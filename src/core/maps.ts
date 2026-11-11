@@ -1,6 +1,6 @@
 // Carregar/trocar mapas.
 import * as THREE from 'three';
-import { S, cam, ctl } from './engine';
+import { R, S, cam, ctl } from './engine';
 import { st, $ } from './state';
 import { setTime, setShadowRadius } from './sky';
 import { placeT, selT } from './tokens';
@@ -8,6 +8,7 @@ import { fillAreas } from './vtt';
 import { WM, startWalk } from './walk';
 import { MAPS } from '../maps/manifest';
 import { loading as loader } from './loading';
+import { collectCull } from './cull';
 import type { MapRuntime } from './types';
 
 function newRuntime(id: string): MapRuntime {
@@ -41,6 +42,7 @@ export async function loadMap(id: string) {
     await MAPS[id].build(M);
     if (old) { S.remove(old.G); disposeTree(old.G); }
     S.add(M.G); st.MP = M; st.curMap = id;
+    M.G.updateMatrixWorld(true); collectCull(M.G); R.shadowMap.needsUpdate = true;
     setShadowRadius(M.shadowRadius);
     $('bmap').textContent = 'Mapa: ' + MAPS[id].n;
     const L = $('lay'); L.innerHTML = '';

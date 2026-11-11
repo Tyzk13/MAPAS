@@ -93,3 +93,13 @@
 - `npm run build:leve` → `dist-lite/`: assets leves e modelos/céus empacotados como `.js` (algumas hospedagens,
   como a do claude.ai, recusam `.glb` e `.hdr`). Carregadores passam por `core/binario.ts`.
 - Publicada como página privada no claude.ai e conferida no visualizador real (carrega sem erros).
+
+## Desempenho (mesmo visual, bem mais leve)
+
+- Vista externa: 12,6 M → 4,7 M triângulos e 3.115 → 1.162 chamadas por quadro; dentro da igreja: 11,6 M → 0,6 M.
+- Corrigido: vidro com transmissão (modelos glTF) fazia a cena inteira ser renderizada duas vezes.
+- Peças estáticas juntadas por material (565 → 65), vegetação em blocos com corte por tela e por distância,
+  gramado com versão simples ao longe, exterior não é desenhado quando a câmera está dentro da igreja e a
+  porta não aparece, auréolas num único objeto, sombra do sol recalculada a cada 2–4 quadros, resolução
+  adaptativa, névoa mais barata, modelos de lanterna/pedra/pedregulho reduzidos, 3º nível de LOD na floresta.
+- `node tools/medir.mjs`: mede o custo por quadro e por grupo.
