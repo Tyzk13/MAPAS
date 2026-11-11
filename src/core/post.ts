@@ -43,7 +43,9 @@ export const post = {
   init(q: Quality) {
     R.shadowMap.autoUpdate = false; R.shadowMap.needsUpdate = true;
     R.toneMapping = THREE.NoToneMapping;
-    composer = new EffectComposer(R, { frameBufferType: THREE.HalfFloatType, multisampling: 0, stencilBuffer: false });
+    // celulares antigos podem não renderizar em meia-precisão: cai para 8 bits
+    const gl = R.getContext(), half = !!(gl.getExtension('EXT_color_buffer_half_float') || gl.getExtension('EXT_color_buffer_float'));
+    composer = new EffectComposer(R, { frameBufferType: half ? THREE.HalfFloatType : THREE.UnsignedByteType, multisampling: 0, stencilBuffer: false });
     composer.addPass(new RenderPass(S, cam));
 
     aoPass = new N8AOPostPass(S, cam, innerWidth, innerHeight);
