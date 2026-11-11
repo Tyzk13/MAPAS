@@ -62,7 +62,8 @@ export function walkStep() {
     const sol = M.solid();
     const bl = (ax: number, az: number) => { const l = Math.hypot(ax, az); if (!l) return false; wr.set(new V3(WM.x, WM.y + 0.9, WM.z), new V3(ax / l, 0, az / l)); wr.far = l + 0.4; return wr.intersectObjects(sol, false).length > 0; };
     if (!bl(dx, 0)) WM.x += dx; if (!bl(0, dz)) WM.z += dz;
-    WM.x = Math.max(-90, Math.min(90, WM.x)); WM.z = Math.max(-90, Math.min(90, WM.z));
+    const lim = M.walkLimit ?? 90;
+    WM.x = Math.max(-lim, Math.min(lim, WM.x)); WM.z = Math.max(-lim, Math.min(lim, WM.z));
   }
   wr.set(new V3(WM.x, WM.y + 0.8, WM.z), DN); wr.far = 40;
   const g = wr.intersectObjects(wk(), false)[0];

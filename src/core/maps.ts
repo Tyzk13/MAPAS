@@ -42,6 +42,7 @@ export async function loadMap(id: string) {
     if (old) { S.remove(old.G); disposeTree(old.G); }
     S.add(M.G); st.MP = M; st.curMap = id;
     setShadowRadius(M.shadowRadius);
+    ctl.maxDistance = M.camMax ?? 95;
     $('bmap').textContent = 'Mapa: ' + MAPS[id].n;
     const L = $('lay'); L.innerHTML = '';
     M.layers.forEach(l => {
