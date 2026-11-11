@@ -2,6 +2,7 @@
 // portal de lojas, panteão (cemitério) com velas e cempasúchil, fazenda abandonada, caixa-d'água e ponte.
 import * as THREE from 'three';
 import { boxUV } from '../../core/pbr';
+import { lod } from './common';
 import { place, instance, instanceVariants, type Xf } from '../../core/models';
 import { halo } from '../../core/kit';
 import { wallGeo, roundArch, circle, type Hole } from '../igreja/common';
@@ -59,8 +60,8 @@ export async function buildLandmarks(G: THREE.Group, T: Town): Promise<Landmarks
     });
     // árvores da praça (laurel da Índia e jacarandá) e plantas
     const tr: Xf[] = [[10.4, 10.4], [-10.4, 10.4], [10.4, -10.4], [-10.4, -10.4]].map(([x, z]) => ({ x, y: CURB + 0.45, z, ry: rnd() * 6, s: 1.05 }));
-    later(instance('island_tree_01_lod1', tr.slice(0, 2).map(t => ({ ...t, s: 0.42 })), G, { wind: { amp: 0.08, freq: 0.9, flutter: 0.015 } }).then(ms => ms.forEach(x => (x.userData.canopy = 1))));
-    later(instance('island_tree_02_lod1', tr.slice(2).map(t => ({ ...t, s: 0.5 })), G, { wind: { amp: 0.08, freq: 0.9, flutter: 0.015 } }).then(ms => ms.forEach(x => (x.userData.canopy = 1))));
+    later(instance(lod('island_tree_01'), tr.slice(0, 2).map(t => ({ ...t, s: 0.42 })), G, { wind: { amp: 0.08, freq: 0.9, flutter: 0.015 } }).then(ms => ms.forEach(x => (x.userData.canopy = 1))));
+    later(instance(lod('island_tree_02'), tr.slice(2).map(t => ({ ...t, s: 0.5 })), G, { wind: { amp: 0.08, freq: 0.9, flutter: 0.015 } }).then(ms => ms.forEach(x => (x.userData.canopy = 1))));
     const shr: Xf[] = []; beds.slice(0, 8).forEach(([x, z, w, d], i) => { for (let k = 0; k < (Q.bushes >= 1 ? 3 : 1); k++) shr.push({ x: x + (rnd() - 0.5) * (w - 1), y: CURB + 0.45, z: z + (rnd() - 0.5) * (d - 1), ry: rnd() * 6, s: 0.6 + rnd() * 0.3 }); void i; });
     later(instance('shrub_02', shr, G, { wind: { amp: 0.04, freq: 1.3, flutter: 0.01 } }));
     if (exported.place && exported.agave) exported.place(exported.agave, beds.slice(0, 8).map(([x, z]) => ({ x, y: CURB + 0.45, z, ry: rnd() * 6, s: 0.8 })), false);
@@ -205,7 +206,7 @@ export async function buildLandmarks(G: THREE.Group, T: Town): Promise<Landmarks
     const arcG = new THREE.TorusGeometry(2.65, 0.16, 6, 20, Math.PI); arcG.translate(0, 3.5, A0); D.add(m.stone, arcG, 0xe9dfcc);
     const pth = new THREE.PlaneGeometry(3.4, A0 - Z0); pth.rotateX(-Math.PI / 2); pth.translate(0, 0.03, (A0 + Z0) / 2); boxUV(pth); D.add(m.cobble as THREE.Material, pth);
     B.box(m.stone, 1.4, 1.2, 1.4, -6.5, 0.6, -28.5, 0xcfc4b0); B.box(m.stone, 0.32, 2.6, 0.32, -6.5, 2.5, -28.5, 0xcfc4b0); B.box(m.stone, 1.5, 0.3, 0.32, -6.5, 3.2, -28.5, 0xcfc4b0);
-    later(instance('island_tree_03_lod1', [{ x: 8.5, y: 0, z: -28.5, ry: 1, s: 0.45 }], G, { wind: { amp: 0.08, freq: 0.9, flutter: 0.015 } }).then(ms => ms.forEach(x => (x.userData.canopy = 1))));
+    later(instance(lod('island_tree_03'), [{ x: 8.5, y: 0, z: -28.5, ry: 1, s: 0.45 }], G, { wind: { amp: 0.08, freq: 0.9, flutter: 0.015 } }).then(ms => ms.forEach(x => (x.userData.canopy = 1))));
     const sg = sign('PARROQUIA DE SAN JUDAS TADEO', 6, 0.6, { bg: '#e9dfcc', fg: '#5a3a20' }); sg.position.set(0, 9.1, Z0 + 0.06); G.add(sg);
   }
 

@@ -93,3 +93,19 @@
 - `npm run build:leve` → `dist-lite/`: assets leves e modelos/céus empacotados como `.js` (algumas hospedagens,
   como a do claude.ai, recusam `.glb` e `.hdr`). Carregadores passam por `core/binario.ts`.
 - Publicada como página privada no claude.ai e conferida no visualizador real (carrega sem erros).
+
+## Mapa novo: San Judas de las Ánimas (México)
+
+- Cidadezinha no semiárido do norte do México (`?map=mexico`): praça com coreto, papel picado e
+  jardineiras; paróquia com duas torres, interior com bancos, retábulo dourado, lustres e veladoras;
+  cantina "El Último Trago" (balcão, garrafas, mesas, portas vaivém); mercado municipal com bancas e lonas;
+  portal de lojas (farmácia, abarrotes, tortilharia, papelaria); panteão com túmulos coloridos,
+  cempasúchil, velas e capela; fazenda abandonada com poço e um círculo de giz (gancho de investigação);
+  caixa-d'água, arroio seco com ponte, casas soltas e ruínas nas estradas.
+- Quadras geradas por código (casas térreas e sobrados, grades, sacadas, toldos de telha, caixas-d'água,
+  tetos com impermeabilizante), postes de madeira com fios, serra distante, sahuaros, nopais e agaves.
+- Celular: peças juntadas por material, colisão por caixas simples, pedras e caixotes leves em código,
+  só as luzes mais importantes viram PointLight (8 / 14 / 22 conforme a qualidade), densidade de
+  capim/cactos/arbustos pela qualidade. Névoa rareia quando a câmera sobe (vista tática legível).
+- Núcleo: campos opcionais por mapa `walkLimit`, `camMax`, `fogScale`; `window.MAPA_PADRAO` escolhe o mapa
+  inicial; `npm run capturas -- --views=Praça,Cantina` usa vistas do mapa pelo nome.

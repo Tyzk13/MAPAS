@@ -6,6 +6,10 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { pbr, boxUV } from '../../core/pbr';
 import { weather } from '../../core/weathering';
 import { CFG } from '../../core/config';
+import { hasModel } from '../../core/models';
+
+/** versão simplificada da árvore, se existir (a versão leve do site já troca os arquivos) */
+export const lod = (id: string) => (hasModel(id + '_lod1') ? id + '_lod1' : id);
 
 // ---------- planta ----------
 /** Eixos das ruas (x e z): quadras de 30 m, ruas de 8 m. A praça é a quadra central. */

@@ -5,6 +5,7 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { makeTerrain, fbm, noise2 } from '../../core/terrain';
 import { grassField } from '../../core/grass';
 import { instance, instanceVariants, type Xf } from '../../core/models';
+import { lod } from './common';
 import { addWind } from '../../core/anim';
 import { Q, rnd, reseed, sm, PANTEON, HACIENDA, ARROYO, ROAD_S, TOWN, MAT, TOWER_W } from './common';
 
@@ -213,8 +214,8 @@ export async function buildNature(G: THREE.Group, free: (x: number, z: number) =
   }
   trees.push(...scatter(14, 70, 150, 14).map(t => ({ ...t, s: 0.7 + rnd() * 0.4 })));
   const tl = (i: number) => trees.filter((_, k) => k % 2 === i);
-  (await instance('tree_small_02_lod1', tl(0), O, { wind: { amp: 0.08, freq: 0.9, flutter: 0.015 } }).catch(() => [])).forEach(m => (m.userData.canopy = 1));
-  (await instance('island_tree_02_lod1', tl(1).map(t => ({ ...t, s: (t.s ?? 1) * 0.75 })), O, { wind: { amp: 0.08, freq: 0.9, flutter: 0.015 } }).catch(() => [])).forEach(m => (m.userData.canopy = 1));
+  (await instance(lod('tree_small_02'), tl(0), O, { wind: { amp: 0.08, freq: 0.9, flutter: 0.015 } }).catch(() => [])).forEach(m => (m.userData.canopy = 1));
+  (await instance(lod('island_tree_02'), tl(1).map(t => ({ ...t, s: (t.s ?? 1) * 0.75 })), O, { wind: { amp: 0.08, freq: 0.9, flutter: 0.015 } }).catch(() => [])).forEach(m => (m.userData.canopy = 1));
 
   // ---------- capim seco ----------
   const dry = [0x9a8a5a, 0xa89a66, 0x8a7a4a, 0xb0a070, 0x7d7448];
