@@ -1,0 +1,11 @@
+{
+  "name": "mapa-3d-sync",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Servidor de sincronização (salas por WebSocket) do mapa 3D",
+  "main": "servidor-sync.mjs",
+  "scripts": { "start": "node servidor-sync.mjs" },
+  "engines": { "node": ">=18" },
+  "dependencies": { "ws": "^8.18.0" }
+}

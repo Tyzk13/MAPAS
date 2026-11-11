@@ -1,7 +1,9 @@
-node_modules/
-dist/
-.cache/
-capturas/*/
-!capturas/README.md
-assets-src/
 *.log
+.cache/
+assets-src/
+dist-single/
+dist/
+node_modules/
+src/assets-lite/
+capturas/_em-andamento-*/
+dist-lite/

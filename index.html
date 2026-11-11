@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Igreja – Mapa 3D</title>
+<link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+<div id="load"><b>Carregando</b><div class="pb"><i id="lp"></i></div><small id="lt"></small></div>
+<canvas id="c"></canvas>
+<div class="tip" id="tip">Arraste os personagens (setas movem o selecionado) · toque no avatar para focar · arraste o fundo para girar</div>
+<div id="ros"></div>
+<div id="meas" hidden></div>
+<div id="joy" hidden><i></i></div>
+<div id="imp" hidden><b>Importar do seu computador</b>
+<label>Mapa 3D (.glb) <input id="if" type="file" accept=".glb,.gltf"></label>
+<label>Escala <input id="is" type="number" value="1" step="0.1" min="0.01"></label>
+<label>Jardim e decoração ao redor <input id="igd" type="checkbox" checked></label>
+<button id="ig">Importar como mapa</button>
+<label>HDRI (.hdr) <input id="ih" type="file" accept=".hdr"></label>
+<div style="display:flex;gap:8px"><button id="ihb">Aplicar HDRI</button><button id="inh">Remover HDRI</button></div>
+<div id="im"></div><div style="font-size:11px;opacity:.7">Nomes das peças: floor/piso/chao = chão · wall/parede = colisão · roof/telhado = camada Telhado</div>
+<div style="display:flex;justify-content:flex-end"><button id="ix">Fechar</button></div></div>
+<div id="exp" hidden><b>Exportar para mesa virtual</b>
+<label>Área <select id="xa"></select></label>
+<label>Pixels por quadrado <select id="xp"><option>50</option><option selected>70</option><option>100</option><option>140</option></select></label>
+<label>Mostrar copas das árvores <input id="xc" type="checkbox"></label>
+<label>Sombras <input id="xs" type="checkbox"></label>
+<div id="xi"></div>
+<div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap"><button id="xx">Fechar</button><button id="xpng">Baixar PNG</button><button id="xvtt">Universal VTT</button></div></div>
+<div id="sel" hidden><span id="sn"></span><button id="szm">−</button><button id="szp">+</button><button id="fl" title="Espelhar">⇋</button><button id="rm">Remover</button></div>
+<div id="add" hidden><b>Novo personagem</b><input id="af" type="file" accept="image/*"><input id="an" placeholder="Nome" maxlength="24">
+<label>Tamanho <select id="as"><option value="1.2">Pequeno</option><option value="1.7" selected>Médio</option><option value="2.4">Grande</option><option value="3.4">Enorme</option></select></label>
+<label>Cor da base <input id="ac" type="color" value="#8a8f98"></label>
+<label>Remover fundo liso <input id="ab" type="checkbox" checked></label><div id="am"></div>
+<div style="display:flex;gap:8px;justify-content:flex-end"><button id="ax">Cancelar</button><button id="ao">Adicionar</button></div></div>
+<div class="bar"><div id="lay" hidden></div><button id="bwk">Caminhar</button><button id="bpv">3ª pessoa</button><button id="bk">Camadas</button><button id="bn">Anoitecer</button><button id="bv">Vista: Cinema</button><button id="bg">Grade: on</button><button id="bmap">Mapa</button><button id="bim">Importar 3D</button><button id="bx">Exportar VTT</button><button id="bch">Personagens: on</button><button id="ba">+ Personagem</button><button id="br">Resetar</button><button id="bfs" title="Tela cheia">⛶</button><button id="bq">Qualidade: Média</button><span id="st">local</span></div>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

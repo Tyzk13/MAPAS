@@ -1,0 +1,49 @@
+// Renderizador, cena, câmera e controles de órbita (compartilhados por todos os mapas).
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CFG } from './config';
+
+export const cv = document.getElementById('c') as HTMLCanvasElement;
+
+export const R = new THREE.WebGLRenderer({
+  canvas: cv,
+  antialias: false, // o anti-serrilhado vem do pós-processamento (SMAA)
+  powerPreference: 'high-performance',
+  preserveDrawingBuffer: CFG.capture,
+  stencil: false,
+});
+R.outputColorSpace = THREE.SRGBColorSpace;
+R.toneMapping = THREE.ACESFilmicToneMapping;
+R.toneMappingExposure = 1;
+R.shadowMap.enabled = true;
+R.shadowMap.type = THREE.PCFShadowMap; // no three atual o PCF já é suave
+
+export const S = new THREE.Scene();
+S.fog = new THREE.Fog(0xa4a9a8, 26, 150);
+
+export const cam = new THREE.PerspectiveCamera(50, 1, 0.1, 700);
+cam.position.set(-16, 6.5, 52);
+
+export const ctl = new OrbitControls(cam, cv);
+ctl.enableDamping = true;
+ctl.maxPolarAngle = 1.78; // permite olhar um pouco para cima (interiores)
+ctl.minDistance = 1.5;
+ctl.maxDistance = 95;
+ctl.target.set(-2, 6, 8);
+
+type ResizeFn = (w: number, h: number) => void;
+const resizers: ResizeFn[] = [];
+export function onResize(f: ResizeFn) { resizers.push(f); }
+
+export let pixelRatioCap = 2;
+export function setPixelRatioCap(v: number) { pixelRatioCap = v; fit(); }
+
+export function fit() {
+  const w = innerWidth, h = innerHeight;
+  R.setPixelRatio(Math.min(devicePixelRatio, pixelRatioCap));
+  R.setSize(w, h, false);
+  cam.aspect = w / h;
+  cam.updateProjectionMatrix();
+  resizers.forEach(f => f(w, h));
+}
+addEventListener('resize', fit);
