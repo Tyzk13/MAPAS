@@ -36,6 +36,36 @@ rede, exportação VTT — **não reescreva o núcleo**. Leia `docs/NOVO-MAPA.md
   `weather()` no concreto (sujeira e escorridos), vento nas plantas (`instance(..., { wind })`).
 - Atmosfera de terror **sutil**: sem monstros, sangue ou sobrenatural explícito.
 
+## Mapas grandes / cidade (aprendido em `src/maps/mexico/`)
+
+- Modelo de referência para cidade: `src/maps/mexico/` — `common.ts` (planta, `Q` por qualidade, materiais,
+  `Batch`), `town.ts` (casas e quadras geradas), `landmarks.ts` (lugares com interior), `nature.ts`
+  (terreno, cactos/pedras em código), `index.ts` (luzes, vistas, VTT, animação).
+- **Junte peças por material** (`Batch` com cor de vértice + `vertexColors`): centenas de casas viram poucas
+  malhas. Tinja a textura pela cor de vértice em vez de criar um material por cor.
+- **Colisão barata**: além da malha visual, uma caixa simples invisível por casa para `M.solid()` (raycast
+  contra malhas detalhadas a cada passo trava o celular).
+- **Luzes**: peça luzes com prioridade (`LREQ` em landmarks.ts) e crie só as N mais importantes como
+  `PointLight` (8/14/22 por qualidade); o resto vira só `halo`. Cada PointLight pesa em todo material.
+- Para mapas maiores que ±90 m use os campos opcionais `M.walkLimit`, `M.camMax`, `M.fogScale`; deixe a
+  névoa rarear com a altura da câmera no `tick` (vista Tática legível) e esconda sprites de névoa no alto.
+- Placas/letreiros: textura de canvas (`sign()` em mexico/common.ts) — barato e dá muita identidade.
+- Coisas que não existem em CC0 e saem bem em código: cactos (lathe com gomos), agave, nopal, pedras
+  low-poly (icosaedro deformado), postes com fios (`LineSegments`), papel picado (InstancedMesh + canvas
+  com recortes), vasos de barro (lathe), caixotes (caixa), círculo de giz (canvas no chão).
+- Mapa inicial da página publicada: `<script>window.MAPA_PADRAO="id"</script>` no `index.html` da cópia.
+
+## Medir o peso (faça antes de publicar)
+
+- Script de medição: abrir `?map=<id>&q=baixa&fps=1` no Playwright e ler `#fps` (draws e triângulos;
+  fps no swiftshader não vale nada). Para achar culpados, percorra `M.G` somando triângulos × `count`
+  das InstancedMesh e liste os 25 maiores.
+- Meta para celular (Baixa): ≲ 1,5 M triângulos na cena (o contador do `#fps` soma sombra/AO, ~3×).
+- Já pegou: `boulder_01` tem **54k tri** por cópia (não espalhe); `jacaranda_tree` até no LOD1 tem 65k
+  nos galhos; `ceramic_vase_03` 11k; `wooden_crate_02` 5k; `street_lamp_02` só depois de simplificar.
+- Na versão leve (`build:leve`) os arquivos `_lod1` somem (viram o id normal): use `lod(id)` de
+  `mexico/common.ts` (`hasModel(id+'_lod1') ? ... : id`), senão as árvores não aparecem no site.
+
 ## Erros que já custaram tempo (não repita)
 
 - **Modelos da Poly Haven são pesados** (árvores 1–4 M faces). Sempre rode `tools/arvores.sh`
@@ -52,7 +82,18 @@ rede, exportação VTT — **não reescreva o núcleo**. Leia `docs/NOVO-MAPA.md
   escondidos nas vistas fixas.
 - `fetch` do Node só passa pelo proxy com `NODE_USE_ENV_PROXY=1` (já no `npm run assets`).
 - Hospedagem no claude.ai recusa `.glb`/`.hdr`: use `npm run build:leve` (empacota como `.js`).
-- Rede: Poly Haven/ambientCG/Blender precisam estar liberados no ambiente (ambiente "3d").
+- Rede: Poly Haven/ambientCG/Blender precisam estar liberados no ambiente (ambiente "3d"). Se a sessão
+  começou no "Default", use `switch_environment` para o "3d" (só rede; nada se perde).
+- Blender não vem instalado: baixe `blender-4.2.3-linux-x64.tar.xz` de download.blender.org para o
+  scratchpad e rode com `BLENDER=<caminho>/blender tools/orcamento.sh` (ou o script direto).
+- `weather()` precisa ser aplicado **depois** de `material.clone()` (o clone não copia `onBeforeCompile`).
+  Escorridos (`streaks`) acima de ~0.15 em reboco parecem tábuas de madeira; use 0.1.
+- `worn_plaster_wall` parece camuflagem de longe — evite em paredes grandes.
+- `wallGeo` com `ry = ±π/2`: o eixo x local vira ∓z; confira a posição dos vãos nos dois lados (use o
+  mesmo sinal nas duas paredes laterais, não espelhe).
+- `testar-funcoes.mjs`: o item "caminhar move o personagem" falha no swiftshader por lentidão (já
+  falhava antes); os demais precisam passar.
+- Capturas de vistas próprias do mapa: `npm run capturas -- rotulo --map=<id> --views=Praça,Cantina`.
 
 ## Achar assets novos (só se o catálogo não tiver)
 
