@@ -23,7 +23,9 @@ export function mergeStatic(root: THREE.Object3D, o: MergeOpts = {}) {
     const m = obj as THREE.Mesh;
     if (m.isMesh && !(m as any).isInstancedMesh && !(m as any).isSkinnedMesh && !Array.isArray(m.material) && m.material.visible !== false
       && Object.keys(m.geometry.attributes).every(k => OK_ATTR.has(k)) && m.geometry.attributes.normal && m.geometry.attributes.uv
-      && !m.userData.noMerge && !m.morphTargetInfluences) {
+      && !m.userData.noMerge && !m.morphTargetInfluences
+      // geometria comprimida (Meshopt: inteiros normalizados) não pode ser transformada direto — fica de fora
+      && Object.values(m.geometry.attributes).every((at: any) => !at.normalized && at.array instanceof Float32Array && !at.isInterleavedBufferAttribute)) {
       box.setFromObject(m);
       const bucket = o.bucket ? o.bucket(m, box) : '';
       const key = m.material.uuid + '|' + m.castShadow + '|' + m.receiveShadow + '|' + bucket + '|' + (m.geometry.index ? 'i' : 'n') + '|' + m.renderOrder;
