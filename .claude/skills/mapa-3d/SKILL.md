@@ -61,6 +61,7 @@ Meça antes de mexer: `node tools/medir.mjs --q=media` (chamadas, triângulos, e
   desligado em `core/models.ts`; nunca use `MeshPhysicalMaterial.transmission` na cena.
 - Peças estáticas feitas em código: `mergeStatic(raiz, { bucket })` no fim do `build` (`core/merge.ts`).
   As originais continuam valendo para colisão. Separe por camada e por altura (VTT esconde o "alto").
+  Ela ignora modelos .glb (geometria quantizada) — juntá-los sem desquantizar desloca as peças.
 - Espalhados (`instance`/`instanceVariants`): use `tile` (blocos para o corte por tela) e `cullDist`
   (some além da névoa). Gramado: `grassField` já faz blocos + versão simples ao longe.
 - Interior: esconda o exterior quando a câmera está dentro e a porta fora do campo de visão
