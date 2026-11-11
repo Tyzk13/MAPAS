@@ -197,6 +197,10 @@ async function start() {
   }
   loading.done();
 }
+// mostra qualquer erro na tela de carregamento (em vez de ficar parada) e avisa se a placa de vídeo cair
+addEventListener('error', e => loading.error(String(e.message || e)));
+addEventListener('unhandledrejection', e => loading.error(String((e as PromiseRejectionEvent).reason)));
+R.domElement.addEventListener('webglcontextlost', ev => { ev.preventDefault(); loading.error('a placa de vídeo do aparelho reiniciou (memória cheia?) — recarregue a página; use Qualidade: Baixa'); });
 start().catch(e => { console.error(e); loading.error(String(e)); });
 
 export { S };
