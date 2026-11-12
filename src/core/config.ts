@@ -1,5 +1,5 @@
 // Configuração lida da URL.
-// ?room=nome  ?map=igreja|campo  ?time=0..4  ?ui=0  ?ro=1  ?walk=1  ?chars=0  ?ws=wss://servidor  ?key=chave  ?q=baixa|media|alta  ?auto=0 (resolução fixa)  ?fps=1 (medidor)
+// ?room=nome  ?map=igreja|mexico|campo  ?time=0..4  ?ui=0  ?ro=1  ?walk=1  ?chars=0  ?ws=wss://servidor  ?key=chave  ?q=baixa|media|alta  ?auto=0 (resolução fixa)  ?fps=1 (medidor)
 // Só para as capturas automáticas: ?capture=1 (desliga o laço contínuo e expõe window.__cap)
 const Q = new URLSearchParams(location.search);
 
