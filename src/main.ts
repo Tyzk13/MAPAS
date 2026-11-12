@@ -16,6 +16,7 @@ import { loadMap } from './core/maps';
 import { MAPS } from './maps/manifest';
 import { post } from './core/post';
 import { loading } from './core/loading';
+import { desempenho } from './core/desempenho';
 
 st.pi = Math.min(CFG.time, PRE.length - 1);
 st.showC = CFG.chars;
@@ -99,7 +100,7 @@ function initUi() {
   const QN = { baixa: 'Baixa', media: 'Média', alta: 'Alta' } as const, QS = ['baixa', 'media', 'alta'] as const;
   $('bq').textContent = 'Qualidade: ' + QN[CFG.quality];
   // qualidade: resolução/sombras/pós na hora; densidade da vegetação ao recarregar o mapa
-  $('bq').onclick = async () => { CFG.quality = QS[(QS.indexOf(CFG.quality) + 1) % 3]; post.setQuality(CFG.quality); $('bq').textContent = 'Qualidade: ' + QN[CFG.quality]; await loadMap(st.curMap); };
+  $('bq').onclick = async () => { CFG.quality = QS[(QS.indexOf(CFG.quality) + 1) % 3]; post.setQuality(CFG.quality); $('bq').textContent = 'Qualidade: ' + QN[CFG.quality]; await loadMap(st.curMap); desempenho.reiniciar(); };
   ctl.addEventListener('start', () => { st.anim = null; });
 }
 
@@ -113,12 +114,13 @@ addEventListener('message', e => {
 // ---------- laço ----------
 const timer = new THREE.Timer();
 // medidor de quadros por segundo (?fps=1)
-const fpsEl = new URLSearchParams(location.search).get('fps') === '1' ? Object.assign(document.body.appendChild(document.createElement('div')), { id: 'fps' }) : null;
+const fpsEl = CFG.fps ? Object.assign(document.body.appendChild(document.createElement('div')), { id: 'fps' }) : null;
 if (fpsEl) R.info.autoReset = false;
 if (fpsEl) Object.assign(fpsEl.style, { position: 'fixed', right: '8px', top: '8px', font: '12px monospace', background: '#000a', color: '#9f9', padding: '3px 6px', borderRadius: '6px', zIndex: '9' });
 let fpsN = 0, fpsT = performance.now();
 function frame(ts?: number) {
   timer.update(ts);
+  desempenho.quadro(performance.now());
   if (fpsEl) R.info.reset();
   const dt = Math.min(0.1, timer.getDelta()), t = timer.getElapsed(), M = st.MP;
   if (!M) return;
@@ -131,7 +133,7 @@ function frame(ts?: number) {
   }
   if (WM.on) walkStep(); else ctl.update();
   post.render(dt);
-  if (fpsEl && ++fpsN >= 30) { const n = performance.now(); fpsEl.textContent = (30000 / (n - fpsT)).toFixed(0) + ' fps · ' + R.info.render.calls + ' draws · ' + (R.info.render.triangles / 1e6).toFixed(2) + ' M tri'; fpsT = n; fpsN = 0; }
+  if (fpsEl && ++fpsN >= 30) { const n = performance.now(); fpsEl.textContent = (30000 / (n - fpsT)).toFixed(0) + ' fps · ' + R.info.render.calls + ' draws · ' + (R.info.render.triangles / 1e6).toFixed(2) + ' M tri · res ' + Math.round(desempenho.escala * 100) + '%'; fpsT = n; fpsN = 0; }
 }
 
 // ---------- capturas automáticas (tools/capturas.mjs) ----------
@@ -187,6 +189,7 @@ async function start() {
     await setTime(st.pi);
   }
   loading.done();
+  desempenho.iniciar();
 }
 start().catch(e => { console.error(e); loading.error(String(e)); });
 

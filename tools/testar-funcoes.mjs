@@ -30,7 +30,8 @@ ok('tela de carregamento some', await fr.evaluate(() => !document.getElementById
 await fr.evaluate(() => document.getElementById('bwk').click());
 // teclas disparadas dentro do iframe (o canvas não recebe foco de teclado)
 await fr.evaluate(() => dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyW', key: 'w' })));
-await p.waitForTimeout(15000);
+// espera até andar ~1 m (sem GPU o navegador faz poucos quadros por segundo; o tempo fixo deixava o teste instável)
+await fr.waitForFunction(() => (window.__walkState?.().moved ?? 0) > 1, null, { timeout: 120000, polling: 500 }).catch(() => {});
 await fr.evaluate(() => dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyW', key: 'w' })));
 const wpos = await fr.evaluate(() => (window).__walkState?.());
 ok('caminhar move o personagem', !!wpos && wpos.moved > 0.3, wpos ? `andou ${wpos.moved.toFixed(1)} m, y=${wpos.y.toFixed(2)}` : 'sem estado');

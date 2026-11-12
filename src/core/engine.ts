@@ -38,9 +38,17 @@ export function onResize(f: ResizeFn) { resizers.push(f); }
 export let pixelRatioCap = 2;
 export function setPixelRatioCap(v: number) { pixelRatioCap = v; fit(); }
 
+/** Escala dinâmica da resolução (0.5–1), ajustada por core/desempenho.ts quando o FPS cai. */
+export let renderScale = 1;
+export function setRenderScale(v: number) {
+  v = Math.max(0.5, Math.min(1, v));
+  if (Math.abs(v - renderScale) < 0.01) return;
+  renderScale = v; fit();
+}
+
 export function fit() {
   const w = innerWidth, h = innerHeight;
-  R.setPixelRatio(Math.min(devicePixelRatio, pixelRatioCap));
+  R.setPixelRatio(Math.max(0.5, Math.min(devicePixelRatio, pixelRatioCap) * renderScale));
   R.setSize(w, h, false);
   cam.aspect = w / h;
   cam.updateProjectionMatrix();

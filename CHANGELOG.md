@@ -93,3 +93,16 @@
 - `npm run build:leve` → `dist-lite/`: assets leves e modelos/céus empacotados como `.js` (algumas hospedagens,
   como a do claude.ai, recusam `.glb` e `.hdr`). Carregadores passam por `core/binario.ts`.
 - Publicada como página privada no claude.ai e conferida no visualizador real (carrega sem erros).
+
+## Organização, desempenho e servidor
+
+- **Resolução adaptativa** (`core/desempenho.ts`): mede o FPS e reduz a resolução interna (até 50%) quando a
+  cena fica lenta; sobe de novo quando sobra folga. `?auto=0` desliga; `?fps=1` mostra a resolução atual.
+- Exportação VTT libera o arquivo da memória depois do download (o `.dd2vtt` traz a imagem embutida).
+- Servidor de sincronização: descarta números inválidos (NaN/infinito), aceita só imagens PNG/WebP/JPEG/GIF,
+  limita personagens (`MAX_CHARS`) e posições (`MAX_POS`) por sala, `/saude` aceita query string.
+  Novo `server/testar.mjs` (`npm run test:servidor`) e `server/Dockerfile`.
+- Scripts `typecheck`, `test`, `test:funcoes`, `test:vtt`, `test:servidor`; CI no GitHub Actions
+  (tipos, builds e servidor a cada push; teste no navegador sob demanda).
+- `.nvmrc`, `.editorconfig`, `CLAUDE.md`; README reorganizado (tabelas de comandos, controles e parâmetros);
+  novo `docs/VTT.md` (Foundry com Universal Battlemap Importer, Roll20, outras mesas); Docker em `docs/HOSPEDAGEM.md`.

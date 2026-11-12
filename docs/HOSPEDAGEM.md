@@ -59,7 +59,21 @@ O servidor fica em `server/` (Node 18+, uma dependência: `ws`). Ele guarda as s
 `DATA_DIR/<sala>.json`, então posições e personagens sobrevivem a reinícios.
 
 Variáveis: `PORT`, `DATA_DIR`, `EDIT_KEY` (só quem abrir com `&key=...` pode mover; os demais só veem),
-`ALLOWED_ORIGINS` (lista de sites que podem conectar), `MAX_ROOMS`.
+`ALLOWED_ORIGINS` (lista de sites que podem conectar), `MAX_ROOMS`, `MAX_CHARS` (personagens por sala, padrão 60),
+`MAX_POS` (posições guardadas por sala, padrão 3000).
+
+O servidor descarta números inválidos (NaN/infinito), imagens que não sejam PNG/WebP/JPEG/GIF e mensagens acima
+de 40 por segundo por conexão. Teste automático: `npm run test:servidor` (na raiz) ou `npm test` (em `server/`).
+
+### Docker (qualquer hospedagem)
+
+```bash
+docker build -t mapa-sync server/
+docker run -d --restart=always -p 8080:8080 -v mapa-dados:/data \
+  -e EDIT_KEY=segredo -e ALLOWED_ORIGINS=https://seu-site.com mapa-sync
+```
+
+O `Dockerfile` já usa `DATA_DIR=/data` (monte um volume ali), roda sem root e tem verificação de saúde em `/saude`.
 
 ### Render.com
 
@@ -73,7 +87,7 @@ Variáveis: `PORT`, `DATA_DIR`, `EDIT_KEY` (só quem abrir com `&key=...` pode m
 
 ```bash
 cd server
-fly launch --no-deploy            # escolha um nome; aceite o Dockerfile/Node detectado
+fly launch --no-deploy            # escolha um nome; usa o Dockerfile de server/
 fly volumes create dados --size 1
 # em fly.toml:  [mounts] source="dados" destination="/data"   e   [env] DATA_DIR="/data"
 fly deploy

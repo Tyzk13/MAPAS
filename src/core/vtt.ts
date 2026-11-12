@@ -84,7 +84,11 @@ export function dd2vtt(c: ReturnType<typeof xcalc>, png: string) {
   };
 }
 
-function dl(name: string, href: string) { const a = document.createElement('a'); a.href = href; a.download = name; document.body.appendChild(a); a.click(); a.remove(); }
+function dl(name: string, href: string) {
+  const a = document.createElement('a'); a.href = href; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  // libera o arquivo (a imagem embutida no .dd2vtt pode ter dezenas de MB)
+  if (href.startsWith('blob:')) setTimeout(() => URL.revokeObjectURL(href), 60000);
+}
 
 export function initVtt() {
   $('bx').onclick = () => { fillAreas(); $('exp').hidden = false; };
