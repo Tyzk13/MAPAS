@@ -79,6 +79,20 @@ await p.evaluate(() => document.getElementById('f').contentWindow.postMessage({ 
 await fr.waitForFunction(() => document.getElementById('bmap').textContent.includes('Igreja'), null, { timeout: 120000 }).catch(() => {});
 ok('volta para a igreja', (await fr.evaluate(() => document.getElementById('bmap').textContent)).includes('Igreja'));
 
+// segundo monitor: janela dos jogadores na mesma sala segue clima e câmera de cinema da janela do mestre
+// (como no claude.ai: as duas são quadros da mesma página — o navegador só liga janelas sob a mesma página de cima)
+await p.evaluate(u => { const f = document.createElement('iframe'); f.id = 'j'; f.src = u; f.style.cssText = 'width:480px;height:270px'; document.body.appendChild(f); }, `${url}?q=baixa&room=t1&tela=jogadores`);
+let jp = null;
+for (let i = 0; i < 600 && !jp; i++) { jp = p.frames().find(f => f.url().includes('tela=jogadores')); if (!jp) await p.waitForTimeout(500); }
+await jp.waitForFunction(() => window.__espelho?.().quadro, null, { timeout: 600000, polling: 1000 }).catch(() => {});
+ok('janela dos jogadores liga à do mestre', await jp.evaluate(() => window.__espelho?.().jogadores && window.__espelho().quadro));
+await p.evaluate(() => document.getElementById('f').contentWindow.postMessage({ cmd: 'time', i: 2 }, '*'));
+await jp.waitForFunction(() => window.__espelho().clima === 2, null, { timeout: 60000, polling: 500 }).catch(() => {});
+await p.evaluate(() => document.getElementById('f').contentWindow.postMessage({ cmd: 'cine', p: [6, 2, 26], t: [0, 2, 12], estilo: 'corte' }, '*'));
+await jp.waitForFunction(() => window.__espelho().cine, null, { timeout: 120000, polling: 500 }).catch(() => {});
+ok('janela dos jogadores espelha clima e cinema', await jp.evaluate(() => window.__espelho().clima === 2 && window.__espelho().cine && getComputedStyle(document.getElementById('dock')).display === 'none'));
+await p.evaluate(() => document.getElementById('f').contentWindow.postMessage({ cmd: 'cine-sair' }, '*'));
+
 ok('sem erros de página', errs.length === 0, errs.slice(0, 3).join(' | '));
 res.forEach(r => console.log(r[0], r[1], r[2] ? '— ' + r[2] : ''));
 await b.close(); await server.close();

@@ -146,6 +146,27 @@ Meça antes de mexer: `node tools/medir.mjs --q=media` (chamadas, triângulos, e
 - Tela limpa (H): `body.limpa` + `body.nu`; atalhos P (ponto do cinema), 1–9 (tomadas), Esc. Cursor some
   parado. Elemento novo que não deve aparecer na transmissão → acrescente na regra `.nu ...{display:none}`.
 - Personagem que salta > 8 m pela rede aparece direto (não desliza pelo mapa) — usado no "Revelar".
+- **Dois monitores** (`core/espelho.ts`): o dono usa um monitor com a janela do mestre e outro com a janela
+  dos jogadores (`?tela=jogadores` ou Mais → "Esta janela é a tela dos jogadores"). Ligação por
+  `BroadcastChannel('mapa3d:'+sala)`: a do mestre manda um quadro por mudança de câmera (posição, quaternion,
+  fov, foco e as sobreposições do cinema lidas do DOM) + mapa/clima/personagens; a dos jogadores só aplica
+  (suaviza com `1-exp(-dt*18)`) e ignora o cinema da rede (já vem pela câmera). Ao abrir, ela manda `oi` e
+  recebe o `estado`. Recurso novo que muda a cena → mande também pelo espelho, senão o 2º monitor não vê.
+- **Partição do navegador**: o Chrome só liga janelas (BroadcastChannel/armazenamento) sob a mesma página de
+  cima. No claude.ai o mapa é um quadro dentro da página do claude.ai: funciona abrir o **mesmo link** noutra
+  janela; `window.open` da URL interna cria uma janela que **não liga**. No teste, as duas janelas são
+  quadros da mesma página por isso.
+- **Imersão** (`core/imersao.ts`, `core/som.ts`): congelar (K), escurecer (B), lanterna (L), relâmpago (R), som.
+  O estado vai no quadro do espelho; efeitos pontuais (`fx`) vão como evento `{k:'fx'}`. Ideias novas de
+  imersão entram aqui e precisam aparecer na janela dos jogadores.
+- Som: Web Audio gerado na hora (ruído filtrado = vento/trovão; osciladores graves = zumbido). O navegador só
+  libera áudio após um gesto **naquela janela** (`som.desbloquear()` em pointerdown/keydown). Padrão: som só na
+  janela dos jogadores, para não tocar dobrado no PC do mestre.
+- Luz nova na cena (lanterna) recompila todos os materiais na primeira vez: crie-a no início (intensidade 0) ou,
+  na qualidade Baixa, só quando usada. Efeito que mexe em `hemi`/`sun`/`S.environmentIntensity` (relâmpago)
+  guarda os valores do início e devolve no fim; se o clima mudar no meio, aborta sem devolver.
+- A rede tem um ramal local: `NET.*` chama a implementação (servidor/banco/local) e depois `tap.*` (espelho).
+  `netDb`/`netWs` trocam `impl.*`, nunca `NET.*`.
 
 ## Verificar sem placa de vídeo (Playwright + swiftshader)
 

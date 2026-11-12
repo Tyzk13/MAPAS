@@ -145,3 +145,17 @@ button.tg[aria-pressed=true]::after{background:var(--acc-bg) radial-gradient(cir
 #toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translate(-50%,-8px);z-index:12;pointer-events:none;
   background:#000c;color:#eee;font-size:13px;padding:8px 14px;border-radius:10px;border:1px solid #ffffff22;opacity:0;transition:opacity .25s,transform .25s;max-width:calc(100vw - 32px);text-align:center}
 #toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- janela dos jogadores (segundo monitor) ---------- */
+.jogadores #c{pointer-events:none}
+.jogadores,.jogadores *{cursor:none!important}
+.jogadores #bshow{display:none!important}
+
+/* ---------- imersão ---------- */
+#preto{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:11;transition:opacity .9s ease}
+#preto.on{opacity:1}
+#jogchip{display:flex;align-items:center;color:#7bd88f;padding:0 2px;flex:none}
+#jogchip[hidden]{display:none}
+#jogst{position:fixed;left:10px;top:calc(10px + env(safe-area-inset-top,0px));z-index:6;font-size:12px;color:#ffd9a0;background:#000b;border:1px solid #e8c27a66;border-radius:8px;padding:5px 10px;pointer-events:none}
+.nu #jogst{display:none!important}
+.pop input[type=range]{accent-color:var(--acc);padding:0}

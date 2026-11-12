@@ -67,6 +67,7 @@ export function rodar(tom: Tomada, est: Estilo = 'suave', o: { enviar?: boolean;
   if (o.rev && st.T[o.rev] && !CFG.ro) { const g = chaoSob(S.toT); if (g) S.rev = { tok: st.T[o.rev], x: g.x, y: g.y, z: g.z }; }
   document.body.classList.add('cine'); $('cinex').hidden = false;
   legenda(o.cap); post.focus = S.toT;
+  cineHooks.forEach(f => f(est));
   if (o.enviar && !CFG.ro) NET.cine({ a: 'play', p: tom.p, t: tom.t, fov: S.toF, e: est, cap: o.cap || '', map: st.curMap, de: EU } satisfies CineMsg);
 }
 
@@ -209,6 +210,8 @@ export function gravarAtual() {
 export function apagarTomada(i: number) { const l = listaTomadas(); l.splice(i, 1); guardar(l); return l; }
 
 export const cineAtivo = () => S.on;
+/** Avisados quando uma cena começa (som do estilo, descongelar a tela dos jogadores). */
+export const cineHooks: ((e: Estilo) => void)[] = [];
 
 export function initCinema() {
   ray.params.Line = { threshold: 0 }; ray.params.Points = { threshold: 0 };

@@ -12,7 +12,10 @@ import { DEF, makeToken, dropT, onChar, onPos, selT, sizeT, save, placeT, initTo
 import { NET, handlers, startNet } from './core/net';
 import { WM, setWalk, setMode, modeHooks, freeLookAt, walkStep, walkPointer, initWalk, placeWalkCam } from './core/walk';
 import { menu, lista, fecharMenu, initMenus } from './core/menu';
-import { initCinema, rodar, sair, tickCinema, apontar, tomadaPara, gravarAtual, apagarTomada, listaTomadas, abortar, type Estilo, type Tomada } from './core/cinema';
+import { espelho, initEspelho, serJogadores, abrirJanelaJogadores, dentroDeOutraPagina, tickEspelho, enviarQuadro, avisarMapa, avisarClima } from './core/espelho';
+import { imersao, fx, tickImersao, aplicarSom, aplicarPreto, prepararLanterna, setNomeClima, type SomModo } from './core/imersao';
+import { som } from './core/som';
+import { initCinema, rodar, cineHooks, sair, tickCinema, apontar, tomadaPara, gravarAtual, apagarTomada, listaTomadas, abortar, type Estilo, type Tomada } from './core/cinema';
 import { initVtt, xcalc, xrender, dd2vtt } from './core/vtt';
 import { initImporter } from './core/importer';
 import { loadMap, mapHooks } from './core/maps';
@@ -128,9 +131,24 @@ function telaLimpa(v: boolean) {
 function initAtalhos() {
   $('blimpa').onclick = () => telaLimpa(true);
   $('bshow').onclick = () => telaLimpa(false);
+  // segundo monitor
+  $('bjog').onclick = () => {
+    fecharMenu();
+    if (!espelho.disponivel) { toast('Este navegador não liga janelas entre si'); return; }
+    if (abrirJanelaJogadores()) toast('Janela dos jogadores aberta: leve-a para o outro monitor e dê duplo clique', 4000);
+    else toast(dentroDeOutraPagina()
+      ? 'Abra este mesmo link noutra janela, leve-a ao outro monitor e nela escolha Mais → Esta janela é a tela dos jogadores'
+      : 'O navegador bloqueou a janela: abra este mesmo link noutra janela e use Mais → Esta janela é a tela dos jogadores', 8000);
+  };
+  $('bsouj').onclick = () => { fecharMenu(); serJogadores(true); };
   addEventListener('keydown', e => {
     if (/INPUT|SELECT|TEXTAREA/.test((e.target as HTMLElement).tagName) || e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
+    if (espelho.jogadores) { if (e.code === 'KeyH') { serJogadores(false); limpa = false; toast('Janela normal (não é mais a dos jogadores)'); } return; }
     if (e.code === 'KeyH') { telaLimpa(!limpa); return; }
+    if (e.code === 'KeyK') { congelar(); return; }
+    if (e.code === 'KeyB') { escurecer(); return; }
+    if (e.code === 'KeyL') { lanterna(); return; }
+    if (e.code === 'KeyR') { fx('raio'); return; }
     if (e.code === 'KeyP') { fecharMenu(); apontar(h => rodarCine(tomadaPara(h))); if (limpa) toast('Clique no lugar da câmera', 1500); return; }
     const n = /^Digit([1-9])$/.exec(e.code);
     if (n) { const t = listaTomadas()[+n[1] - 1]; if (t) { fecharMenu(); rodarCine(t); } else if (!limpa) toast('Sem tomada ' + n[1] + ' gravada neste mapa'); }
@@ -141,6 +159,33 @@ function initAtalhos() {
     document.body.classList.remove('idle'); clearTimeout(idleT);
     idleT = window.setTimeout(() => document.body.classList.add('idle'), 2000);
   });
+}
+
+// ---------- imersão (congelar, escurecer, lanterna, relâmpago, som) ----------
+function atualizarSelo() {
+  const el = $('jogst') as HTMLElement, partes: string[] = [];
+  if (imersao.temJogadores && imersao.congelado) partes.push('congelada');
+  if (imersao.preto) partes.push('preta');
+  el.hidden = !partes.length; el.textContent = 'Tela dos jogadores ' + partes.join(' e ');
+  tg('bcong', imersao.congelado); tg('bpreto', imersao.preto); tg('blant', imersao.lanterna); tg('bauto', imersao.autoRaio);
+}
+function congelar(v = !imersao.congelado) {
+  if (v && !imersao.temJogadores) { toast('Congelar vale para a janela dos jogadores (Mais → Abrir janela dos jogadores)'); return; }
+  imersao.congelado = v; atualizarSelo(); toast(v ? 'Tela dos jogadores congelada · K solta' : 'Tela dos jogadores acompanhando de novo', 1800);
+}
+function escurecer(v = !imersao.preto) { imersao.preto = v; aplicarPreto(); atualizarSelo(); if (!imersao.temJogadores && v) toast('Tela preta · B volta', 1500); }
+function lanterna(v = !imersao.lanterna) { imersao.lanterna = v; atualizarSelo(); }
+function marcarSom() { for (const b of $('bsom').children as HTMLCollectionOf<HTMLElement>) b.classList.toggle('act', b.dataset.s === imersao.somModo); }
+function initImersaoUi() {
+  prepararLanterna();
+  setNomeClima(() => PRE[st.pi].n);
+  $('bcong').onclick = () => congelar(); $('bpreto').onclick = () => escurecer(); $('blant').onclick = () => lanterna();
+  $('braio').onclick = () => fx('raio');
+  $('bauto').onclick = () => { imersao.autoRaio = !imersao.autoRaio; atualizarSelo(); };
+  for (const b of $('bsom').children as HTMLCollectionOf<HTMLElement>) b.onclick = () => { imersao.somModo = b.dataset.s as SomModo; marcarSom(); aplicarSom(); };
+  $('bvol').oninput = () => { imersao.volume = +$('bvol').value; aplicarSom(); };
+  marcarSom();
+  cineHooks.push(e => { if (imersao.congelado) { imersao.congelado = false; atualizarSelo(); } fx(e); });
 }
 
 function initUi() {
@@ -156,6 +201,11 @@ function initUi() {
   menu('mc', 'pc');
   initCinemaUi();
   initAtalhos();
+  initEspelho({ loadMap, setTime: i => escolherClima(i), toast, jogadores: v => {
+    $('jogchip').hidden = !v; atualizarSelo();
+    if (v) toast('Janela dos jogadores ligada · dica: deixe esta janela em Qualidade Baixa e a dos jogadores em Alta', 5000);
+  } });
+  initImersaoUi();
   menu('mx', 'px');
   // personagens
   $('ba').onclick = () => { fecharMenu(); $('add').hidden = false; };
@@ -206,6 +256,9 @@ addEventListener('message', e => {
 });
 
 mapHooks.push(() => abortar()); // trocar de mapa no meio de uma cena de cinema
+mapHooks.push(() => avisarMapa()); // janela dos jogadores troca junto
+timeHooks.push(() => avisarClima());
+timeHooks.push(p => som.setClima(p.n));
 
 // ---------- laço ----------
 const timer = new THREE.Timer();
@@ -227,9 +280,11 @@ function frame(ts?: number) {
     const a = st.anim; ctl.target.lerp(a.tp, 0.1); cam.position.lerp(a.cp, 0.1);
     if (cam.position.distanceTo(a.cp) < 0.1 && ctl.target.distanceTo(a.tp) < 0.1) st.anim = null;
   }
-  if (tickCinema(dt, t)) { /* a câmera de cinema está no controle */ } else if (WM.on) walkStep(); else ctl.update();
+  if (tickEspelho(dt)) { /* janela dos jogadores: segue a câmera do mestre */ } else if (tickCinema(dt, t)) { /* a câmera de cinema está no controle */ } else if (WM.on) walkStep(); else ctl.update();
   updateCull(cam);
+  tickImersao(dt);
   post.render(dt);
+  enviarQuadro();
   if (fpsEl && ++fpsN >= 30) { const n = performance.now(); fpsEl.textContent = (30000 / (n - fpsT)).toFixed(0) + ' fps · ' + R.info.render.calls + ' draws · ' + (R.info.render.triangles / 1e6).toFixed(2) + ' M tri · res ' + Math.round(desempenho.escala * 100) + '%'; fpsT = n; fpsN = 0; }
 }
 
@@ -294,6 +349,7 @@ async function start() {
   }
   loading.done();
   desempenho.iniciar();
+  if (new URLSearchParams(location.search).get('tela') === 'jogadores') serJogadores(true);
 }
 // mostra qualquer erro na tela de carregamento (em vez de ficar parada) e avisa se a placa de vídeo cair
 addEventListener('error', e => loading.error(String(e.message || e)));

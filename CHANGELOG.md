@@ -172,3 +172,32 @@
   gravadas, **Esc** sai do cinema. Aviso rápido no topo ao entrar na tela limpa.
 - Skill `mapa-3d` e `CLAUDE.md`: tudo o que foi aprendido nesta rodada (branches de outras sessões, interface
   pronta, cinema, verificação sem placa de vídeo, publicação no claude.ai); regra de sempre registrar na skill.
+
+## Segundo monitor: janela dos jogadores
+
+- **Mais → Abrir janela dos jogadores** (ou `?tela=jogadores`, ou **Mais → Esta janela é a tela dos jogadores**
+  num segundo link aberto): uma janela sem botões nem cursor, para o monitor/transmissão dos jogadores, que segue
+  a janela do mestre ao vivo — câmera (órbita, livre, cinema com barras, legenda, esmaecimento e clarão), mapa,
+  clima, personagens movidos/criados/revelados e "mostrar personagens". Duplo clique ou F: tela cheia; H: volta
+  a ser uma janela normal.
+- Ligação local entre janelas (`BroadcastChannel`, `core/espelho.ts`), sem servidor nem internet; por sala
+  (`?room=`). A janela nova pede o estado atual (mapa, clima, personagens) ao abrir.
+- Dentro de outra página (claude.ai) o botão explica como abrir em vez de abrir uma janela solta: o navegador
+  só liga janelas que estão sob a mesma página de cima.
+- A rede passou a ter um "ramal" local (`tap` em `core/net.ts`) que recebe o que esta janela muda.
+- Teste de funções: janela dos jogadores liga e espelha clima e cinema.
+
+## Imersão: congelar, escurecer, lanterna, relâmpago e som
+
+- **Congelar a tela dos jogadores** (K): eles ficam na última imagem enquanto o mestre explora ou prepara; ao
+  soltar, a câmera deles desliza até a do mestre. Uma cena de cinema descongela sozinha.
+- **Escurecer** (B): tela preta com transição na janela dos jogadores (sem janela dos jogadores, escurece a
+  própria). A janela do mestre mostra um selo "Tela dos jogadores congelada/preta".
+- **Lanterna** (L): facho preso à câmera, com leve tremor; espelhado na janela dos jogadores. Na qualidade Baixa
+  a luz só entra quando usada (cada luz pesa em todo material).
+- **Relâmpago** (R) e **relâmpagos automáticos** (Terror e Noite): três clarões no céu e na luz ambiente e um
+  trovão atrasado.
+- **Som ambiente** gerado na hora (Web Audio, sem arquivos): vento com rajadas, zumbido grave, trovões distantes,
+  grilos à noite — por clima, com transição; efeitos do cinema (susto, corte, suave) e trovão do relâmpago.
+  Modo: desligado, nesta janela ou só na janela dos jogadores (padrão); volume.
+- Indicador no dock (monitor verde) quando a janela dos jogadores está ligada; dica de qualidade ao ligar.

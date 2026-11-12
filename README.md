@@ -59,6 +59,9 @@ abrem como folha inferior.
 | Câmera livre | WASD: mover para onde olha · arrastar: olhar · Q/E ou Espaço: descer/subir · Shift: rápido · roda: velocidade · G: atravessar paredes · joystick e ▲▼ no celular |
 | Cinema | **Escolher ponto na cena** e clicar onde a câmera deve ir, ou tocar uma **tomada gravada** / vista do mapa. Estilos: *Suave* (grua), *Corte* (escurece e corta), *Susto* (chicote, zoom e tremida). Legenda opcional; **Revelar** faz um personagem aparecer no ponto quando a câmera chega. Com *Mostrar para todos*, toca na tela de todos da sala. Esc ou ✕ volta |
 | Transmitir | **Ocultar** (ou **H**): tela limpa, sem botões nem dicas, cursor some parado · H ou o canto inferior direito trazem a interface. Atalhos que funcionam assim: **P** escolhe o ponto do cinema, **1–9** tocam as tomadas gravadas, **Esc** sai |
+| Dois monitores | **Mais → Abrir janela dos jogadores** (no claude.ai: abra o mesmo link noutra janela e escolha **Mais → Esta janela é a tela dos jogadores**). Leve-a ao outro monitor e dê duplo clique (tela cheia). Ela não tem botões nem cursor e segue sua câmera (órbita, livre, cinema com barras e legenda), o mapa, o clima e os personagens. H nela volta ao normal. Também por URL: `?tela=jogadores` |
+| Imersão | **K** congela a tela dos jogadores (você explora/prepara sem eles verem; ao soltar, a câmera desliza até a sua) · **B** escurece a tela deles (transições) · **L** lanterna na câmera · **R** relâmpago (clarão + trovão) · Mais → *Relâmpagos automáticos* (Terror e Noite). O dock mostra um monitor verde quando a janela dos jogadores está ligada |
+| Som | Mais → *Som ambiente*: vento, zumbido grave, trovões distantes e grilos conforme o clima, e efeitos do cinema (o *Susto* tem um golpe sonoro). *Jogadores* toca só na janela dos jogadores (clique nela uma vez para o navegador liberar o áudio); *Nesta janela* para quem usa uma janela só. Gerado na hora, sem arquivos de áudio |
 | Geral | Esc: volta para a órbita · menu Vista leva a câmera (ou a câmera livre) para pontos prontos |
 
 Tomadas gravadas ficam neste navegador, por mapa.
@@ -73,6 +76,7 @@ Tomadas gravadas ficam neste navegador, por mapa.
 | `?q=baixa\|media\|alta` | qualidade gráfica (padrão: Média no desktop, Baixa no celular) |
 | `?ui=0` · `?ro=1` · `?chars=0` | sem interface · só ver · sem personagens |
 | `?ws=wss://servidor` · `?key=chave` | servidor de sincronização e chave de edição |
+| `?tela=jogadores` | esta janela é a tela dos jogadores (segue a janela do mestre na mesma sala e navegador) |
 | `?fps=1` | medidor: FPS, chamadas de desenho, triângulos e resolução atual |
 | `?auto=0` | desliga a resolução adaptativa |
 
