@@ -56,6 +56,18 @@ await fr.evaluate(() => document.getElementById('csave').click());
 ok('gravar tomada aparece na lista', (await fr.evaluate(() => document.querySelectorAll('#clist .it').length)) >= 1);
 await fr.evaluate(() => document.getElementById('mcine').click());
 
+// tela limpa (H) esconde a interface; tecla 1 toca a tomada gravada mesmo assim; Esc sai; H traz a interface
+const tecla = code => fr.evaluate(c => dispatchEvent(new KeyboardEvent('keydown', { code: c, key: c })), code);
+await tecla('KeyH');
+ok('tela limpa esconde a interface', await fr.evaluate(() => document.body.classList.contains('limpa') && getComputedStyle(document.getElementById('dock')).display === 'none' && getComputedStyle(document.getElementById('ros')).display === 'none'));
+await tecla('Digit1');
+await fr.waitForFunction(() => window.__cineState?.().on, null, { timeout: 60000, polling: 300 }).catch(() => {});
+ok('tecla 1 toca a tomada gravada', await fr.evaluate(() => window.__cineState().on && getComputedStyle(document.getElementById('cinex')).display === 'none'));
+await tecla('Escape');
+await fr.waitForFunction(() => !window.__cineState().on, null, { timeout: 180000, polling: 500 }).catch(() => {});
+await tecla('KeyH');
+ok('H traz a interface de volta', await fr.evaluate(() => !document.body.classList.contains('limpa') && getComputedStyle(document.getElementById('dock')).display !== 'none'));
+
 // clima e mapa por postMessage
 await p.evaluate(() => document.getElementById('f').contentWindow.postMessage({ cmd: 'time', i: 4 }, '*'));
 await p.waitForTimeout(1500);

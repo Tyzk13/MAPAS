@@ -111,6 +111,38 @@ function initCinemaUi() {
   $('cpick').onclick = () => { fecharMenu(); apontar(h => rodarCine(tomadaPara(h))); };
 }
 
+// ---------- tela limpa (transmitir) e atalhos ----------
+let toastT = 0;
+function toast(txt: string, ms = 2600) {
+  const el = $('toast') as HTMLElement; el.textContent = txt; el.classList.add('on');
+  clearTimeout(toastT); toastT = window.setTimeout(() => el.classList.remove('on'), ms);
+}
+let limpa = false;
+function telaLimpa(v: boolean) {
+  limpa = v; fecharMenu();
+  if (v) selT(null);
+  document.body.classList.toggle('limpa', v);
+  document.body.classList.toggle('nu', v || !CFG.ui);
+  if (v) toast('Tela limpa · H ou o canto inferior direito para voltar');
+}
+function initAtalhos() {
+  $('blimpa').onclick = () => telaLimpa(true);
+  $('bshow').onclick = () => telaLimpa(false);
+  addEventListener('keydown', e => {
+    if (/INPUT|SELECT|TEXTAREA/.test((e.target as HTMLElement).tagName) || e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
+    if (e.code === 'KeyH') { telaLimpa(!limpa); return; }
+    if (e.code === 'KeyP') { fecharMenu(); apontar(h => rodarCine(tomadaPara(h))); if (limpa) toast('Clique no lugar da câmera', 1500); return; }
+    const n = /^Digit([1-9])$/.exec(e.code);
+    if (n) { const t = listaTomadas()[+n[1] - 1]; if (t) { fecharMenu(); rodarCine(t); } else if (!limpa) toast('Sem tomada ' + n[1] + ' gravada neste mapa'); }
+  });
+  // cursor some depois de 2 s parado (na tela limpa)
+  let idleT = 0;
+  addEventListener('pointermove', () => {
+    document.body.classList.remove('idle'); clearTimeout(idleT);
+    idleT = window.setTimeout(() => document.body.classList.add('idle'), 2000);
+  });
+}
+
 function initUi() {
   initMenus();
   // modos de câmera
@@ -123,6 +155,7 @@ function initUi() {
   menu('mm', 'pl', p => lista(p, 'Mapa', Object.values(MAPS).map(m => ({ n: m.n, cur: m.id === st.curMap, go: () => { if (m.id !== st.curMap) loadMap(m.id); } }))));
   menu('mc', 'pc');
   initCinemaUi();
+  initAtalhos();
   menu('mx', 'px');
   // personagens
   $('ba').onclick = () => { fecharMenu(); $('add').hidden = false; };

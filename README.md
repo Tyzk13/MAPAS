@@ -58,6 +58,7 @@ abrem como folha inferior.
 | Órbita | arrastar: girar · roda/pinça: zoom · botão direito/dois dedos: mover · arraste os personagens (setas movem o selecionado) |
 | Câmera livre | WASD: mover para onde olha · arrastar: olhar · Q/E ou Espaço: descer/subir · Shift: rápido · roda: velocidade · G: atravessar paredes · joystick e ▲▼ no celular |
 | Cinema | **Escolher ponto na cena** e clicar onde a câmera deve ir, ou tocar uma **tomada gravada** / vista do mapa. Estilos: *Suave* (grua), *Corte* (escurece e corta), *Susto* (chicote, zoom e tremida). Legenda opcional; **Revelar** faz um personagem aparecer no ponto quando a câmera chega. Com *Mostrar para todos*, toca na tela de todos da sala. Esc ou ✕ volta |
+| Transmitir | **Ocultar** (ou **H**): tela limpa, sem botões nem dicas, cursor some parado · H ou o canto inferior direito trazem a interface. Atalhos que funcionam assim: **P** escolhe o ponto do cinema, **1–9** tocam as tomadas gravadas, **Esc** sai |
 | Geral | Esc: volta para a órbita · menu Vista leva a câmera (ou a câmera livre) para pontos prontos |
 
 Tomadas gravadas ficam neste navegador, por mapa.

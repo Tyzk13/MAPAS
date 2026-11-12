@@ -1,13 +1,26 @@
 ---
 name: mapa-3d
-description: Criar ou melhorar um mapa 3D de RPG de mesa (estilo terror realista, Ordem Paranormal) neste projeto — igreja, casa, hospital, floresta, etc. Use sempre que o usuário pedir um mapa novo, mudar um mapa existente, trocar materiais/modelos/céu, ou deixar a cena "com cara de jogo". Traz o fluxo, o catálogo de assets CC0 já testados e os erros a evitar.
+description: Criar ou melhorar um mapa 3D de RPG de mesa (estilo terror realista, Ordem Paranormal) neste projeto — igreja, cidade, casa, hospital, floresta — e a interface em volta (câmera livre, câmera de cinema, tela limpa para transmitir, sala com vários jogadores). Use sempre que o usuário pedir um mapa novo, mudar um mapa ou a interface, trocar materiais/modelos/céu, deixar a cena "com cara de jogo" ou publicar/atualizar os links no claude.ai. Traz o fluxo, o catálogo de assets CC0 já testados, os erros a evitar e como verificar sem placa de vídeo.
 ---
 
 # Mapa 3D (estilo terror realista)
 
 Projeto: Vite + TypeScript + three.js r187. Cada mapa é um módulo em `src/maps/` registrado em
-`src/maps/manifest.ts`. O núcleo (`src/core/`) já faz céu, luz, pós-processamento, personagens, caminhar,
-rede, exportação VTT — **não reescreva o núcleo**. Leia `docs/NOVO-MAPA.md` antes de começar.
+`src/maps/manifest.ts`. O núcleo (`src/core/`) já faz céu, luz, pós-processamento, personagens, câmera livre,
+câmera de cinema, tela limpa, rede, exportação VTT e resolução adaptativa — **não reescreva o núcleo**.
+Leia `docs/NOVO-MAPA.md` antes de começar.
+
+**Tudo o que aprender (erro, truque, decisão do dono) vai para esta skill no mesmo commit.**
+
+## Antes de começar
+
+- `git fetch` e `git branch -a`: outras sessões deixam trabalho em branches não juntadas (já aconteceu:
+  `mapa-igreja` tinha a otimização de desempenho; `ccr-a7aaff16-e40c5h`, o mapa do México). Se o pedido
+  envolve essas coisas, junte antes. Ao juntar, procure recursos **duplicados** (duas resoluções adaptativas
+  se somavam e derrubavam a imagem para ~30%) e mantenha todas as seções do `CHANGELOG.md`.
+- Decisões do dono já tomadas: modo **Caminhar saiu da interface** (a câmera livre cobre; o código ficou só
+  para a captura "terceira" e `?walk=1`); a tela é **transmitida para os jogadores** — nada de informação de
+  mestre aparecendo na cena (use a tela limpa).
 
 ## Fluxo (siga nesta ordem, com commit e capturas a cada etapa)
 
@@ -20,7 +33,8 @@ rede, exportação VTT — **não reescreva o núcleo**. Leia `docs/NOVO-MAPA.md
 4. **Capturas**: defina vistas com nomes e rode `npm run capturas -- <rótulo> --map=<id>`
    (use `--q=baixa --w=960 --h=540 --only=...` para iterar rápido; `--q=alta` para a rodada final).
    Abra as imagens e compare com `referencias/`. Corrija em ciclos.
-5. **Testes**: `node tools/testar-funcoes.mjs` (precisa passar) e `node tools/testar-vtt.mjs`.
+5. **Testes**: `npm run typecheck`, `npm run test:funcoes` (~8 min, precisa passar inteiro),
+   `npm run test:vtt`; mexeu no servidor → `npm run test:servidor`.
 6. **Entrega**: `npm run build` (site), `npm run build:single` (HTML único), `npm run build:leve`
    (celular / página no claude.ai). Atualize `CHANGELOG.md`; `CREDITS.md` é gerado por `npm run assets`.
 
@@ -91,8 +105,6 @@ rede, exportação VTT — **não reescreva o núcleo**. Leia `docs/NOVO-MAPA.md
 - `worn_plaster_wall` parece camuflagem de longe — evite em paredes grandes.
 - `wallGeo` com `ry = ±π/2`: o eixo x local vira ∓z; confira a posição dos vãos nos dois lados (use o
   mesmo sinal nas duas paredes laterais, não espelhe).
-- `testar-funcoes.mjs`: o item "caminhar move o personagem" falha no swiftshader por lentidão (já
-  falhava antes); os demais precisam passar.
 - Capturas de vistas próprias do mapa: `npm run capturas -- rotulo --map=<id> --views=Praça,Cantina`.
 
 ## Desempenho (aprendido na otimização da igreja: 12,6 M → 4,7 M triângulos por quadro)
@@ -111,8 +123,56 @@ Meça antes de mexer: `node tools/medir.mjs --q=media` (chamadas, triângulos, e
   `R.shadowMap.needsUpdate = true`. Detalhes pequenos (flores) e floresta fora da cerca: sem sombra.
 - Auréolas de luz: `halo()` já agrupa tudo num único objeto de pontos — não crie `Sprite` por luz.
 - Floresta: LOD por distância (`_lod1`, `_lod2`); só a qualidade Alta usa o modelo completo perto.
-- Resolução adaptativa automática (cai até 60% se os quadros passarem de ~21 ms).
+- Resolução adaptativa: **uma só**, em `core/desempenho.ts` (mede o FPS em janelas de 2 s, cai até 50%,
+  sobe com folga; `?auto=0` desliga; `?fps=1` mostra "res %"). Não crie outra no `post.ts`.
 - Névoa: no shader, use a transposta da `viewMatrix`, nunca `inverse()` por vértice.
+
+## Interface pronta (use, não reinvente)
+
+- Dock e menus: `core/menu.ts` (`menu(botão, painel, preencher)`, `lista(...)`) + `main.ts`. Ids usados nos
+  testes: `bmo`/`blv` (Órbita/Livre), `mcine` (Cinema), `mv`/`mn`/`mm` com os spans `bv`/`bn`/`bmap` (valor
+  atual), `mc` (Personagens), `mx` (Mais), `blimpa` (tela limpa), `bshow` (voltar).
+- Botão novo no dock → confira larguras 390, 800 e 1024 px. Quebras: ≤760 px duas linhas (vista/clima/mapa
+  embaixo), 761–1000 px só ícones (nome no `title`).
+- Câmera livre (`core/walk.ts`, modo `livre`): WASD, Q/E, Shift, roda = velocidade, G = fantasma.
+- **Câmera de cinema** (`core/cinema.ts`): `rodar(tomada, 'suave'|'corte'|'susto', {enviar, cap, rev})`;
+  `tomadaPara(hit)` monta a tomada de um clique (alvo a 1,4 m do chão, câmera a ~5,5 m do lado de quem olha,
+  ângulo baixo; clique em parede vale o chão 1 m à frente; recua se houver construção no caminho).
+  Tomadas gravadas ficam no `localStorage` por mapa (com cópia em memória se o armazenamento falhar).
+  **As vistas do mapa aparecem como tomadas** — dê vistas boas, com `fov`. O clique usa `M.walk` + `M.solid()`
+  (raycast barato): mapa novo precisa dos dois bem feitos.
+- Rede do cinema: mensagem `cine` (WebSocket e banco do claude.ai); o servidor repassa sem gravar e guarda a
+  cena em andamento por 2 min para quem entra/reconecta. Cada aba tem um id (`de`) para ignorar o próprio eco.
+- Tela limpa (H): `body.limpa` + `body.nu`; atalhos P (ponto do cinema), 1–9 (tomadas), Esc. Cursor some
+  parado. Elemento novo que não deve aparecer na transmissão → acrescente na regra `.nu ...{display:none}`.
+- Personagem que salta > 8 m pela rede aparece direto (não desliza pelo mapa) — usado no "Revelar".
+
+## Verificar sem placa de vídeo (Playwright + swiftshader)
+
+- Roda a 1–2 fps: **nunca espere tempo fixo**; espere estado (`__capReady`, `__freeState()`,
+  `__cineState()`, `__walkState()`), com `waitForFunction(..., { polling: 500 })`.
+- Prints da interface: `?capture=1` (laço parado) e `__cap.frames(1)` antes do `screenshot`. Com o laço
+  normal o print sai atrasado (menu aberto que não aparece) e 1280×720 estoura o tempo; use ≤ 1024×576.
+- Script fora do repositório (scratchpad): importe o vite por caminho absoluto
+  (`/home/user/MAPAS/node_modules/vite/dist/node/index.js`) e o Playwright global (`npm root -g`).
+- Versão leve: `preview({ mode: 'lite', build: { outDir: 'dist-lite' } })` e abrir `?map=<id>&capture=1`.
+- Teste de sala: suba `server/servidor-sync.mjs` com `PORT`/`DATA_DIR` temporários e abra duas páginas com
+  `&ws=ws://127.0.0.1:PORT&room=x` (uma com `&ro=1`). Duas páginas em swiftshader saturam a CPU e o
+  batimento de 30 s do servidor pode derrubar uma conexão — repita antes de concluir que é defeito.
+- CSS: `.pop>button` (fundo transparente) ganha de `button.pri`; o botão principal some (texto escuro no
+  escuro). Use `.pop>button.pri`.
+
+## Publicar no claude.ai (links do dono)
+
+- Links atuais (atualize-os em vez de criar outros; quem já recebeu continua usando):
+  Igreja do Casamento `https://claude.ai/artifact/65XS5FnzDBvfneK5AnFXUh` ·
+  San Judas de las Ánimas `https://claude.ai/artifact/55cVSvDE5dfVtg2Km2iR9K`. Os dois têm todos os mapas.
+- Passos: `npm run build:leve` → copie `dist-lite/` para o scratchpad (`pub/`) → crie `igreja.html` (troca o
+  `<title>`) e `mexico.html` (`<title>` + `<script>window.MAPA_PADRAO="mexico"</script>`) a partir do
+  `index.html` → Artifact `publish` com `url` do link, `file_path` = a página, `root` = `pub/`,
+  `files` = lista de `{path:"assets/<arquivo>"}` (140 arquivos, ~32 MB; cabe no limite de 255 por envio).
+- Antes de publicar: confira os dois mapas na versão leve sem erros de página e rode o teste de funções.
+- Os links são privados: para os jogadores abrirem, o dono compartilha pelo menu da página.
 
 ## Achar assets novos (só se o catálogo não tiver)
 

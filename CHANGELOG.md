@@ -162,3 +162,13 @@
 - Saiu da interface o modo **Caminhar** (e o botão 1ª/3ª pessoa): a câmera livre cobre o mesmo uso.
 - Personagem que dá um salto grande pela rede aparece direto no lugar, sem deslizar pelo mapa.
 - Testes: servidor confere o repasse do cinema; teste de funções cobre cinema por postMessage, sair e gravar tomada.
+
+## Tela limpa para transmitir
+
+- Botão **Ocultar** no dock (ou tecla **H**): esconde barra, dicas, avatares, botão de sair do cinema e
+  medidor — só a cena fica na tela que vai para os jogadores. O cursor some depois de 2 s parado. Volta com H
+  ou com o botão invisível no canto inferior direito (aparece ao passar o mouse).
+- Atalhos (com ou sem tela limpa): **P** escolhe o ponto da câmera de cinema, **1–9** tocam as tomadas
+  gravadas, **Esc** sai do cinema. Aviso rápido no topo ao entrar na tela limpa.
+- Skill `mapa-3d` e `CLAUDE.md`: tudo o que foi aprendido nesta rodada (branches de outras sessões, interface
+  pronta, cinema, verificação sem placa de vídeo, publicação no claude.ai); regra de sempre registrar na skill.

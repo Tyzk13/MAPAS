@@ -135,3 +135,13 @@ button.tg[aria-pressed=true]::after{background:var(--acc-bg) radial-gradient(cir
 .picking #c{cursor:crosshair}
 .ro #call,.ro #crevl{display:none}
 @media (max-width:760px){#lcap{font-size:16px}.cine #lbox i{height:9vh}#lcap{bottom:calc(9vh + 10px)}}
+
+/* ---------- tela limpa (transmitir para os jogadores) ---------- */
+#bshow{display:none;position:fixed;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:11;width:40px;height:40px;padding:0;border-radius:50%;opacity:0;transition:opacity .2s}
+.limpa #bshow{display:block}
+.limpa #bshow:hover,.limpa #bshow:focus-visible{opacity:.85}
+.nu #joy,.nu #fps,.nu #meas,.limpa #cinex,.limpa #erro-x{display:none!important}
+.limpa.idle:not(.picking) #c{cursor:none}
+#toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translate(-50%,-8px);z-index:12;pointer-events:none;
+  background:#000c;color:#eee;font-size:13px;padding:8px 14px;border-radius:10px;border:1px solid #ffffff22;opacity:0;transition:opacity .25s,transform .25s;max-width:calc(100vw - 32px);text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,0)}
