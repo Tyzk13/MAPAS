@@ -148,19 +148,40 @@ export function tickCinema(dt: number, time: number) {
 }
 
 // ---------- escolher ponto na cena ----------
-/** Monta uma tomada olhando para um ponto: câmera a ~5,5 m, um pouco abaixo do olhar (ângulo baixo), sem atravessar paredes. */
+/** Peças que podem ficar entre a câmera e o alvo (paredes, construções; sem vegetação instanciada). */
+function obstaculos() {
+  const out: THREE.Object3D[] = [...st.MP!.solid()];
+  st.MP!.G.traverse((o: any) => {
+    if (!o.isMesh || o.isInstancedMesh || !o.visible || o.userData.foliage) return;
+    const m = Array.isArray(o.material) ? o.material[0] : o.material;
+    if (m && m.visible !== false && !m.transparent) out.push(o);
+  });
+  return out;
+}
+/**
+ * Monta uma tomada olhando para um ponto: alvo na altura do rosto de quem estaria ali, câmera a ~5,5 m do lado
+ * de onde se está olhando, um pouco abaixo do olhar (ângulo baixo), sem atravessar paredes nem construções.
+ * Clique numa parede vale como o chão logo à frente dela.
+ */
 export function tomadaPara(hit: THREE.Intersection) {
   const p = hit.point, n = hit.face ? hit.face.normal.clone().transformDirection(hit.object.matrixWorld) : new V(0, 1, 0);
-  const parede = Math.abs(n.y) < 0.5;
-  const alvo = parede ? p.clone() : new V(p.x, p.y + 1.4, p.z);
-  const d = parede ? new V(n.x, 0, n.z) : new V(cam.position.x - p.x, 0, cam.position.z - p.z);
+  const spot = p.clone();
+  if (Math.abs(n.y) < 0.5) {
+    spot.addScaledVector(new V(n.x, 0, n.z).normalize(), 1.0);
+    const g = chaoSob(spot); if (g) spot.y = g.y;
+  }
+  const alvo = new V(spot.x, spot.y + 1.4, spot.z);
+  const d = new V(cam.position.x - spot.x, 0, cam.position.z - spot.z);
+  if (d.lengthSq() < 1e-4) d.set(n.x, 0, n.z);
   if (d.lengthSq() < 1e-4) d.set(0, 0, 1);
   d.normalize();
   let D = 5.5;
-  ray.set(alvo, d); ray.far = D;
-  const bate = ray.intersectObjects(st.MP!.solid(), false)[0];
-  if (bate) D = Math.max(1.6, bate.distance - 0.4);
-  const pos = alvo.clone().addScaledVector(d, D); pos.y = Math.max(alvo.y - 0.15, p.y + 0.5);
+  ray.set(alvo, d); ray.far = D + 0.4;
+  const bate = ray.intersectObjects(obstaculos(), false)[0];
+  if (bate) D = Math.max(1.4, bate.distance - 0.4);
+  const pos = alvo.clone().addScaledVector(d, D);
+  pos.y = alvo.y - 0.15;
+  const g2 = chaoSob(pos); if (g2) pos.y = Math.max(pos.y, g2.y + 0.6);
   const r = (v: THREE.Vector3) => v.toArray().map(x => +x.toFixed(2)) as V3t;
   return { p: r(pos), t: r(alvo), fov: 40 } as Tomada;
 }
