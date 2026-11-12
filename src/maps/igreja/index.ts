@@ -45,6 +45,12 @@ export async function build(M: MapRuntime) {
 
   M.spawn = i => ({ x: i % 2 ? 0.45 : -0.45, z: 4.2 - Math.floor(i / 2) * 1.3, y: FLOOR });
   M.walkStart = { x: 0, z: 18 };
+  // som no lugar: velas do altar crepitando, sino da torre (de vez em quando) e a porta que range quando a câmera passa
+  M.sons = [
+    { x: 0, y: FLOOR + 1.7, z: -9.3, tipo: 'velas' },
+    { x: (TOWER.x0 + TOWER.x1) / 2, y: TOWER.h - 3, z: (TOWER.z0 + TOWER.z1) / 2, tipo: 'sino' },
+    { x: 0, y: FLOOR + 1.8, z: NZ + WT / 2, tipo: 'porta' },
+  ];
 
   const OX = NX + WT, OZ = NZ + WT, T = TOWER, dw = DOOR.w / 2;
   const sh = { x0: SHED.x - SHED.d / 2, x1: SHED.x + SHED.d / 2, z0: SHED.z - SHED.w / 2, z1: SHED.z + SHED.w / 2 };

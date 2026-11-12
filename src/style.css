@@ -91,7 +91,7 @@ button.tg[aria-pressed=true]::after{background:var(--acc-bg) radial-gradient(cir
 .nu .dock,.nu .pop,.nu .tip,.nu #ros,.nu #sel,.nu #fly{display:none}
 
 /* telas médias: só ícones nos botões do dock (o nome aparece ao passar o mouse) */
-@media (max-width:1000px) and (min-width:761px){.dock .lbl{display:none}}
+@media (max-width:1240px) and (min-width:761px){.dock .lbl{display:none}}
 
 /* ---------- telas estreitas: dock em duas linhas (modos/ações em cima, vista/clima/mapa embaixo) ---------- */
 @media (max-width:760px){
@@ -159,3 +159,34 @@ button.tg[aria-pressed=true]::after{background:var(--acc-bg) radial-gradient(cir
 #jogst{position:fixed;left:10px;top:calc(10px + env(safe-area-inset-top,0px));z-index:6;font-size:12px;color:#ffd9a0;background:#000b;border:1px solid #e8c27a66;border-radius:8px;padding:5px 10px;pointer-events:none}
 .nu #jogst{display:none!important}
 .pop input[type=range]{accent-color:var(--acc);padding:0}
+
+/* ---------- painel do mestre ---------- */
+.pop.wide{max-width:min(600px,calc(100vw - 16px));width:600px}
+.pop .cols{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px}
+.pop .col{display:flex;flex-direction:column;gap:2px;min-width:0}
+.pop .col>button,.pop .grade>button{text-align:left;background:transparent;border-color:transparent;padding:8px 10px;display:flex;align-items:center;gap:8px}
+.pop .col>button:hover,.pop .grade>button:hover{background:#ffffff10}
+.pop .grade{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.pop .grade>button{background:#ffffff08;justify-content:center;text-align:center;font-size:12px}
+.pop .h small{text-transform:none;letter-spacing:0;opacity:.8}
+.pop .col .fld{padding:4px 10px 6px}
+.minis{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:4px 10px}
+.minis button{padding:0;aspect-ratio:1;overflow:hidden;border-radius:8px;border:2px solid transparent;background:#0005}
+.minis button.cur{border-color:var(--acc)}
+.minis img{width:100%;height:100%;object-fit:cover;display:block}
+@media (max-width:760px){.pop.wide{width:auto}.pop .cols{grid-template-columns:1fr}}
+button.av.oc{opacity:.45;border-style:dashed}
+.ro #boc{display:none}
+
+/* ---------- imagem para os jogadores ---------- */
+#handout{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;
+  background:radial-gradient(ellipse at center,#000a 0%,#000d 100%);transition:opacity .6s ease}
+#handout.on{opacity:1;pointer-events:auto;cursor:pointer}
+.jogadores #handout.on{pointer-events:none}
+#handout figure{margin:0;max-width:84vw;max-height:84vh;transform:scale(.94) rotate(0deg);transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+#handout.on figure{transform:scale(1) rotate(0deg)}
+#handout img{display:block;max-width:84vw;max-height:84vh;object-fit:contain;border-radius:4px;box-shadow:0 18px 60px #000c}
+#handout.papel figure{background:#e6dbc2 linear-gradient(135deg,#efe5cf 0%,#ddd0b2 60%,#cbbd9c 100%);padding:16px 16px 34px;border-radius:2px;
+  box-shadow:0 20px 60px #000d,inset 0 0 40px #8a744a55;transform:scale(.94) rotate(-2.5deg)}
+#handout.papel.on figure{transform:scale(1) rotate(-1.2deg)}
+#handout.papel img{max-width:calc(84vw - 32px);max-height:calc(84vh - 50px);border-radius:0;box-shadow:0 0 0 1px #0002;filter:sepia(.3) contrast(1.05) saturate(.85)}

@@ -41,6 +41,8 @@ export interface MapRuntime {
   shadowRadius: number;
   /** opcionais para mapas grandes: limite do caminhar (|x|,|z|), distância máx. da câmera, multiplicador da névoa */
   walkLimit?: number;
+  /** fontes de som no lugar (velas crepitando, sino, porta que range quando a câmera passa) */
+  sons?: { x: number; y: number; z: number; tipo: 'velas' | 'sino' | 'porta' }[];
   camMax?: number;
   fogScale?: number;
 }

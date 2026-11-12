@@ -159,6 +159,17 @@ Meça antes de mexer: `node tools/medir.mjs --q=media` (chamadas, triângulos, e
 - **Imersão** (`core/imersao.ts`, `core/som.ts`): congelar (K), escurecer (B), lanterna (L), relâmpago (R), som.
   O estado vai no quadro do espelho; efeitos pontuais (`fx`) vão como evento `{k:'fx'}`. Ideias novas de
   imersão entram aqui e precisam aparecer na janela dos jogadores.
+- **Painel Mestre** (`main.ts` → `initMestreUi`): cenas (`core/cenas.ts`, `localStorage` por mapa + memória),
+  a luz caiu (`setApagao` → pisca com `aplicarLuzes(k, true)` = só intensidades; no fim `forcarLuzes` chama o
+  `onTime` do mapa **uma vez** — o da igreja recaptura a sonda, caro), névoa (multiplica a densidade que outro
+  código definiu: detecta mudança de base a cada quadro), sons do mestre, imagens (`core/mostrar.ts`).
+- Ao animar luzes no `M.tick` do mapa, só mexa se `intensity > 0` (senão desfaz "a luz caiu").
+- **Som no lugar**: `M.sons = [{x,y,z,tipo:'velas'|'sino'|'porta'}]` no mapa; o ouvinte é a câmera
+  (`som.ouvinte`). Mapa novo: ponha velas/sinos/portas marcantes ali.
+- **Personagem oculto** (`t.oc`, campo `o` na posição; servidor guarda): some se `st.jogadores || CFG.ro`;
+  o mestre vê com opacidade 0,4 e sem base.
+- Teclas já usadas (não reaproveite): WASD Q E C G Shift Espaço (livre), V (caminhar), H, P, 1–9, K, B, L, R,
+  O, N, I, . , PageUp/PageDown, Esc; na janela dos jogadores F e H.
 - Som: Web Audio gerado na hora (ruído filtrado = vento/trovão; osciladores graves = zumbido). O navegador só
   libera áudio após um gesto **naquela janela** (`som.desbloquear()` em pointerdown/keydown). Padrão: som só na
   janela dos jogadores, para não tocar dobrado no PC do mestre.

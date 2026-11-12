@@ -4,12 +4,12 @@
 import * as THREE from 'three';
 import { S, cam } from './engine';
 import { st, $ } from './state';
-import { hemi, sun } from './sky';
-import { som } from './som';
+import { hemi, sun, aplicarLuzes, forcarLuzes } from './sky';
+import { som, type Efeito } from './som';
 import { CFG } from './config';
 
 export type SomModo = 'off' | 'aqui' | 'jogadores';
-export type Fx = 'susto' | 'corte' | 'suave' | 'raio';
+export type Fx = Efeito;
 
 export const imersao = {
   /** tela dos jogadores congelada (o mestre prepara sem eles verem) */
@@ -17,6 +17,10 @@ export const imersao = {
   /** tela dos jogadores preta */
   preto: false,
   lanterna: false,
+  /** "a luz caiu": luzes artificiais apagadas (pisca antes) */
+  apagao: false,
+  /** névoa densa */
+  nevoa: false,
   autoRaio: false,
   somModo: 'jogadores' as SomModo,
   volume: 0.6,
@@ -91,8 +95,37 @@ export function tickImersao(dt: number) {
     if (!proxAuto) proxAuto = relogio + 20 + Math.random() * 30;
     else if (relogio > proxAuto) { fx('raio'); proxAuto = relogio + 35 + Math.random() * 55; }
   }
+  // "a luz caiu": pisca ~1,4 s e então apaga (ou volta) de vez
+  if (piscar) {
+    piscar.t += dt;
+    if (piscar.t >= 1.4) { forcarLuzes(imersao.apagao ? 0 : null); piscar = null; }
+    else if (piscar.t > piscar.prox) {
+      const u = piscar.t / 1.4, acesa = imersao.apagao ? Math.random() > u : Math.random() < u;
+      aplicarLuzes(acesa ? 1 : Math.random() < 0.3 ? 0.25 : 0, true);
+      piscar.prox = piscar.t + 0.05 + Math.random() * 0.12;
+    }
+  }
+  // névoa densa (multiplica a densidade que o clima/mapa definiu)
+  nevoaK += ((imersao.nevoa ? 2.4 : 1) - nevoaK) * Math.min(1, dt * 0.8);
+  const fog = S.fog as THREE.FogExp2 | null;
+  if (fog && (fog as any).isFogExp2) {
+    if (Math.abs(fog.density - nevoaAplicada) > 1e-7) nevoaBase = fog.density; // alguém (clima/mapa) mudou a base
+    fog.density = nevoaAplicada = nevoaBase * nevoaK;
+    st.MP?.mist.forEach(m => (m.material.opacity = 0.08 * (0.5 + 0.5 * nevoaK)));
+  }
+  // o som acompanha a câmera
+  cam.getWorldDirection(fwd); som.ouvinte(cam.position, fwd);
   som.tick(dt);
 }
+let piscar: null | { t: number; prox: number } = null, nevoaK = 1, nevoaBase = 0.01, nevoaAplicada = -1;
+(window as any).__fog = () => (S.fog as THREE.FogExp2 | null)?.density ?? 0;
+/** "A luz caiu" (true) ou volta (false), piscando antes. */
+export function setApagao(v: boolean) {
+  if (imersao.apagao === v && !piscar) return;
+  imersao.apagao = v; piscar = { t: 0, prox: 0 };
+}
+/** Depois de trocar de mapa/clima, mantém a luz apagada. */
+export function reaplicarApagao() { if (imersao.apagao && !piscar) forcarLuzes(0); }
 let nomeClima = () => '';
 export function setNomeClima(f: () => string) { nomeClima = f; }
 

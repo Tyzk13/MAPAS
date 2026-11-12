@@ -92,6 +92,16 @@ await p.evaluate(() => document.getElementById('f').contentWindow.postMessage({ 
 await jp.waitForFunction(() => window.__espelho().cine, null, { timeout: 120000, polling: 500 }).catch(() => {});
 ok('janela dos jogadores espelha clima e cinema', await jp.evaluate(() => window.__espelho().clima === 2 && window.__espelho().cine && getComputedStyle(document.getElementById('dock')).display === 'none'));
 await p.evaluate(() => document.getElementById('f').contentWindow.postMessage({ cmd: 'cine-sair' }, '*'));
+await fr.waitForFunction(() => !window.__cineState().on, null, { timeout: 180000, polling: 500 }).catch(() => {});
+// "a luz caiu" (O) e personagem oculto também chegam à janela dos jogadores
+await tecla('KeyO');
+await jp.waitForFunction(() => window.__espelho().apag && window.__espelho().luzes === 0, null, { timeout: 120000, polling: 500 }).catch(() => {});
+ok('a luz caiu na janela dos jogadores', await jp.evaluate(() => window.__espelho().apag && window.__espelho().luzes === 0));
+await tecla('KeyO');
+await fr.evaluate(() => { document.querySelector('#ros button.av').click(); document.getElementById('boc').click(); });
+await jp.waitForFunction(() => !window.__espelho().visiveis.includes('dante'), null, { timeout: 60000, polling: 500 }).catch(() => {});
+ok('personagem oculto some só para os jogadores', await jp.evaluate(() => !window.__espelho().visiveis.includes('dante')) && await fr.evaluate(() => window.__espelho().visiveis.includes('dante')));
+await fr.evaluate(() => document.getElementById('boc').click());
 
 ok('sem erros de página', errs.length === 0, errs.slice(0, 3).join(' | '));
 res.forEach(r => console.log(r[0], r[1], r[2] ? '— ' + r[2] : ''));

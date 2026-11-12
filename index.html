@@ -29,7 +29,7 @@
 <label>Sombras <input id="xs" type="checkbox"></label>
 <div id="xi"></div>
 <div class="row"><button id="xx">Fechar</button><button id="xpng">Baixar PNG</button><button id="xvtt" class="pri">Universal VTT</button></div></div>
-<div id="sel" hidden><span id="sn"></span><button id="szm">−</button><button id="szp">+</button><button id="fl" title="Espelhar">⇋</button><button id="rm">Remover</button></div>
+<div id="sel" hidden><span id="sn"></span><button id="szm">−</button><button id="szp">+</button><button id="fl" title="Espelhar">⇋</button><button id="boc" title="Só você vê (meio transparente) até revelar">Ocultar</button><button id="rm">Remover</button></div>
 <div id="add" class="dlg" hidden><b>Novo personagem</b><input id="af" type="file" accept="image/*"><input id="an" placeholder="Nome" maxlength="24">
 <label>Tamanho <select id="as"><option value="1.2">Pequeno</option><option value="1.7" selected>Médio</option><option value="2.4">Grande</option><option value="3.4">Enorme</option></select></label>
 <label>Cor da base <input id="ac" type="color" value="#8a8f98"></label>
@@ -48,6 +48,7 @@
 <button class="pick" id="mm" aria-haspopup="menu"><small>Mapa</small><span id="bmap">Igreja</span></button>
 <span class="sep"></span>
 <button id="mc" aria-haspopup="menu" title="Personagens"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3.5 20c0-3.1 2.4-5.6 5.5-5.6s5.5 2.5 5.5 5.6"/><circle cx="17" cy="9" r="2.3"/><path d="M16 14.3c2.6.3 4.5 2.6 4.5 5.4"/></svg><span class="lbl">Personagens</span></button>
+<button id="mdir" aria-haspopup="menu" title="Mesa do mestre: cenas, luz, névoa, sons, imagens"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><span class="lbl">Mestre</span></button>
 <button id="mx" aria-haspopup="menu" title="Mais opções"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg><span class="lbl">Mais</span></button>
 <button id="blimpa" title="Tela limpa para transmitir aos jogadores (H)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 6.1A9.8 9.8 0 0 1 12 6c5 0 9 6 9 6a17 17 0 0 1-3 3.5M6.4 7.6A17 17 0 0 0 3 12s4 6 9 6a9.6 9.6 0 0 0 4.2-1"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg><span class="lbl">Ocultar</span></button>
 <span id="jogchip" hidden title="Janela dos jogadores ligada"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/></svg></span>
@@ -65,6 +66,33 @@
 <div class="h">Tomadas gravadas</div><div id="clist"></div>
 <div class="h">Vistas do mapa</div><div id="cviews"></div>
 </div>
+<div class="pop wide" id="pdir" hidden role="menu">
+<div class="cols"><div class="col">
+<div class="h">Cenas <small>· . e , passam</small></div>
+<div id="dcenas"></div>
+<button id="dgrava">+ Gravar a cena atual</button>
+<div class="h">Tela dos jogadores</div>
+<button id="bcong" class="tg" aria-pressed="false" title="Eles ficam vendo a última imagem enquanto você prepara">Congelar · K</button>
+<button id="bpreto" class="tg" aria-pressed="false" title="Tela preta para transições">Escurecer · B</button>
+<div class="h">Luz e clima</div>
+<button id="bapag" class="tg" aria-pressed="false" title="As luzes piscam e apagam (ou voltam)">A luz caiu · O</button>
+<button id="bnevoa" class="tg" aria-pressed="false" title="Névoa bem mais densa, com transição">Névoa densa · N</button>
+<button id="blant" class="tg" aria-pressed="false" title="Lanterna presa à câmera">Lanterna na câmera · L</button>
+<button id="braio">Relâmpago agora · R</button>
+<button id="bauto" class="tg" aria-pressed="false" title="Clarões e trovões de vez em quando nos climas Terror e Noite">Relâmpagos automáticos</button>
+</div><div class="col">
+<div class="h">Sons do mestre</div>
+<div class="grade" id="dsons"><button data-f="batida">Batida na porta</button><button data-f="passos">Passos</button><button data-f="sussurro">Sussurro</button><button data-f="rangido">Rangido</button><button data-f="sino">Sino</button><button data-f="trovao">Trovão</button></div>
+<div class="h">Som ambiente</div>
+<div class="seg full" id="bsom"><button data-s="off">Desligado</button><button data-s="aqui">Nesta janela</button><button data-s="jogadores">Jogadores</button></div>
+<label class="fld">Volume <input id="bvol" type="range" min="0" max="1" step="0.05" value="0.6"></label>
+<div class="h">Mostrar aos jogadores</div>
+<button id="dimg">+ Escolher imagem (pista, foto, carta)…</button><input id="dimgf" type="file" accept="image/*" hidden>
+<button id="dpapel" class="tg" aria-pressed="true">Efeito de papel</button>
+<div id="dimgs" class="minis"></div>
+<button id="desc">Esconder imagem · I</button>
+</div></div>
+</div>
 <div class="pop" id="pc" hidden role="menu">
 <div class="h">Personagens</div>
 <button id="ba">+ Novo personagem…</button>
@@ -79,15 +107,6 @@
 <div class="h">Segundo monitor (jogadores)</div>
 <button id="bjog">Abrir janela dos jogadores</button>
 <button id="bsouj">Esta janela é a tela dos jogadores</button>
-<div class="h">Imersão</div>
-<button id="bcong" class="tg" aria-pressed="false" title="Os jogadores ficam vendo a última imagem enquanto você prepara (K)">Congelar a tela dos jogadores · K</button>
-<button id="bpreto" class="tg" aria-pressed="false" title="Tela preta para transições (B)">Escurecer a tela dos jogadores · B</button>
-<button id="blant" class="tg" aria-pressed="false" title="Lanterna presa à câmera (L)">Lanterna na câmera · L</button>
-<button id="braio">Relâmpago agora · R</button>
-<button id="bauto" class="tg" aria-pressed="false" title="Clarões e trovões de vez em quando nos climas Terror e Noite">Relâmpagos automáticos</button>
-<div class="h">Som ambiente</div>
-<div class="seg full" id="bsom"><button data-s="off">Desligado</button><button data-s="aqui">Nesta janela</button><button data-s="jogadores">Jogadores</button></div>
-<label class="fld">Volume <input id="bvol" type="range" min="0" max="1" step="0.05" value="0.6"></label>
 <div class="h">Ferramentas</div>
 <button id="bx">Exportar para mesa virtual…</button>
 <button id="bim">Importar 3D / HDRI…</button>
@@ -98,6 +117,7 @@
 <button id="cinex" hidden title="Sair do cinema (Esc)">✕ Sair do cinema</button>
 <button id="bshow" title="Mostrar a interface (H)" aria-label="Mostrar a interface">◉</button>
 <div id="toast" role="status" aria-live="polite"></div>
+<div id="handout" aria-hidden="true"><figure><img alt="Imagem mostrada aos jogadores"></figure></div>
 <div id="preto"></div>
 <div id="jogst" hidden></div>
 <div id="fly" hidden><button id="flu" aria-label="Subir">▲</button><button id="fld" aria-label="Descer">▼</button></div>
@@ -108,8 +128,9 @@
 <dt>Cinema</dt><dd>escolha um ponto na cena (ou uma tomada gravada) e a câmera vai até lá como num filme: Suave, Corte ou Susto · legenda opcional · Revelar faz um personagem aparecer no ponto quando a câmera chega · Esc ou ✕ volta</dd>
 <dt>Transmitir</dt><dd>Ocultar (ou H): tela limpa, sem botões nem dicas; o cursor some parado · H ou o canto inferior direito trazem a interface de volta</dd>
 <dt>Dois monitores</dt><dd>Mais → Abrir janela dos jogadores (ou abra o mesmo link noutra janela e escolha "Esta janela é a tela dos jogadores"); leve-a para o outro monitor e dê duplo clique para tela cheia. Ela segue sua câmera, o cinema, o mapa, o clima e os personagens · H nela volta ao normal</dd>
-<dt>Atalhos</dt><dd>P: escolher ponto da câmera de cinema · 1 a 9: tocar as tomadas gravadas · Esc: sair do cinema · K: congelar a tela dos jogadores · B: escurecer · L: lanterna · R: relâmpago</dd>
-<dt>Som</dt><dd>Mais → Som ambiente: vento, zumbido, trovões e grilos conforme o clima, e efeitos no cinema. "Jogadores" toca só na janela dos jogadores (dê um clique ou duplo clique nela uma vez para o navegador liberar o som)</dd>
+<dt>Atalhos</dt><dd>P: escolher ponto da câmera de cinema · 1 a 9: tocar as tomadas gravadas · Esc: sair do cinema · K: congelar a tela dos jogadores · B: escurecer · O: a luz caiu · N: névoa densa · L: lanterna · R: relâmpago · I: mostrar/esconder imagem · . e ,: próxima/anterior cena</dd>
+<dt>Mestre</dt><dd>Cenas (gravam clima, câmera, legenda, luz, névoa e vilões), tela dos jogadores, luz e clima, sons do mestre, som ambiente e imagens para mostrar. Personagem selecionado → Ocultar: só você vê até revelar no Cinema</dd>
+<dt>Som</dt><dd>Mestre → Som ambiente: vento, zumbido, trovões e grilos conforme o clima, e efeitos no cinema. "Jogadores" toca só na janela dos jogadores (dê um clique ou duplo clique nela uma vez para o navegador liberar o som)</dd>
 <dt>Geral</dt><dd>Esc: volta para a órbita · Vista: leva a câmera para pontos prontos</dd>
 </dl>
 <div class="row"><button id="hx">Fechar</button></div></div>

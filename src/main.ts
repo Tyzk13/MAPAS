@@ -8,14 +8,16 @@ import { st, $ } from './core/state';
 import { PRE, setTime, timeHooks, preloadSkies, driftSky } from './core/sky';
 import { anim } from './core/anim';
 import { updateCull } from './core/cull';
-import { DEF, makeToken, dropT, onChar, onPos, selT, sizeT, save, placeT, initTokenInput, tickTokens, snapTokens } from './core/tokens';
+import { DEF, makeToken, dropT, onChar, onPos, selT, sizeT, save, placeT, initTokenInput, tickTokens, snapTokens, setTarget } from './core/tokens';
 import { NET, handlers, startNet } from './core/net';
 import { WM, setWalk, setMode, modeHooks, freeLookAt, walkStep, walkPointer, initWalk, placeWalkCam } from './core/walk';
 import { menu, lista, fecharMenu, initMenus } from './core/menu';
 import { espelho, initEspelho, serJogadores, abrirJanelaJogadores, dentroDeOutraPagina, tickEspelho, enviarQuadro, avisarMapa, avisarClima } from './core/espelho';
-import { imersao, fx, tickImersao, aplicarSom, aplicarPreto, prepararLanterna, setNomeClima, type SomModo } from './core/imersao';
+import { imersao, fx, tickImersao, aplicarSom, aplicarPreto, prepararLanterna, setNomeClima, setApagao, type SomModo, type Fx } from './core/imersao';
+import { mostrar, exibir, carregarImagem } from './core/mostrar';
+import { listaCenas, gravarCena, apagarCena } from './core/cenas';
 import { som } from './core/som';
-import { initCinema, rodar, cineHooks, sair, tickCinema, apontar, tomadaPara, gravarAtual, apagarTomada, listaTomadas, abortar, type Estilo, type Tomada } from './core/cinema';
+import { initCinema, rodar, cineHooks, tomadaAtual, sair, tickCinema, apontar, tomadaPara, gravarAtual, apagarTomada, listaTomadas, abortar, type Estilo, type Tomada } from './core/cinema';
 import { initVtt, xcalc, xrender, dd2vtt } from './core/vtt';
 import { initImporter } from './core/importer';
 import { loadMap, mapHooks } from './core/maps';
@@ -114,6 +116,70 @@ function initCinemaUi() {
   $('cpick').onclick = () => { fecharMenu(); apontar(h => rodarCine(tomadaPara(h))); };
 }
 
+function mostrarPersonagens(v: boolean) { st.showC = v; $('ros').style.display = v ? '' : 'none'; tg('bch', v); if (!v) selT(null); }
+
+// ---------- painel do mestre: cenas, luz, névoa, sons, imagens ----------
+let cenaAtual = -1, papel = true, ultimaImagem = '';
+function tocarCena(i: number) {
+  const l = listaCenas(); if (!l.length) { toast('Nenhuma cena gravada neste mapa (Mestre → Gravar a cena atual)'); return; }
+  i = (i + l.length) % l.length; const c = l[i]; cenaAtual = i;
+  if (c.clima !== st.pi) escolherClima(c.clima);
+  mostrarPersonagens(c.showC);
+  setApagao(c.apagao); imersao.nevoa = c.nevoa; imersao.lanterna = c.lant;
+  for (const id in c.npcs) {
+    const t = st.T[id], v = c.npcs[id]; if (!t || !v) continue;
+    t.oc = !!v.o; setTarget(t, v.x, v.z, v.y); t.g.position.set(t.target.x, t.ty, t.target.y); save(t, true);
+  }
+  atualizarSelo();
+  rodar(c.tom, c.est, { enviar: cTodos, cap: c.cap });
+  if (!limpa) toast('▶ ' + c.n + ' (' + (i + 1) + '/' + l.length + ')', 1500);
+}
+function gravarCenaAtual() {
+  const npcs: Record<string, any> = {};
+  for (const id in st.T) { const t = st.T[id]; if (t.custom) npcs[id] = { x: t.target.x, z: t.target.y, y: t.ty, h: t.h, f: t.fl ? 1 : 0, o: t.oc ? 1 : 0 }; }
+  const l = gravarCena({ clima: st.pi, tom: tomadaAtual(), est: cEst, cap: $('ccap').value.trim(), showC: st.showC, apagao: imersao.apagao, nevoa: imersao.nevoa, lant: imersao.lanterna, npcs });
+  toast('Cena gravada: ' + l[l.length - 1].n + ' · use . e , para passar', 2500);
+}
+function encherMestre() {
+  const box = $('dcenas') as HTMLElement; box.innerHTML = '';
+  const l = listaCenas();
+  if (!l.length) { const v = document.createElement('div'); v.className = 'vazio'; v.textContent = 'Monte o momento (câmera, clima, luz, vilões) e grave.'; box.appendChild(v); }
+  l.forEach((c, i) => itemCine(box, (i === cenaAtual ? '● ' : '') + c.n + (c.cap ? ' — ' + c.cap.slice(0, 24) : ''), () => tocarCena(i), () => { apagarCena(i); if (cenaAtual >= i) cenaAtual--; encherMestre(); }));
+  const mi = $('dimgs') as HTMLElement; mi.innerHTML = '';
+  mostrar.lista.forEach(im => {
+    const b = document.createElement('button'); b.title = im.n; if (im.id === mostrar.atual) b.className = 'cur';
+    const img = document.createElement('img'); img.src = im.data; img.alt = im.n; b.appendChild(img);
+    b.onclick = () => { exibir(im.id === mostrar.atual ? '' : im.id); ultimaImagem = im.id; encherMestre(); };
+    mi.appendChild(b);
+  });
+  tg('dpapel', papel);
+}
+function alternarImagem() {
+  if (mostrar.atual) { exibir(''); return; }
+  const id = ultimaImagem || mostrar.lista[0]?.id;
+  if (id) exibir(id); else toast('Escolha uma imagem em Mestre → Mostrar aos jogadores');
+}
+function initMestreUi() {
+  menu('mdir', 'pdir', encherMestre);
+  $('dgrava').onclick = () => { gravarCenaAtual(); encherMestre(); };
+  $('bapag').onclick = () => { setApagao(!imersao.apagao); atualizarSelo(); };
+  $('bnevoa').onclick = () => { imersao.nevoa = !imersao.nevoa; atualizarSelo(); };
+  for (const b of $('dsons').children as HTMLCollectionOf<HTMLElement>) b.onclick = () => fx(b.dataset.f as Fx);
+  $('dimg').onclick = () => $('dimgf').click();
+  $('dimgf').onchange = async () => {
+    const f = $('dimgf').files[0]; if (!f) return;
+    try { const im = await carregarImagem(f, papel); ultimaImagem = im.id; exibir(im.id); encherMestre(); } catch { toast('Não consegui abrir essa imagem'); }
+    $('dimgf').value = '';
+  };
+  $('dpapel').onclick = () => {
+    papel = !papel; tg('dpapel', papel);
+    const im = mostrar.porId(mostrar.atual); if (im) { im.papel = papel; mostrar.aoNova(im); exibir(im.id); }
+  };
+  $('desc').onclick = () => exibir('');
+  $('handout').onclick = () => { if (!st.jogadores) exibir(''); };
+  $('boc').onclick = () => { const t = st.sel; if (!t || CFG.ro) return; t.oc = !t.oc; save(t, true); $('boc').textContent = t.oc ? 'Mostrar' : 'Ocultar'; toast(t.oc ? t.name + ' oculto: só você vê' : t.name + ' visível para todos', 1800); };
+}
+
 // ---------- tela limpa (transmitir) e atalhos ----------
 let toastT = 0;
 function toast(txt: string, ms = 2600) {
@@ -149,6 +215,11 @@ function initAtalhos() {
     if (e.code === 'KeyB') { escurecer(); return; }
     if (e.code === 'KeyL') { lanterna(); return; }
     if (e.code === 'KeyR') { fx('raio'); return; }
+    if (e.code === 'KeyO') { setApagao(!imersao.apagao); atualizarSelo(); return; }
+    if (e.code === 'KeyN') { imersao.nevoa = !imersao.nevoa; atualizarSelo(); return; }
+    if (e.code === 'KeyI') { alternarImagem(); return; }
+    if (e.code === 'Period' || e.code === 'PageDown') { e.preventDefault(); fecharMenu(); tocarCena(cenaAtual + 1); return; }
+    if (e.code === 'Comma' || e.code === 'PageUp') { e.preventDefault(); fecharMenu(); tocarCena(cenaAtual - 1); return; }
     if (e.code === 'KeyP') { fecharMenu(); apontar(h => rodarCine(tomadaPara(h))); if (limpa) toast('Clique no lugar da câmera', 1500); return; }
     const n = /^Digit([1-9])$/.exec(e.code);
     if (n) { const t = listaTomadas()[+n[1] - 1]; if (t) { fecharMenu(); rodarCine(t); } else if (!limpa) toast('Sem tomada ' + n[1] + ' gravada neste mapa'); }
@@ -168,6 +239,7 @@ function atualizarSelo() {
   if (imersao.preto) partes.push('preta');
   el.hidden = !partes.length; el.textContent = 'Tela dos jogadores ' + partes.join(' e ');
   tg('bcong', imersao.congelado); tg('bpreto', imersao.preto); tg('blant', imersao.lanterna); tg('bauto', imersao.autoRaio);
+  tg('bapag', imersao.apagao); tg('bnevoa', imersao.nevoa);
 }
 function congelar(v = !imersao.congelado) {
   if (v && !imersao.temJogadores) { toast('Congelar vale para a janela dos jogadores (Mais → Abrir janela dos jogadores)'); return; }
@@ -206,6 +278,7 @@ function initUi() {
     if (v) toast('Janela dos jogadores ligada · dica: deixe esta janela em Qualidade Baixa e a dos jogadores em Alta', 5000);
   } });
   initImersaoUi();
+  initMestreUi();
   menu('mx', 'px');
   // personagens
   $('ba').onclick = () => { fecharMenu(); $('add').hidden = false; };
@@ -224,7 +297,7 @@ function initUi() {
   $('szm').onclick = () => resz(1 / 1.15); $('szp').onclick = () => resz(1.15);
   $('fl').onclick = () => { const s = st.sel; if (s) { s.fl = !s.fl; sizeT(s); save(s, true); } };
   $('rm').onclick = () => { if (!st.sel || CFG.ro) return; NET.delChar(st.sel.id); selT(null); };
-  const setC = (v: boolean) => { st.showC = v; $('ros').style.display = v ? '' : 'none'; tg('bch', v); if (!v) selT(null); };
+  const setC = mostrarPersonagens;
   $('bch').onclick = () => setC(!st.showC); setC(st.showC);
   $('bg').onclick = () => { st.snap = !st.snap; tg('bg', st.snap); };
   $('br').onclick = () => { if (CFG.ro) return; fecharMenu(); for (const k in st.T) { delete st.pos[st.curMap + '__' + k]; placeT(st.T[k]); save(st.T[k], true); } };
@@ -257,6 +330,7 @@ addEventListener('message', e => {
 
 mapHooks.push(() => abortar()); // trocar de mapa no meio de uma cena de cinema
 mapHooks.push(() => avisarMapa()); // janela dos jogadores troca junto
+mapHooks.push(M => { som.setFontes(M.sons || []); cenaAtual = -1; });
 timeHooks.push(() => avisarClima());
 timeHooks.push(p => som.setClima(p.n));
 

@@ -201,3 +201,21 @@
   grilos à noite — por clima, com transição; efeitos do cinema (susto, corte, suave) e trovão do relâmpago.
   Modo: desligado, nesta janela ou só na janela dos jogadores (padrão); volume.
 - Indicador no dock (monitor verde) quando a janela dos jogadores está ligada; dica de qualidade ao ligar.
+
+## Mesa do mestre: cenas, luz que cai, névoa, sons, imagens e vilão oculto
+
+- Painel **Mestre** no dock reúne a direção da sessão (imersão e som saíram do *Mais*).
+- **Cenas**: gravam clima, tomada da câmera, estilo e legenda do cinema, luz, névoa, lanterna, "mostrar
+  personagens" e a posição/ocultação dos personagens **criados** (vilões/NPCs; os dos jogadores não mudam).
+  **.** e **,** (ou Page Down/Up) passam como slides; ficam neste navegador, por mapa (`core/cenas.ts`).
+- **A luz caiu** (O): lâmpadas, velas e auréolas piscam ~1,4 s e apagam (a luz de fora das janelas fica);
+  O de novo pisca e volta. Persiste ao trocar de clima/mapa (`forcarLuzes` em `core/sky.ts`).
+- **Névoa densa** (N): densidade ×2,4 com transição, por cima do que clima/mapa definem.
+- **Sons do mestre**: batida na porta, passos, sussurro (passa de um lado ao outro), rangido, sino, trovão —
+  gerados na hora. **Som no lugar** (`M.sons` no mapa): velas crepitando, sino da torre e porta que range quando
+  a câmera passa; igreja e San Judas já têm os seus.
+- **Mostrar imagem aos jogadores** (I): pista, foto, carta… por cima da cena, com efeito de papel opcional;
+  as 8 últimas ficam como miniaturas (`core/mostrar.ts`).
+- **Personagem oculto**: selecionar → Ocultar. O mestre vê meio transparente; a tela dos jogadores e quem só vê
+  não veem até revelar (o Revelar do cinema já mostra). Vai pela rede (`o` na posição) e pelo espelho.
+- Tudo aparece na janela dos jogadores; dock só com ícones até 1240 px.

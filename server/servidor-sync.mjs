@@ -115,7 +115,7 @@ wss.on('connection', (ws, req) => {
       const v = m.v; if (!v || !Number.isFinite(v.x) || !Number.isFinite(v.z)) return;
       const map = String(m.map || '').replace(/\|/g, '-').slice(0, 40), k = map + '|' + m.id;
       if (!(k in R.pos) && Object.keys(R.pos).length >= MAX_POS) return;
-      R.pos[k] = { x: num(v.x), z: num(v.z), y: num(v.y), h: num(v.h, 20), f: v.f ? 1 : 0 };
+      R.pos[k] = { x: num(v.x), z: num(v.z), y: num(v.y), h: num(v.h, 20), f: v.f ? 1 : 0, o: v.o ? 1 : 0 };
       m = { t: 'pos', map, id: m.id, v: R.pos[map + '|' + m.id] };
     } else if (m.t === 'char') {
       const v = m.v; if (!v || typeof v.img !== 'string' || !/^data:image\/(png|webp|jpeg|gif);/.test(v.img)) return;

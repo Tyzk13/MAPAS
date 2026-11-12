@@ -8,19 +8,21 @@ import { CFG } from './config';
 import { handlers, tap } from './net';
 import { post } from './post';
 import { WM } from './walk';
-import { imersao, fx, aplicarSom, aplicarPreto, type Fx, type SomModo } from './imersao';
+import { imersao, fx, aplicarSom, aplicarPreto, setApagao, type Fx, type SomModo } from './imersao';
+import { mostrar, exibir, guardarImagem, type Imagem } from './mostrar';
 import { som } from './som';
 
 type V3t = [number, number, number];
 interface Quadro {
   k: 'cam'; p: V3t; q: [number, number, number, number]; f: number; t: V3t; cine: boolean; cap: string; fade: number; flash: number; chars: boolean;
-  cong: boolean; preto: boolean; lant: boolean; snd: SomModo; vol: number;
+  cong: boolean; preto: boolean; lant: boolean; snd: SomModo; vol: number; apag: boolean; nev: boolean; img: string;
 }
 type Msg =
   | Quadro
   | { k: 'oi' }
   | { k: 'vivo' }
   | { k: 'fx'; e: Fx }
+  | { k: 'img'; im: Imagem }
   | { k: 'map'; id: string }
   | { k: 'time'; i: number }
   | { k: 'pos'; map: string; id: string; v: any }
@@ -43,7 +45,7 @@ export const espelho = {
 
 // ---------- janela dos jogadores: recebe ----------
 const alvoP = new THREE.Vector3(), alvoQ = new THREE.Quaternion(), foco = new THREE.Vector3();
-let temQuadro = false, alvoF = 50, congelado = false, deslizar = 0;
+let temQuadro = false, alvoF = 50, congelado = false, deslizar = 0, ultimoImgPedido = '';
 
 function aplicarSobreposicao(m: Quadro) {
   document.body.classList.toggle('cine', m.cine);
@@ -81,10 +83,14 @@ async function receber(m: Msg) {
       imersao.lanterna = m.lant;
       if (imersao.preto !== m.preto) { imersao.preto = m.preto; aplicarPreto(); }
       if (imersao.somModo !== m.snd || imersao.volume !== m.vol) { imersao.somModo = m.snd; imersao.volume = m.vol; aplicarSom(); }
+      if (imersao.apagao !== m.apag) setApagao(m.apag);
+      imersao.nevoa = m.nev;
+      if (mostrar.atual !== m.img && !exibir(m.img)) ultimoImgPedido = m.img;
       espelho.ultimo = performance.now();
       break;
     }
     case 'fx': fx(m.e, { enviar: false }); break;
+    case 'img': guardarImagem(m.im); if (m.im.id === mostrar.atual) exibir(m.im.id); else if (m.im.id === ultimoImgPedido) exibir(m.im.id); break;
     case 'map': if (m.id !== st.curMap) await opcoes.loadMap(m.id); break;
     case 'time': if (m.i !== st.pi) opcoes.setTime(m.i); break;
     case 'pos': handlers.onPos(m.map, m.id, m.v); break;
@@ -120,7 +126,7 @@ export function enviarQuadro() {
   if (!imersao.congelado) pose0 = pose;
   const m: Quadro = {
     k: 'cam', ...pose, cine: document.body.classList.contains('cine'),
-    cong: imersao.congelado, preto: imersao.preto, lant: imersao.lanterna, snd: imersao.somModo, vol: imersao.volume,
+    cong: imersao.congelado, preto: imersao.preto, lant: imersao.lanterna, snd: imersao.somModo, vol: imersao.volume, apag: imersao.apagao, nev: imersao.nevoa, img: mostrar.atual,
     cap: ($('lcap') as HTMLElement).classList.contains('on') ? ($('lcap') as HTMLElement).textContent || '' : '',
     fade: +(($('fade') as HTMLElement).style.opacity || 0), flash: +(($('flash') as HTMLElement).style.opacity || 0), chars: st.showC,
   };
@@ -133,8 +139,9 @@ function mandarEstado() {
   const pos: Record<string, any> = {};
   for (const k in st.pos) pos[k] = st.pos[k];
   // posições atuais de quem ainda não tem registro (posição inicial do mapa)
-  for (const id in st.T) { const t = st.T[id], k = st.curMap + '__' + id; if (!pos[k]) pos[k] = { x: t.target.x, z: t.target.y, y: t.ty, h: t.h, f: t.fl ? 1 : 0 }; }
+  for (const id in st.T) { const t = st.T[id], k = st.curMap + '__' + id; if (!pos[k]) pos[k] = { x: t.target.x, z: t.target.y, y: t.ty, h: t.h, f: t.fl ? 1 : 0, o: t.oc ? 1 : 0 }; }
   enviar({ k: 'estado', map: st.curMap, time: st.pi, chars: criados, pos });
+  for (const im of mostrar.lista) enviar({ k: 'img', im }); // imagens já mostradas (a atual entra no próximo quadro)
 }
 
 // ---------- modo ----------
@@ -143,7 +150,7 @@ const opcoes = { loadMap: async (_id: string) => {}, setTime: (_i: number) => {}
 
 /** Liga/desliga o modo "tela dos jogadores" nesta janela. */
 export function serJogadores(v: boolean) {
-  espelho.jogadores = v;
+  espelho.jogadores = v; st.jogadores = v;
   document.body.classList.toggle('jogadores', v);
   document.body.classList.toggle('limpa', v);
   document.body.classList.toggle('nu', v || !CFG.ui);
@@ -154,7 +161,8 @@ export function serJogadores(v: boolean) {
     enviar({ k: 'oi' });
     imersao.ehJogadores = true; aplicarSom(); aplicarPreto();
   } else {
-    imersao.ehJogadores = false; imersao.preto = false; imersao.lanterna = false; aplicarPreto(); aplicarSom();
+    imersao.ehJogadores = false; imersao.preto = false; imersao.lanterna = false; imersao.nevoa = false; aplicarPreto(); aplicarSom();
+    if (imersao.apagao) setApagao(false); exibir('');
     post.focus = null; ctl.enabled = !WM.on;
     document.body.classList.remove('cine'); ($('fade') as HTMLElement).style.opacity = '0'; ($('flash') as HTMLElement).style.opacity = '0';
     ($('lcap') as HTMLElement).classList.remove('on');
@@ -183,6 +191,7 @@ export function initEspelho(o: { loadMap: (id: string) => Promise<void>; setTime
   if (!canal) return;
   canal.onmessage = e => { receber(e.data as Msg); };
   imersao.aoEvento = e => enviar({ k: 'fx', e });
+  mostrar.aoNova = im => { if (!espelho.jogadores) enviar({ k: 'img', im }); };
   // a janela dos jogadores avisa que está viva (a do mestre mostra o indicador e decide onde escurecer)
   setInterval(() => { if (espelho.jogadores) enviar({ k: 'vivo' }); }, 2000);
   // o que esta janela muda vai para a outra
@@ -214,4 +223,7 @@ export function avisarClima() { if (!espelho.jogadores) enviar({ k: 'time', i: s
   som: som.ativo, preto: document.getElementById('preto')!.classList.contains('on'), lant: imersao.lanterna, temJog: imersao.temJogadores, cong: imersao.congelado,
   cam: cam.position.toArray().map(n => +n.toFixed(2)),
   tokens: Object.fromEntries(Object.values(st.T).map(t => [t.id, [+t.target.x.toFixed(2), +t.target.y.toFixed(2)]])),
+  visiveis: Object.values(st.T).filter(t => t.g.visible).map(t => t.id),
+  apag: imersao.apagao, luzes: +(st.MP?.lights.reduce((a, l) => a + l.l.intensity, 0) ?? 0).toFixed(2),
+  nevoa: +((((window as any).__fog?.() ?? 0)) as number).toFixed(5), img: mostrar.atual,
 });

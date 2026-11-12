@@ -100,7 +100,7 @@ export function abortar() {
 function revelar() {
   if (!S.rev) return;
   const { tok, x, y, z } = S.rev; S.rev = null;
-  setTarget(tok, x, z, y); tok.g.position.set(tok.target.x, tok.ty, tok.target.y); save(tok, true);
+  tok.oc = false; setTarget(tok, x, z, y); tok.g.position.set(tok.target.x, tok.ty, tok.target.y); save(tok, true);
 }
 
 /** Chamado a cada quadro; devolve true enquanto o cinema controla a câmera. */
@@ -210,6 +210,11 @@ export function gravarAtual() {
 export function apagarTomada(i: number) { const l = listaTomadas(); l.splice(i, 1); guardar(l); return l; }
 
 export const cineAtivo = () => S.on;
+/** A câmera atual como tomada (para gravar cenas). */
+export function tomadaAtual(): Tomada {
+  const r = (v: THREE.Vector3) => v.toArray().map(x => +x.toFixed(2)) as V3t;
+  return { p: r(cam.position), t: r(alvoAtual()), fov: Math.round(cam.fov) };
+}
 /** Avisados quando uma cena começa (som do estilo, descongelar a tela dos jogadores). */
 export const cineHooks: ((e: Estilo) => void)[] = [];
 
