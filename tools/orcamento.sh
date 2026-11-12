@@ -21,6 +21,8 @@ shrub_03 3000 800 512
 shrub_04 3500 800 512
 nettle_plant 2000 400 512
 fern_02 1500 300 512
+searsia_lucida 9000 4000 512
+wild_rooibos_bush 3500 600 512
 LIST
 # id  razão  textura
 while read -r id r t; do
@@ -38,4 +40,8 @@ dry_branches_medium_01 0.2 512
 Lantern_01 0.15 512
 street_lamp_01 0.2 512
 brass_candleholders 0.3 512
+namaqualand_boulder_02 0.06 512
+caged_hanging_light 0.3 512
+street_lamp_02 0.12 512
+metal_trash_can 0.4 512
 LIST

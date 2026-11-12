@@ -1,5 +1,5 @@
 // Capturas automáticas: abre a cena em câmeras fixas e climas e salva em capturas/<rodada>/.
-// Uso:  npm run capturas -- [rótulo] [--map=igreja] [--q=alta] [--w=1280] [--h=720] [--only=cinema,altar] [--times=0,1] [--png]
+// Uso:  npm run capturas -- [rótulo] [--map=igreja] [--q=alta] [--w=1280] [--h=720] [--only=cinema,altar] [--views=Praça,Cantina] [--times=0,1] [--png]
 // Gera também uma folha comparativa com as imagens de referencias/.
 import { build, preview } from 'vite';
 import { createRequire } from 'node:module';
@@ -34,6 +34,8 @@ const SHOTS = [
   { id: 'coro', view: 'Coro' },
   { id: 'terceira', third: { x: 0.7, z: 18, yaw: 0, pitch: -0.08 } },
 ].filter(s => !opt.only || opt.only.split(',').includes(s.id));
+// --views=Praça,Cantina → usa vistas do mapa pelo nome (para mapas com outras vistas)
+if (opt.views) SHOTS.splice(0, SHOTS.length, ...opt.views.split(',').map(v => ({ id: v.normalize('NFD').replace(/[^a-zA-Z0-9]/g, '').toLowerCase(), view: v })));
 
 const stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 13).replace('T', '-');
 // grava numa pasta temporária (ignorada pelo git) e renomeia no fim

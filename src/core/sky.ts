@@ -107,7 +107,7 @@ export async function setTime(i: number) {
   const fog = S.fog as THREE.FogExp2;
   fog.color.copy(h.horizon).multiplyScalar(p.bg * p.fogK);
   if (p.fogTint != null) fog.color.multiply(new THREE.Color(p.fogTint));
-  fog.density = p.fogD;
+  fog.density = p.fogD * (st.MP?.fogScale ?? 1);
   const az = THREE.MathUtils.degToRad(p.az), el = THREE.MathUtils.degToRad(p.el);
   sun.position.set(Math.sin(az) * Math.cos(el), Math.sin(el), Math.cos(az) * Math.cos(el)).multiplyScalar(80);
   sun.color.set(p.sc); sun.intensity = p.si;

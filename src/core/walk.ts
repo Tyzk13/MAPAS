@@ -135,7 +135,8 @@ function freeStep(dt: number) {
     const g = wr.intersectObjects(wk(), false)[0];
     if (g && WM.fp.y < g.point.y + 0.3) { WM.fp.y = g.point.y + 0.3; if (WM.vel.y < 0) WM.vel.y = 0; }
   }
-  WM.fp.set(Math.max(-150, Math.min(150, WM.fp.x)), Math.max(-5, Math.min(140, WM.fp.y)), Math.max(-150, Math.min(150, WM.fp.z)));
+  const lim = Math.max(150, (st.MP!.walkLimit ?? 90) + 40);
+  WM.fp.set(Math.max(-lim, Math.min(lim, WM.fp.x)), Math.max(-5, Math.min(lim, WM.fp.y)), Math.max(-lim, Math.min(lim, WM.fp.z)));
   cam.position.copy(WM.fp); cam.rotation.set(WM.pitch, WM.yaw, 0);
 }
 
@@ -157,7 +158,8 @@ export function walkStep() {
     const sol = M.solid();
     const bl = (ax: number, az: number) => { const l = Math.hypot(ax, az); if (!l) return false; wr.set(new V3(WM.x, WM.y + 0.9, WM.z), new V3(ax / l, 0, az / l)); wr.far = l + 0.4; return wr.intersectObjects(sol, false).length > 0; };
     if (!bl(dx, 0)) WM.x += dx; if (!bl(0, dz)) WM.z += dz;
-    WM.x = Math.max(-90, Math.min(90, WM.x)); WM.z = Math.max(-90, Math.min(90, WM.z));
+    const lim = M.walkLimit ?? 90;
+    WM.x = Math.max(-lim, Math.min(lim, WM.x)); WM.z = Math.max(-lim, Math.min(lim, WM.z));
   }
   wr.set(new V3(WM.x, WM.y + 0.8, WM.z), DN); wr.far = 40;
   const g = wr.intersectObjects(wk(), false)[0];

@@ -39,6 +39,10 @@ export interface MapRuntime {
   onTime: ((p: Preset) => void) | null;
   /** Limites do mapa para a câmera de sombra do sol. */
   shadowRadius: number;
+  /** opcionais para mapas grandes: limite do caminhar (|x|,|z|), distância máx. da câmera, multiplicador da névoa */
+  walkLimit?: number;
+  camMax?: number;
+  fogScale?: number;
 }
 
 export interface MapModule {

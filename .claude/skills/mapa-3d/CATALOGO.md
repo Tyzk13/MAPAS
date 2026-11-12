@@ -54,3 +54,18 @@ Paredes com vãos e janelas ogivais (`wallGeo`, `pointedArch`, `roundArch`, `fra
 (`stainedGlass`), bancos de igreja (`pewGeometry`), rosas brancas (`roseGeometry`), quadros antigos
 (`oldPainting`), telhado com tesouras, torre com sino, varais de lampadinhas (`garland` em grounds.ts),
 gramado (`grassField`), poças, névoa, poeira, feixes de luz.
+
+## Acrescentados no mapa do México (testados)
+
+| Uso | Id (tamanho sugerido em m) | Observação |
+|---|---|---|
+| Fachada pintada (tingir por cor de vértice) | `painted_plaster_wall` (2.6) | base de todas as casas; ruína: mesmo id com `normalScale` 1.6 e mais sujeira |
+| Tijolo aparecendo sob reboco | `rough_plaster_brick` (2.2) | escuro; clarear com cor |
+| Telha de barro | `clay_roof_tiles_02` (1.8) | coreto, toldos, cúpulas |
+| Rua de paralelepípedo | `cobblestone_floor_08` (2.2) | |
+| Piso de lajota | `terracotta_floor_tiles` (2.4) | praça, igreja, mercado |
+| Terreno de deserto | `dry_ground_01` (3.2) base, `sandy_gravel` (2.4), `dry_ground_rocks` (3) | estradas de terra pela máscara R |
+| Arbusto do deserto | `searsia_lucida` (desbastado 9k), `wild_rooibos_bush` (3,5k) | só média/alta para o searsia |
+| Pedra grande | `namaqualand_boulder_02` (simplificar 0.06 → 6k) | poucas; o resto em código |
+| Props | `plastic_monobloc_chair_01` (3k), `propane_tank`, `rollershutter_door` (3,08 m de largura → escala 0.84), `street_lamp_02` (lanterna de parede, 2,6k após simplificar), `caged_hanging_light`, `Barrel_01`, `WoodenTable_01` (baixa: escala y 1.35), `metal_trash_can`, `old_tyre`, `trashbag` | |
+| Descartados | `modular_electricity_poles` (200k, peças soltas), `othonna_cerarioides`, `wooden_candlestick` (212k), `dead_quiver_trunk` (2 m, fino), `boulder_01` espalhado, `wooden_crate_02`, `ceramic_vase_03` | fazer em código |

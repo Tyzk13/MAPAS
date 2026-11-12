@@ -19,7 +19,7 @@ export const CFG = {
   key: Q.get('key') || '',
   ro: Q.get('ro') === '1',
   time: Math.max(0, +(Q.get('time') || 0) || 0),
-  map: Q.get('map') || 'igreja',
+  map: Q.get('map') || (window as any).MAPA_PADRAO || 'igreja',
   ui: Q.get('ui') !== '0',
   walk: Q.get('walk') === '1',
   chars: Q.get('chars') !== '0',

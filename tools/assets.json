@@ -18,7 +18,15 @@
     "quatrefoil_jacquard_fabric": "2k",
     "rusty_metal_02": "1k",
     "concrete_wall_008": "2k",
-    "leafy_grass": "2k"
+    "leafy_grass": "2k",
+    "painted_plaster_wall": "2k",
+    "rough_plaster_brick": "1k",
+    "clay_roof_tiles_02": "1k",
+    "cobblestone_floor_08": "1k",
+    "terracotta_floor_tiles": "1k",
+    "dry_ground_01": "1k",
+    "sandy_gravel": "1k",
+    "dry_ground_rocks": "1k"
   },
   "hdris": {
     "overcast_soil_puresky": "1k",
@@ -62,6 +70,19 @@
     "wine_barrel_01": 512,
     "wooden_crate_01": 512,
     "planter_pot_clay": 512,
-    "Lantern_01": 512
+    "Lantern_01": 512,
+    "plastic_monobloc_chair_01": 512,
+    "propane_tank": 512,
+    "rollershutter_door": 512,
+    "street_lamp_02": 512,
+    "searsia_lucida": 512,
+    "wild_rooibos_bush": 512,
+    "namaqualand_boulder_02": 512,
+    "metal_trash_can": 512,
+    "old_tyre": 512,
+    "trashbag": 512,
+    "WoodenTable_01": 512,
+    "Barrel_01": 512,
+    "caged_hanging_light": 512
   }
 }
