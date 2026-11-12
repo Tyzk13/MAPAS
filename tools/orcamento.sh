@@ -32,8 +32,8 @@ while read -r id r t; do
   echo "✓ sólido $id (razão $r)"
 done <<'LIST'
 root_cluster_01 0.015 512
-rock_moss_set_01 0.07 1024
-boulder_01 0.06 512
+rock_moss_set_01 0.03 1024
+boulder_01 0.012 512  # (pedregulho: soldar vértices antes; ver skill)
 dead_tree_trunk 0.06 512
 tree_stump_01 0.08 512
 dry_branches_medium_01 0.2 512
@@ -44,4 +44,5 @@ namaqualand_boulder_02 0.06 512
 caged_hanging_light 0.3 512
 street_lamp_02 0.12 512
 metal_trash_can 0.4 512
+wooden_lantern_01 0.25 512
 LIST
