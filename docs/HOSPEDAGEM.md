@@ -36,6 +36,9 @@ use o HTML único só quando não puder subir uma pasta.
 const f = document.querySelector('iframe').contentWindow;
 f.postMessage({ cmd: 'map', id: 'campo' }, '*');
 f.postMessage({ cmd: 'time', i: 2 }, '*');
+// câmera de cinema: vai até p olhando para t (metros do mapa); estilo 'suave' | 'corte' | 'susto'
+f.postMessage({ cmd: 'cine', p: [6, 1.6, 26], t: [0, 1.6, 12], estilo: 'susto', legenda: 'Algo se move…' }, '*');
+f.postMessage({ cmd: 'cine-sair' }, '*');
 addEventListener('message', e => { if (e.data?.evt === 'ready') console.log('mapas:', e.data.maps); });
 ```
 

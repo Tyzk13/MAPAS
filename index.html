@@ -38,10 +38,9 @@
 <nav class="dock" id="dock" aria-label="Controles do mapa">
 <div class="seg" role="group" aria-label="Modo de câmera">
 <button id="bmo" class="act" title="Órbita: arrastar gira em volta, roda aproxima"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2.6"/><ellipse cx="12" cy="12" rx="9.5" ry="4.2" transform="rotate(-20 12 12)"/></svg><span class="lbl">Órbita</span></button>
-<button id="bwk" title="Caminhar com o personagem (WASD)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="13" cy="4.2" r="2"/><path d="M10.5 21l2-5.5 3 2.5v3M12.5 15.5l-1-5.5 3.5 1.5 2.5 3M11.5 10l-3.5 3"/></svg><span class="lbl">Caminhar</span></button>
 <button id="blv" title="Câmera livre: voar pela cena (WASD, Q/E)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="7" width="12.5" height="10" rx="2"/><path d="M15 11l6.5-3.2v8.4L15 13z"/></svg><span class="lbl">Livre</span></button>
 </div>
-<button id="bpv" class="mini" hidden title="Alternar 1ª/3ª pessoa (V)">3ª pessoa</button>
+<button id="mcine" aria-haspopup="menu" title="Câmera de cinema: leva a câmera até um ponto, como num filme"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="9" width="18" height="11.5" rx="1.5"/><path d="M3 9l1.6-4.6 16.2 3.4-.6 1.2M8.2 5.2l2.1 3.6M13.5 6.3l2.1 3.6M3 13h18"/></svg><span class="lbl">Cinema</span></button>
 <span class="sep"></span>
 <span class="brk"></span>
 <button class="pick" id="mv" aria-haspopup="menu"><small>Vista</small><span id="bv">Cinema</span></button>
@@ -53,6 +52,17 @@
 <span id="st" title="Conexão">local</span>
 </nav>
 <div class="pop" id="pl" hidden role="menu"></div>
+<div class="pop" id="pcine" hidden role="menu">
+<div class="h">Câmera de cinema</div>
+<div class="seg full" id="cest"><button data-e="suave" class="act" title="Movimento de grua, lento">Suave</button><button data-e="corte" title="Escurece e corta para o ponto">Corte</button><button data-e="susto" title="Chicote rápido, zoom e tremida">Susto</button></div>
+<button id="cpick" class="pri">◎ Escolher ponto na cena</button>
+<button id="csave">+ Gravar a câmera atual como tomada</button>
+<label class="fld">Legenda <input id="ccap" maxlength="140" placeholder="opcional: aparece embaixo, como num filme"></label>
+<label class="fld" id="crevl">Revelar <select id="crev"><option value="">ninguém</option></select></label>
+<button id="call" class="tg" aria-pressed="true">Mostrar para todos da sala</button>
+<div class="h">Tomadas gravadas</div><div id="clist"></div>
+<div class="h">Vistas do mapa</div><div id="cviews"></div>
+</div>
 <div class="pop" id="pc" hidden role="menu">
 <div class="h">Personagens</div>
 <button id="ba">+ Novo personagem…</button>
@@ -70,12 +80,14 @@
 <button id="bfs">Tela cheia</button>
 <button id="bhelp">Atalhos e controles</button>
 </div>
+<div id="lbox" aria-hidden="true"><i></i><i></i></div><p id="lcap" aria-live="polite"></p><div id="fade"></div><div id="flash"></div>
+<button id="cinex" hidden title="Sair do cinema (Esc)">✕ Sair do cinema</button>
 <div id="fly" hidden><button id="flu" aria-label="Subir">▲</button><button id="fld" aria-label="Descer">▼</button></div>
 <div id="help" class="dlg" hidden><b>Atalhos e controles</b>
 <dl>
 <dt>Órbita</dt><dd>arrastar: girar · roda/pinça: zoom · botão direito ou dois dedos: mover · arraste os personagens para posicioná-los (setas movem o selecionado)</dd>
-<dt>Caminhar</dt><dd>WASD/setas: andar · arrastar: olhar · Shift: correr · V: 1ª/3ª pessoa · joystick no celular</dd>
 <dt>Câmera livre</dt><dd>WASD: mover · arrastar: olhar · Q/E (ou Espaço): descer/subir · Shift: rápido · roda: velocidade · G: atravessar paredes · ▲▼ no celular</dd>
+<dt>Cinema</dt><dd>escolha um ponto na cena (ou uma tomada gravada) e a câmera vai até lá como num filme: Suave, Corte ou Susto · legenda opcional · Revelar faz um personagem aparecer no ponto quando a câmera chega · Esc ou ✕ volta</dd>
 <dt>Geral</dt><dd>Esc: volta para a órbita · Vista: leva a câmera para pontos prontos</dd>
 </dl>
 <div class="row"><button id="hx">Fechar</button></div></div>

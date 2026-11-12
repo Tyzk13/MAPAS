@@ -90,6 +90,9 @@ button.tg[aria-pressed=true]::after{background:var(--acc-bg) radial-gradient(cir
 
 .nu .dock,.nu .pop,.nu .tip,.nu #ros,.nu #sel,.nu #fly{display:none}
 
+/* telas médias: só ícones nos botões do dock (o nome aparece ao passar o mouse) */
+@media (max-width:1000px) and (min-width:761px){.dock .lbl{display:none}}
+
 /* ---------- telas estreitas: dock em duas linhas (modos/ações em cima, vista/clima/mapa embaixo) ---------- */
 @media (max-width:760px){
   .dock{left:8px;right:8px;transform:none;max-width:none;flex-wrap:wrap;justify-content:center;gap:4px;padding:5px;bottom:calc(6px + env(safe-area-inset-bottom,0px));overflow:visible}
@@ -105,3 +108,30 @@ button.tg[aria-pressed=true]::after{background:var(--acc-bg) radial-gradient(cir
   #ros{top:calc(44px + env(safe-area-inset-top,0px))}
   #sel{top:calc(100px + env(safe-area-inset-top,0px))}
 }
+
+/* ---------- câmera de cinema ---------- */
+.pop .fld{display:flex;flex-direction:column;gap:4px;padding:4px 10px 6px;font-size:12px;color:var(--dim)}
+.pop .fld input,.pop .fld select{font:inherit;font-size:13px;color:var(--txt);background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:7px 8px}
+.pop>button.pri{justify-content:center;margin:4px 4px 2px;text-align:center;background:var(--acc);border-color:var(--acc);color:#1a1613;font-weight:600}
+.pop>button.pri:hover{background:#f0d394}
+.pop .it{display:flex;gap:2px}
+.pop .it>button{background:transparent;border-color:transparent;padding:8px 10px;text-align:left}
+.pop .it>button:hover{background:#ffffff10}
+.pop .it>.go{flex:1}
+.pop .it>.x{color:var(--dim);flex:none}
+.pop .vazio{font-size:12px;color:var(--dim);padding:2px 10px 6px}
+#lbox i{position:fixed;left:0;right:0;height:0;background:#000;z-index:8;pointer-events:none;transition:height .7s cubic-bezier(.6,0,.2,1)}
+#lbox i:first-child{top:0}#lbox i:last-child{bottom:0}
+.cine #lbox i{height:11vh}
+#lcap{position:fixed;left:8%;right:8%;bottom:calc(11vh + 14px);margin:0;text-align:center;font:italic 20px/1.35 Georgia,"Times New Roman",serif;color:#efe4d2;
+  text-shadow:0 2px 8px #000,0 0 2px #000;z-index:9;pointer-events:none;opacity:0;transform:translateY(6px);transition:opacity .8s .5s,transform .8s .5s}
+#lcap.on{opacity:1;transform:none}
+#fade,#flash{position:fixed;inset:0;pointer-events:none;opacity:0;z-index:7}
+#fade{background:#000}#flash{background:#fff}
+#cinex{position:fixed;right:12px;top:calc(12px + env(safe-area-inset-top,0px));z-index:10;font-size:12px;background:#000a;border-color:#ffffff33;opacity:.55}
+#cinex:hover{opacity:1}
+.cine .dock,.cine .pop,.cine .tip,.cine #ros,.cine #sel,.cine #joy,.cine #fly,.cine #fps{display:none!important}
+.cine #c{pointer-events:none}
+.picking #c{cursor:crosshair}
+.ro #call,.ro #crevl{display:none}
+@media (max-width:760px){#lcap{font-size:16px}.cine #lbox i{height:9vh}#lcap{bottom:calc(9vh + 10px)}}

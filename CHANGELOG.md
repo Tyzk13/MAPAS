@@ -145,3 +145,20 @@
   tela cheia, atalhos). Ícones, ponto verde quando a sincronização está ao vivo, janela de atalhos.
 - Celular: dock em duas linhas, menus como folha inferior.
 - `tools/testar-funcoes.mjs` testa também a câmera livre, o Esc e o menu Clima.
+
+## Câmera de cinema (e sai o modo Caminhar)
+
+- **Cinema** (novo botão no dock): a câmera puxa até um lugar escolhido como num filme, com barras pretas.
+  *Escolher ponto na cena* (clica onde a câmera vai; ela se posiciona a ~5,5 m, em ângulo baixo, sem atravessar
+  paredes) ou tocar uma *tomada gravada* (a câmera atual, guardada por mapa neste navegador) ou uma vista do mapa.
+  Estilos: **Suave** (grua que sobe e desce), **Corte** (escurece e corta), **Susto** (chicote rápido, zoom e
+  tremida com clarão). Depois de chegar, a câmera avança devagar (dolly) com leve movimento de mão.
+- **Legenda** opcional embaixo, como num filme, e **Revelar**: um personagem (ex.: o vilão) aparece no ponto quando
+  a câmera chega — "do nada".
+- **Mostrar para todos**: a cena toca na tela de todos da sala (WebSocket ou banco do claude.ai); quem só vê também
+  recebe. O servidor repassa a mensagem `cine` sem gravar em disco e guarda a cena em andamento por até 2 min,
+  para quem entra ou reconecta no meio dela. Esc ou ✕ volta a câmera para onde estava (para todos).
+- Página que incorpora: `postMessage({cmd:'cine', p, t, estilo, legenda})` e `{cmd:'cine-sair'}`.
+- Saiu da interface o modo **Caminhar** (e o botão 1ª/3ª pessoa): a câmera livre cobre o mesmo uso.
+- Personagem que dá um salto grande pela rede aparece direto no lugar, sem deslizar pelo mapa.
+- Testes: servidor confere o repasse do cinema; teste de funções cobre cinema por postMessage, sair e gravar tomada.

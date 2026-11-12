@@ -7,6 +7,8 @@ export const NET = {
   pos: ((_id, _v) => {}) as PosFn,
   addChar: (id: string, v: any): Promise<void> => { handlers.onChar(id, v); return Promise.resolve(); },
   delChar: (id: string) => { handlers.dropT(id); },
+  /** câmera de cinema para a sala (sem rede: não faz nada) */
+  cine: (_m: any) => {},
 };
 
 // Preenchido por main.ts para evitar dependência circular com tokens.ts
@@ -14,6 +16,7 @@ export const handlers = {
   onPos: (_m: string, _id: string, _v: any) => {},
   onChar: (_id: string, _v: any) => {},
   dropT: (_id: string) => {},
+  onCine: (_m: any) => {},
 };
 
 const key = (id: string) => CFG.room + '__' + st.curMap + '__' + id;
@@ -27,6 +30,13 @@ async function netDb() {
   NET.pos = (id, v) => { col.doc(key(id)).set(v).catch(() => { stEl.textContent = 'sem permissão para salvar'; }); };
   NET.addChar = async (id, v) => { await cc.doc(P + id).set(v); };
   NET.delChar = id => { cc.doc(P + id).delete().catch(() => {}); col.doc(key(id)).delete().catch(() => {}); };
+  // cinema: um documento por sala; só toca o que chegar depois de abrir a página (nada de cena antiga)
+  const cine = db.collection('cine'), t0 = Date.now();
+  NET.cine = m => { cine.doc(CFG.room).set({ ...m, ts: Date.now() }).catch(() => {}); };
+  cine.onSnapshot((q: any) => q.docChanges().forEach((c: any) => {
+    if (c.doc.id !== CFG.room || c.type === 'removed') return;
+    const m = c.doc.data(); if (m && m.ts > t0 && Date.now() - m.ts < 20000) handlers.onCine(m);
+  }), () => {});
   cc.onSnapshot((q: any) => q.docChanges().forEach((c: any) => {
     if (!c.doc.id.startsWith(P)) return;
     const id = c.doc.id.slice(P.length);
@@ -56,11 +66,13 @@ function netWs(url: string) {
         else if (m.t === 'pos') handlers.onPos(m.map, m.id, m.v);
         else if (m.t === 'char') handlers.onChar(m.id, m.v);
         else if (m.t === 'delchar') handlers.dropT(m.id);
+        else if (m.t === 'cine') handlers.onCine(m.v);
       };
     };
     NET.pos = (id, v) => snd({ t: 'pos', map: st.curMap, id, v });
     NET.addChar = (id, v) => { snd({ t: 'char', id, v }); return Promise.resolve(); };
     NET.delChar = id => snd({ t: 'delchar', id });
+    NET.cine = v => snd({ t: 'cine', v });
     open();
   });
 }

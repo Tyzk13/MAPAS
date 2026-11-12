@@ -48,7 +48,7 @@ O CI do GitHub (`.github/workflows/ci.yml`) roda tipos, builds e o teste do serv
 
 ## Controles
 
-O dock na parte de baixo tem: **modo de câmera** (Órbita · Caminhar · Livre), menus **Vista**, **Clima** e **Mapa**
+O dock na parte de baixo tem: **modo de câmera** (Órbita · Livre), **Cinema**, menus **Vista**, **Clima** e **Mapa**
 (mostram todas as opções, com a atual marcada), **Personagens** (novo, mostrar, grade, resetar) e **Mais**
 (qualidade, camadas, exportar VTT, importar 3D, tela cheia, atalhos). No celular ele vira duas linhas e os menus
 abrem como folha inferior.
@@ -56,9 +56,11 @@ abrem como folha inferior.
 | Modo | Controles |
 |---|---|
 | Órbita | arrastar: girar · roda/pinça: zoom · botão direito/dois dedos: mover · arraste os personagens (setas movem o selecionado) |
-| Caminhar | WASD/setas: andar · arrastar: olhar · Shift: correr · V: 1ª/3ª pessoa · joystick no celular |
 | Câmera livre | WASD: mover para onde olha · arrastar: olhar · Q/E ou Espaço: descer/subir · Shift: rápido · roda: velocidade · G: atravessar paredes · joystick e ▲▼ no celular |
+| Cinema | **Escolher ponto na cena** e clicar onde a câmera deve ir, ou tocar uma **tomada gravada** / vista do mapa. Estilos: *Suave* (grua), *Corte* (escurece e corta), *Susto* (chicote, zoom e tremida). Legenda opcional; **Revelar** faz um personagem aparecer no ponto quando a câmera chega. Com *Mostrar para todos*, toca na tela de todos da sala. Esc ou ✕ volta |
 | Geral | Esc: volta para a órbita · menu Vista leva a câmera (ou a câmera livre) para pontos prontos |
+
+Tomadas gravadas ficam neste navegador, por mapa.
 
 ## Parâmetros de URL
 
@@ -68,7 +70,7 @@ abrem como folha inferior.
 | `?map=igreja\|mexico\|campo` | mapa inicial (igreja, San Judas no México, campo de exemplo) |
 | `?time=0..4` | clima: Terror, Anoitecer, Crepúsculo, Nublado, Noite |
 | `?q=baixa\|media\|alta` | qualidade gráfica (padrão: Média no desktop, Baixa no celular) |
-| `?ui=0` · `?ro=1` · `?walk=1` · `?chars=0` | sem interface · só ver · começar caminhando · sem personagens |
+| `?ui=0` · `?ro=1` · `?chars=0` | sem interface · só ver · sem personagens |
 | `?ws=wss://servidor` · `?key=chave` | servidor de sincronização e chave de edição |
 | `?fps=1` | medidor: FPS, chamadas de desenho, triângulos e resolução atual |
 | `?auto=0` | desliga a resolução adaptativa |
@@ -76,7 +78,8 @@ abrem como folha inferior.
 **Resolução adaptativa:** se o FPS ficar abaixo de ~40, a resolução interna cai em passos até 50%; quando
 sobra folga (acima de ~57 FPS por alguns segundos), volta a subir. Não afeta as capturas.
 
-Página que incorpora (iframe): `postMessage({cmd:'map',id:'campo'})` e `postMessage({cmd:'time',i:2})`;
+Página que incorpora (iframe): `postMessage({cmd:'map',id:'campo'})`, `postMessage({cmd:'time',i:2})` e câmera de
+cinema `postMessage({cmd:'cine', p:[x,y,z], t:[x,y,z], estilo:'susto', legenda:'...'})` / `{cmd:'cine-sair'}`;
 a página avisa `{evt:'ready', maps:[...]}`.
 
 ## Estrutura

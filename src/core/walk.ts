@@ -41,7 +41,7 @@ export function placeWalkCam() {
   } else cam.position.set(WM.x, WM.y + 1.55, WM.z);
   cam.rotation.set(WM.pitch, WM.yaw, 0);
 }
-export function togV() { WM.third = !WM.third; $('bpv').textContent = WM.third ? '3ª pessoa' : '1ª pessoa'; }
+export function togV() { WM.third = !WM.third; const b = $('bpv'); if (b) b.textContent = WM.third ? '3ª pessoa' : '1ª pessoa'; }
 
 export function startWalk() {
   const d = new V3(); cam.getWorldDirection(d);
@@ -68,7 +68,6 @@ export function setMode(m: Modo) {
   $('tip').textContent = TIPS[m] || TIP0;
   $('joy').hidden = !(WM.on && coarse());
   $('fly').hidden = !(WM.free && coarse());
-  $('bpv').hidden = m !== 'caminhar';
   if (WM.on) {
     ctl.enabled = false; cam.rotation.order = 'YXZ';
     if (m === 'caminhar') { WM.av = st.sel || st.T[DEF[0].id] || null; startWalk(); }
@@ -184,7 +183,7 @@ export function initWalk() {
   TIP0 = $('tip').textContent;
   addEventListener('keydown', e => {
     if (!WM.on || /INPUT|SELECT|TEXTAREA/.test((e.target as HTMLElement).tagName)) return;
-    if (e.code === 'Escape') { setMode('orbita'); return; }
+    if (e.code === 'Escape') { if (!document.body.classList.contains('picking')) setMode('orbita'); return; }
     if (e.code === 'KeyV' && !WM.free) { togV(); return; }
     if (e.code === 'KeyG' && WM.free) { WM.ghost = !WM.ghost; aviso(WM.ghost ? 'Atravessar paredes: ligado' : 'Atravessar paredes: desligado'); return; }
     if (/^(Key[WASDQEC]|Arrow|Shift|Space|ControlLeft)/.test(e.code)) { WM.keys[e.code] = 1; if (/^(Arrow|Space)/.test(e.code)) e.preventDefault(); }
@@ -216,5 +215,4 @@ export function initWalk() {
   joy.addEventListener('pointermove', e => { if (e.buttons) jmove(e); });
   const jend = () => { WM.jx = WM.jy = 0; knob.style.transform = ''; };
   joy.addEventListener('pointerup', jend); joy.addEventListener('pointercancel', jend);
-  $('bpv').onclick = togV;
 }

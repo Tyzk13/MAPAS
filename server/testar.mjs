@@ -49,6 +49,20 @@ try {
   await wait(200);
   ok('mensagens inválidas são descartadas', !b.msgs.some(m => m.id === 'leo' || m.id === 'mal'));
 
+  enviar(a, { t: 'cine', v: { a: 'play', p: [1, 2, 3], t: [0, 1, 0], fov: 40, e: 'susto', cap: 'Algo se move', map: 'igreja', de: 'gm' } });
+  enviar(ro, { t: 'cine', v: { a: 'play', p: [9, 9, 9], t: [0, 0, 0], e: 'corte', map: 'igreja' } });
+  enviar(a, { t: 'cine', v: { a: 'play', p: [1, 'x', 3], t: [0, 1, 0] } });
+  await wait(200);
+  const cines = ro.msgs.filter(m => m.t === 'cine');
+  ok('câmera de cinema chega a quem só vê', cines.length === 1 && cines[0].v.e === 'susto' && cines[0].v.p[2] === 3 && cines[0].v.cap === 'Algo se move');
+  const tarde = await conectar('ro=1'); await wait(200);
+  ok('quem entra no meio da cena também vê', tarde.msgs.some(m => m.t === 'cine' && m.v.a === 'play'));
+  enviar(a, { t: 'cine', v: { a: 'end', de: 'gm' } }); await wait(200);
+  const depois = await conectar('ro=1'); await wait(200);
+  ok('depois do fim, quem entra não vê cena', !depois.msgs.some(m => m.t === 'cine'));
+  tarde.ws.close(); depois.ws.close();
+  ok('cinema de quem só vê e inválido é ignorado', !b.msgs.some(m => m.t === 'cine' && (m.v.e === 'corte' || m.v.p?.includes(null))));
+
   const img = 'data:image/png;base64,iVBORw0KGgo=';
   for (const id of ['p1', 'p2', 'p3']) enviar(a, { t: 'char', id, v: { name: id, h: 1.7, c: 1, img } });
   await wait(200);

@@ -26,17 +26,6 @@ const fr = p.frames().find(f => f.url().startsWith(url));
 await fr.waitForFunction(() => !document.getElementById('load'), null, { timeout: 120000 }).catch(() => {});
 ok('tela de carregamento some', await fr.evaluate(() => !document.getElementById('load') || document.getElementById('load').classList.contains('done')));
 
-// caminhar: entra no modo, anda para frente (-z) a partir do caminho, deve subir a escada e entrar
-await fr.evaluate(() => document.getElementById('bwk').click());
-// teclas disparadas dentro do iframe (o canvas não recebe foco de teclado)
-await fr.evaluate(() => dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyW', key: 'w' })));
-// espera até andar ~1 m (sem GPU o navegador faz poucos quadros por segundo; o tempo fixo deixava o teste instável)
-await fr.waitForFunction(() => (window.__walkState?.().moved ?? 0) > 1, null, { timeout: 120000, polling: 500 }).catch(() => {});
-await fr.evaluate(() => dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyW', key: 'w' })));
-const wpos = await fr.evaluate(() => (window).__walkState?.());
-ok('caminhar move o personagem', !!wpos && wpos.moved > 0.3, wpos ? `andou ${wpos.moved.toFixed(1)} m, y=${wpos.y.toFixed(2)}` : 'sem estado');
-await fr.evaluate(() => document.getElementById('bwk').click());
-
 // câmera livre: entra pelo botão, anda para frente e sobe; Esc volta para a órbita
 await fr.evaluate(() => document.getElementById('blv').click());
 await fr.evaluate(() => { dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyW', key: 'w' })); dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyE', key: 'e' })); });
@@ -51,6 +40,21 @@ ok('Esc volta para a órbita', await fr.evaluate(() => document.getElementById('
 await fr.evaluate(() => document.getElementById('mn').click());
 ok('menu Clima lista as opções', (await fr.evaluate(() => document.querySelectorAll('#pl button').length)) === 5);
 await fr.evaluate(() => document.getElementById('mn').click());
+
+// câmera de cinema pela página que incorpora: barras aparecem, câmera chega ao ponto; cine-sair devolve
+await p.evaluate(() => document.getElementById('f').contentWindow.postMessage({ cmd: 'cine', p: [6, 2, 26], t: [0, 2, 12], estilo: 'corte', legenda: 'Algo se move' }, '*'));
+await fr.waitForFunction(() => (window.__cineState?.().on && window.__cineState().dist < 1.5), null, { timeout: 180000, polling: 500 }).catch(() => {});
+const cs = await fr.evaluate(() => ({ ...window.__cineState?.(), barras: document.body.classList.contains('cine'), leg: document.getElementById('lcap').textContent }));
+ok('cinema leva a câmera ao ponto', cs.on && cs.dist < 1.5 && cs.barras && cs.leg === 'Algo se move', `dist ${cs.dist?.toFixed(2)}`);
+await p.evaluate(() => document.getElementById('f').contentWindow.postMessage({ cmd: 'cine-sair' }, '*'));
+await fr.waitForFunction(() => !window.__cineState?.().on, null, { timeout: 180000, polling: 500 }).catch(() => {});
+ok('sair do cinema devolve a câmera', await fr.evaluate(() => !window.__cineState().on && !document.body.classList.contains('cine') && !document.getElementById('bmo').hidden));
+
+// painel de cinema: gravar a câmera atual cria uma tomada
+await fr.evaluate(() => document.getElementById('mcine').click());
+await fr.evaluate(() => document.getElementById('csave').click());
+ok('gravar tomada aparece na lista', (await fr.evaluate(() => document.querySelectorAll('#clist .it').length)) >= 1);
+await fr.evaluate(() => document.getElementById('mcine').click());
 
 // clima e mapa por postMessage
 await p.evaluate(() => document.getElementById('f').contentWindow.postMessage({ cmd: 'time', i: 4 }, '*'));

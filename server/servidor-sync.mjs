@@ -13,6 +13,7 @@
 //   MAX_POS=3000              limite de posições guardadas por sala
 //
 // Mensagens (JSON):  {t:'pos', map, id, v}  {t:'char', id, v}  {t:'delchar', id}
+//                    {t:'cine', v:{a:'play'|'end', p, t, fov, e, cap, map, de}}  (câmera de cinema: só repassada, não fica salva)
 // Conexões com ?ro=1 (ou sem a chave, quando EDIT_KEY existe) só recebem: o servidor ignora o que enviarem.
 import { WebSocketServer } from 'ws';
 import http from 'node:http';
@@ -85,6 +86,7 @@ wss.on('connection', (ws, req) => {
   for (const id in R.chars) ws.send(JSON.stringify({ t: 'char', id, v: R.chars[id] }));
   for (const k in R.pos) { const i = k.indexOf('|'); ws.send(JSON.stringify({ t: 'pos', map: k.slice(0, i), id: k.slice(i + 1), v: R.pos[k] })); }
   ws.send(JSON.stringify({ t: 'hello', room, edit: canEdit }));
+  if (R.cine && Date.now() - R.cine.ts < 120000) ws.send(R.cine.msg);
 
   let tokens = RATE.perSec, lastFill = Date.now();
   ws.on('message', data => {
@@ -92,7 +94,23 @@ wss.on('connection', (ws, req) => {
     const now = Date.now(); tokens = Math.min(RATE.perSec, tokens + ((now - lastFill) / 1000) * RATE.perSec); lastFill = now;
     if (tokens < 1) return; tokens -= 1;
     let m; try { m = JSON.parse(data); } catch { return; }
-    if (!m || typeof m !== 'object' || typeof m.id !== 'string' || m.id.length > 64) return;
+    if (!m || typeof m !== 'object') return;
+    if (m.t === 'cine') { // câmera de cinema do mestre: repassa para a sala, sem salvar
+      const v = m.v, vec = a => Array.isArray(a) && a.length === 3 && a.every(Number.isFinite), de = String(v?.de || '').slice(0, 16);
+      let out;
+      if (v?.a === 'end') out = { a: 'end', de };
+      else if (v?.a === 'play' && vec(v.p) && vec(v.t)) out = {
+        a: 'play', p: v.p.map(n => num(n)), t: v.t.map(n => num(n)), fov: num(v.fov, 120, 50) || 50,
+        e: ['suave', 'corte', 'susto'].includes(v.e) ? v.e : 'suave', cap: String(v.cap || '').slice(0, 140), map: String(v.map || '').slice(0, 40), de,
+      };
+      else return;
+      const msg = JSON.stringify({ t: 'cine', v: out });
+      // guarda a cena em andamento: quem entra ou reconecta no meio dela também vê (até 2 min)
+      R.cine = out.a === 'play' ? { msg, ts: now } : null;
+      R.set.forEach(c => c.readyState === 1 && c.send(msg));
+      return;
+    }
+    if (typeof m.id !== 'string' || m.id.length > 64) return;
     if (m.t === 'pos') {
       const v = m.v; if (!v || !Number.isFinite(v.x) || !Number.isFinite(v.z)) return;
       const map = String(m.map || '').replace(/\|/g, '-').slice(0, 40), k = map + '|' + m.id;

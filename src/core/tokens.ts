@@ -93,7 +93,11 @@ export function onPos(map: string, id: string, v: any) {
   if (!v || typeof v.x !== 'number') return;
   st.pos[map + '__' + id] = v; if (map !== st.curMap) return;
   const t = st.T[id];
-  if (t && t !== st.drag) { t.target.set(v.x, v.z); t.ty = v.y || 0; t.fl = !!v.f; if (typeof v.h === 'number') t.h = v.h; sizeT(t); }
+  if (t && t !== st.drag) {
+    t.target.set(v.x, v.z); t.ty = v.y || 0; t.fl = !!v.f; if (typeof v.h === 'number') t.h = v.h; sizeT(t);
+    // salto grande (ex.: revelado pela câmera de cinema): aparece direto no lugar, sem deslizar pelo mapa
+    if (Math.hypot(t.g.position.x - v.x, t.g.position.z - v.z) > 8) t.g.position.set(v.x, t.ty, v.z);
+  }
 }
 export function onChar(id: string, v: any) {
   if (v && v.img && !st.T[id]) makeToken({ id, name: v.name, h: v.h, c: v.c, img: v.img, custom: true });
