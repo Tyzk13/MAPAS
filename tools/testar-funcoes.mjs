@@ -37,6 +37,21 @@ const wpos = await fr.evaluate(() => (window).__walkState?.());
 ok('caminhar move o personagem', !!wpos && wpos.moved > 0.3, wpos ? `andou ${wpos.moved.toFixed(1)} m, y=${wpos.y.toFixed(2)}` : 'sem estado');
 await fr.evaluate(() => document.getElementById('bwk').click());
 
+// câmera livre: entra pelo botão, anda para frente e sobe; Esc volta para a órbita
+await fr.evaluate(() => document.getElementById('blv').click());
+await fr.evaluate(() => { dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyW', key: 'w' })); dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyE', key: 'e' })); });
+await fr.waitForFunction(() => (window.__freeState?.().moved ?? 0) > 1, null, { timeout: 120000, polling: 500 }).catch(() => {});
+await fr.evaluate(() => { dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyW', key: 'w' })); dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyE', key: 'e' })); });
+const fpos = await fr.evaluate(() => window.__freeState?.());
+ok('câmera livre move a câmera', !!fpos && fpos.moved > 1, fpos ? `moveu ${fpos.moved.toFixed(1)} m` : 'sem estado');
+await fr.evaluate(() => dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', key: 'Escape' })));
+ok('Esc volta para a órbita', await fr.evaluate(() => document.getElementById('bmo').classList.contains('act')));
+
+// menus do dock: abrir Clima lista os 5 climas
+await fr.evaluate(() => document.getElementById('mn').click());
+ok('menu Clima lista as opções', (await fr.evaluate(() => document.querySelectorAll('#pl button').length)) === 5);
+await fr.evaluate(() => document.getElementById('mn').click());
+
 // clima e mapa por postMessage
 await p.evaluate(() => document.getElementById('f').contentWindow.postMessage({ cmd: 'time', i: 4 }, '*'));
 await p.waitForTimeout(1500);

@@ -5,7 +5,7 @@ import { st, $ } from './state';
 import { setTime, setShadowRadius } from './sky';
 import { placeT, selT } from './tokens';
 import { fillAreas } from './vtt';
-import { WM, startWalk } from './walk';
+import { WM, startWalk, freeLookAt } from './walk';
 import { MAPS } from '../maps/manifest';
 import { loading as loader } from './loading';
 import type { MapRuntime } from './types';
@@ -43,23 +43,25 @@ export async function loadMap(id: string) {
     if (old) { S.remove(old.G); disposeTree(old.G); }
     S.add(M.G); st.MP = M; st.curMap = id;
     setShadowRadius(M.shadowRadius);
-    $('bmap').textContent = 'Mapa: ' + MAPS[id].n;
+    $('bmap').textContent = MAPS[id].n;
     const L = $('lay'); L.innerHTML = '';
     M.layers.forEach(l => {
       const b = document.createElement('button'); let on = l.v;
-      const u = () => { b.textContent = l.n + ': ' + (on ? 'on' : 'off'); l.o.visible = on; };
+      b.className = 'tg'; b.textContent = l.n;
+      const u = () => { b.setAttribute('aria-pressed', String(on)); l.o.visible = on; };
       b.onclick = () => { on = !on; u(); }; u(); L.appendChild(b);
     });
-    $('bk').style.display = M.layers.length ? '' : 'none'; L.hidden = true;
+    $('bk').style.display = L.style.display = M.layers.length ? '' : 'none';
     st.V = M.views; st.vi = 0; st.anim = null;
     const v = st.V[0];
-    $('bv').textContent = 'Vista: ' + v.n;
+    $('bv').textContent = v.n;
     cam.fov = v.fov || 50; cam.updateProjectionMatrix();
     cam.position.set(...v.p); ctl.target.set(...v.t); ctl.update();
     setTime(st.pi);
     let i = 0; for (const k in st.T) placeT(st.T[k], i++);
     selT(null); fillAreas();
-    if (WM.on) startWalk();
+    if (WM.on && !WM.free) startWalk();
+    else if (WM.free) freeLookAt(new THREE.Vector3(...v.p), new THREE.Vector3(...v.t));
     mapHooks.forEach(f => f(M));
     desempenho.reiniciar();
     // quando as texturas chegarem, reaplica o clima (recaptura sondas de ambiente)

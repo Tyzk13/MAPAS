@@ -9,7 +9,8 @@ import { PRE, setTime, timeHooks, preloadSkies, driftSky } from './core/sky';
 import { anim } from './core/anim';
 import { DEF, makeToken, dropT, onChar, onPos, selT, sizeT, save, placeT, initTokenInput, tickTokens, snapTokens } from './core/tokens';
 import { NET, handlers, startNet } from './core/net';
-import { WM, setWalk, walkStep, walkPointer, initWalk, placeWalkCam } from './core/walk';
+import { WM, setWalk, setMode, modeHooks, freeLookAt, walkStep, walkPointer, initWalk, placeWalkCam } from './core/walk';
+import { menu, lista, fecharMenu, initMenus } from './core/menu';
 import { initVtt, xcalc, xrender, dd2vtt } from './core/vtt';
 import { initImporter } from './core/importer';
 import { loadMap } from './core/maps';
@@ -64,9 +65,34 @@ async function addChar(d: { name: string; h: number; c: number; img: string }) {
   await NET.addChar(id, d); NET.pos(id, { x: p.x, z: p.z, y: p.y, h: d.h, f: 0 });
 }
 
-// ---------- botões ----------
+// ---------- interface (dock, menus e painéis) ----------
+const QN = { baixa: 'Baixa', media: 'Média', alta: 'Alta' } as const;
+const marcarQ = () => { for (const b of $('bq').children as HTMLCollectionOf<HTMLElement>) b.classList.toggle('act', b.dataset.q === CFG.quality); };
+function escolherClima(i: number) { st.pi = i; setTime(i); $('bn').textContent = PRE[i].n; }
+function irParaVista(i: number) {
+  const v = st.V[i]; if (!v) return;
+  st.vi = i; $('bv').textContent = v.n;
+  if (WM.free) { freeLookAt(new THREE.Vector3(...v.p), new THREE.Vector3(...v.t)); return; }
+  if (WM.on) setMode('orbita');
+  st.anim = { cp: new THREE.Vector3(...v.p), tp: new THREE.Vector3(...v.t) };
+}
+const tg = (id: string, v: boolean) => $(id).setAttribute('aria-pressed', String(v));
+
 function initUi() {
-  $('ba').onclick = () => { $('add').hidden = false; };
+  initMenus();
+  // modos de câmera
+  $('bmo').onclick = () => setMode('orbita');
+  $('bwk').onclick = () => setMode(WM.on && !WM.free ? 'orbita' : 'caminhar');
+  $('blv').onclick = () => setMode(WM.free ? 'orbita' : 'livre');
+  modeHooks.push(m => { $('bmo').classList.toggle('act', m === 'orbita'); $('bwk').classList.toggle('act', m === 'caminhar'); $('blv').classList.toggle('act', m === 'livre'); });
+  // listas: vista, clima, mapa
+  menu('mv', 'pl', p => lista(p, 'Vista', st.V.map((v, i) => ({ n: v.n, cur: i === st.vi, go: () => irParaVista(i) }))));
+  menu('mn', 'pl', p => lista(p, 'Clima', PRE.map((c, i) => ({ n: c.n, cur: i === st.pi, go: () => escolherClima(i) }))));
+  menu('mm', 'pl', p => lista(p, 'Mapa', Object.values(MAPS).map(m => ({ n: m.n, cur: m.id === st.curMap, go: () => { if (m.id !== st.curMap) loadMap(m.id); } }))));
+  menu('mc', 'pc');
+  menu('mx', 'px');
+  // personagens
+  $('ba').onclick = () => { fecharMenu(); $('add').hidden = false; };
   $('ax').onclick = () => { $('add').hidden = true; };
   $('ao').onclick = async () => {
     const f = $('af').files[0], n = $('an').value.trim(), m = $('am');
@@ -82,25 +108,24 @@ function initUi() {
   $('szm').onclick = () => resz(1 / 1.15); $('szp').onclick = () => resz(1.15);
   $('fl').onclick = () => { const s = st.sel; if (s) { s.fl = !s.fl; sizeT(s); save(s, true); } };
   $('rm').onclick = () => { if (!st.sel || CFG.ro) return; NET.delChar(st.sel.id); selT(null); };
-  $('bn').textContent = PRE[st.pi].n;
-  $('bn').onclick = () => { st.pi = (st.pi + 1) % PRE.length; setTime(st.pi); $('bn').textContent = PRE[st.pi].n; };
-  $('bmap').onclick = () => { const ks = Object.keys(MAPS); loadMap(ks[(ks.indexOf(st.curMap) + 1) % ks.length]); };
-  $('bk').onclick = () => { $('lay').hidden = !$('lay').hidden; };
-  $('bg').onclick = () => { st.snap = !st.snap; $('bg').textContent = 'Grade: ' + (st.snap ? 'on' : 'off'); };
-  $('br').onclick = () => { if (CFG.ro) return; for (const k in st.T) { delete st.pos[st.curMap + '__' + k]; placeT(st.T[k]); save(st.T[k], true); } };
-  $('bv').onclick = () => {
-    if (WM.on) return;
-    st.vi = (st.vi + 1) % st.V.length; const v = st.V[st.vi];
-    st.anim = { cp: new THREE.Vector3(...v.p), tp: new THREE.Vector3(...v.t) }; $('bv').textContent = 'Vista: ' + v.n;
-  };
-  $('bfs').onclick = () => { const d = document.documentElement; if (document.fullscreenElement) document.exitFullscreen(); else if (d.requestFullscreen) d.requestFullscreen(); };
-  if (!document.documentElement.requestFullscreen) $('bfs').style.display = 'none';
-  const setC = (v: boolean) => { st.showC = v; $('ros').style.display = v ? '' : 'none'; $('bch').textContent = 'Personagens: ' + (v ? 'on' : 'off'); if (!v) selT(null); };
+  const setC = (v: boolean) => { st.showC = v; $('ros').style.display = v ? '' : 'none'; tg('bch', v); if (!v) selT(null); };
   $('bch').onclick = () => setC(!st.showC); setC(st.showC);
-  const QN = { baixa: 'Baixa', media: 'Média', alta: 'Alta' } as const, QS = ['baixa', 'media', 'alta'] as const;
-  $('bq').textContent = 'Qualidade: ' + QN[CFG.quality];
-  // qualidade: resolução/sombras/pós na hora; densidade da vegetação ao recarregar o mapa
-  $('bq').onclick = async () => { CFG.quality = QS[(QS.indexOf(CFG.quality) + 1) % 3]; post.setQuality(CFG.quality); $('bq').textContent = 'Qualidade: ' + QN[CFG.quality]; await loadMap(st.curMap); desempenho.reiniciar(); };
+  $('bg').onclick = () => { st.snap = !st.snap; tg('bg', st.snap); };
+  $('br').onclick = () => { if (CFG.ro) return; fecharMenu(); for (const k in st.T) { delete st.pos[st.curMap + '__' + k]; placeT(st.T[k]); save(st.T[k], true); } };
+  // mais: qualidade (resolução/sombras/pós na hora; densidade da vegetação ao recarregar o mapa)
+  marcarQ();
+  for (const b of $('bq').children as HTMLCollectionOf<HTMLElement>) b.onclick = async () => {
+    const q = b.dataset.q as keyof typeof QN; if (q === CFG.quality) return;
+    CFG.quality = q; marcarQ(); fecharMenu(); post.setQuality(q); await loadMap(st.curMap); desempenho.reiniciar();
+  };
+  $('bim').addEventListener('click', fecharMenu); $('bx').addEventListener('click', fecharMenu);
+  $('bfs').onclick = () => { fecharMenu(); const d = document.documentElement; if (document.fullscreenElement) document.exitFullscreen(); else if (d.requestFullscreen) d.requestFullscreen(); };
+  if (!document.documentElement.requestFullscreen) $('bfs').style.display = 'none';
+  $('bhelp').onclick = () => { fecharMenu(); $('help').hidden = false; };
+  $('hx').onclick = () => { $('help').hidden = true; };
+  $('bn').textContent = PRE[st.pi].n;
+  // indicador de conexão (ponto verde quando ao vivo)
+  new MutationObserver(() => document.body.classList.toggle('ao-vivo', /^ao vivo/.test($('st').textContent))).observe($('st'), { childList: true, characterData: true, subtree: true });
   ctl.addEventListener('start', () => { st.anim = null; });
 }
 
@@ -108,7 +133,7 @@ function initUi() {
 addEventListener('message', e => {
   const m = e.data || {};
   if (m.cmd === 'map' && MAPS[m.id]) loadMap(m.id);
-  else if (m.cmd === 'time') { st.pi = (+m.i || 0) % PRE.length; setTime(st.pi); $('bn').textContent = PRE[st.pi].n; }
+  else if (m.cmd === 'time') escolherClima(Math.abs(+m.i || 0) % PRE.length);
 });
 
 // ---------- laço ----------
@@ -125,7 +150,7 @@ function frame(ts?: number) {
   const dt = Math.min(0.1, timer.getDelta()), t = timer.getElapsed(), M = st.MP;
   if (!M) return;
   anim.time.value = t; driftSky(t);
-  tickTokens(WM.on, WM.third, WM.av);
+  tickTokens(WM.on && !WM.free, WM.third, WM.av);
   if (M.tick) M.tick(dt, t);
   if (st.anim) {
     const a = st.anim; ctl.target.lerp(a.tp, 0.1); cam.position.lerp(a.cp, 0.1);

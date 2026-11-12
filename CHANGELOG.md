@@ -106,3 +106,16 @@
   (tipos, builds e servidor a cada push; teste no navegador sob demanda).
 - `.nvmrc`, `.editorconfig`, `CLAUDE.md`; README reorganizado (tabelas de comandos, controles e parâmetros);
   novo `docs/VTT.md` (Foundry com Universal Battlemap Importer, Roll20, outras mesas); Docker em `docs/HOSPEDAGEM.md`.
+
+## Câmera livre e novo menu
+
+- **Câmera livre** (botão *Livre*): voa pela cena como um personagem sem corpo — WASD para onde olha, arrastar para
+  olhar, Q/E (ou Espaço) desce/sobe, Shift acelera, roda do mouse ajusta a velocidade, aceleração e frenagem suaves.
+  Colide com paredes e não entra no chão; **G** liga o modo fantasma. No celular: joystick + botões ▲▼.
+  O menu Vista leva a câmera livre direto para os pontos prontos.
+- **Dock redesenhado**: a barra de 15 botões virou um dock compacto com seletor de modo (Órbita/Caminhar/Livre),
+  menus com todas as opções de Vista, Clima e Mapa (antes era preciso clicar várias vezes para chegar à opção),
+  painel Personagens com interruptores e painel Mais (qualidade em 3 botões, camadas, exportar, importar,
+  tela cheia, atalhos). Ícones, ponto verde quando a sincronização está ao vivo, janela de atalhos.
+- Celular: dock em duas linhas, menus como folha inferior.
+- `tools/testar-funcoes.mjs` testa também a câmera livre, o Esc e o menu Clima.

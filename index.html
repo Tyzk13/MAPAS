@@ -13,7 +13,7 @@
 <div id="ros"></div>
 <div id="meas" hidden></div>
 <div id="joy" hidden><i></i></div>
-<div id="imp" hidden><b>Importar do seu computador</b>
+<div id="imp" class="dlg" hidden><b>Importar do seu computador</b>
 <label>Mapa 3D (.glb) <input id="if" type="file" accept=".glb,.gltf"></label>
 <label>Escala <input id="is" type="number" value="1" step="0.1" min="0.01"></label>
 <label>Jardim e decoração ao redor <input id="igd" type="checkbox" checked></label>
@@ -21,21 +21,64 @@
 <label>HDRI (.hdr) <input id="ih" type="file" accept=".hdr"></label>
 <div style="display:flex;gap:8px"><button id="ihb">Aplicar HDRI</button><button id="inh">Remover HDRI</button></div>
 <div id="im"></div><div style="font-size:11px;opacity:.7">Nomes das peças: floor/piso/chao = chão · wall/parede = colisão · roof/telhado = camada Telhado</div>
-<div style="display:flex;justify-content:flex-end"><button id="ix">Fechar</button></div></div>
-<div id="exp" hidden><b>Exportar para mesa virtual</b>
+<div class="row"><button id="ix">Fechar</button></div></div>
+<div id="exp" class="dlg" hidden><b>Exportar para mesa virtual</b>
 <label>Área <select id="xa"></select></label>
 <label>Pixels por quadrado <select id="xp"><option>50</option><option selected>70</option><option>100</option><option>140</option></select></label>
 <label>Mostrar copas das árvores <input id="xc" type="checkbox"></label>
 <label>Sombras <input id="xs" type="checkbox"></label>
 <div id="xi"></div>
-<div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap"><button id="xx">Fechar</button><button id="xpng">Baixar PNG</button><button id="xvtt">Universal VTT</button></div></div>
+<div class="row"><button id="xx">Fechar</button><button id="xpng">Baixar PNG</button><button id="xvtt" class="pri">Universal VTT</button></div></div>
 <div id="sel" hidden><span id="sn"></span><button id="szm">−</button><button id="szp">+</button><button id="fl" title="Espelhar">⇋</button><button id="rm">Remover</button></div>
-<div id="add" hidden><b>Novo personagem</b><input id="af" type="file" accept="image/*"><input id="an" placeholder="Nome" maxlength="24">
+<div id="add" class="dlg" hidden><b>Novo personagem</b><input id="af" type="file" accept="image/*"><input id="an" placeholder="Nome" maxlength="24">
 <label>Tamanho <select id="as"><option value="1.2">Pequeno</option><option value="1.7" selected>Médio</option><option value="2.4">Grande</option><option value="3.4">Enorme</option></select></label>
 <label>Cor da base <input id="ac" type="color" value="#8a8f98"></label>
 <label>Remover fundo liso <input id="ab" type="checkbox" checked></label><div id="am"></div>
-<div style="display:flex;gap:8px;justify-content:flex-end"><button id="ax">Cancelar</button><button id="ao">Adicionar</button></div></div>
-<div class="bar"><div id="lay" hidden></div><button id="bwk">Caminhar</button><button id="bpv">3ª pessoa</button><button id="bk">Camadas</button><button id="bn">Anoitecer</button><button id="bv">Vista: Cinema</button><button id="bg">Grade: on</button><button id="bmap">Mapa</button><button id="bim">Importar 3D</button><button id="bx">Exportar VTT</button><button id="bch">Personagens: on</button><button id="ba">+ Personagem</button><button id="br">Resetar</button><button id="bfs" title="Tela cheia">⛶</button><button id="bq">Qualidade: Média</button><span id="st">local</span></div>
+<div class="row"><button id="ax">Cancelar</button><button id="ao" class="pri">Adicionar</button></div></div>
+<nav class="dock" id="dock" aria-label="Controles do mapa">
+<div class="seg" role="group" aria-label="Modo de câmera">
+<button id="bmo" class="act" title="Órbita: arrastar gira em volta, roda aproxima"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2.6"/><ellipse cx="12" cy="12" rx="9.5" ry="4.2" transform="rotate(-20 12 12)"/></svg><span class="lbl">Órbita</span></button>
+<button id="bwk" title="Caminhar com o personagem (WASD)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="13" cy="4.2" r="2"/><path d="M10.5 21l2-5.5 3 2.5v3M12.5 15.5l-1-5.5 3.5 1.5 2.5 3M11.5 10l-3.5 3"/></svg><span class="lbl">Caminhar</span></button>
+<button id="blv" title="Câmera livre: voar pela cena (WASD, Q/E)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="7" width="12.5" height="10" rx="2"/><path d="M15 11l6.5-3.2v8.4L15 13z"/></svg><span class="lbl">Livre</span></button>
+</div>
+<button id="bpv" class="mini" hidden title="Alternar 1ª/3ª pessoa (V)">3ª pessoa</button>
+<span class="sep"></span>
+<span class="brk"></span>
+<button class="pick" id="mv" aria-haspopup="menu"><small>Vista</small><span id="bv">Cinema</span></button>
+<button class="pick" id="mn" aria-haspopup="menu"><small>Clima</small><span id="bn">Terror</span></button>
+<button class="pick" id="mm" aria-haspopup="menu"><small>Mapa</small><span id="bmap">Igreja</span></button>
+<span class="sep"></span>
+<button id="mc" aria-haspopup="menu" title="Personagens"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3.5 20c0-3.1 2.4-5.6 5.5-5.6s5.5 2.5 5.5 5.6"/><circle cx="17" cy="9" r="2.3"/><path d="M16 14.3c2.6.3 4.5 2.6 4.5 5.4"/></svg><span class="lbl">Personagens</span></button>
+<button id="mx" aria-haspopup="menu" title="Mais opções"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg><span class="lbl">Mais</span></button>
+<span id="st" title="Conexão">local</span>
+</nav>
+<div class="pop" id="pl" hidden role="menu"></div>
+<div class="pop" id="pc" hidden role="menu">
+<div class="h">Personagens</div>
+<button id="ba">+ Novo personagem…</button>
+<button id="bch" class="tg" aria-pressed="true">Mostrar personagens</button>
+<button id="bg" class="tg" aria-pressed="true">Encaixar na grade</button>
+<button id="br">Voltar às posições iniciais</button>
+</div>
+<div class="pop" id="px" hidden role="menu">
+<div class="h">Qualidade</div>
+<div class="seg full" id="bq"><button data-q="baixa">Baixa</button><button data-q="media">Média</button><button data-q="alta">Alta</button></div>
+<div class="h" id="bk">Camadas</div><div id="lay"></div>
+<div class="h">Ferramentas</div>
+<button id="bx">Exportar para mesa virtual…</button>
+<button id="bim">Importar 3D / HDRI…</button>
+<button id="bfs">Tela cheia</button>
+<button id="bhelp">Atalhos e controles</button>
+</div>
+<div id="fly" hidden><button id="flu" aria-label="Subir">▲</button><button id="fld" aria-label="Descer">▼</button></div>
+<div id="help" class="dlg" hidden><b>Atalhos e controles</b>
+<dl>
+<dt>Órbita</dt><dd>arrastar: girar · roda/pinça: zoom · botão direito ou dois dedos: mover · arraste os personagens para posicioná-los (setas movem o selecionado)</dd>
+<dt>Caminhar</dt><dd>WASD/setas: andar · arrastar: olhar · Shift: correr · V: 1ª/3ª pessoa · joystick no celular</dd>
+<dt>Câmera livre</dt><dd>WASD: mover · arrastar: olhar · Q/E (ou Espaço): descer/subir · Shift: rápido · roda: velocidade · G: atravessar paredes · ▲▼ no celular</dd>
+<dt>Geral</dt><dd>Esc: volta para a órbita · Vista: leva a câmera para pontos prontos</dd>
+</dl>
+<div class="row"><button id="hx">Fechar</button></div></div>
 <script type="module" src="/src/main.ts"></script>
 </body>
 </html>

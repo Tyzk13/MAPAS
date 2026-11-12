@@ -47,11 +47,17 @@ O CI do GitHub (`.github/workflows/ci.yml`) roda tipos, builds e o teste do serv
 
 ## Controles
 
+O dock na parte de baixo tem: **modo de câmera** (Órbita · Caminhar · Livre), menus **Vista**, **Clima** e **Mapa**
+(mostram todas as opções, com a atual marcada), **Personagens** (novo, mostrar, grade, resetar) e **Mais**
+(qualidade, camadas, exportar VTT, importar 3D, tela cheia, atalhos). No celular ele vira duas linhas e os menus
+abrem como folha inferior.
+
 | Modo | Controles |
 |---|---|
-| Câmera | arrastar: girar · roda/pinça: zoom · botão direito/dois dedos: mover · **Vista** alterna câmeras prontas |
-| Personagens | arrastar para mover (encaixa na grade) · setas movem o selecionado · Esc solta |
-| Caminhar | WASD/setas: andar · ←/→ ou arrastar: olhar · Shift: correr · V: 1ª/3ª pessoa · Esc: sair · joystick no celular |
+| Órbita | arrastar: girar · roda/pinça: zoom · botão direito/dois dedos: mover · arraste os personagens (setas movem o selecionado) |
+| Caminhar | WASD/setas: andar · arrastar: olhar · Shift: correr · V: 1ª/3ª pessoa · joystick no celular |
+| Câmera livre | WASD: mover para onde olha · arrastar: olhar · Q/E ou Espaço: descer/subir · Shift: rápido · roda: velocidade · G: atravessar paredes · joystick e ▲▼ no celular |
+| Geral | Esc: volta para a órbita · menu Vista leva a câmera (ou a câmera livre) para pontos prontos |
 
 ## Parâmetros de URL
 
