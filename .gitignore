@@ -8,3 +8,7 @@ src/assets-lite/
 capturas/_em-andamento-*/
 dist-lite/
 server/dados/
+
+# exportações do teste VTT (dezenas de MB): ficam só as prévias
+capturas/vtt/*.dd2vtt
+capturas/vtt/*.png

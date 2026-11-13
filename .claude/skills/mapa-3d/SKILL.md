@@ -149,6 +149,9 @@ Leia `docs/NOVO-MAPA.md` antes de começar.
   luzes pedidas mais perto da câmera (`escolherLuzes`, 3×/s ou quando a câmera pula > 5 m). Mudar posição/cor
   não recompila shader. Nas capturas o tempo é fixo: re-escolha também pela distância percorrida.
 
+- `node tools/testar-vtt.mjs` grava `.dd2vtt`/`.png` de dezenas de MB em `capturas/vtt/`: estão no `.gitignore`
+  (só as `_previa.jpg` vão para o git). Nunca faça `git add` deles.
+
 ## Medir o peso (faça antes de publicar)
 
 - `npx vite build --outDir .cache/capturas-build && node tools/medir-peso.mjs <mapa>` (Baixa e Alta).
