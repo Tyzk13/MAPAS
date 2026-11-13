@@ -137,6 +137,18 @@ Leia `docs/NOVO-MAPA.md` antes de começar.
   `waitForFunction` na posição da câmera, não um tempo fixo).
 - A 1ª vista de `M.views` é onde o mapa abre: ponha lá o lugar da missão (Harlow abre na delegacia).
 
+## Floresta e luzes (aprendido em `src/maps/texas/forest.ts` e `texas/index.ts`)
+
+- `fir_tree_01` (até no LOD2) custa ~17k triângulos por cópia e quase não aparece de longe: para mata densa, use
+  **pinheiro em código** (`pineGeo`: tronco + 7 saias de cone com borda irregular, cor por vértice, ~150 tri),
+  instanciado em blocos de 30 m com `cullDist`. Cor verde-oliva escura e pouco saturada (HSL ~0.27/0.22/0.075).
+- Chão de mata = malha por cima do terreno com textura `forest_ground_04` e **cor de vértice com alfa
+  (itemSize 4) + `transparent`**: a borda some aos poucos. Corte seco (afundar vértices) deixa degraus.
+- Mantenha livres de árvores as câmeras das vistas (`FOREST.cams`) e os pontos de cena (árvore dos sapatos).
+- Luzes: em vez de acender só as N de maior prioridade no mapa todo, mantenha N PointLights e mova-as para as
+  luzes pedidas mais perto da câmera (`escolherLuzes`, 3×/s ou quando a câmera pula > 5 m). Mudar posição/cor
+  não recompila shader. Nas capturas o tempo é fixo: re-escolha também pela distância percorrida.
+
 ## Medir o peso (faça antes de publicar)
 
 - `npx vite build --outDir .cache/capturas-build && node tools/medir-peso.mjs <mapa>` (Baixa e Alta).

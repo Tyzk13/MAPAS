@@ -361,6 +361,62 @@ export async function buildPolice(G: THREE.Group): Promise<Police> {
   nm('Bilhete na cela'); doc(paper('(scrap of paper)', ['they all say the same thing at 10:01.', 'don\'t answer.', 'don\'t say your name out loud.', '— T.B.'], { size: 22, bg: '#ece6d0' }), 0.18, 0.22, 20.3, FL + 0.565, 18.7, 0.6, true);
   light(wx(17.2), CEIL - 0.1, wz(19.5), 5, 8, 0xe0f0e8, { vtt: 5, flick: 3 });
 
+  // =================== O SUMIÇO DAS CRIANÇAS ===================
+  const kids: [string, number, string, string, string][] = [
+    ['LILY HALE', 8, 'Oct 29', 'Hale ranch, edge of the corn by the woods, 9:50 PM', 'one pink sneaker at the tree line'],
+    ['TOMMY GARZA', 10, 'Nov 2', 'Camp Harlow trail (dared by friends), ~10 PM', 'his flashlight — still ON'],
+    ['JOSIE KOWALSKI', 7, 'Nov 6', 'her bedroom. Window open from INSIDE. Bare footprints to the woods', 'nothing'],
+    ['DANNY BOONE', 11, 'Nov 9', 'rode his bike to look for Tommy', 'red bike on the trail'],
+  ];
+  // quadro "crianças desaparecidas" na sala do caso (parede leste)
+  nm('Quadro das crianças desaparecidas'); doc(mk(2048, 1024, g => {
+    cork(g, 2048, 1024);
+    marker(g, 'MISSING CHILDREN — HARLOW, FALL 2026', 50, 80, 58, '#1a1a1a');
+    kids.forEach(([n, a2, d, onde, ach], i) => { const x = 50 + i * 495; photo(g, x + 90, 120, 300, 340, 'girl', n.split(' ')[0] + ', ' + a2);
+      paperDraw(g, x, 480, 470, 250, n + ' (' + a2 + ') — ' + d, ['Last seen: ' + onde + '.', 'Found: ' + ach + '.'], { size: 19, bg: i === 3 ? '#f2d8d0' : '#f0ead8' }); pin(g, x + 240, 125); });
+    // padrão: a cada 20 anos
+    g.strokeStyle = '#1a1a1a'; g.lineWidth = 4; g.beginPath(); g.moveTo(60, 900); g.lineTo(1990, 900); g.stroke();
+    [['1946', '2 kids · "ran off"'], ['1966', '3 kids · CAMP HARLOW'], ['1986', 'Clara + 2 campers'], ['2006', '1 kid · "runaway"'], ['2026', '4 so far…']].forEach(([y, t2], i) => { const x = 120 + i * 440; g.fillStyle = '#1a1a1a'; g.beginPath(); g.arc(x, 900, 10, 0, 7); g.fill(); g.font = 'bold 34px "Courier New"'; g.fillText(y, x - 40, 870); g.font = '24px "Courier New"'; g.fillStyle = i === 4 ? '#a01a1a' : '#2a2a2a'; g.fillText(t2, x - 60, 950); });
+    marker(g, 'EVERY 20 YEARS · ALWAYS IN THE FALL · ALWAYS CEDAR HOLLOW', 300, 1000, 40, '#a01a1a');
+    g.strokeStyle = '#b01818'; g.lineWidth = 3; [[290, 125], [785, 125], [1280, 125], [1775, 125]].reduce((p0, p1) => { g.beginPath(); g.moveTo(p0[0], p0[1]); g.lineTo(p1[0], p1[1]); g.stroke(); return p1; });
+  }), 4.0, 2.0, 16 - IT / 2 - 0.012, 1.6, 16.8, -Math.PI / 2);
+  // mapa de busca de Cedar Hollow na sala dos agentes (entre as janelas)
+  nm('Mapa de busca de Cedar Hollow'); doc(mk(1024, 1024, g => {
+    g.fillStyle = '#e8e2c8'; g.fillRect(0, 0, 1024, 1024); g.fillStyle = '#3a4a3a';
+    for (let i = 0; i < 900; i++) { const a2 = rnd() * 6.283, r = Math.sqrt(rnd()) * 400; g.beginPath(); g.arc(512 + Math.cos(a2) * r, 520 + Math.sin(a2) * r * 0.9, 5, 0, 7); g.fill(); }
+    g.strokeStyle = '#1a1a1a'; g.lineWidth = 2; for (let k = 0; k <= 8; k++) { g.beginPath(); g.moveTo(112 + k * 100, 120); g.lineTo(112 + k * 100, 920); g.stroke(); g.beginPath(); g.moveTo(112, 120 + k * 100); g.lineTo(912, 120 + k * 100); g.stroke(); }
+    g.font = 'bold 40px Arial'; g.fillStyle = '#1a1a1a'; g.fillText('CEDAR HOLLOW — SEARCH GRID', 140, 80);
+    g.globalAlpha = 0.45; g.fillStyle = '#2a8a2a'; [[1, 1], [2, 1], [5, 2], [6, 6], [2, 6], [3, 7]].forEach(([c, r]) => g.fillRect(112 + c * 100, 120 + r * 100, 100, 100)); g.globalAlpha = 1;
+    g.fillStyle = '#a01a1a'; g.font = 'bold 34px Arial'; g.fillText('X', 600, 520); g.fillText('X', 395, 610); g.font = '26px "Comic Sans MS", cursive'; g.fillText('camp', 560, 560); g.fillText('shoe tree??', 330, 660);
+    g.fillStyle = '#1a2a6a'; g.font = '26px "Comic Sans MS", cursive'; g.fillText('green = searched. Dogs REFUSE to go past the camp.', 120, 980); g.fillText('compasses spin near the camp', 560, 300);
+    g.strokeStyle = '#6a4a2a'; g.setLineDash([12, 8]); g.lineWidth = 6; g.beginPath(); g.moveTo(900, 120); g.quadraticCurveTo(720, 400, 600, 520); g.stroke(); g.setLineDash([]); g.fillStyle = '#6a4a2a'; g.fillText('trail', 800, 200);
+  }), 1.4, 1.4, 11, 1.75, T + 0.012, 0);
+  // desenhos das crianças pregados na sala de evidências
+  nm('Desenhos das crianças'); doc(mk(1536, 640, g => {
+    g.fillStyle = '#9a7650'; g.fillRect(0, 0, 1536, 640);
+    const draw = (x: number, nome: string, frase: string) => {
+      g.save(); g.translate(x, 30); g.rotate((rnd() - 0.5) * 0.06); g.fillStyle = '#f4f2ea'; g.fillRect(0, 0, 470, 580);
+      g.fillStyle = '#2a7a2a'; for (let k = 0; k < 7; k++) { g.beginPath(); g.moveTo(30 + k * 62, 380); g.lineTo(60 + k * 62, 140 + (k % 2) * 40); g.lineTo(90 + k * 62, 380); g.fill(); }
+      g.strokeStyle = '#3a3a3a'; g.lineWidth = 5; g.fillStyle = '#ffffff'; g.beginPath(); g.moveTo(235, 210); g.lineTo(205, 380); g.lineTo(265, 380); g.closePath(); g.fill(); g.stroke(); g.beginPath(); g.arc(235, 190, 24, 0, 7); g.stroke();
+      g.fillStyle = '#1a1a1a'; g.beginPath(); g.arc(227, 188, 4, 0, 7); g.arc(243, 188, 4, 0, 7); g.fill();
+      g.fillStyle = '#c02a2a'; g.font = '34px "Comic Sans MS", cursive'; g.fillText(frase, 25, 450); g.fillStyle = '#2a2a8a'; g.font = '30px "Comic Sans MS", cursive'; g.fillText(nome, 25, 540);
+      g.restore(); pin(g, x + 235, 40);
+    };
+    draw(30, 'Lily, 8', 'the lady sings'); draw(530, 'Josie, 7', 'she knows my name'); draw(1030, 'Tommy, 10', 'DONT ANSWER HER');
+  }), 1.8, 0.75, 19, 1.7, 7 + IT / 2 + 0.012, 0);
+  // cartazes das crianças na recepção (parede sul)
+  nm('Cartazes das crianças (recepção)'); doc(mk(1024, 512, g => {
+    cork(g, 1024, 512);
+    kids.forEach(([n, a2, d], i) => { const x = 20 + i * 250; paperDraw(g, x, 30, 235, 450, 'MISSING', [n, 'Age ' + a2, 'Since ' + d + ', 2026', '', '', '', '', '', 'Any info: Sheriff Dept.'], { size: 14, bg: '#f2eee0' }); photo(g, x + 40, 160, 155, 175, 'girl'); pin(g, x + 117, 40); });
+  }), 1.7, 0.85, 4.6, 1.75, 16 - IT / 2 - 0.012, Math.PI);
+  // recorte de 1966 na mesa do xerife
+  nm('Recorte do jornal de 1966'); doc(paper('HARLOW GAZETTE — NOV. 3, 1966', ['THREE CHILDREN VANISH FROM CAMP HARLOW', 'Search of Cedar Hollow called off after 4 days. "They walked into the trees singing," said a counselor.', 'Funeral director Elias Pruitt Sr. leads prayer vigil.', 'Sheriff: "The boys ran off. They\'ll turn up."', '(same story printed in 1946, see archive)'], { size: 15, bg: '#e2d8bc' }), 0.26, 0.34, 3.85, FL + 0.796, 3.0, 0.5, true);
+  // depoimento da mãe de Tommy no interrogatório
+  nm('Depoimento de Rosa Garza'); doc(paper('STATEMENT — ROSA GARZA (mother of Tommy, 10)', ['"For a week he couldn\'t sleep. He said a girl in a white dress stood at the edge of the woods and called him by name — his whole name, Tomás Miguel, like his grandmother used to.', 'He said she told him the other kids were "playing" with her and it doesn\'t hurt, it\'s only cold.', 'The night he went, the phone rang at 10:01. Nobody there. Just wind and trees."', '— Deputy M. Garza did not finish taking this statement.'], { size: 15 }), 0.24, 0.32, 18.95, FL + 0.786, 3.0, 0.25, true);
+  // tênis rosa, mochila e lanterna na mesa de evidências
+  { const shoe = new THREE.BoxGeometry(0.09, 0.07, 0.2); shoe.translate(wx(18.7), FL + 0.82, wz(11.25)); Dt.add(m.paint, shoe, 0xe06a9a);
+    bx(Dt, m.paint, 0.3, 0.36, 0.14, 19.6, FL + 0.95, 10.7, 0x2a5a9a); bx(Dt, m.paint, 0.22, 0.12, 0.05, 19.6, FL + 0.9, 10.62, 0xd0b020); }
+
   // luminárias fluorescentes (painéis emissivos no forro)
   { const fm = new THREE.MeshStandardMaterial({ color: 0xe8ecf0, emissive: 0xf0f4ff, emissiveIntensity: 1.6, roughness: 0.4 });
     [[3, 4], [3, 12], [3, 20], [9, 4], [13, 4], [9, 10], [13, 10], [9, 18], [13, 18], [9, 21.5], [13, 21.5], [19, 3.5], [19, 11], [17.2, 18], [17.2, 21.5]].forEach(([x, z]) => { const p = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.04, 0.3), fm); p.position.set(wx(x), CEIL - 0.03, wz(z)); roofs.add(p); }); }

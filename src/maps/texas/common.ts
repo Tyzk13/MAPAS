@@ -33,6 +33,12 @@ export const PUMPS: [number, number, number][] = [[130, -46, 0.4], [196, -6, 2.1
 export const CROP = { x: 199, z: 60, r: 7 };
 /** Departamento do Xerife (frente para a Main St, a oeste) */
 export const POLICE = { x0: 10, x1: 32, z0: 70, z1: 94 };
+/** Cedar Hollow: pinheiral a noroeste; trilha sai do fim da estrada de terra (Commerce St oeste) */
+export const FOREST = { x: -178, z: -168, r: 54, trail: [-158, -118] as [number, number],
+  /** câmeras das vistas da floresta (ficam livres de árvores): Floresta, Acampamento, Árvore dos sapatos */
+  cams: [[-152, -106], [-163, -151], [-189, -175]] as [number, number][] };
+/** Camp Harlow (acampamento abandonado) e a árvore dos sapatos (deslocamento a partir do acampamento) */
+export const CAMP = { x: -176, z: -164, r: 14, shoes: [-19, -16] as [number, number] };
 export const TAVERN = { x0: -53.2, x1: -ROW0, z0: -36, z1: -18 };
 
 // ---------- materiais ----------

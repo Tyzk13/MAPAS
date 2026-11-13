@@ -8,10 +8,11 @@ import { Builder } from './buildings';
 import { buildLandmarks } from './landmarks';
 import { buildMystery, DOCS } from './mystery';
 import { buildPolice } from './police';
+import { buildForest } from './forest';
 import { PISTAS, NOTAS } from './pistas';
 import { buildNature, setBuilt, groundH } from './nature';
 import {
-  Q, rnd, reseed, sm, LREQ, TM, neonTexture, SQ, RING, ROW0, ROWD, HWY, RAIL, RES_Z, RES_X, EXT, CHURCH, CEMETERY, DINER, GAS, MOTEL, DEPOT, ELEVATOR, TOWERW, FARM, PUMPS, TAVERN, POLICE,
+  Q, rnd, reseed, sm, LREQ, TM, neonTexture, SQ, RING, ROW0, ROWD, HWY, RAIL, RES_Z, RES_X, EXT, CHURCH, CEMETERY, DINER, GAS, MOTEL, DEPOT, ELEVATOR, TOWERW, FARM, PUMPS, TAVERN, POLICE, FOREST, CAMP,
 } from './common';
 
 const P = (x: number, y: number, z: number) => [x, y, z] as [number, number, number];
@@ -39,7 +40,12 @@ export const VIEWS: View[] = [
   { n: 'Rádio', p: P(14.5, 1.65, 87), t: P(10.5, 1.2, 90), fov: 64 },
   { n: 'Celas', p: P(27.2, 1.65, 85.6), t: P(32, 1.3, 89.5), fov: 64 },
   { n: 'Quadro do caso', p: P(21, 1.65, 91.2), t: P(21, 1.65, 94), fov: 62 },
+  { n: 'Quadro das crianças', p: P(22.6, 1.6, 86.8), t: P(26, 1.6, 86.8), fov: 62 },
   { n: 'Mural da recepção', p: P(13, 1.7, 80.0), t: P(13, 1.7, 78), fov: 60 },
+  { n: 'Floresta', p: P(-152, 2.4, -106), t: P(-164, 3, -130), fov: 58 },
+  { n: 'Acampamento', p: P(-163, 3.2, -151), t: P(-178, 1.2, -166), fov: 60 },
+  { n: 'Árvore dos sapatos', p: P(-189, 1.7, -175), t: P(-195, 1.2, -180), fov: 60 },
+  { n: 'Cabana 1', p: P(-184.5, 1.6, -168.4), t: P(-186.6, 0.8, -171.4), fov: 66 },
   { n: 'Milharal', p: P(186, 2.4, 50), t: P(199, 0, 60), fov: 58 },
   { n: 'Vagão', p: P(-58, 1.7, -96), t: P(-63, 2.4, -104), fov: 58 },
   { n: 'Geral', p: P(0, 70, 120), t: P(0, 0, 10) },
@@ -55,7 +61,8 @@ export async function build(M: MapRuntime) {
   setBuilt((x, z) => {
     const d = Math.max(0, Math.max(Math.abs(x) - (EXT + 10), z - (HWY + 12), (RAIL - 24) - z));
     const farm = Math.max(0, Math.hypot(x - FARM.x - 8, z - FARM.z) - 48);
-    return Math.max(1 - sm(0, 30, d), 1 - sm(0, 20, farm));
+    const mata = Math.max(0, Math.hypot(x - FOREST.x, z - FOREST.z) - FOREST.r - 6);
+    return Math.max(1 - sm(0, 30, d), 1 - sm(0, 20, farm), 1 - sm(0, 25, mata));
   });
 
   // ---------- ruas ----------
@@ -135,22 +142,38 @@ export async function build(M: MapRuntime) {
   const L = await buildLandmarks(G);
   buildMystery(G, L.lamps);
   const PD = await buildPolice(G);
+  const FO = await buildForest(G);
+  M.lamps.push(...FO.lamps);
   M.lamps.push(...PD.lamps);
   // documentos clicáveis + tradução/nota do mestre; notas por vista (só na janela do mestre)
-  M.docs = [...PD.docs, ...DOCS].map(d => ({ ...d, ...(PISTAS[d.n] || {}) }));
+  M.docs = [...PD.docs, ...DOCS, ...FO.docs].map(d => ({ ...d, ...(PISTAS[d.n] || {}) }));
   M.notas = NOTAS;
   await b.finish();
   M.lamps.push(...L.lamps);
 
   // ---------- natureza ----------
-  const free = (x: number, z: number) => !busy(x, z) && !inR(x, z, -EXT - 4, EXT + 4, RES_Z[0] - 22, RES_Z[1] + 22) && !inR(x, z, FARM.x - 25, FARM.x + 50, FARM.z - 32, FARM.z + 60) &&
+  const free = (x: number, z: number) => !busy(x, z) && Math.hypot(x - FOREST.x, z - FOREST.z) > FOREST.r + 6 && !inR(x, z, -EXT - 4, EXT + 4, RES_Z[0] - 22, RES_Z[1] + 22) && !inR(x, z, FARM.x - 25, FARM.x + 50, FARM.z - 32, FARM.z + 60) &&
     !inR(x, z, ELEVATOR.x - 10, ELEVATOR.x + 22, ELEVATOR.z - 10, ELEVATOR.z + 14) && Math.hypot(x - TOWERW.x, z - TOWERW.z) > 7 && !PUMPS.some(([px, pz]) => Math.hypot(x - px, z - pz) < 7) &&
     !(Math.abs(x) < 9 && z < 0 && z > RAIL - 30);
   const N = await buildNature(G, free);
 
   // ---------- luzes ----------
-  const req = LREQ.slice().sort((a, c) => c.prio - a.prio), flick: { l: THREE.PointLight; n: number; k: number; kind: number }[] = [];
-  req.slice(0, Q.lights).forEach((r, i) => { const l = new THREE.PointLight(r.color, 0, 0, 2); l.position.set(r.x, r.y, r.z); G.add(l); M.lights.push({ l, d: 0, n: r.n }); if (r.flick) flick.push({ l, n: r.n, k: i, kind: r.flick }); });
+  // luzes que acompanham a câmera: um conjunto fixo de PointLights (8/14/22 pela qualidade) vai para as luzes
+  // pedidas mais perto da câmera (com bônus pela prioridade). Mudar posição/cor não recompila os shaders.
+  const req = LREQ.slice().sort((a, c) => c.prio - a.prio);
+  const pool = Array.from({ length: Q.lights }, () => { const l = new THREE.PointLight(0xffffff, 0, 0, 2); G.add(l); const e = { l, d: 0, n: 0 }; M.lights.push(e); return e; });
+  const alvo: (typeof LREQ[number] | null)[] = [];
+  let lampF = 1, ultimaEscolha = -1; const posEscolha = new THREE.Vector3(1e9, 0, 0);
+  const escolherLuzes = () => {
+    const c = cam.position;
+    const lista = LREQ.map(r => ({ r, s: Math.hypot(r.x - c.x, (r.y - c.y) * 1.5, r.z - c.z) - r.prio * 3 })).sort((a, b2) => a.s - b2.s).slice(0, pool.length);
+    pool.forEach((e, i) => {
+      const r = lista[i]?.r || null; alvo[i] = r;
+      if (!r) { e.n = 0; e.l.intensity = 0; return; }
+      e.l.position.set(r.x, r.y, r.z); e.l.color.setHex(r.color); e.n = r.n; e.l.intensity = r.n * lampF;
+    });
+  };
+  escolherLuzes();
 
   // ---------- poeira e rodadoras ----------
   const mist: THREE.Sprite[] = [];
@@ -164,10 +187,10 @@ export async function build(M: MapRuntime) {
   });
 
   // ---------- registro ----------
-  M.walk.push(...N.floors, ...b.floors, ...L.floors, ...PD.floors);
-  const solids = [...b.colliders, ...L.solids, ...PD.solids];
+  M.walk.push(...N.floors, ...b.floors, ...L.floors, ...PD.floors, ...FO.floors);
+  const solids = [...b.colliders, ...L.solids, ...PD.solids, ...FO.solids];
   M.solid = () => solids;
-  M.layers = [{ n: 'Telhados', o: b.roofs, v: true }, { n: 'Telhados (marcos)', o: L.roofs, v: true }, { n: 'Teto da delegacia', o: PD.roofs, v: true }];
+  M.layers = [{ n: 'Telhados', o: b.roofs, v: true }, { n: 'Telhados (marcos)', o: L.roofs, v: true }, { n: 'Teto da delegacia', o: PD.roofs, v: true }, { n: 'Telhados da floresta', o: FO.roofs, v: true }];
   M.views = VIEWS;
   M.shadowRadius = Q.lights > 8 ? 80 : 55;
   M.walkLimit = 240; M.camMax = 240; M.fogScale = 0.5;
@@ -182,6 +205,8 @@ export async function build(M: MapRuntime) {
   ];
   M.vtt = {
     areas: [
+      { n: 'Floresta: Camp Harlow', b: [CAMP.x - 28, CAMP.x + 22, CAMP.z - 26, CAMP.z + 16], lv: 1 },
+      { n: 'Floresta: Cedar Hollow inteira', b: [FOREST.x - FOREST.r - 6, FOREST.x + FOREST.r + 25, FOREST.z - FOREST.r - 6, FOREST.z + FOREST.r + 12], lv: 1 },
       { n: 'Delegacia (missão)', b: [POLICE.x0 - 8, POLICE.x1 + 1, POLICE.z0 - 1, POLICE.z1 + 1], lv: 1 },
       { n: 'Praça do tribunal', b: [-55, 55, -55, 55], lv: 1 },
       { n: 'Saloon', b: [TAVERN.x0 - 1, TAVERN.x1 + 5, TAVERN.z0 - 1, TAVERN.z1 + 1], lv: 1 },
@@ -193,21 +218,23 @@ export async function build(M: MapRuntime) {
       { n: 'Milharal (círculo)', b: [182, 218, 42, 82], lv: 1 },
       { n: 'Cidade inteira', b: [-160, 160, -125, 115], lv: 1 },
     ],
-    walls: [...b.vtt, ...L.vttWalls, ...PD.vttWalls],
-    portals: [...L.portals, ...PD.portals],
+    walls: [...b.vtt, ...L.vttWalls, ...PD.vttWalls, ...FO.vttWalls],
+    portals: [...L.portals, ...PD.portals, ...FO.portals],
     lights: req.filter(r => r.vtt).map(r => [+r.x.toFixed(2), +r.z.toFixed(2), r.vtt!, 0.8, r.color.toString(16).padStart(6, '0')] as [number, number, number, number, string]),
   };
-  M.exportHide = () => [b.roofs, L.roofs, PD.roofs];
+  M.exportHide = () => [b.roofs, L.roofs, PD.roofs, FO.roofs];
 
   // ---------- animação ----------
   let fogBase = 0.01, lampsOn = true;
-  M.onTime = p => { lampsOn = p.lamps > 0; fogBase = (S.fog as THREE.FogExp2 | null)?.density ?? fogBase; };
+  M.onTime = p => { lampsOn = p.lamps > 0; lampF = p.lamps; fogBase = (S.fog as THREE.FogExp2 | null)?.density ?? fogBase; escolherLuzes(); };
   const fp = L.anim.flag?.geometry.attributes.position as THREE.BufferAttribute | undefined, fx0 = fp ? Float32Array.from(fp.array as Float32Array) : null;
   M.tick = (dt, t) => {
-    flick.forEach(f => {
-      if (f.l.intensity <= 0) return;
-      if (f.kind === 3) { const on = Math.sin(t * 2.3) + Math.sin(t * 7.1) * 0.6 > -0.6; f.l.intensity = f.n * (on ? 0.9 + 0.1 * Math.sin(t * 40) : 0.08); }
-      else f.l.intensity = f.n * (0.82 + 0.18 * Math.sin(t * 13 + f.k * 7) * Math.sin(t * 7.3 + f.k));
+    // re-escolhe 3×/s ou quando a câmera pula (vistas, cinema, capturas)
+    if (Math.floor(t * 3) !== ultimaEscolha || cam.position.distanceToSquared(posEscolha) > 25) { ultimaEscolha = Math.floor(t * 3); posEscolha.copy(cam.position); escolherLuzes(); }
+    pool.forEach((e, k) => {
+      const r = alvo[k]; if (!r || !r.flick || !lampF) return;
+      if (r.flick === 3) { const on = Math.sin(t * 2.3) + Math.sin(t * 7.1) * 0.6 > -0.6; e.l.intensity = r.n * lampF * (on ? 0.9 + 0.1 * Math.sin(t * 40) : 0.08); }
+      else e.l.intensity = r.n * lampF * (0.82 + 0.18 * Math.sin(t * 13 + k * 7) * Math.sin(t * 7.3 + k));
     });
     if (lampsOn) {
       M.lamps.forEach((m, i) => { const bb = m.userData.base; if (bb && !L.anim.neon.some(n => n.m === m)) m.color.copy(bb).multiplyScalar(0.9 + 0.1 * Math.sin(t * 11 + i * 2.1) * Math.sin(t * 6.1 + i)); });
@@ -224,6 +251,7 @@ export async function build(M: MapRuntime) {
       tb.position.set(i === 1 ? k : -k, groundH(-k, z) + 0.38 + Math.abs(Math.sin(t * 3.1 + i)) * 0.25, z + Math.sin(t * 0.7 + i) * 1.2);
       tb.rotation.z = t * 5.5 * (i === 1 ? -1 : 1); tb.rotation.x = t * 0.7;
     });
-    const f = S.fog as THREE.FogExp2 | null; if (f && f.isFogExp2) f.density = fogBase / (1 + Math.max(0, cam.position.y - 8) / 14);
+    const naMata = Math.max(0, 1 - Math.max(0, Math.hypot(cam.position.x - FOREST.x, cam.position.z - FOREST.z) - FOREST.r + 10) / 30);
+    const f = S.fog as THREE.FogExp2 | null; if (f && f.isFogExp2) f.density = fogBase * (1 + naMata * 1.4) / (1 + Math.max(0, cam.position.y - 8) / 14);
   };
 }

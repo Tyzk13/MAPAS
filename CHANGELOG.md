@@ -283,3 +283,18 @@
 - Na lupa: **Mostrar aos jogadores** (imagem por cima da tela deles) ou **Levar a câmera até lá** (movimento de
   cinema que enquadra o documento na cena).
 - Harlow: tradução e nota de todos os 31 documentos e notas para todas as vistas (`src/maps/texas/pistas.ts`).
+
+## Harlow: o sumiço das crianças e a floresta de Cedar Hollow
+
+- **Floresta Cedar Hollow** (`src/maps/texas/forest.ts`), a noroeste depois dos trilhos, com estrada de terra:
+  pinheiral (pinheiros leves em código, ~150 triângulos cada, em blocos com corte por distância), sub-bosque,
+  chão de folhas com borda suave e névoa mais densa dentro da mata. No meio, o **Camp Harlow** abandonado
+  (cabanas com interior, torre de vigia, fogueira, balanço, mastro) e a **árvore dos sapatos** (símbolo entalhado,
+  12 sapatinhos, fitas, fita de isolamento, a lanterna do Tommy acesa). Pistas: cartaz e bicicleta do Danny,
+  bilhete da mãe do Tommy, diário da monitora de 1986. Vistas e áreas VTT novas.
+- **Delegacia — o sumiço das crianças:** quadro das 4 crianças com o padrão de 20 em 20 anos, mapa de busca da
+  floresta, desenhos das crianças, cartazes na recepção, recorte de jornal de 1966, depoimento da mãe do Tommy,
+  tênis e mochila nas evidências. Tradução e notas do mestre para tudo; dossiê reescrito para a missão.
+- **Luzes que acompanham a câmera:** o conjunto de luzes (8/14/22 pela qualidade) vai para as luzes mais perto da
+  câmera, 3×/s ou quando ela pula — delegacia, floresta e fazenda ficam iluminadas quando você está nelas, mesmo
+  na qualidade Baixa (antes só as de maior prioridade no mapa todo acendiam).

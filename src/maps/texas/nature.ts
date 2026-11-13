@@ -6,7 +6,7 @@ import { grassField } from '../../core/grass';
 import { instance, instanceVariants, type Xf } from '../../core/models';
 import { rockGeo, placeRock, nopal, agave, colorize } from '../mexico/nature';
 import { MAT } from '../mexico/common';
-import { Q, rnd, sm, lod, HWY, RAIL, FARM } from './common';
+import { Q, rnd, sm, lod, HWY, RAIL, FARM, FOREST } from './common';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
 /** quanto o ponto está dentro da área construída (1 = plano) */
@@ -26,6 +26,9 @@ export function dirtRoad(x: number, z: number) {
   let m = 0;
   if (x > 100 && x < FARM.x + 4) m = Math.max(m, 1 - sm(2.4, 4, Math.abs(z - 0)) ); // estrada da fazenda
   if (Math.abs(x - FARM.x + 12) < 4 && z > -2 && z < FARM.z) m = Math.max(m, 1 - sm(2.4, 4, Math.abs(x - FARM.x + 12)));
+  // estrada de terra para a floresta (fim da Commerce St oeste → entrada da trilha)
+  { const ax = -150, az = 0, bx = FOREST.trail[0], bz = FOREST.trail[1], dx = bx - ax, dz = bz - az, t = Math.max(0, Math.min(1, ((x - ax) * dx + (z - az) * dz) / (dx * dx + dz * dz)));
+    m = Math.max(m, 1 - sm(2.2, 3.8, Math.hypot(x - (ax + dx * t), z - (az + dz * t)))); }
   return m;
 }
 
@@ -45,7 +48,8 @@ export async function buildNature(G: THREE.Group, free: (x: number, z: number) =
     mask: (x, z) => {
       const n = fbm(x * 0.06, z * 0.06, 3), h = groundH(x, z), built = builtFn(x, z);
       const dirt = Math.max(dirtRoad(x, z), sm(0.58, 0.75, n) * 0.55, built * 0.3 * sm(0.4, 0.62, noise2(x * 0.12, z * 0.12)), (1 - sm(1.8, 3.6, Math.abs(z - RAIL))) * 0.9, (1 - sm(5, 9, Math.abs(z - HWY))) * 0.8);
-      const rocks = Math.max(sm(3, 14, h) * 0.9, sm(0.65, 0.8, fbm(x * 0.03 + 9, z * 0.03, 3)) * 0.4);
+      const mata = 1 - sm(FOREST.r - 14, FOREST.r + 14, Math.hypot(x - FOREST.x, z - FOREST.z)); // terra escura em volta da floresta (borda suave)
+      const rocks = Math.max(sm(3, 14, h) * 0.9, sm(0.65, 0.8, fbm(x * 0.03 + 9, z * 0.03, 3)) * 0.4, mata * 0.95);
       return [Math.min(1, dirt), Math.min(1, rocks)];
     },
   });

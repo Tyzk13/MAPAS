@@ -1,8 +1,51 @@
-# O Caso Whitlock — Harlow, Texas
+# O Caso Whitlock e o sumiço das crianças — Harlow, Texas
 
 Dossiê do mestre para o mapa **Harlow (Texas)** (`?map=texas`). Investigação curta (1–2 sessões) no estilo
 Ordem Paranormal: terror sutil, pistas no cenário, o paranormal aparece aos poucos. Tudo o que está aqui já
 existe no mapa 3D — cada pista tem uma vista com o nome indicado.
+
+## A missão: o sumiço das crianças
+
+**Em três semanas, quatro crianças sumiram em Harlow**, todas perto da floresta de **Cedar Hollow** (o pinheiral
+a noroeste, depois dos trilhos). Os agentes chegam à **delegacia** (o mapa abre lá) para descobrir o que está
+levando as crianças. O caso Whitlock, de 1986, é a chave: aconteceu antes, a cada 20 anos.
+
+| Criança | Idade | Quando | Onde foi vista | O que se achou | Ligação |
+|---|---|---|---|---|---|
+| Lily Hale | 8 | 29/out | beira do milharal junto à mata (rancho Hale), 21:50 | um tênis rosa (na delegacia) | filha do fazendeiro Hale — "menina no milho" |
+| Tommy Garza | 10 | 2/nov | trilha do Camp Harlow, num desafio, ~22h | a lanterna dele, ainda acesa (árvore dos sapatos) | filho do deputado M. Garza |
+| Josie Kowalski | 7 | 6/nov | do próprio quarto; janela aberta por dentro; pegadas descalças até a mata | nada | neta de Irene Kowalski (rádio) |
+| Danny Boone | 11 | 9/nov | foi de bicicleta procurar o Tommy | a bicicleta na trilha, virada para fora | filho do deputado T. Boone |
+
+**O padrão (quadro na sala do caso):** 1946 (2 crianças, "fugiram"), 1966 (3 crianças do Camp Harlow), 1986
+(Clara e 2 acampantes — o acampamento fecha em 1987), 2006 (1 criança, "fugiu de casa"), 2026 (4 até agora).
+Sempre no outono, sempre em Cedar Hollow. A família **Pruitt** estava na cidade em todos esses anos.
+
+**A verdade (só o mestre):** algo muito antigo vive em Cedar Hollow — uma "menina de vestido branco" que chama as
+crianças pelo nome entre as árvores ("não dói, só é frio"). A cada 20 anos, Elias Pruitt Sr. (e antes o pai dele)
+a "alimentava" em troca da prosperidade da cidade (o petróleo veio em 1946). Em 1986 Clara viu o ritual e foi
+levada; desde então a coisa usa o rosto e a voz dela. Pruitt Sr. morreu e o pacto ficou sem dono: agora ela leva
+quantas quiser. As crianças de 2026 ainda podem voltar se o círculo for fechado — dentro do círculo da árvore dos
+sapatos (ou do milharal), às 22:01, com as palavras que Pruitt Jr. escondeu no porão da fazenda.
+
+**Locais da floresta (vistas Floresta, Acampamento, Árvore dos sapatos, Cabana 1):**
+- **Entrada da trilha** (fim da estrada de terra, depois dos trilhos): portal "Camp Harlow · est. 1952 / fechado
+  pelo condado em 1987", cartaz do Danny pregado numa árvore, a bicicleta dele caída na trilha com etiqueta.
+- **Camp Harlow:** 3 cabanas, torre de vigia, fogueira, balanço com a corrente quebrada, bandeira rasgada; lampião
+  aceso na cabana 1 (deixado pela mãe do Tommy) e o bilhete "Tommy, volte para casa"; dentro, o **diário da
+  monitora M. Ruiz, de 30/out/1986 — um dia antes de Clara sumir**: a menina de branco é mais antiga que Clara.
+- **Árvore dos sapatos:** árvore seca com o símbolo entalhado, 12 sapatinhos em círculo (as crianças desde 1946),
+  fitas vermelhas nos galhos, fita de isolamento e a lanterna do Tommy acesa, piscando. Lugar do clímax.
+- A névoa engrossa dentro da mata; os cães não passam do acampamento; as bússolas giram.
+
+**Na delegacia, para o sumiço das crianças:** quadro das crianças (sala do caso, parede leste — vista "Quadro das
+crianças"), mapa de busca de Cedar Hollow (sala dos agentes), desenhos das crianças ("a moça canta", "ela sabe meu
+nome", "NÃO RESPONDA ELA") e o tênis rosa e a mochila (evidências), cartazes das 4 crianças (recepção), recorte do
+jornal de 1966 (mesa do xerife) e o depoimento de Rosa Garza, mãe do Tommy (interrogatório).
+
+**Estrutura sugerida:** 1) delegacia: quadros, cartazes, depoimentos, o xerife fechado; 2) cidade: famílias das
+crianças, lanchonete, igreja, cemitério (o túmulo vazio de Clara); 3) floresta de dia: acampamento, diário,
+árvore dos sapatos; 4) fazenda: porão com as palavras; 5) floresta às 22:01: fechar o círculo.
 
 ## Premissa
 
