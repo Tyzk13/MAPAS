@@ -125,6 +125,15 @@ export async function build(M: MapRuntime) {
   M.walkLimit = 200; M.camMax = 220; M.fogScale = 0.55;
   M.spawn = i => ({ x: 6 + (i % 3) * 1.1, z: 17 + Math.floor(i / 3) * 1.1, y: 0.16 });
   M.walkStart = { x: 17, z: 21 };
+  // som no lugar: velas da paróquia, das veladoras e do panteão; sinos das torres; portas vaivém da cantina
+  M.sons = [
+    { x: 0, y: 1.7, z: CHURCH.z1 + 2.6, tipo: 'velas' },
+    { x: -CHURCH.w / 2 + 1.1, y: 0.8, z: CHURCH.z1 + 8.2, tipo: 'velas' },
+    { x: PANTEON.x1 - 8 + 2.3, y: 1, z: (PANTEON.z0 + PANTEON.z1) / 2, tipo: 'velas' },
+    { x: HACIENDA.x - 15 + 4.5, y: 0.5, z: HACIENDA.z + 13 - 3.5, tipo: 'velas' },
+    { x: CHURCH.w / 2 + 2, y: 14, z: CHURCH.front - 2, tipo: 'sino' },
+    { x: CANTINA.x0, y: 1.4, z: 0, tipo: 'porta' },
+  ];
 
   M.vtt = {
     areas: [

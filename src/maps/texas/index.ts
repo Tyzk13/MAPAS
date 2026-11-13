@@ -154,6 +154,13 @@ export async function build(M: MapRuntime) {
   M.walkLimit = 240; M.camMax = 240; M.fogScale = 0.5;
   M.spawn = i => ({ x: 24 + (i % 3) * 1.1, z: 28 + Math.floor(i / 3) * 1.1, y: 0 });
   M.walkStart = { x: 26, z: 30 };
+  // som no lugar: velas do ritual na fazenda e do porão, sino do campanário, portas do saloon e do quarto 7
+  M.sons = [
+    { x: FARM.x - 2.8, y: 0.5, z: FARM.z, tipo: 'velas' },
+    { x: CHURCH.x, y: 13, z: CHURCH.z + CHURCH.d / 2 - 1.5, tipo: 'sino' },
+    { x: TAVERN.x1, y: 1.4, z: (TAVERN.z0 + TAVERN.z1) / 2, tipo: 'porta' },
+    { x: MOTEL.x0 + 8 + 6 * 4 + 0.6, y: 1.2, z: MOTEL.z0 + 7, tipo: 'porta' },
+  ];
   M.vtt = {
     areas: [
       { n: 'Praça do tribunal', b: [-55, 55, -55, 55], lv: 1 },

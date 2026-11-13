@@ -94,6 +94,10 @@ pelo núcleo). Nas capturas automáticas o tempo é fixo, para as imagens serem 
 
 ## Unidades e convenções
 
+- As **vistas** (`M.views`) também aparecem como tomadas no painel **Cinema**; dê vistas bem enquadradas, com `fov`.
+- `M.walk` (chão) e `M.solid()` (paredes) são usados pelo Cinema para escolher o ponto clicado e evitar que a
+  câmera atravesse paredes; mantenha os dois corretos e baratos (caixas simples servem).
+
 - 1 unidade = 1 metro = 1 quadrado da grade. O chão fica em y = 0; frente do mapa = +z.
 - Intensidades de luz em unidades físicas (candelas para luzes pontuais, decaimento 2).
 - Malhas com `userData.ns = 1` não ganham sombra automática; `userData.canopy = 1` some na exportação

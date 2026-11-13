@@ -15,6 +15,8 @@ export const st = {
   sel: null as Token | null,
   drag: null as Token | null,
   showC: true,
+  /** esta janela é a tela dos jogadores (segundo monitor) */
+  jogadores: false,
   snap: true,
   /** posições conhecidas: `${mapa}__${id}` → {x,z,y,h,f} */
   pos: {} as Record<string, any>,

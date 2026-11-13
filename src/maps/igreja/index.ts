@@ -6,6 +6,8 @@ import type { MapRuntime, View } from '../../core/types';
 import { begin, K } from '../../core/kit';
 import { buildChurch } from './building';
 import { EnvProbe } from '../../core/probe';
+import { mergeStatic } from '../../core/merge';
+import { cam } from '../../core/engine';
 import { dustMotes, lightShaft } from '../../core/anim';
 import { mistTex } from '../../core/kit';
 import { st } from '../../core/state';
@@ -43,6 +45,12 @@ export async function build(M: MapRuntime) {
 
   M.spawn = i => ({ x: i % 2 ? 0.45 : -0.45, z: 4.2 - Math.floor(i / 2) * 1.3, y: FLOOR });
   M.walkStart = { x: 0, z: 18 };
+  // som no lugar: velas do altar crepitando, sino da torre (de vez em quando) e a porta que range quando a câmera passa
+  M.sons = [
+    { x: 0, y: FLOOR + 1.7, z: -9.3, tipo: 'velas' },
+    { x: (TOWER.x0 + TOWER.x1) / 2, y: TOWER.h - 3, z: (TOWER.z0 + TOWER.z1) / 2, tipo: 'sino' },
+    { x: 0, y: FLOOR + 1.8, z: NZ + WT / 2, tipo: 'porta' },
+  ];
 
   const OX = NX + WT, OZ = NZ + WT, T = TOWER, dw = DOOR.w / 2;
   const sh = { x0: SHED.x - SHED.d / 2, x1: SHED.x + SHED.d / 2, z0: SHED.z - SHED.w / 2, z1: SHED.z + SHED.w / 2 };
@@ -120,13 +128,33 @@ export async function build(M: MapRuntime) {
   // velas e lustres tremulando, chamas pulsando, lustres balançando, névoa andando
   const flick = M.lights.filter(l => l.n > 0 && l.n < 4), chand = M.lights.filter(l => l.n >= 20);
   let lampsOn = true;
+  // dentro da nave, com a porta fora do campo de visão, o exterior (gramado, árvores, floresta) não aparece:
+  // deixa de ser desenhado (as paredes o escondem de qualquer jeito)
+  const EXT = G.getObjectByName('exterior')!; EXT.userData.autoHide = true;
+  const frus = new THREE.Frustum(), pm = new THREE.Matrix4();
+  const door = new THREE.Box3(new THREE.Vector3(-DOOR.w / 2, FLOOR, NZ - 0.2), new THREE.Vector3(DOOR.w / 2, FLOOR + DOOR.h, NZ + WT + 0.2));
+  const inside = () => Math.abs(cam.position.x) < NX && Math.abs(cam.position.z) < NZ && cam.position.y < TOP + 3 && cam.position.y > FLOOR - 0.2;
+  const updExterior = () => {
+    if (!inside() || !B.walls.visible) { EXT.visible = true; return; }
+    cam.updateMatrixWorld(); pm.multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse); frus.setFromProjectionMatrix(pm);
+    EXT.visible = frus.intersectsBox(door);
+  };
   M.tick = (dt, t) => {
+    updExterior();
     flick.forEach((l, i) => { if (l.l.intensity > 0) l.l.intensity = l.n * (0.86 + 0.14 * Math.sin(t * 13 + i * 7) * Math.sin(t * 7.3 + i)); });
     chand.forEach((l, i) => { if (l.l.intensity > 0) l.l.intensity = l.n * (0.95 + 0.05 * Math.sin(t * 9.1 + i * 3) * Math.sin(t * 5.3 + i)); });
     if (lampsOn) M.lamps.forEach((m, i) => { const b = m.userData.base; if (b) m.color.copy(b).multiplyScalar(0.88 + 0.12 * Math.sin(t * 11 + i * 2.1) * Math.sin(t * 6.1 + i)); });
     I.swing.forEach((p, i) => { p.rotation.x = Math.sin(t * 0.63 + i * 1.7) * 0.006; p.rotation.z = Math.sin(t * 0.51 + i) * 0.005; });
     mist.forEach(m => { m.position.x += m.userData.v * dt; if (m.position.x > 40) m.position.x = -40; });
   };
+  // ---------- desempenho: junta peças estáticas por material (cada camada separada; alto/baixo para o VTT) ----------
+  const bucket = (_m: THREE.Mesh, b: THREE.Box3) => (b.min.y > FLOOR + 3.2 ? 'alto' : 'baixo');
+  const skip = (o: THREE.Object3D) => I.swing.includes(o) || o === I.loft;
+  let antes = 0, depois = 0;
+  for (const root of [B.walls, B.roof, I.loft, I.group, G.getObjectByName('exterior')!]) {
+    const r = mergeStatic(root, { skip: o => o !== root && skip(o), bucket }); antes += r.before; depois += r.after;
+  }
+  console.info(`peças estáticas juntadas: ${antes} → ${depois}`);
   void K; void PEW;
 }
 

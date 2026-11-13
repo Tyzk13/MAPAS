@@ -7,3 +7,4 @@ node_modules/
 src/assets-lite/
 capturas/_em-andamento-*/
 dist-lite/
+server/dados/

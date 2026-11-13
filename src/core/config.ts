@@ -1,5 +1,5 @@
 // Configuração lida da URL.
-// ?room=nome  ?map=igreja|campo  ?time=0..4  ?ui=0  ?ro=1  ?walk=1  ?chars=0  ?ws=wss://servidor  ?key=chave  ?q=baixa|media|alta
+// ?room=nome  ?map=igreja|mexico|campo  ?time=0..4  ?ui=0  ?ro=1  ?walk=1  ?chars=0  ?ws=wss://servidor  ?key=chave  ?q=baixa|media|alta  ?auto=0 (resolução fixa)  ?fps=1 (medidor)
 // Só para as capturas automáticas: ?capture=1 (desliga o laço contínuo e expõe window.__cap)
 const Q = new URLSearchParams(location.search);
 
@@ -24,5 +24,8 @@ export const CFG = {
   walk: Q.get('walk') === '1',
   chars: Q.get('chars') !== '0',
   capture: Q.get('capture') === '1',
+  /** resolução adaptativa (core/desempenho.ts) */
+  auto: Q.get('auto') !== '0',
+  fps: Q.get('fps') === '1',
   quality: (['baixa', 'media', 'alta'].includes(q) ? q : defaultQuality()) as Quality,
 };

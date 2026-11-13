@@ -7,15 +7,24 @@ import { R, S, cam, ctl, fit } from './core/engine';
 import { st, $ } from './core/state';
 import { PRE, setTime, timeHooks, preloadSkies, driftSky } from './core/sky';
 import { anim } from './core/anim';
-import { DEF, makeToken, dropT, onChar, onPos, selT, sizeT, save, placeT, initTokenInput, tickTokens, snapTokens } from './core/tokens';
+import { updateCull } from './core/cull';
+import { DEF, makeToken, dropT, onChar, onPos, selT, sizeT, save, placeT, initTokenInput, tickTokens, snapTokens, setTarget } from './core/tokens';
 import { NET, handlers, startNet } from './core/net';
-import { WM, setWalk, walkStep, walkPointer, initWalk, placeWalkCam } from './core/walk';
+import { WM, setWalk, setMode, modeHooks, freeLookAt, walkStep, walkPointer, initWalk, placeWalkCam } from './core/walk';
+import { menu, lista, fecharMenu, initMenus } from './core/menu';
+import { espelho, initEspelho, serJogadores, abrirJanelaJogadores, dentroDeOutraPagina, tickEspelho, enviarQuadro, avisarMapa, avisarClima } from './core/espelho';
+import { imersao, fx, tickImersao, aplicarSom, aplicarPreto, prepararLanterna, setNomeClima, setApagao, type SomModo, type Fx } from './core/imersao';
+import { mostrar, exibir, carregarImagem } from './core/mostrar';
+import { listaCenas, gravarCena, apagarCena } from './core/cenas';
+import { som } from './core/som';
+import { initCinema, rodar, cineHooks, tomadaAtual, sair, tickCinema, apontar, tomadaPara, gravarAtual, apagarTomada, listaTomadas, abortar, type Estilo, type Tomada } from './core/cinema';
 import { initVtt, xcalc, xrender, dd2vtt } from './core/vtt';
 import { initImporter } from './core/importer';
-import { loadMap } from './core/maps';
+import { loadMap, mapHooks } from './core/maps';
 import { MAPS } from './maps/manifest';
 import { post } from './core/post';
 import { loading } from './core/loading';
+import { desempenho } from './core/desempenho';
 
 st.pi = Math.min(CFG.time, PRE.length - 1);
 st.showC = CFG.chars;
@@ -63,9 +72,216 @@ async function addChar(d: { name: string; h: number; c: number; img: string }) {
   await NET.addChar(id, d); NET.pos(id, { x: p.x, z: p.z, y: p.y, h: d.h, f: 0 });
 }
 
-// ---------- botões ----------
+// ---------- interface (dock, menus e painéis) ----------
+const QN = { baixa: 'Baixa', media: 'Média', alta: 'Alta' } as const;
+const marcarQ = () => { for (const b of $('bq').children as HTMLCollectionOf<HTMLElement>) b.classList.toggle('act', b.dataset.q === CFG.quality); };
+function escolherClima(i: number) { st.pi = i; setTime(i); $('bn').textContent = PRE[i].n; }
+function irParaVista(i: number) {
+  const v = st.V[i]; if (!v) return;
+  st.vi = i; $('bv').textContent = v.n;
+  if (WM.free) { freeLookAt(new THREE.Vector3(...v.p), new THREE.Vector3(...v.t)); return; }
+  if (WM.on) setMode('orbita');
+  st.anim = { cp: new THREE.Vector3(...v.p), tp: new THREE.Vector3(...v.t) };
+}
+const tg = (id: string, v: boolean) => $(id).setAttribute('aria-pressed', String(v));
+
+// ---------- painel da câmera de cinema ----------
+let cEst: Estilo = 'suave', cTodos = true;
+function rodarCine(tom: Tomada) { rodar(tom, cEst, { enviar: cTodos, cap: $('ccap').value.trim(), rev: $('crev').value }); }
+function itemCine(box: HTMLElement, n: string, go: () => void, del?: () => void) {
+  const it = document.createElement('div'); it.className = 'it';
+  const b = document.createElement('button'); b.className = 'go'; b.textContent = '▶ ' + n; b.onclick = () => { fecharMenu(); go(); }; it.appendChild(b);
+  if (del) { const x = document.createElement('button'); x.className = 'x'; x.textContent = '✕'; x.title = 'Apagar tomada'; x.setAttribute('aria-label', 'Apagar ' + n); x.onclick = e => { e.stopPropagation(); del(); }; it.appendChild(x); }
+  box.appendChild(it);
+}
+function encherCine() {
+  const l = $('clist') as HTMLElement; l.innerHTML = '';
+  const ts = listaTomadas();
+  if (!ts.length) { const v = document.createElement('div'); v.className = 'vazio'; v.textContent = 'Posicione a câmera (Livre ajuda) e grave.'; l.appendChild(v); }
+  ts.forEach((t, i) => itemCine(l, t.n || 'Tomada ' + (i + 1), () => rodarCine(t), () => { apagarTomada(i); encherCine(); }));
+  const vs = $('cviews') as HTMLElement; vs.innerHTML = '';
+  st.V.forEach(v => itemCine(vs, v.n, () => rodarCine({ p: v.p, t: v.t, fov: v.fov || 45 })));
+  const sel = $('crev') as HTMLSelectElement, cur = sel.value;
+  sel.innerHTML = '<option value="">ninguém</option>' + Object.values(st.T).map(t => `<option value="${t.id}">${t.name.replace(/[<>&"]/g, '')}</option>`).join('');
+  sel.value = st.T[cur] ? cur : '';
+}
+function initCinemaUi() {
+  initCinema();
+  menu('mcine', 'pcine', encherCine);
+  for (const b of $('cest').children as HTMLCollectionOf<HTMLElement>) b.onclick = () => {
+    cEst = b.dataset.e as Estilo; for (const o of $('cest').children as HTMLCollectionOf<HTMLElement>) o.classList.toggle('act', o === b);
+  };
+  $('call').onclick = () => { cTodos = !cTodos; tg('call', cTodos); };
+  $('csave').onclick = () => { gravarAtual(); encherCine(); };
+  $('cpick').onclick = () => { fecharMenu(); apontar(h => rodarCine(tomadaPara(h))); };
+}
+
+function mostrarPersonagens(v: boolean) { st.showC = v; $('ros').style.display = v ? '' : 'none'; tg('bch', v); if (!v) selT(null); }
+
+// ---------- painel do mestre: cenas, luz, névoa, sons, imagens ----------
+let cenaAtual = -1, papel = true, ultimaImagem = '';
+function tocarCena(i: number) {
+  const l = listaCenas(); if (!l.length) { toast('Nenhuma cena gravada neste mapa (Mestre → Gravar a cena atual)'); return; }
+  i = (i + l.length) % l.length; const c = l[i]; cenaAtual = i;
+  if (c.clima !== st.pi) escolherClima(c.clima);
+  mostrarPersonagens(c.showC);
+  setApagao(c.apagao); imersao.nevoa = c.nevoa; imersao.lanterna = c.lant;
+  for (const id in c.npcs) {
+    const t = st.T[id], v = c.npcs[id]; if (!t || !v) continue;
+    t.oc = !!v.o; setTarget(t, v.x, v.z, v.y); t.g.position.set(t.target.x, t.ty, t.target.y); save(t, true);
+  }
+  atualizarSelo();
+  rodar(c.tom, c.est, { enviar: cTodos, cap: c.cap });
+  if (!limpa) toast('▶ ' + c.n + ' (' + (i + 1) + '/' + l.length + ')', 1500);
+}
+function gravarCenaAtual() {
+  const npcs: Record<string, any> = {};
+  for (const id in st.T) { const t = st.T[id]; if (t.custom) npcs[id] = { x: t.target.x, z: t.target.y, y: t.ty, h: t.h, f: t.fl ? 1 : 0, o: t.oc ? 1 : 0 }; }
+  const l = gravarCena({ clima: st.pi, tom: tomadaAtual(), est: cEst, cap: $('ccap').value.trim(), showC: st.showC, apagao: imersao.apagao, nevoa: imersao.nevoa, lant: imersao.lanterna, npcs });
+  toast('Cena gravada: ' + l[l.length - 1].n + ' · use . e , para passar', 2500);
+}
+function encherMestre() {
+  const box = $('dcenas') as HTMLElement; box.innerHTML = '';
+  const l = listaCenas();
+  if (!l.length) { const v = document.createElement('div'); v.className = 'vazio'; v.textContent = 'Monte o momento (câmera, clima, luz, vilões) e grave.'; box.appendChild(v); }
+  l.forEach((c, i) => itemCine(box, (i === cenaAtual ? '● ' : '') + c.n + (c.cap ? ' — ' + c.cap.slice(0, 24) : ''), () => tocarCena(i), () => { apagarCena(i); if (cenaAtual >= i) cenaAtual--; encherMestre(); }));
+  const mi = $('dimgs') as HTMLElement; mi.innerHTML = '';
+  mostrar.lista.forEach(im => {
+    const b = document.createElement('button'); b.title = im.n; if (im.id === mostrar.atual) b.className = 'cur';
+    const img = document.createElement('img'); img.src = im.data; img.alt = im.n; b.appendChild(img);
+    b.onclick = () => { exibir(im.id === mostrar.atual ? '' : im.id); ultimaImagem = im.id; encherMestre(); };
+    mi.appendChild(b);
+  });
+  tg('dpapel', papel);
+}
+function alternarImagem() {
+  if (mostrar.atual) { exibir(''); return; }
+  const id = ultimaImagem || mostrar.lista[0]?.id;
+  if (id) exibir(id); else toast('Escolha uma imagem em Mestre → Mostrar aos jogadores');
+}
+function initMestreUi() {
+  menu('mdir', 'pdir', encherMestre);
+  $('dgrava').onclick = () => { gravarCenaAtual(); encherMestre(); };
+  $('bapag').onclick = () => { setApagao(!imersao.apagao); atualizarSelo(); };
+  $('bnevoa').onclick = () => { imersao.nevoa = !imersao.nevoa; atualizarSelo(); };
+  for (const b of $('dsons').children as HTMLCollectionOf<HTMLElement>) b.onclick = () => fx(b.dataset.f as Fx);
+  $('dimg').onclick = () => $('dimgf').click();
+  $('dimgf').onchange = async () => {
+    const f = $('dimgf').files[0]; if (!f) return;
+    try { const im = await carregarImagem(f, papel); ultimaImagem = im.id; exibir(im.id); encherMestre(); } catch { toast('Não consegui abrir essa imagem'); }
+    $('dimgf').value = '';
+  };
+  $('dpapel').onclick = () => {
+    papel = !papel; tg('dpapel', papel);
+    const im = mostrar.porId(mostrar.atual); if (im) { im.papel = papel; mostrar.aoNova(im); exibir(im.id); }
+  };
+  $('desc').onclick = () => exibir('');
+  $('handout').onclick = () => { if (!st.jogadores) exibir(''); };
+  $('boc').onclick = () => { const t = st.sel; if (!t || CFG.ro) return; t.oc = !t.oc; save(t, true); $('boc').textContent = t.oc ? 'Mostrar' : 'Ocultar'; toast(t.oc ? t.name + ' oculto: só você vê' : t.name + ' visível para todos', 1800); };
+}
+
+// ---------- tela limpa (transmitir) e atalhos ----------
+let toastT = 0;
+function toast(txt: string, ms = 2600) {
+  const el = $('toast') as HTMLElement; el.textContent = txt; el.classList.add('on');
+  clearTimeout(toastT); toastT = window.setTimeout(() => el.classList.remove('on'), ms);
+}
+let limpa = false;
+function telaLimpa(v: boolean) {
+  limpa = v; fecharMenu();
+  if (v) selT(null);
+  document.body.classList.toggle('limpa', v);
+  document.body.classList.toggle('nu', v || !CFG.ui);
+  if (v) toast('Tela limpa · H ou o canto inferior direito para voltar');
+}
+function initAtalhos() {
+  $('blimpa').onclick = () => telaLimpa(true);
+  $('bshow').onclick = () => telaLimpa(false);
+  // segundo monitor
+  $('bjog').onclick = () => {
+    fecharMenu();
+    if (!espelho.disponivel) { toast('Este navegador não liga janelas entre si'); return; }
+    if (abrirJanelaJogadores()) toast('Janela dos jogadores aberta: leve-a para o outro monitor e dê duplo clique', 4000);
+    else toast(dentroDeOutraPagina()
+      ? 'Abra este mesmo link noutra janela, leve-a ao outro monitor e nela escolha Mais → Esta janela é a tela dos jogadores'
+      : 'O navegador bloqueou a janela: abra este mesmo link noutra janela e use Mais → Esta janela é a tela dos jogadores', 8000);
+  };
+  $('bsouj').onclick = () => { fecharMenu(); serJogadores(true); };
+  addEventListener('keydown', e => {
+    if (/INPUT|SELECT|TEXTAREA/.test((e.target as HTMLElement).tagName) || e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
+    if (espelho.jogadores) { if (e.code === 'KeyH') { serJogadores(false); limpa = false; toast('Janela normal (não é mais a dos jogadores)'); } return; }
+    if (e.code === 'KeyH') { telaLimpa(!limpa); return; }
+    if (e.code === 'KeyK') { congelar(); return; }
+    if (e.code === 'KeyB') { escurecer(); return; }
+    if (e.code === 'KeyL') { lanterna(); return; }
+    if (e.code === 'KeyR') { fx('raio'); return; }
+    if (e.code === 'KeyO') { setApagao(!imersao.apagao); atualizarSelo(); return; }
+    if (e.code === 'KeyN') { imersao.nevoa = !imersao.nevoa; atualizarSelo(); return; }
+    if (e.code === 'KeyI') { alternarImagem(); return; }
+    if (e.code === 'Period' || e.code === 'PageDown') { e.preventDefault(); fecharMenu(); tocarCena(cenaAtual + 1); return; }
+    if (e.code === 'Comma' || e.code === 'PageUp') { e.preventDefault(); fecharMenu(); tocarCena(cenaAtual - 1); return; }
+    if (e.code === 'KeyP') { fecharMenu(); apontar(h => rodarCine(tomadaPara(h))); if (limpa) toast('Clique no lugar da câmera', 1500); return; }
+    const n = /^Digit([1-9])$/.exec(e.code);
+    if (n) { const t = listaTomadas()[+n[1] - 1]; if (t) { fecharMenu(); rodarCine(t); } else if (!limpa) toast('Sem tomada ' + n[1] + ' gravada neste mapa'); }
+  });
+  // cursor some depois de 2 s parado (na tela limpa)
+  let idleT = 0;
+  addEventListener('pointermove', () => {
+    document.body.classList.remove('idle'); clearTimeout(idleT);
+    idleT = window.setTimeout(() => document.body.classList.add('idle'), 2000);
+  });
+}
+
+// ---------- imersão (congelar, escurecer, lanterna, relâmpago, som) ----------
+function atualizarSelo() {
+  const el = $('jogst') as HTMLElement, partes: string[] = [];
+  if (imersao.temJogadores && imersao.congelado) partes.push('congelada');
+  if (imersao.preto) partes.push('preta');
+  el.hidden = !partes.length; el.textContent = 'Tela dos jogadores ' + partes.join(' e ');
+  tg('bcong', imersao.congelado); tg('bpreto', imersao.preto); tg('blant', imersao.lanterna); tg('bauto', imersao.autoRaio);
+  tg('bapag', imersao.apagao); tg('bnevoa', imersao.nevoa);
+}
+function congelar(v = !imersao.congelado) {
+  if (v && !imersao.temJogadores) { toast('Congelar vale para a janela dos jogadores (Mais → Abrir janela dos jogadores)'); return; }
+  imersao.congelado = v; atualizarSelo(); toast(v ? 'Tela dos jogadores congelada · K solta' : 'Tela dos jogadores acompanhando de novo', 1800);
+}
+function escurecer(v = !imersao.preto) { imersao.preto = v; aplicarPreto(); atualizarSelo(); if (!imersao.temJogadores && v) toast('Tela preta · B volta', 1500); }
+function lanterna(v = !imersao.lanterna) { imersao.lanterna = v; atualizarSelo(); }
+function marcarSom() { for (const b of $('bsom').children as HTMLCollectionOf<HTMLElement>) b.classList.toggle('act', b.dataset.s === imersao.somModo); }
+function initImersaoUi() {
+  prepararLanterna();
+  setNomeClima(() => PRE[st.pi].n);
+  $('bcong').onclick = () => congelar(); $('bpreto').onclick = () => escurecer(); $('blant').onclick = () => lanterna();
+  $('braio').onclick = () => fx('raio');
+  $('bauto').onclick = () => { imersao.autoRaio = !imersao.autoRaio; atualizarSelo(); };
+  for (const b of $('bsom').children as HTMLCollectionOf<HTMLElement>) b.onclick = () => { imersao.somModo = b.dataset.s as SomModo; marcarSom(); aplicarSom(); };
+  $('bvol').oninput = () => { imersao.volume = +$('bvol').value; aplicarSom(); };
+  marcarSom();
+  cineHooks.push(e => { if (imersao.congelado) { imersao.congelado = false; atualizarSelo(); } fx(e); });
+}
+
 function initUi() {
-  $('ba').onclick = () => { $('add').hidden = false; };
+  initMenus();
+  // modos de câmera
+  $('bmo').onclick = () => setMode('orbita');
+  $('blv').onclick = () => setMode(WM.free ? 'orbita' : 'livre');
+  modeHooks.push(m => { $('bmo').classList.toggle('act', m === 'orbita'); $('blv').classList.toggle('act', m === 'livre'); });
+  // listas: vista, clima, mapa
+  menu('mv', 'pl', p => lista(p, 'Vista', st.V.map((v, i) => ({ n: v.n, cur: i === st.vi, go: () => irParaVista(i) }))));
+  menu('mn', 'pl', p => lista(p, 'Clima', PRE.map((c, i) => ({ n: c.n, cur: i === st.pi, go: () => escolherClima(i) }))));
+  menu('mm', 'pl', p => lista(p, 'Mapa', Object.values(MAPS).map(m => ({ n: m.n, cur: m.id === st.curMap, go: () => { if (m.id !== st.curMap) loadMap(m.id); } }))));
+  menu('mc', 'pc');
+  initCinemaUi();
+  initAtalhos();
+  initEspelho({ loadMap, setTime: i => escolherClima(i), toast, jogadores: v => {
+    $('jogchip').hidden = !v; atualizarSelo();
+    if (v) toast('Janela dos jogadores ligada · dica: deixe esta janela em Qualidade Baixa e a dos jogadores em Alta', 5000);
+  } });
+  initImersaoUi();
+  initMestreUi();
+  menu('mx', 'px');
+  // personagens
+  $('ba').onclick = () => { fecharMenu(); $('add').hidden = false; };
   $('ax').onclick = () => { $('add').hidden = true; };
   $('ao').onclick = async () => {
     const f = $('af').files[0], n = $('an').value.trim(), m = $('am');
@@ -81,25 +297,24 @@ function initUi() {
   $('szm').onclick = () => resz(1 / 1.15); $('szp').onclick = () => resz(1.15);
   $('fl').onclick = () => { const s = st.sel; if (s) { s.fl = !s.fl; sizeT(s); save(s, true); } };
   $('rm').onclick = () => { if (!st.sel || CFG.ro) return; NET.delChar(st.sel.id); selT(null); };
-  $('bn').textContent = PRE[st.pi].n;
-  $('bn').onclick = () => { st.pi = (st.pi + 1) % PRE.length; setTime(st.pi); $('bn').textContent = PRE[st.pi].n; };
-  $('bmap').onclick = () => { const ks = Object.keys(MAPS); loadMap(ks[(ks.indexOf(st.curMap) + 1) % ks.length]); };
-  $('bk').onclick = () => { $('lay').hidden = !$('lay').hidden; };
-  $('bg').onclick = () => { st.snap = !st.snap; $('bg').textContent = 'Grade: ' + (st.snap ? 'on' : 'off'); };
-  $('br').onclick = () => { if (CFG.ro) return; for (const k in st.T) { delete st.pos[st.curMap + '__' + k]; placeT(st.T[k]); save(st.T[k], true); } };
-  $('bv').onclick = () => {
-    if (WM.on) return;
-    st.vi = (st.vi + 1) % st.V.length; const v = st.V[st.vi];
-    st.anim = { cp: new THREE.Vector3(...v.p), tp: new THREE.Vector3(...v.t) }; $('bv').textContent = 'Vista: ' + v.n;
-  };
-  $('bfs').onclick = () => { const d = document.documentElement; if (document.fullscreenElement) document.exitFullscreen(); else if (d.requestFullscreen) d.requestFullscreen(); };
-  if (!document.documentElement.requestFullscreen) $('bfs').style.display = 'none';
-  const setC = (v: boolean) => { st.showC = v; $('ros').style.display = v ? '' : 'none'; $('bch').textContent = 'Personagens: ' + (v ? 'on' : 'off'); if (!v) selT(null); };
+  const setC = mostrarPersonagens;
   $('bch').onclick = () => setC(!st.showC); setC(st.showC);
-  const QN = { baixa: 'Baixa', media: 'Média', alta: 'Alta' } as const, QS = ['baixa', 'media', 'alta'] as const;
-  $('bq').textContent = 'Qualidade: ' + QN[CFG.quality];
-  // qualidade: resolução/sombras/pós na hora; densidade da vegetação ao recarregar o mapa
-  $('bq').onclick = async () => { CFG.quality = QS[(QS.indexOf(CFG.quality) + 1) % 3]; post.setQuality(CFG.quality); $('bq').textContent = 'Qualidade: ' + QN[CFG.quality]; await loadMap(st.curMap); };
+  $('bg').onclick = () => { st.snap = !st.snap; tg('bg', st.snap); };
+  $('br').onclick = () => { if (CFG.ro) return; fecharMenu(); for (const k in st.T) { delete st.pos[st.curMap + '__' + k]; placeT(st.T[k]); save(st.T[k], true); } };
+  // mais: qualidade (resolução/sombras/pós na hora; densidade da vegetação ao recarregar o mapa)
+  marcarQ();
+  for (const b of $('bq').children as HTMLCollectionOf<HTMLElement>) b.onclick = async () => {
+    const q = b.dataset.q as keyof typeof QN; if (q === CFG.quality) return;
+    CFG.quality = q; marcarQ(); fecharMenu(); post.setQuality(q); await loadMap(st.curMap); desempenho.reiniciar();
+  };
+  $('bim').addEventListener('click', fecharMenu); $('bx').addEventListener('click', fecharMenu);
+  $('bfs').onclick = () => { fecharMenu(); const d = document.documentElement; if (document.fullscreenElement) document.exitFullscreen(); else if (d.requestFullscreen) d.requestFullscreen(); };
+  if (!document.documentElement.requestFullscreen) $('bfs').style.display = 'none';
+  $('bhelp').onclick = () => { fecharMenu(); $('help').hidden = false; };
+  $('hx').onclick = () => { $('help').hidden = true; };
+  $('bn').textContent = PRE[st.pi].n;
+  // indicador de conexão (ponto verde quando ao vivo)
+  new MutationObserver(() => document.body.classList.toggle('ao-vivo', /^ao vivo/.test($('st').textContent))).observe($('st'), { childList: true, characterData: true, subtree: true });
   ctl.addEventListener('start', () => { st.anim = null; });
 }
 
@@ -107,31 +322,44 @@ function initUi() {
 addEventListener('message', e => {
   const m = e.data || {};
   if (m.cmd === 'map' && MAPS[m.id]) loadMap(m.id);
-  else if (m.cmd === 'time') { st.pi = (+m.i || 0) % PRE.length; setTime(st.pi); $('bn').textContent = PRE[st.pi].n; }
+  else if (m.cmd === 'time') escolherClima(Math.abs(+m.i || 0) % PRE.length);
+  // câmera de cinema: {cmd:'cine', p:[x,y,z], t:[x,y,z], fov?, estilo?: 'suave'|'corte'|'susto', legenda?} e {cmd:'cine-sair'}
+  else if (m.cmd === 'cine' && Array.isArray(m.p) && Array.isArray(m.t)) rodar({ p: m.p, t: m.t, fov: +m.fov || 40 }, m.estilo, { enviar: true, cap: String(m.legenda || '').slice(0, 140) });
+  else if (m.cmd === 'cine-sair') sair();
 });
+
+mapHooks.push(() => abortar()); // trocar de mapa no meio de uma cena de cinema
+mapHooks.push(() => avisarMapa()); // janela dos jogadores troca junto
+mapHooks.push(M => { som.setFontes(M.sons || []); cenaAtual = -1; });
+timeHooks.push(() => avisarClima());
+timeHooks.push(p => som.setClima(p.n));
 
 // ---------- laço ----------
 const timer = new THREE.Timer();
 // medidor de quadros por segundo (?fps=1)
-const fpsEl = new URLSearchParams(location.search).get('fps') === '1' ? Object.assign(document.body.appendChild(document.createElement('div')), { id: 'fps' }) : null;
+const fpsEl = CFG.fps ? Object.assign(document.body.appendChild(document.createElement('div')), { id: 'fps' }) : null;
 if (fpsEl) R.info.autoReset = false;
 if (fpsEl) Object.assign(fpsEl.style, { position: 'fixed', right: '8px', top: '8px', font: '12px monospace', background: '#000a', color: '#9f9', padding: '3px 6px', borderRadius: '6px', zIndex: '9' });
 let fpsN = 0, fpsT = performance.now();
 function frame(ts?: number) {
   timer.update(ts);
+  desempenho.quadro(performance.now());
   if (fpsEl) R.info.reset();
   const dt = Math.min(0.1, timer.getDelta()), t = timer.getElapsed(), M = st.MP;
   if (!M) return;
   anim.time.value = t; driftSky(t);
-  tickTokens(WM.on, WM.third, WM.av);
+  tickTokens(WM.on && !WM.free, WM.third, WM.av);
   if (M.tick) M.tick(dt, t);
   if (st.anim) {
     const a = st.anim; ctl.target.lerp(a.tp, 0.1); cam.position.lerp(a.cp, 0.1);
     if (cam.position.distanceTo(a.cp) < 0.1 && ctl.target.distanceTo(a.tp) < 0.1) st.anim = null;
   }
-  if (WM.on) walkStep(); else ctl.update();
+  if (tickEspelho(dt)) { /* janela dos jogadores: segue a câmera do mestre */ } else if (tickCinema(dt, t)) { /* a câmera de cinema está no controle */ } else if (WM.on) walkStep(); else ctl.update();
+  updateCull(cam);
+  tickImersao(dt);
   post.render(dt);
-  if (fpsEl && ++fpsN >= 30) { const n = performance.now(); fpsEl.textContent = (30000 / (n - fpsT)).toFixed(0) + ' fps · ' + R.info.render.calls + ' draws · ' + (R.info.render.triangles / 1e6).toFixed(2) + ' M tri'; fpsT = n; fpsN = 0; }
+  enviarQuadro();
+  if (fpsEl && ++fpsN >= 30) { const n = performance.now(); fpsEl.textContent = (30000 / (n - fpsT)).toFixed(0) + ' fps · ' + R.info.render.calls + ' draws · ' + (R.info.render.triangles / 1e6).toFixed(2) + ' M tri · res ' + Math.round(desempenho.escala * 100) + '%'; fpsT = n; fpsN = 0; }
 }
 
 // ---------- capturas automáticas (tools/capturas.mjs) ----------
@@ -154,7 +382,14 @@ function captureApi() {
     },
     async time(i: number) { st.pi = i; await setTime(i); },
     map: (id: string) => loadMap(id),
-    frames(n = 1) { anim.time.value = 7.3; for (let i = 0; i < n; i++) { if (WM.on) placeWalkCam(); if (st.MP?.tick) st.MP.tick(1 / 60, 7.3); snapTokens(); tickTokens(WM.on, WM.third, WM.av); post.render(1 / 60); } },
+    frames(n = 1) { anim.time.value = 7.3; for (let i = 0; i < n; i++) { if (WM.on) placeWalkCam(); if (st.MP?.tick) st.MP.tick(1 / 60, 7.3); snapTokens(); updateCull(cam); tickTokens(WM.on, WM.third, WM.av); post.render(1 / 60); } },
+    scene: () => S, renderer: () => R, camera: () => cam,
+    stats() {
+      const a = R.info.autoReset; R.info.autoReset = false; R.info.reset();
+      this.frames(1);
+      const r = { calls: R.info.render.calls, triangles: R.info.render.triangles, programs: R.info.programs?.length, textures: R.info.memory.textures, geometries: R.info.memory.geometries, lights: (() => { let n = 0; S.traverse((o: any) => { if (o.isLight && o.visible && o.intensity > 0) n++; }); return n; })() };
+      R.info.autoReset = a; return r;
+    },
     shot(png = false) { this.frames(post.warmup()); return png ? R.domElement.toDataURL('image/png') : R.domElement.toDataURL('image/jpeg', 0.9); },
     vtt(area: number, ppg: number) { const c = xcalc(area, ppg), png = xrender(c, {}); return { png, json: dd2vtt(c, png) }; },
   };
@@ -187,7 +422,13 @@ async function start() {
     await setTime(st.pi);
   }
   loading.done();
+  desempenho.iniciar();
+  if (new URLSearchParams(location.search).get('tela') === 'jogadores') serJogadores(true);
 }
+// mostra qualquer erro na tela de carregamento (em vez de ficar parada) e avisa se a placa de vídeo cair
+addEventListener('error', e => loading.error(String(e.message || e)));
+addEventListener('unhandledrejection', e => loading.error(String((e as PromiseRejectionEvent).reason)));
+R.domElement.addEventListener('webglcontextlost', ev => { ev.preventDefault(); loading.error('a placa de vídeo do aparelho reiniciou (memória cheia?) — recarregue a página; use Qualidade: Baixa'); });
 start().catch(e => { console.error(e); loading.error(String(e)); });
 
 export { S };

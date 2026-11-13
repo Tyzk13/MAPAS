@@ -114,16 +114,32 @@ export async function setTime(i: number) {
   hemi.color.set(p.hs); hemi.groundColor.set(p.hg); hemi.intensity = p.hi;
   const M = st.MP;
   if (M) {
-    M.lights.forEach(l => (l.l.intensity = l.n * p.lamps));
-    M.lamps.forEach(m => { const b = (m.userData.base ||= m.color.clone()); m.color.copy(b).multiplyScalar(p.lamps ? 1 : 0.15); });
     M.glass.forEach((m: any) => { if (m.emissive) m.emissiveIntensity = p.win; else m.color.setScalar(p.win); });
-    M.halos.forEach(s => (s.material.opacity = 0.22 * p.lamps));
     M.mist.forEach(s => (s.material.opacity = 0.08));
-    if (M.onTime) M.onTime(p);
   }
-  litGlass.forEach(m => (m.emissiveIntensity = (m.userData.litBase ?? 1.4) * (p.lamps ? 1 : 0.02)));
+  aplicarLuzes();
+  R.shadowMap.needsUpdate = true;
   timeHooks.forEach(f => f(p));
 }
+
+/** Luzes artificiais forçadas (null = as do clima; 0 = apagadas, "a luz caiu"). */
+let luzesForcadas: number | null = null;
+/**
+ * Acende/apaga as luzes artificiais do mapa (lâmpadas, velas, auréolas, vidros acesos).
+ * `rapido` = só as intensidades (para piscar); sem ele chama também o `onTime` do mapa (sondas de reflexo etc.).
+ */
+export function aplicarLuzes(k?: number, rapido = false) {
+  const p0 = PRE[st.pi], lamps = k ?? luzesForcadas ?? p0.lamps, p = { ...p0, lamps }, M = st.MP;
+  if (M) {
+    M.lights.forEach(l => (l.l.intensity = l.n * lamps));
+    M.lamps.forEach(m => { const b = (m.userData.base ||= m.color.clone()); m.color.copy(b).multiplyScalar(lamps ? Math.max(0.15, lamps) : 0.15); });
+    M.halos.forEach(s => (s.material.opacity = 0.22 * lamps));
+    if (M.onTime && !rapido) M.onTime(p);
+  }
+  litGlass.forEach(m => (m.emissiveIntensity = (m.userData.litBase ?? 1.4) * (lamps ? lamps : 0.02)));
+  R.shadowMap.needsUpdate = true;
+}
+export function forcarLuzes(k: number | null) { luzesForcadas = k; aplicarLuzes(); }
 
 /** Pré-carrega os HDRIs dos climas (em segundo plano). */
 export function preloadSkies() { PRE.forEach(p => loadHdr(p.hdr).catch(() => {})); }

@@ -7,12 +7,17 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
     "build:single": "node tools/assets-leves.mjs && vite build --mode single",
     "build:leve": "node tools/assets-leves.mjs && vite build --mode lite",
     "preview": "vite preview",
     "capturas": "node tools/capturas.mjs",
     "assets": "NODE_USE_ENV_PROXY=1 node tools/baixar-assets.mjs",
-    "servidor": "cd server && npm install --silent && node servidor-sync.mjs"
+    "servidor": "cd server && npm install --silent && node servidor-sync.mjs",
+    "test": "npm run typecheck && npm run test:servidor && npm run test:funcoes",
+    "test:funcoes": "node tools/testar-funcoes.mjs",
+    "test:vtt": "node tools/testar-vtt.mjs",
+    "test:servidor": "cd server && npm install --silent && npm test"
   },
   "dependencies": {
     "n8ao": "^2.0.1",
@@ -30,5 +35,8 @@
     "typescript": "^7.0.2",
     "vite": "^8.3.7",
     "vite-plugin-singlefile": "^2.3.4"
+  },
+  "engines": {
+    "node": ">=20.19"
   }
 }
