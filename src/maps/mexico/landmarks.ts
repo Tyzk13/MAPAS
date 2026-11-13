@@ -21,11 +21,11 @@ const light = (x: number, y: number, z: number, n: number, prio: number, color =
 export interface Landmarks { solids: THREE.Object3D[]; floors: THREE.Object3D[]; roofs: THREE.Object3D; vttWalls: [number, number][][]; portals: { p: [number, number]; a: [number, number]; b: [number, number] }[]; doors: THREE.Object3D[]; candles: THREE.Vector3[] }
 
 /** parede (wallGeo) posicionada: (x,z) = início da face, ry = rotação; vãos em coordenadas da parede */
-function wall(B: Batch, mat: THREE.Material, w: number, h: number, d: number, holes: Hole[], x: number, y: number, z: number, ry: number, col: number, top?: THREE.Vector2[]) {
+export function wall(B: Batch, mat: THREE.Material, w: number, h: number, d: number, holes: Hole[], x: number, y: number, z: number, ry: number, col: number, top?: THREE.Vector2[]) {
   const g = wallGeo(w, h, d, holes, top);
   g.applyMatrix4(mtx(x, y, z, ry)); boxUV(g); B.add(mat, g, col);
 }
-const rect = (w: number, h: number) => [new THREE.Vector2(-w / 2, 0), new THREE.Vector2(w / 2, 0), new THREE.Vector2(w / 2, h), new THREE.Vector2(-w / 2, h)];
+export const rect = (w: number, h: number) => [new THREE.Vector2(-w / 2, 0), new THREE.Vector2(w / 2, 0), new THREE.Vector2(w / 2, h), new THREE.Vector2(-w / 2, h)];
 
 export async function buildLandmarks(G: THREE.Group, T: Town): Promise<Landmarks> {
   reseed(77);
@@ -493,7 +493,7 @@ function sigilTex() {
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
 }
 /** topo irregular de parede em ruína */
-function ruinTop(w: number, h: number) {
+export function ruinTop(w: number, h: number) {
   const pts = [new THREE.Vector2(-w / 2, 0), new THREE.Vector2(w / 2, 0)];
   const n = Math.max(4, Math.round(w / 1.5));
   for (let i = n; i >= 0; i--) { const x = -w / 2 + (w * i) / n, drop = rnd() < 0.25 ? 0.6 + rnd() * 1.8 : rnd() * 0.25; pts.push(new THREE.Vector2(x, h - drop)); }

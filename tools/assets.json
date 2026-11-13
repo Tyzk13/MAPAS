@@ -26,7 +26,14 @@
     "terracotta_floor_tiles": "1k",
     "dry_ground_01": "1k",
     "sandy_gravel": "1k",
-    "dry_ground_rocks": "1k"
+    "dry_ground_rocks": "1k",
+    "weathered_plank_siding": "1k",
+    "distressed_painted_planks": "1k",
+    "red_brick": "1k",
+    "asphalt_02": "1k",
+    "rusty_corrugated_iron": "1k",
+    "grey_roof_01": "1k",
+    "withered_grass": "1k"
   },
   "hdris": {
     "overcast_soil_puresky": "1k",
@@ -83,6 +90,14 @@
     "trashbag": 512,
     "WoodenTable_01": 512,
     "Barrel_01": 512,
-    "caged_hanging_light": 512
+    "caged_hanging_light": 512,
+    "wooden_picnic_table": 512,
+    "Rockingchair_01": 512,
+    "fire_hydrant": 512,
+    "security_light": 512,
+    "hanging_industrial_lamp": 512,
+    "CashRegister_01": 512,
+    "metal_jerrycan": 512,
+    "wooden_ladder": 512
   }
 }

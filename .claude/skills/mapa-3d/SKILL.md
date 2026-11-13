@@ -55,9 +55,36 @@ rede, exportação VTT — **não reescreva o núcleo**. Leia `docs/NOVO-MAPA.md
   com recortes), vasos de barro (lathe), caixotes (caixa), círculo de giz (canvas no chão).
 - Mapa inicial da página publicada: `<script>window.MAPA_PADRAO="id"</script>` no `index.html` da cópia.
 
+## Mistério (Ordem Paranormal) — receita que funcionou em `src/maps/texas/mystery.ts`
+
+- Escreva primeiro o caso (premissa, verdade do mestre, 8–12 pistas) em `docs/casos/<mapa>-<caso>.md`,
+  com uma **vista nomeada para cada pista**, e só então coloque as pistas no mapa.
+- Pistas baratas e legíveis: texturas de canvas (lápide com nome, cartaz de desaparecida, mural de recortes
+  com barbante, polaroid, quadro de hinos com a data, espelho escrito), **um sigilo inventado repetido** em
+  vários lugares (vagão, caixa-d'água, milharal, mapa), uma luz vermelha fraca pulsando (porão), velas
+  acesas "por alguém hoje", relógio parado, letreiro de neon com frase ambígua.
+- Algo visível na vista **Tática** (círculo queimado no milharal) ajuda o mestre na mesa virtual.
+- Não copie sigilos oficiais do sistema; invente. Terror sutil: sem monstro explícito.
+- Textos no idioma do lugar (inglês no Texas, espanhol no México); a tradução vai no dossiê.
+
+## Texas (aprendido em `src/maps/texas/`)
+
+- `shell()` (texas/common.ts): 4 paredes com vãos reais por lado (`side`, `at` em coordenada do mundo) e
+  oitão opcional; `gableRoof()` telhado de duas águas; `Builder.store()` fachada falsa de faroeste,
+  `Builder.house()` casa de tábuas com varanda; `neonTexture()` letreiro de neon (MeshBasic em `M.lamps`).
+- Tábuas texturizadas escuras não ficam brancas tingindo: use `pbr(id, { map: false })` + cor de vértice
+  (fica o relevo das tábuas e a cor vem da pintura).
+- Faixa colorida em volta de prédio com interior = 4 caixas finas, **nunca** uma caixa do tamanho do prédio
+  (enche o interior).
+- Torre treliçada: pernas inclinam para dentro (`rx = -b·k`, `rz = a·k` com a,b = ±1).
+- Animações baratas no `tick`: bombas de petróleo (grupo do balancim + manivela), roda do moinho,
+  bandeira (vértices de um plano 12×6), rodadoras (LineSegments), neon piscando.
+
 ## Medir o peso (faça antes de publicar)
 
-- Script de medição: abrir `?map=<id>&q=baixa&fps=1` no Playwright e ler `#fps` (draws e triângulos;
+- `npx vite build --outDir .cache/capturas-build && node tools/medir-peso.mjs <mapa>` (Baixa e Alta).
+
+- Por dentro: abrir `?map=<id>&q=baixa&fps=1` no Playwright e ler `#fps` (draws e triângulos;
   fps no swiftshader não vale nada). Para achar culpados, percorra `M.G` somando triângulos × `count`
   das InstancedMesh e liste os 25 maiores.
 - Meta para celular (Baixa): ≲ 1,5 M triângulos na cena (o contador do `#fps` soma sombra/AO, ~3×).

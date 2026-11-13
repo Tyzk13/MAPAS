@@ -44,4 +44,11 @@ namaqualand_boulder_02 0.06 512
 caged_hanging_light 0.3 512
 street_lamp_02 0.12 512
 metal_trash_can 0.4 512
+fire_hydrant 0.04 512
+metal_jerrycan 0.15 512
+Rockingchair_01 0.3 512
+wooden_picnic_table 0.3 512
+CashRegister_01 0.3 512
+hanging_industrial_lamp 0.3 512
+wooden_ladder 0.3 512
 LIST

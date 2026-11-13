@@ -37,7 +37,6 @@ Ferramentas usadas só no preparo (não distribuídas): Blender (GPL), gltf-tran
 | Concrete Wall 008 (`concrete_wall_008`) | textura | Dario Barresi, Charlotte Baglioni | CC0 | https://polyhaven.com/a/concrete_wall_008 |
 | Leafy Grass (`leafy_grass`) | textura | Charlotte Baglioni | CC0 | https://polyhaven.com/a/leafy_grass |
 | Painted Plaster Wall (`painted_plaster_wall`) | textura | Amal Kumar | CC0 | https://polyhaven.com/a/painted_plaster_wall |
-| Worn Plaster Wall (`worn_plaster_wall`) | textura | Dimitrios Savva | CC0 | https://polyhaven.com/a/worn_plaster_wall |
 | Rough Plaster Brick (`rough_plaster_brick`) | textura | Rob Tuytel | CC0 | https://polyhaven.com/a/rough_plaster_brick |
 | Clay Roof Tiles 02 (`clay_roof_tiles_02`) | textura | Amal Kumar | CC0 | https://polyhaven.com/a/clay_roof_tiles_02 |
 | Cobblestone Floor 08 (`cobblestone_floor_08`) | textura | Rob Tuytel | CC0 | https://polyhaven.com/a/cobblestone_floor_08 |
@@ -45,6 +44,13 @@ Ferramentas usadas só no preparo (não distribuídas): Blender (GPL), gltf-tran
 | Dry Ground 01 (`dry_ground_01`) | textura | Rob Tuytel | CC0 | https://polyhaven.com/a/dry_ground_01 |
 | Sandy Gravel (`sandy_gravel`) | textura | Charlotte Baglioni | CC0 | https://polyhaven.com/a/sandy_gravel |
 | Dry Ground Rocks (`dry_ground_rocks`) | textura | Rob Tuytel | CC0 | https://polyhaven.com/a/dry_ground_rocks |
+| Weathered Plank Siding (`weathered_plank_siding`) | textura | Dimitrios Savva | CC0 | https://polyhaven.com/a/weathered_plank_siding |
+| Distressed Painted Planks (`distressed_painted_planks`) | textura | Rob Tuytel | CC0 | https://polyhaven.com/a/distressed_painted_planks |
+| Red Brick (`red_brick`) | textura | Rob Tuytel | CC0 | https://polyhaven.com/a/red_brick |
+| Asphalt 02 (`asphalt_02`) | textura | Rob Tuytel | CC0 | https://polyhaven.com/a/asphalt_02 |
+| Rusty Corrugated Iron (`rusty_corrugated_iron`) | textura | Charlotte Baglioni | CC0 | https://polyhaven.com/a/rusty_corrugated_iron |
+| Grey Roof 01 (`grey_roof_01`) | textura | Rob Tuytel | CC0 | https://polyhaven.com/a/grey_roof_01 |
+| Withered Grass (`withered_grass`) | textura | Charlotte Baglioni | CC0 | https://polyhaven.com/a/withered_grass |
 | Overcast Soil (Pure Sky) (`overcast_soil_puresky`) | HDRI | Jarod Guest, Sergej Majboroda | CC0 | https://polyhaven.com/a/overcast_soil_puresky |
 | Kloppenheim 07 (Pure Sky) (`kloppenheim_07_puresky`) | HDRI | Greg Zaal, Jarod Guest | CC0 | https://polyhaven.com/a/kloppenheim_07_puresky |
 | Qwantani Dusk 2 (Pure Sky) (`qwantani_dusk_2_puresky`) | HDRI | Greg Zaal, Jarod Guest | CC0 | https://polyhaven.com/a/qwantani_dusk_2_puresky |
@@ -85,24 +91,26 @@ Ferramentas usadas só no preparo (não distribuídas): Blender (GPL), gltf-tran
 | Wooden Crate 01 (`wooden_crate_01`) | modelo | James Ray Cock | CC0 | https://polyhaven.com/a/wooden_crate_01 |
 | Planter Pot Clay (`planter_pot_clay`) | modelo | Amal Kumar | CC0 | https://polyhaven.com/a/planter_pot_clay |
 | Lantern 01 (`Lantern_01`) | modelo | Rajil Jose Macatangay | CC0 | https://polyhaven.com/a/Lantern_01 |
-| Modular Electricity Poles (`modular_electricity_poles`) | modelo | James Ray Cock | CC0 | https://polyhaven.com/a/modular_electricity_poles |
 | Plastic Monobloc Chair 01 (`plastic_monobloc_chair_01`) | modelo | Kuutti Siitonen | CC0 | https://polyhaven.com/a/plastic_monobloc_chair_01 |
 | Propane Tank (`propane_tank`) | modelo | Slinc | CC0 | https://polyhaven.com/a/propane_tank |
 | Rollershutter Door (`rollershutter_door`) | modelo | MP | CC0 | https://polyhaven.com/a/rollershutter_door |
 | Street Lamp 02 (`street_lamp_02`) | modelo | Josh Dean | CC0 | https://polyhaven.com/a/street_lamp_02 |
 | Searsia Lucida (`searsia_lucida`) | modelo | James Ray Cock, Jenelle van Heerden | CC0 | https://polyhaven.com/a/searsia_lucida |
 | Wild Rooibos Bush (`wild_rooibos_bush`) | modelo | James Ray Cock, Jenelle van Heerden | CC0 | https://polyhaven.com/a/wild_rooibos_bush |
-| Othonna Cerarioides (`othonna_cerarioides`) | modelo | James Ray Cock, Jenelle van Heerden | CC0 | https://polyhaven.com/a/othonna_cerarioides |
 | Namaqualand Boulder 02 (`namaqualand_boulder_02`) | modelo | Greg Zaal, Rico Cilliers | CC0 | https://polyhaven.com/a/namaqualand_boulder_02 |
-| Dead Quiver Trunk (`dead_quiver_trunk`) | modelo | James Ray Cock, Dario Barresi, Rico Cilliers | CC0 | https://polyhaven.com/a/dead_quiver_trunk |
 | Metal Trash Can (`metal_trash_can`) | modelo | GurJas Studios | CC0 | https://polyhaven.com/a/metal_trash_can |
 | Old Tyre (`old_tyre`) | modelo | MP | CC0 | https://polyhaven.com/a/old_tyre |
 | Trashbag (`trashbag`) | modelo | Benny Weimer | CC0 | https://polyhaven.com/a/trashbag |
-| Wooden Crate 02 (`wooden_crate_02`) | modelo | James Ray Cock, Jurita Burger | CC0 | https://polyhaven.com/a/wooden_crate_02 |
 | Wooden Table 01 (`WoodenTable_01`) | modelo | Ethan Place | CC0 | https://polyhaven.com/a/WoodenTable_01 |
 | Barrel_01 (`Barrel_01`) | modelo | Jorge Camacho | CC0 | https://polyhaven.com/a/Barrel_01 |
-| Wooden Candlestick (`wooden_candlestick`) | modelo | Josh Dean | CC0 | https://polyhaven.com/a/wooden_candlestick |
 | Caged Hanging Light (`caged_hanging_light`) | modelo | Ulan Cabanilla | CC0 | https://polyhaven.com/a/caged_hanging_light |
-| Ceramic Vase 03 (`ceramic_vase_03`) | modelo | James Ray Cock | CC0 | https://polyhaven.com/a/ceramic_vase_03 |
+| Wooden Picnic Table (`wooden_picnic_table`) | modelo | Ulan Cabanilla | CC0 | https://polyhaven.com/a/wooden_picnic_table |
+| Rockingchair 01 (`Rockingchair_01`) | modelo | Jorge Camacho | CC0 | https://polyhaven.com/a/Rockingchair_01 |
+| Fire Hydrant (`fire_hydrant`) | modelo | Gonçalo Felício | CC0 | https://polyhaven.com/a/fire_hydrant |
+| Security Light (`security_light`) | modelo | Maximilian Schuster | CC0 | https://polyhaven.com/a/security_light |
+| Hanging Industrial Lamp (`hanging_industrial_lamp`) | modelo | Kuutti Siitonen | CC0 | https://polyhaven.com/a/hanging_industrial_lamp |
+| Cash Register 01 (`CashRegister_01`) | modelo | Joe Seabuhr | CC0 | https://polyhaven.com/a/CashRegister_01 |
+| Metal Jerrycan (`metal_jerrycan`) | modelo | Sean Buckley | CC0 | https://polyhaven.com/a/metal_jerrycan |
+| Wooden Ladder (`wooden_ladder`) | modelo | Miroslav Turura | CC0 | https://polyhaven.com/a/wooden_ladder |
 
 <!-- polyhaven:fim -->

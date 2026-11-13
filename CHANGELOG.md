@@ -109,3 +109,17 @@
   capim/cactos/arbustos pela qualidade. Névoa rareia quando a câmera sobe (vista tática legível).
 - Núcleo: campos opcionais por mapa `walkLimit`, `camMax`, `fogScale`; `window.MAPA_PADRAO` escolhe o mapa
   inicial; `npm run capturas -- --views=Praça,Cantina` usa vistas do mapa pelo nome.
+
+## Mapa novo: Harlow, Texas + O Caso Whitlock
+
+- Cidadezinha do oeste texano (`?map=texas`): tribunal do condado com torre do relógio na praça, lojas com
+  fachada falsa e calçadas cobertas (xerife, banco, cinema Roxy com marquise de neon, funerária Pruitt…),
+  saloon com interior (balcão, sinuca), lanchonete 24 h com interior quadriculado, posto de gasolina, motel
+  com neon e o quarto 7 aberto (interior), estação de trem, trilhos, silos da cooperativa, caixa-d'água,
+  igreja batista de madeira com interior e cemitério, bairro de casas de tábuas com varanda, cadeira de
+  balanço, cerca e caixa de correio, fazenda abandonada (casa com interior, celeiro, moinho girando,
+  milharal seco, espantalho, porão de tempestade), bombas de petróleo animadas, outdoors, mesas no horizonte.
+- Mistério estilo Ordem Paranormal: pistas espalhadas (lápide, cova aberta, espelho escrito, polaroid,
+  cartaz, mural de recortes, quadro de hinos, sigilo no vagão, na caixa-d'água e queimado no milharal, brilho
+  vermelho no porão) e dossiê do mestre em `docs/casos/harlow-caso-whitlock.md`.
+- `tools/medir-peso.mjs`: mede draws e triângulos de um mapa nas qualidades Baixa e Alta.

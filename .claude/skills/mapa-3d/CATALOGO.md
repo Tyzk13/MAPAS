@@ -69,3 +69,16 @@ gramado (`grassField`), poças, névoa, poeira, feixes de luz.
 | Pedra grande | `namaqualand_boulder_02` (simplificar 0.06 → 6k) | poucas; o resto em código |
 | Props | `plastic_monobloc_chair_01` (3k), `propane_tank`, `rollershutter_door` (3,08 m de largura → escala 0.84), `street_lamp_02` (lanterna de parede, 2,6k após simplificar), `caged_hanging_light`, `Barrel_01`, `WoodenTable_01` (baixa: escala y 1.35), `metal_trash_can`, `old_tyre`, `trashbag` | |
 | Descartados | `modular_electricity_poles` (200k, peças soltas), `othonna_cerarioides`, `wooden_candlestick` (212k), `dead_quiver_trunk` (2 m, fino), `boulder_01` espalhado, `wooden_crate_02`, `ceramic_vase_03` | fazer em código |
+
+## Acrescentados no mapa do Texas (testados)
+
+| Uso | Id | Observação |
+|---|---|---|
+| Tábuas de casa (pintadas) | `weathered_plank_siding` (2.2) | `map:false` + cor de vértice para pintura; com mapa = madeira crua (celeiro, ruína) |
+| Fachada de faroeste | `distressed_painted_planks` (2.2) | tingir com cores de loja |
+| Tijolo vermelho | `red_brick` (1.8) | lojas, chaminés |
+| Asfalto | `asphalt_02` (5) | rodovia/ruas, faixas amarelas em código |
+| Zinco enferrujado | `rusty_corrugated_iron` (2) | telhados de loja/celeiro, silos de metal |
+| Telha asfáltica | `grey_roof_01` (2) | casas |
+| Capim seco (terreno) | `withered_grass` (3.2) | base da planície |
+| Props | `Rockingchair_01` (simplificar 0.3 → 3,5k), `wooden_picnic_table` (0.3), `fire_hydrant` (86k! → 0.04), `security_light` (luz de celeiro), `hanging_industrial_lamp` (0.3), `CashRegister_01` (0.3), `metal_jerrycan` (0.15), `wooden_ladder` (0.3) | |

@@ -49,7 +49,7 @@ export function groundH(x: number, z: number) {
 
 // ---------- cactos ----------
 const green = (k: number) => new THREE.Color().setHSL(0.27 + rnd() * 0.05, 0.28 + rnd() * 0.1, 0.2 + k * 0.08);
-function colorize(g: THREE.BufferGeometry, fn: (y: number, x: number, z: number) => THREE.Color) {
+export function colorize(g: THREE.BufferGeometry, fn: (y: number, x: number, z: number) => THREE.Color) {
   const p = g.attributes.position, a = new Float32Array(p.count * 3);
   for (let i = 0; i < p.count; i++) { const c = fn(p.getY(i), p.getX(i), p.getZ(i)); a[i * 3] = c.r; a[i * 3 + 1] = c.g; a[i * 3 + 2] = c.b; }
   g.setAttribute('color', new THREE.BufferAttribute(a, 3)); return g;
@@ -81,7 +81,7 @@ function saguaro(seed: number) {
   const c0 = green(1);
   return colorize(g, y => c0.clone().multiplyScalar(0.72 + 0.28 * Math.min(1, y / 1.5)));
 }
-function nopal(seed: number) {
+export function nopal(seed: number) {
   reseed(seed * 71 + 3);
   const parts: THREE.BufferGeometry[] = [], c0 = green(1.4);
   const pad = (x: number, y: number, z: number, ry: number, rz: number, s: number, depth: number) => {
@@ -94,7 +94,7 @@ function nopal(seed: number) {
   const g = mergeGeometries(parts)!;
   return colorize(g, (y, x, z) => c0.clone().multiplyScalar(0.8 + 0.25 * noise2(x * 6 + y * 3, z * 6)));
 }
-function agave(seed: number) {
+export function agave(seed: number) {
   reseed(seed * 53 + 11);
   const parts: THREE.BufferGeometry[] = [], c0 = new THREE.Color().setHSL(0.36 + rnd() * 0.06, 0.18, 0.36);
   const n = 18 + ((rnd() * 8) | 0);
