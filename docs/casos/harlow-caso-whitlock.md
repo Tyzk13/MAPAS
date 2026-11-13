@@ -94,6 +94,9 @@ mapa (em inglês); aqui vai a tradução para o mestre.
 | Celas | Cela 2 | O símbolo riscado na parede, marcas de contagem, "22:01" · bilhete do deputado Boone: "todos dizem a mesma coisa às 22:01. Não atenda. Não diga seu nome em voz alta." · A porta da cela 3 está aberta |
 | Fora | Viaturas | Uma com o giroflex ligado; a outra parada — é a do deputado Lyle? (o mestre decide) |
 
+**Na mesa:** o mapa abre na frente da delegacia. Passe o mouse em qualquer papel, quadro ou cartaz (aparece a
+lupa) e clique: ele abre ampliado; o botão **Mostrar aos jogadores** manda para a tela deles.
+
 **Ganchos para começar a missão aqui:** o xerife recebe os agentes friamente; a recepcionista Irene
 Kowalski (do rádio) passa o registro de ontem às escondidas; a fita nº 7 está no cofre do xerife; o
 deputado Lyle sumiu na Pruitt Rd.; às 22:01 o telefone da delegacia toca.

@@ -95,6 +95,9 @@ pelo núcleo). Nas capturas automáticas o tempo é fixo, para as imagens serem 
 ## Unidades e convenções
 
 - As **vistas** (`M.views`) também aparecem como tomadas no painel **Cinema**; dê vistas bem enquadradas, com `fov`.
+  A **primeira** vista é onde o mapa abre.
+- **Documentos legíveis**: `M.docs = [{ o: malha, n: 'Nome' }]` (planos com textura de canvas) — clicar abre
+  ampliado e o mestre pode mostrar aos jogadores (`src/core/docs.ts`).
 - `M.walk` (chão) e `M.solid()` (paredes) são usados pelo Cinema para escolher o ponto clicado e evitar que a
   câmera atravesse paredes; mantenha os dois corretos e baratos (caixas simples servem).
 

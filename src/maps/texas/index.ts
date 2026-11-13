@@ -6,7 +6,7 @@ import { begin, mistTex } from '../../core/kit';
 import { S, cam } from '../../core/engine';
 import { Builder } from './buildings';
 import { buildLandmarks } from './landmarks';
-import { buildMystery } from './mystery';
+import { buildMystery, DOCS } from './mystery';
 import { buildPolice } from './police';
 import { buildNature, setBuilt, groundH } from './nature';
 import {
@@ -15,6 +15,8 @@ import {
 
 const P = (x: number, y: number, z: number) => [x, y, z] as [number, number, number];
 export const VIEWS: View[] = [
+  // a 1ª vista é a inicial: o mapa abre na delegacia (onde a missão começa)
+  { n: 'Delegacia', p: P(-9, 2.8, 67.5), t: P(12, 2.2, 82.5), fov: 52 },
   { n: 'Cinema', p: P(70, 30, 82), t: P(0, 2, -6), fov: 45 },
   { n: 'Praça', p: P(27, 1.7, 30), t: P(0, 5, 0), fov: 58 },
   { n: 'Main Street', p: P(-2.5, 1.75, -66), t: P(1, 3, 10), fov: 50 },
@@ -27,7 +29,6 @@ export const VIEWS: View[] = [
   { n: 'Estação', p: P(-10, 2.2, -86), t: P(30, 6, -108), fov: 55 },
   { n: 'Fazenda', p: P(140, 3, 18), t: P(168, 3, 26), fov: 55 },
   { n: 'Ritual', p: P(166.5, 1.7, 33), t: P(165.2, 0.1, 30), fov: 64 },
-  { n: 'Delegacia', p: P(-4, 2.0, 74), t: P(10, 2.6, 82), fov: 55 },
   { n: 'Recepção', p: P(14.6, 1.65, 85.4), t: P(13, 1.7, 78), fov: 62 },
   { n: 'Sala do xerife', p: P(15.3, 1.65, 77.3), t: P(11, 1.3, 73), fov: 64 },
   { n: 'Agentes', p: P(17, 1.7, 82.8), t: P(24, 1.2, 74), fov: 64 },
@@ -134,6 +135,7 @@ export async function build(M: MapRuntime) {
   buildMystery(G, L.lamps);
   const PD = await buildPolice(G);
   M.lamps.push(...PD.lamps);
+  M.docs = [...PD.docs, ...DOCS];
   await b.finish();
   M.lamps.push(...L.lamps);
 
@@ -166,8 +168,8 @@ export async function build(M: MapRuntime) {
   M.views = VIEWS;
   M.shadowRadius = Q.lights > 8 ? 80 : 55;
   M.walkLimit = 240; M.camMax = 240; M.fogScale = 0.5;
-  M.spawn = i => ({ x: 24 + (i % 3) * 1.1, z: 28 + Math.floor(i / 3) * 1.1, y: 0 });
-  M.walkStart = { x: 26, z: 30 };
+  M.spawn = i => ({ x: 7.2 + (i % 3) * 1.0, z: 77.4 - Math.floor(i / 3) * 1.1, y: 0.12 }); // calçada da delegacia
+  M.walkStart = { x: 7, z: 82 };
   // som no lugar: velas do ritual na fazenda e do porão, sino do campanário, portas do saloon e do quarto 7
   M.sons = [
     { x: FARM.x - 2.8, y: 0.5, z: FARM.z, tipo: 'velas' },

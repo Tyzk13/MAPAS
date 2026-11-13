@@ -15,6 +15,7 @@ import { menu, lista, fecharMenu, initMenus } from './core/menu';
 import { espelho, initEspelho, serJogadores, abrirJanelaJogadores, dentroDeOutraPagina, tickEspelho, enviarQuadro, avisarMapa, avisarClima } from './core/espelho';
 import { imersao, fx, tickImersao, aplicarSom, aplicarPreto, prepararLanterna, setNomeClima, setApagao, type SomModo, type Fx } from './core/imersao';
 import { mostrar, exibir, carregarImagem } from './core/mostrar';
+import { initDocs } from './core/docs';
 import { listaCenas, gravarCena, apagarCena } from './core/cenas';
 import { som } from './core/som';
 import { initCinema, rodar, cineHooks, tomadaAtual, sair, tickCinema, apontar, tomadaPara, gravarAtual, apagarTomada, listaTomadas, abortar, type Estilo, type Tomada } from './core/cinema';
@@ -339,6 +340,13 @@ const timer = new THREE.Timer();
 // medidor de quadros por segundo (?fps=1)
 const fpsEl = CFG.fps ? Object.assign(document.body.appendChild(document.createElement('div')), { id: 'fps' }) : null;
 if (fpsEl) R.info.autoReset = false;
+// com ?fps=1: window.__peso() lista as malhas mais pesadas da cena (triângulos × instâncias), para otimizar
+if (fpsEl) (window as any).__peso = (n = 25) => {
+  const out: [string, number, boolean][] = [];
+  S.traverse((o: any) => { if (!o.isMesh || !o.geometry) return; const g = o.geometry, t = (g.index ? g.index.count : g.attributes.position.count) / 3, k = o.isInstancedMesh ? o.count : 1;
+    let vis = o.visible; for (let p = o.parent; p && vis; p = p.parent) vis = p.visible; out.push([(o.name || o.material?.name || o.type) + ' <' + (o.parent?.name || '') + '> ×' + k, Math.round(t * k), vis]); });
+  out.sort((a, b) => b[1] - a[1]); return out.slice(0, n).map(([a, b, v]) => `${(b / 1000).toFixed(0)}k ${v ? '' : '(oculto) '}${a}`).join('\n');
+};
 if (fpsEl) Object.assign(fpsEl.style, { position: 'fixed', right: '8px', top: '8px', font: '12px monospace', background: '#000a', color: '#9f9', padding: '3px 6px', borderRadius: '6px', zIndex: '9' });
 let fpsN = 0, fpsT = performance.now();
 function frame(ts?: number) {
@@ -397,7 +405,7 @@ function captureApi() {
 
 // ---------- iniciar ----------
 async function start() {
-  initUi(); initWalk(); initVtt(); initImporter();
+  initUi(); initWalk(); initVtt(); initImporter(); initDocs();
   initTokenInput(() => WM.on, walkPointer);
   fit();
   post.init(CFG.quality);

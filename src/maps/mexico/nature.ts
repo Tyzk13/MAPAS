@@ -120,10 +120,12 @@ export function rockGeo(seed: number) {
 let _rm: THREE.MeshStandardMaterial | null = null;
 export function placeRock(geo: THREE.BufferGeometry, list: Xf[], parent: THREE.Object3D) {
   if (!list.length) return;
+  const by = new Map<string, Xf[]>(); list.forEach(t => { const k = Math.floor(t.x / 50) + ',' + Math.floor(t.z / 50); if (!by.has(k)) by.set(k, []); by.get(k)!.push(t); });
+  if (by.size > 1) { by.forEach(L => placeRock(geo, L, parent)); return; }
   const mat = (_rm ||= Object.assign(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95, envMapIntensity: 0.4 }), { flatShading: true }));
   const im = new THREE.InstancedMesh(geo, mat, list.length), o = new THREE.Object3D();
   list.forEach((t, i) => { o.position.set(t.x, t.y, t.z); o.rotation.set(0, t.ry || 0, 0); o.scale.setScalar(t.s ?? 1); o.updateMatrix(); im.setMatrixAt(i, o.matrix); });
-  im.castShadow = Q.bushes >= 1; im.receiveShadow = true; im.computeBoundingSphere(); parent.add(im);
+  im.castShadow = Q.bushes >= 1; im.receiveShadow = true; im.computeBoundingSphere(); im.userData.cullDist = 140; parent.add(im);
 }
 
 export interface Nature { floors: THREE.Object3D[] }
@@ -174,11 +176,13 @@ export async function buildNature(G: THREE.Group, free: (x: number, z: number) =
     return out;
   };
   const cmat = MAT().cactus;
-  const placeGeo = (geo: THREE.BufferGeometry, list: Xf[], shadow = true) => {
+  const placeGeo: (geo: THREE.BufferGeometry, list: Xf[], shadow?: boolean) => void = (geo: THREE.BufferGeometry, list: Xf[], shadow = true) => {
     if (!list.length) return;
+    const by = new Map<string, Xf[]>(); list.forEach(t => { const k = Math.floor(t.x / 50) + ',' + Math.floor(t.z / 50); if (!by.has(k)) by.set(k, []); by.get(k)!.push(t); });
+    if (by.size > 1) { by.forEach(L => placeGeo(geo, L, shadow)); return; }
     const im = new THREE.InstancedMesh(geo, cmat, list.length), o = new THREE.Object3D();
     list.forEach((t, i) => { o.position.set(t.x, t.y, t.z); o.rotation.set(0, t.ry || 0, 0); o.scale.setScalar(t.s ?? 1); o.updateMatrix(); im.setMatrixAt(i, o.matrix); });
-    im.castShadow = shadow; im.receiveShadow = true; im.computeBoundingSphere(); O.add(im);
+    im.castShadow = shadow; im.receiveShadow = true; im.computeBoundingSphere(); im.userData.cullDist = 160; O.add(im);
   };
   const sag = scatter(Math.round(70 * Q.cacti), 66, 240, 7);
   for (let v = 0; v < 4; v++) placeGeo(saguaro(v), sag.filter((_, i) => i % 4 === v));
@@ -192,18 +196,18 @@ export async function buildNature(G: THREE.Group, free: (x: number, z: number) =
   // ---------- arbustos, pedras, troncos ----------
   const bush = scatter(Math.round(120 * Q.bushes), 64, 230, 4);
   const big = bush.filter((_, i) => i % 3 === 0), small = bush.filter((_, i) => i % 3 !== 0);
-  if (Q.bushes >= 1) await instance('searsia_lucida', big.map(b => ({ ...b, s: 0.7 + rnd() * 0.5 })), O, { wind: { amp: 0.05, freq: 1.2, flutter: 0.01 } }).catch(() => {});
+  if (Q.bushes >= 1) await instance('searsia_lucida', big.map(b => ({ ...b, s: 0.7 + rnd() * 0.5 })), O, { wind: { amp: 0.05, freq: 1.2, flutter: 0.01 }, tile: 50, cullDist: 110 }).catch(() => {});
   else small.push(...big);
-  await instance('wild_rooibos_bush', small.map(b => ({ ...b, s: 1.2 + rnd() * 0.8 })), O, { shadow: false, wind: { amp: 0.04, freq: 1.5, flutter: 0.01 } }).catch(() => {});
+  await instance('wild_rooibos_bush', small.map(b => ({ ...b, s: 1.2 + rnd() * 0.8 })), O, { shadow: false, wind: { amp: 0.04, freq: 1.5, flutter: 0.01 }, tile: 50, cullDist: 100 }).catch(() => {});
   // poucas pedras grandes de modelo; o resto são pedras leves feitas em código
   const rocks = scatter(Math.round(18 * Q.bushes), 66, 235, 8).map(r => ({ ...r, s: 0.6 + rnd() * 1.0, y: r.y - 0.3 }));
-  await instanceVariants('namaqualand_boulder_02', rocks, O, { shadow: Q.bushes >= 1 }).catch(() => {});
+  await instanceVariants('namaqualand_boulder_02', rocks, O, { shadow: Q.bushes >= 1, tile: 60, cullDist: 170 }).catch(() => {});
   const stones: Xf[] = scatter(70, 64, 235, 4).map(r => ({ ...r, s: 0.3 + rnd() * 0.9 }));
   for (let i = 0; i < 70; i++) { const x = -200 + rnd() * 400, z = ARROYO(x) + (rnd() - 0.5) * 7; if (Math.abs(x - ROAD_S) < 6) continue; stones.push({ x, y: groundH(x, z) - 0.05, z, ry: rnd() * 6, s: 0.2 + rnd() * 0.5 }); }
   for (let v = 0; v < 3; v++) placeRock(rockGeo(v), stones.filter((_, i) => i % 3 === v), O);
   const dead = scatter(8, 70, 200, 14).map(d => ({ ...d, s: 0.8 + rnd() * 0.5 }));
-  await instance('dead_tree_trunk', dead, O).catch(() => {});
-  await instance('dry_branches_medium_01', scatter(10, 64, 200, 6), O, { shadow: false }).catch(() => {});
+  await instance('dead_tree_trunk', dead, O, { tile: 80, cullDist: 200 }).catch(() => {});
+  await instance('dry_branches_medium_01', scatter(10, 64, 200, 6), O, { shadow: false, tile: 50, cullDist: 80 }).catch(() => {});
 
   // ---------- árvores (mezquites/pirules) nos arredores e ao longo do arroio ----------
   const trees: Xf[] = [];
@@ -214,8 +218,8 @@ export async function buildNature(G: THREE.Group, free: (x: number, z: number) =
   }
   trees.push(...scatter(14, 70, 150, 14).map(t => ({ ...t, s: 0.7 + rnd() * 0.4 })));
   const tl = (i: number) => trees.filter((_, k) => k % 2 === i);
-  (await instance(lod('tree_small_02'), tl(0), O, { wind: { amp: 0.08, freq: 0.9, flutter: 0.015 } }).catch(() => [])).forEach(m => (m.userData.canopy = 1));
-  (await instance(lod('island_tree_02'), tl(1).map(t => ({ ...t, s: (t.s ?? 1) * 0.75 })), O, { wind: { amp: 0.08, freq: 0.9, flutter: 0.015 } }).catch(() => [])).forEach(m => (m.userData.canopy = 1));
+  (await instance(lod('tree_small_02'), tl(0), O, { wind: { amp: 0.08, freq: 0.9, flutter: 0.015 }, tile: 70, cullDist: 220 }).catch(() => [])).forEach(m => (m.userData.canopy = 1));
+  (await instance(lod('island_tree_02'), tl(1).map(t => ({ ...t, s: (t.s ?? 1) * 0.75 })), O, { wind: { amp: 0.08, freq: 0.9, flutter: 0.015 }, tile: 70, cullDist: 220 }).catch(() => [])).forEach(m => (m.userData.canopy = 1));
 
   // ---------- capim seco ----------
   const dry = [0x9a8a5a, 0xa89a66, 0x8a7a4a, 0xb0a070, 0x7d7448];

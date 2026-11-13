@@ -46,7 +46,7 @@ street_lamp_02 0.12 512
 metal_trash_can 0.4 512
 fire_hydrant 0.04 512
 metal_jerrycan 0.15 512
-Rockingchair_01 0.3 512
+Rockingchair_01 0.15 512
 wooden_picnic_table 0.3 512
 CashRegister_01 0.3 512
 hanging_industrial_lamp 0.3 512
@@ -54,7 +54,9 @@ wooden_ladder 0.3 512
 wooden_lantern_01 0.25 512
 vintage_radio_transceiver 0.12 512
 desk_lamp_arm_01 0.15 512
-cardboard_box_01 0.1 512
+cardboard_box_01 0.05 512
 clipboard 0.3 512
 metal_office_desk 0.5 512
+WoodenChair_01 0.15 512
+covered_car 0.4 1024
 LIST

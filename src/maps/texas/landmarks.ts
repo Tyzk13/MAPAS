@@ -114,7 +114,7 @@ export async function buildLandmarks(G: THREE.Group): Promise<Landmarks> {
     const px = (x0 + x1) / 2 + 1.5, pz = cz + 3.5;
     box(D, m.woodDark, 2.7, 0.75, 1.5, px, 0.42, pz, 0x3a2418); box(D, m.plain, 2.4, 0.04, 1.2, px, 0.81, pz, 0x1e5a32);
     later(instance('WoodenTable_01', [{ x: px + 0.5, y: 0.05, z: cz - 3.5, ry: 0.2, s: 0.6, sy: 1.35 } as Xf, { x: px - 1.2, y: 0.05, z: cz - 6, ry: 1.4, s: 0.6, sy: 1.35 } as Xf], G));
-    later(instance('WoodenChair_01', [{ x: px + 0.5, y: 0.05, z: cz - 2.6, ry: 3.1 }, { x: px + 1.4, y: 0.05, z: cz - 3.8, ry: -1.5 }, { x: px - 1.2, y: 0.05, z: cz - 5.1, ry: 2.6 }, { x: px - 2.0, y: 0.6, z: cz - 6.4, ry: 0, tilt: 1.5 } as Xf], G));
+    woodChairs(D, [{ x: px + 0.5, y: 0.05, z: cz - 2.6, ry: 3.1 }, { x: px + 1.4, y: 0.05, z: cz - 3.8, ry: -1.5 }, { x: px - 1.2, y: 0.05, z: cz - 5.1, ry: 2.6 }, { x: px - 2.0, y: 0.25, z: cz - 6.4, ry: 0, tilt: 1.5 }]);
     const hl: Xf[] = [{ x: px, y: H - 1.3, z: pz }, { x: px + 0.5, y: H - 1.3, z: cz - 3.5 }, { x: bx + 0.6, y: H - 1.3, z: cz - 1 }];
     later(instance('hanging_industrial_lamp', hl.map(l => ({ ...l, ry: 0, s: 0.9 })), G));
     hl.forEach((l, i) => { light(l.x, l.y - 0.2, l.z, 6, i ? 7 : 8, 0xffa860, { vtt: 6, flick: i === 2 ? 1 : 0 }); halo(l.x, l.y - 0.05, l.z, 0.7); });
@@ -319,7 +319,7 @@ export async function buildLandmarks(G: THREE.Group): Promise<Landmarks> {
     const fi = new THREE.InstancedMesh(new THREE.SphereGeometry(0.02, 5, 4).scale(1, 1.8, 1).translate(0, 0.2, 0), flm, cand.length), o4 = new THREE.Object3D();
     cand.forEach((p, i) => { o4.position.copy(p); o4.updateMatrix(); cm.setMatrixAt(i, o4.matrix); fi.setMatrixAt(i, o4.matrix); halo(p.x, p.y + 0.22, p.z, 0.3); }); cm.computeBoundingSphere(); fi.computeBoundingSphere(); G.add(cm, fi);
     light(fx - 2.8, 0.7, fz, 3, 9, 0xff9040, { flick: 1, vtt: 4 });
-    later(instance('WoodenChair_01', [{ x: fx - 0.8, y: 0.06, z: fz + 2.5, ry: 2.2, tilt: 1.5 } as Xf], G));
+    woodChairs(D, [{ x: fx - 0.8, y: 0.3, z: fz + 2.5, ry: 2.2, tilt: 1.5 }]);
     later(place('GothicCabinet_01', x0 + 0.6, 0.06, fz + 3.6, Math.PI / 2, 1, G));
     later(instance('Rockingchair_01', [{ x: x0 - 1.0, y: 0.25, z: fz + 2.6, ry: -Math.PI / 2 }], G));
     vttWalls.push([[x0, fz - 0.5], [x0, z0], [x1, z0], [x1, fz + 1.5], [x1, fz + 2.5], [x1, z1], [x0, z1], [x0, fz + 0.5]]);
@@ -350,7 +350,10 @@ export async function buildLandmarks(G: THREE.Group): Promise<Landmarks> {
     // milharal seco com espantalho no meio
     const corn: THREE.Matrix4[] = [], cnt = Math.round(1600 * Q.cacti);
     for (let i = 0; i < cnt; i++) { const row = i % 30, x = fx + 14 + row * 1.2 + (rnd() - 0.5) * 0.3, z = fz + 12 + rnd() * 40; if (Math.hypot(x - CROP.x, z - CROP.z) < CROP.r) continue; corn.push(mtx(x, 0, z, rnd() * 6, 0.9 + rnd() * 0.4, 0.8 + rnd() * 0.5)); }
-    const cg = cornGeo(), ci = new THREE.InstancedMesh(cg, m.veg, corn.length); corn.forEach((mm, i) => ci.setMatrixAt(i, mm)); ci.computeBoundingSphere(); ci.castShadow = Q.lights > 8; ci.receiveShadow = true; G.add(ci);
+    // milharal em blocos de 12 m (corte por tela e por distância)
+    { const cg = cornGeo(), by = new Map<string, THREE.Matrix4[]>(), pv = new THREE.Vector3();
+      corn.forEach(mm => { pv.setFromMatrixPosition(mm); const k = Math.floor(pv.x / 12) + ',' + Math.floor(pv.z / 12); if (!by.has(k)) by.set(k, []); by.get(k)!.push(mm); });
+      by.forEach(L2 => { const ci = new THREE.InstancedMesh(cg, m.veg, L2.length); L2.forEach((mm, i) => ci.setMatrixAt(i, mm)); ci.computeBoundingSphere(); ci.castShadow = Q.lights > 8; ci.receiveShadow = true; ci.userData.cullDist = 110; G.add(ci); }); }
     const sx = CROP.x, sz = CROP.z; box(D, m.wood, 0.12, 2.6, 0.12, sx, 1.3, sz, 0x6a5a48); box(D, m.wood, 1.8, 0.1, 0.1, sx, 2.0, sz, 0x6a5a48);
     box(D, m.plain, 0.6, 0.8, 0.3, sx, 1.75, sz, 0x6a5a40); const head = new THREE.SphereGeometry(0.22, 8, 6); head.scale(1, 1.15, 1); head.translate(sx, 2.45, sz); D.add(m.plain, head, 0xb8a888);
     const hat = new THREE.CylinderGeometry(0.2, 0.45, 0.22, 10); hat.translate(sx, 2.72, sz); D.add(m.plain, hat, 0x4a3a2a);
@@ -398,6 +401,17 @@ export async function buildLandmarks(G: THREE.Group): Promise<Landmarks> {
 }
 
 // ---------- geometrias e texturas por código ----------
+/** cadeira de madeira simples de saloon/cozinha (tilt = tombada) */
+function woodChairs(D: Batch, list: { x: number; y: number; z: number; ry: number; tilt?: number }[]) {
+  const m = TM();
+  list.forEach(c => {
+    const M = mtx(c.x, c.y, c.z, c.ry, 1, 1, 1, 0, c.tilt ?? 0);
+    const ad = (w: number, h: number, d: number, x: number, y: number, z: number) => bxM(D, m.wood, w, h, d, x, y, z, 0x7a5a40, M);
+    ad(0.44, 0.05, 0.42, 0, 0.46, 0);
+    [[-0.19, -0.18], [0.19, -0.18], [-0.19, 0.18], [0.19, 0.18]].forEach(([a, b]) => ad(0.04, 0.46, 0.04, a, 0.23, b));
+    [-0.19, 0.19].forEach(a => ad(0.04, 0.5, 0.04, a, 0.73, -0.19)); ad(0.42, 0.1, 0.03, 0, 0.9, -0.19); ad(0.42, 0.06, 0.03, 0, 0.7, -0.19);
+  });
+}
 function cornGeo() {
   const parts: THREE.BufferGeometry[] = [];
   const st = new THREE.CylinderGeometry(0.015, 0.025, 2.0, 4, 1); st.translate(0, 1.0, 0); parts.push(st.toNonIndexed());

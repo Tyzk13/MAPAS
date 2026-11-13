@@ -92,7 +92,7 @@ const COUNTY_MAP = (g: G2, x: number, y: number, w: number, h: number) => {
   g.restore();
 };
 
-export interface Police { solids: THREE.Object3D[]; floors: THREE.Object3D[]; roofs: THREE.Group; vttWalls: [number, number][][]; portals: { p: [number, number]; a: [number, number]; b: [number, number] }[]; lamps: THREE.MeshBasicMaterial[] }
+export interface Police { docs: { o: THREE.Object3D; n: string }[]; solids: THREE.Object3D[]; floors: THREE.Object3D[]; roofs: THREE.Group; vttWalls: [number, number][][]; portals: { p: [number, number]; a: [number, number]; b: [number, number] }[]; lamps: THREE.MeshBasicMaterial[] }
 
 export async function buildPolice(G: THREE.Group): Promise<Police> {
   reseed(911);
@@ -105,8 +105,9 @@ export async function buildPolice(G: THREE.Group): Promise<Police> {
   /** plano de documento/quadro: ry 0 = olha +z, π = −z, π/2 = +x, −π/2 = −x */
   const doc = (t: THREE.Texture, w: number, h: number, x: number, y: number, z: number, ry: number, flat = false) => {
     const mm = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshStandardMaterial({ map: t, roughness: 0.85, envMapIntensity: 0.3, polygonOffset: true, polygonOffsetFactor: -2 }));
-    mm.position.set(wx(x), y, wz(z)); if (flat) { mm.rotation.set(-Math.PI / 2, 0, ry); } else mm.rotation.y = ry; mm.userData.ns = 1; G.add(mm); lastDoc = mm; return mm;
+    mm.position.set(wx(x), y, wz(z)); if (flat) { mm.rotation.set(-Math.PI / 2, 0, ry); } else mm.rotation.y = ry; mm.userData.ns = 1; G.add(mm); lastDoc = mm; if (nextName) { docs.push({ o: mm, n: nextName }); nextName = ''; } mm.geometry.computeBoundingSphere(); mm.userData.cullDist = 40; return mm;
   };
+  const docs: { o: THREE.Object3D; n: string }[] = []; let nextName = ''; const nm = (n: string) => { nextName = n; };
   let lastDoc: THREE.Mesh | null = null;
   /** cadeira de escritório (coordenadas do mundo) */
   const chairs = (list: { x: number; y: number; z: number; ry?: number }[]) => list.forEach(c => {
@@ -193,13 +194,31 @@ export async function buildPolice(G: THREE.Group): Promise<Police> {
   };
   car(X0 - 6.3, wz(5), 0, true); car(X0 - 6.3, wz(18.5), Math.PI, false);
 
+  // ---------- vidros e persianas nas janelas externas ----------
+  { const blindT = mk(64, 256, g => { for (let y = 0; y < 256; y += 8) { g.fillStyle = '#d8d4c8'; g.fillRect(0, y, 64, 6); g.fillStyle = 'rgba(0,0,0,0)'; g.clearRect(0, y + 6, 64, 2); } });
+    const blindM = new THREE.MeshStandardMaterial({ map: blindT, transparent: true, alphaTest: 0.3, roughness: 0.7, side: THREE.DoubleSide });
+    const glassM = new THREE.MeshStandardMaterial({ color: 0x1a2228, roughness: 0.05, metalness: 0.2, transparent: true, opacity: 0.35, envMapIntensity: 1.4, depthWrite: false });
+    const win = (side: 'N' | 'W' | 'E', at: number, w: number, h: number, sill: number, drop: number) => {
+      const ry = side === 'N' ? 0 : side === 'W' ? Math.PI / 2 : -Math.PI / 2;
+      const px = (d: number) => side === 'N' ? [wx(at), wz(d)] : side === 'W' ? [wx(d), wz(at)] : [wx(W - d), wz(at)];
+      const [gx, gz] = px(T / 2), gl = new THREE.Mesh(new THREE.PlaneGeometry(w, h), glassM); gl.position.set(gx, sill + h / 2, gz); gl.rotation.y = ry; gl.userData.ns = 1; G.add(gl);
+      if (drop > 0) { const [bxp, bzp] = px(T + 0.04); const bl = new THREE.Mesh(new THREE.PlaneGeometry(w + 0.1, h * drop), blindM); bl.position.set(bxp, sill + h - h * drop / 2, bzp); bl.rotation.y = ry; bl.userData.ns = 1; G.add(bl); }
+    };
+    win('W', 14.9, 1.0, 1.2, 1.1, 0.5); win('W', 22.5, 1.2, 1.2, 1.1, 0.9);
+    win('N', 3, 1.4, 1.2, 1.1, 0.7); win('N', 9, 1.6, 1.2, 1.1, 0.4); win('N', 13, 1.6, 1.2, 1.1, 1.0);
+    [16.5, 19.5, 22.5].forEach(z => win('E', z, 0.7, 0.4, 2.3, 0));
+    // portas de vidro da entrada (abertas para dentro) e toldo
+    const gd = new THREE.MeshStandardMaterial({ color: 0x20282e, roughness: 0.05, metalness: 0.3, transparent: true, opacity: 0.45, envMapIntensity: 1.3, depthWrite: false });
+    [-1, 1].forEach(sg => { const d = new THREE.Mesh(new THREE.BoxGeometry(0.04, 2.3, 0.88), gd); d.geometry.translate(0, 0, sg * 0.44); d.position.set(wx(T + 0.05), FL + 1.15, wz(12 + sg * 0.9)); d.rotation.y = -sg * 1.1; d.userData.ns = 1; G.add(d); });
+    bx(Dt, m.paint, 2.2, 0.08, 4.0, -1.1, 2.95, 12, 0x1e2a4a); [-1.8, 1.8].forEach(o => bx(Dt, m.iron, 0.06, 2.9, 0.06, -2.1, 1.45, 12 + o, 0x3a3a3a)); }
+
   // =================== RECEPÇÃO (x 0..6, z 8..16) ===================
   bx(B, m.woodDark, 0.6, 1.1, 2.9, 6 - 0.3, FL + 0.55, 10.95, 0x5a4030); bx(Dt, m.woodDark, 0.75, 0.05, 3.0, 6 - 0.3, FL + 1.12, 10.95, 0x3a2418);
   { const gl = new THREE.Mesh(new THREE.BoxGeometry(0.02, 1.0, 2.9), new THREE.MeshStandardMaterial({ color: 0xa8c0c8, transparent: true, opacity: 0.18, roughness: 0.05, metalness: 0.1, envMapIntensity: 1.2, depthWrite: false })); gl.position.set(wx(6 - 0.62), FL + 1.65, wz(10.95)); gl.userData.ns = 1; G.add(gl); } // vidro do balcão
   later(instance('painted_wooden_bench', [{ x: wx(0.7), y: FL, z: wz(9.4), ry: Math.PI / 2, s: 1.3 }, { x: wx(3), y: FL, z: wz(15.4), ry: Math.PI, s: 1.3 }], G));
   bx(Dt, m.paint, 0.35, 1.2, 0.35, 0.5, FL + 0.6, 15.5, 0xd8d8d0); { const wb = new THREE.CylinderGeometry(0.15, 0.15, 0.45, 12); wb.translate(wx(0.5), FL + 1.43, wz(15.5)); Dt.add(m.paint, wb, 0x6a9ac0); }
   // mural de avisos da recepção
-  doc(mk(1024, 512, g => {
+  nm('Mural de avisos (recepção)'); doc(mk(1024, 512, g => {
     cork(g, 1024, 512);
     paperDraw(g, 30, 30, 200, 330, 'MISSING', ['CLARA MAE WHITLOCK', 'Age 16 · 5\'4" · brown hair', 'Last seen Oct 31 1986 near Pruitt Rd.', 'Call Sheriff Dept.'], { size: 13, bg: '#f0ead8' }); photo(g, 60, 210, 140, 120, 'girl');
     paperDraw(g, 260, 30, 210, 330, 'WANTED FOR QUESTIONING', ['ELIAS PRUITT', 'Age ~70. Former owner of Pruitt Funeral Home.', 'Re: desecration of a grave at First Baptist cemetery.', 'Do NOT approach.'], { size: 13, bg: '#efe0c0', stamp: 'ARMED?' });
@@ -210,18 +229,18 @@ export async function buildPolice(G: THREE.Group): Promise<Police> {
     paperDraw(g, 760, 240, 230, 240, 'PRAYER VIGIL', ['First Baptist Church', 'for Clara and for Ray Collins (missing from Starlite Motel).', 'Candles provided.', 'Pastor A. Kell'], { size: 12, bg: '#f2ece0' });
     [[130, 40], [365, 40], [615, 50], [615, 280], [875, 40], [875, 250]].forEach(([x, y]) => pin(g, x, y));
   }), 2.6, 1.3, 3.0, 1.75, 8 + IT / 2 + 0.012, 0);
-  doc(mk(512, 128, g => { g.fillStyle = '#1e2a4a'; g.fillRect(0, 0, 512, 128); g.fillStyle = '#e8d8a0'; g.font = 'bold 40px Georgia'; g.textAlign = 'center'; g.fillText('SHERIFF DALE HUTTO', 256, 58); g.font = '24px Georgia'; g.fillText('Harlow County · Since 1998', 256, 100); }), 1.6, 0.4, 6 - IT / 2 - 0.012, 2.62, 11.5, -Math.PI / 2);
-  doc(mk(512, 360, g => { g.fillStyle = '#3a2a1a'; g.fillRect(0, 0, 512, 360); photo(g, 25, 20, 462, 300, 'group'); g.fillStyle = '#e8d8a0'; g.font = '20px Georgia'; g.textAlign = 'center'; g.fillText('Search party · Nov. 1st, 1986 · Sheriff W. Hutto (left)', 256, 345); }), 1.0, 0.7, T + 0.012, 1.85, 9.6, Math.PI / 2);
+  nm('Placa do xerife'); doc(mk(512, 128, g => { g.fillStyle = '#1e2a4a'; g.fillRect(0, 0, 512, 128); g.fillStyle = '#e8d8a0'; g.font = 'bold 40px Georgia'; g.textAlign = 'center'; g.fillText('SHERIFF DALE HUTTO', 256, 58); g.font = '24px Georgia'; g.fillText('Harlow County · Since 1998', 256, 100); }), 1.6, 0.4, 6 - IT / 2 - 0.012, 2.62, 11.5, -Math.PI / 2);
+  nm('Foto do grupo de busca, 1986'); doc(mk(512, 360, g => { g.fillStyle = '#3a2a1a'; g.fillRect(0, 0, 512, 360); photo(g, 25, 20, 462, 300, 'group'); g.fillStyle = '#e8d8a0'; g.font = '20px Georgia'; g.textAlign = 'center'; g.fillText('Search party · Nov. 1st, 1986 · Sheriff W. Hutto (left)', 256, 345); }), 1.0, 0.7, T + 0.012, 1.85, 9.6, Math.PI / 2);
   light(wx(3), CEIL - 0.1, wz(12), 6, 8, 0xf0f4ff, { vtt: 6 });
 
   // =================== SALA DO XERIFE (x 0..6, z 0..8) ===================
   later(place('metal_office_desk', wx(3.2), FL, wz(3.4), 0, 1, G));
   chairs([{ x: wx(3.2), y: FL, z: wz(2.4), ry: 0 }, { x: wx(2.6), y: FL, z: wz(4.8), ry: Math.PI }, { x: wx(3.8), y: FL, z: wz(4.9), ry: Math.PI + 0.3 }]);
   later(place('desk_lamp_arm_01', wx(2.5), FL + 0.79, wz(3.2), 0.8, 1, G));
-  doc(paper('MEMO — FROM THE DESK OF SHERIFF D. HUTTO', ['RE: WHITLOCK (86-1031)', 'This case stays CLOSED.', 'Nobody pulls the file. Nobody talks to the press. Nobody goes out to the Pruitt place after dark.', 'My father put it to rest in \'86 and I intend to keep it that way.', '— D.H.'], { stamp: 'CONFIDENTIAL' }), 0.24, 0.32, 3.4, FL + 0.795, 3.3, 0.2, true);
-  doc(mk(512, 680, g => { g.fillStyle = '#e8e2cc'; g.fillRect(0, 0, 512, 680); g.fillStyle = '#2a2a6a'; g.font = '24px "Brush Script MT", "Comic Sans MS", cursive'; ['Dale,', '', 'I know what my father did in that', 'field, and I know what your father', 'helped him bury. The circle was', 'never closed. It is opening again.', '', 'It has to be closed from the', 'inside of the field, at 10:01, with', 'the same words. I wrote them down.', 'They are in the cellar.', '', 'Do not let anyone answer when it', 'calls with her voice.', '', '— E. Pruitt'].forEach((l, i) => g.fillText(l, 40, 60 + i * 36)); age(g, 512, 680, 40); }), 0.21, 0.28, 2.95, FL + 0.796, 3.5, -0.3, true);
-  doc(mk(1024, 700, g => { g.fillStyle = '#3a2a1a'; g.fillRect(0, 0, 1024, 700); COUNTY_MAP(g, 30, 30, 964, 640); }), 1.8, 1.2, T + 0.012, 1.75, 5.3, Math.PI / 2);
-  doc(mk(512, 360, g => { g.fillStyle = '#d8d0c0'; g.fillRect(0, 0, 512, 360); photo(g, 20, 20, 220, 160, 'group', 'Dad, 1986'); photo(g, 270, 20, 220, 160, 'man', 'W. Hutto & E. Pruitt Sr.'); photo(g, 20, 190, 220, 150, 'house', 'Pruitt place'); photo(g, 270, 190, 220, 150, 'field', '"burn it"'); }), 1.3, 0.9, 3, 1.75, 8 - IT / 2 - 0.012, Math.PI);
+  nm('Memorando do xerife'); doc(paper('MEMO — FROM THE DESK OF SHERIFF D. HUTTO', ['RE: WHITLOCK (86-1031)', 'This case stays CLOSED.', 'Nobody pulls the file. Nobody talks to the press. Nobody goes out to the Pruitt place after dark.', 'My father put it to rest in \'86 and I intend to keep it that way.', '— D.H.'], { stamp: 'CONFIDENTIAL' }), 0.24, 0.32, 3.4, FL + 0.795, 3.3, 0.2, true);
+  nm('Carta de Elias Pruitt Jr.'); doc(mk(512, 680, g => { g.fillStyle = '#e8e2cc'; g.fillRect(0, 0, 512, 680); g.fillStyle = '#2a2a6a'; g.font = '24px "Brush Script MT", "Comic Sans MS", cursive'; ['Dale,', '', 'I know what my father did in that', 'field, and I know what your father', 'helped him bury. The circle was', 'never closed. It is opening again.', '', 'It has to be closed from the', 'inside of the field, at 10:01, with', 'the same words. I wrote them down.', 'They are in the cellar.', '', 'Do not let anyone answer when it', 'calls with her voice.', '', '— E. Pruitt'].forEach((l, i) => g.fillText(l, 40, 60 + i * 36)); age(g, 512, 680, 40); }), 0.21, 0.28, 2.95, FL + 0.796, 3.5, -0.3, true);
+  nm('Mapa do condado (sala do xerife)'); doc(mk(1024, 700, g => { g.fillStyle = '#3a2a1a'; g.fillRect(0, 0, 1024, 700); COUNTY_MAP(g, 30, 30, 964, 640); }), 1.8, 1.2, T + 0.012, 1.75, 5.3, Math.PI / 2);
+  nm('Fotos na parede do xerife'); doc(mk(512, 360, g => { g.fillStyle = '#d8d0c0'; g.fillRect(0, 0, 512, 360); photo(g, 20, 20, 220, 160, 'group', 'Dad, 1986'); photo(g, 270, 20, 220, 160, 'man', 'W. Hutto & E. Pruitt Sr.'); photo(g, 20, 190, 220, 150, 'house', 'Pruitt place'); photo(g, 270, 190, 220, 150, 'field', '"burn it"'); }), 1.3, 0.9, 3, 1.75, 8 - IT / 2 - 0.012, Math.PI);
   bx(B, m.paint, 0.7, 1.0, 0.6, 5.3, FL + 0.5, 0.75, 0x3a3a3c); doc(mk(128, 128, g => { g.fillStyle = '#3a3a3c'; g.fillRect(0, 0, 128, 128); g.fillStyle = '#c8b060'; g.beginPath(); g.arc(64, 64, 26, 0, 7); g.fill(); g.fillStyle = '#1a1a1a'; g.font = '12px Arial'; g.textAlign = 'center'; g.fillText('MOSLER', 64, 110); }), 0.5, 0.5, 5.3, FL + 0.55, 1.06, 0);
   light(wx(2.5), FL + 1.3, wz(3.2), 3, 6, 0xffb070, { vtt: 4 });
 
@@ -240,14 +259,14 @@ export async function buildPolice(G: THREE.Group): Promise<Police> {
     ['CALL FOR SERVICE 26-1106', ['Pruitt lease, 5 pump jacks RUNNING. Field shut in since 1994.', 'Texland Power confirms: NO power to those lines.', 'Deputy Garza: "the motors are cold. They\'re moving anyway."'], undefined],
     ['CALL FOR SERVICE 26-1108', ['Hale ranch: 12 head of cattle missing. Gate closed. No tracks.', 'Rancher reports a girl standing in the corn at night, "calling for her mama".', 'Deputy did not find anyone.'], undefined],
   ];
-  desks.forEach(([x, z, r], i) => doc(paper(reps[i][0], reps[i][1], { stamp: reps[i][2], size: 17 }), 0.23, 0.31, x - 0.15 + (rnd() - 0.5) * 0.1, FL + 0.795, z + (r ? -0.05 : 0.05), r + (rnd() - 0.5) * 0.4, true));
+  desks.forEach(([x, z, r], i) => { nm('Relatório: ' + reps[i][0]); doc(paper(reps[i][0], reps[i][1], { stamp: reps[i][2], size: 17 }), 0.23, 0.31, x - 0.15 + (rnd() - 0.5) * 0.1, FL + 0.795, z + (r ? -0.05 : 0.05), r + (rnd() - 0.5) * 0.4, true); });
   // quadro branco: chamadas da semana
-  doc(mk(1024, 512, g => { g.fillStyle = '#f4f4f0'; g.fillRect(0, 0, 1024, 512); g.strokeStyle = '#9a9a9a'; g.lineWidth = 14; g.strokeRect(0, 0, 1024, 512);
+  nm('Quadro de chamadas da semana'); doc(mk(1024, 512, g => { g.fillStyle = '#f4f4f0'; g.fillRect(0, 0, 1024, 512); g.strokeStyle = '#9a9a9a'; g.lineWidth = 14; g.strokeRect(0, 0, 1024, 512);
     marker(g, 'CALLS — THIS WEEK', 40, 70, 46, '#1a2a6a');
     ['Mon — grave open (Whitlock) ✔ photos', 'Tue — Ray Collins missing, Room 7', 'Wed — pump jacks moving?? (Garza)', 'Thu — Hale cattle gone / "girl in corn"', 'Fri — 3 calls from the PRUITT line (DISCONNECTED 1987)', 'Sat — clock on courthouse stopped 10:01', 'Sun — ???'].forEach((l, i) => marker(g, l, 50, 130 + i * 50, 30, i === 4 ? '#a01a1a' : '#1a1a1a'));
     marker(g, 'DON\'T GO OUT THERE ALONE', 560, 470, 30, '#a01a1a'); g.fillStyle = 'rgba(120,120,120,0.15)'; g.fillRect(600, 40, 380, 200); }), 3.6, 1.8, 16 - IT / 2 - 0.012, 1.7, 7.4, -Math.PI / 2);
-  doc(mk(512, 256, g => { g.fillStyle = '#f0ece0'; g.fillRect(0, 0, 512, 256); g.fillStyle = '#1a1a1a'; g.font = 'bold 34px Arial'; g.textAlign = 'center'; g.fillText('DAYS WITHOUT', 256, 70); g.fillText('AN INCIDENT', 256, 112); g.fillStyle = '#a01a1a'; g.font = 'bold 110px Arial'; g.fillText('0', 256, 230); }), 0.9, 0.45, 14, 2.2, 14 - IT / 2 - 0.012, Math.PI);
-  doc(paper('DUTY ROSTER — NOVEMBER', ['DAYS: Sheriff Hutto · Dep. M. Garza', 'NIGHTS: Dep. T. Boone · Dep. J. Lyle', 'DISPATCH: Mrs. Irene Kowalski', '', 'NOTE: night patrol stays ON PAVEMENT. Do NOT drive Pruitt Rd. after 10 PM. — D.H.', 'Lyle — out sick since Wed (?)'], { size: 15 }), 0.8, 1.05, 7.5, 1.7, 14 - IT / 2 - 0.012, Math.PI);
+  nm('Dias sem incidentes'); doc(mk(512, 256, g => { g.fillStyle = '#f0ece0'; g.fillRect(0, 0, 512, 256); g.fillStyle = '#1a1a1a'; g.font = 'bold 34px Arial'; g.textAlign = 'center'; g.fillText('DAYS WITHOUT', 256, 70); g.fillText('AN INCIDENT', 256, 112); g.fillStyle = '#a01a1a'; g.font = 'bold 110px Arial'; g.fillText('0', 256, 230); }), 0.9, 0.45, 14, 2.2, 14 - IT / 2 - 0.012, Math.PI);
+  nm('Escala de plantão'); doc(paper('DUTY ROSTER — NOVEMBER', ['DAYS: Sheriff Hutto · Dep. M. Garza', 'NIGHTS: Dep. T. Boone · Dep. J. Lyle', 'DISPATCH: Mrs. Irene Kowalski', '', 'NOTE: night patrol stays ON PAVEMENT. Do NOT drive Pruitt Rd. after 10 PM. — D.H.', 'Lyle — out sick since Wed (?)'], { size: 15 }), 0.8, 1.05, 7.5, 1.7, 14 - IT / 2 - 0.012, Math.PI);
   for (let i = 0; i < 6; i++) bx(B, m.paint, 0.5, 1.9, 0.5, 6.6 + i * 0.52, FL + 0.95, 0.65, 0x6a7a6a); // armários
   bx(Dt, m.paint, 0.5, 0.45, 0.4, 15.4, FL + 1.1, 12.8, 0x2a2a2a); bx(Dt, m.woodDark, 0.8, 0.85, 0.5, 15.4, FL + 0.43, 12.8, 0x5a4030); // cafeteira
   light(wx(11), CEIL - 0.1, wz(6), 8, 9, 0xf0f4ff, { vtt: 9 });
@@ -257,7 +276,7 @@ export async function buildPolice(G: THREE.Group): Promise<Police> {
   chairs([{ x: wx(9.6), y: FL, z: wz(18.2), ry: 0.2 }, { x: wx(12.4), y: FL, z: wz(18.1), ry: -0.3 }, { x: wx(11), y: FL, z: wz(20.4), ry: Math.PI }]);
   later(instance('cardboard_box_01', [{ x: wx(10.4), y: FL + 0.77, z: wz(19), ry: 0.3 }, { x: wx(14.6), y: FL, z: wz(22.8), ry: 1.2 }, { x: wx(15.1), y: FL, z: wz(22.3), ry: 0.2 }, { x: wx(14.8), y: FL + 0.34, z: wz(22.6), ry: 0.9 }], G));
   // QUADRÃO DO CASO
-  doc(mk(2048, 512, g => {
+  nm('Quadro do caso'); doc(mk(2048, 512, g => {
     cork(g, 2048, 512);
     COUNTY_MAP(g, 40, 40, 560, 330); pin(g, 320, 40);
     marker(g, 'THE WHITLOCK CASE', 640, 70, 52, '#1a1a1a');
@@ -276,12 +295,12 @@ export async function buildPolice(G: THREE.Group): Promise<Police> {
     marker(g, 'WHO ANSWERED THE PHONE AT 10:01?', 1300, 30, 26, '#a01a1a');
   }), 8.8, 2.2, 11, 1.65, D - T - 0.012, Math.PI);
   // quadro branco "o que sabemos"
-  doc(mk(1024, 640, g => { g.fillStyle = '#f4f4f0'; g.fillRect(0, 0, 1024, 640); g.strokeStyle = '#9a9a9a'; g.lineWidth = 14; g.strokeRect(0, 0, 1024, 640);
+  nm('Quadro "o que sabemos"'); doc(mk(1024, 640, g => { g.fillStyle = '#f4f4f0'; g.fillRect(0, 0, 1024, 640); g.strokeStyle = '#9a9a9a'; g.lineWidth = 14; g.strokeRect(0, 0, 1024, 640);
     marker(g, 'WHAT WE KNOW', 40, 70, 48);
     ['1. Clara went INTO the field. Didn\'t come out.', '2. Pruitt Sr. + "friends" did something there.', '3. Dad ended the search. Dad knew.', '4. Coffin: ribbon + TAPE (evidence #7 — MISSING?)', '5. Symbol = map of the 3 sites. Center?', '6. Everything happens at 10:01 PM.', '7. Pruitt Jr. is back. Wants the field CLOSED.'].forEach((l, i) => marker(g, l, 50, 140 + i * 62, 32, i === 3 || i === 5 ? '#a01a1a' : '#1a1a1a'));
     sigil(g, 900, 120, 60, '#1a2a6a', 4); }), 3.4, 2.1, 6 + IT / 2 + 0.012, 1.65, 17.4, Math.PI / 2);
   // fotos e papéis sobre a mesa
-  doc(mk(512, 512, g => { g.fillStyle = 'rgba(0,0,0,0)'; g.clearRect(0, 0, 512, 512); photo(g, 20, 30, 160, 130, 'field'); photo(g, 200, 10, 160, 130, 'grave'); photo(g, 330, 160, 160, 130, 'mirror'); paperDraw(g, 40, 200, 230, 290, 'PRUITT FUNERAL HOME — RECEIPT', ['Whitlock memorial, 1993.', 'Casket (sealed, child size).', 'CONTENTS per family request: none.', 'Handwritten: "per W.H. — seal it. — E.P."'], { size: 14 }); }), 1.1, 1.1, 11.2, FL + 1.02, 19.2, 0.2, true); (lastDoc!.material as THREE.MeshStandardMaterial).transparent = true;
+  nm('Papéis sobre a mesa do caso'); doc(mk(512, 512, g => { g.fillStyle = 'rgba(0,0,0,0)'; g.clearRect(0, 0, 512, 512); photo(g, 20, 30, 160, 130, 'field'); photo(g, 200, 10, 160, 130, 'grave'); photo(g, 330, 160, 160, 130, 'mirror'); paperDraw(g, 40, 200, 230, 290, 'PRUITT FUNERAL HOME — RECEIPT', ['Whitlock memorial, 1993.', 'Casket (sealed, child size).', 'CONTENTS per family request: none.', 'Handwritten: "per W.H. — seal it. — E.P."'], { size: 14 }); }), 1.1, 1.1, 11.2, FL + 1.02, 19.2, 0.2, true); (lastDoc!.material as THREE.MeshStandardMaterial).transparent = true;
   light(wx(11), CEIL - 0.1, wz(19), 8, 9, 0xf0f4ff, { vtt: 8 });
 
   // =================== EVIDÊNCIAS / ARQUIVO (x 16..22, z 7..15) ===================
@@ -301,15 +320,15 @@ export async function buildPolice(G: THREE.Group): Promise<Police> {
   later(place('cassette_player', wx(19.3), FL + 0.78, wz(11.4), -0.5, 1, G));
   bx(Dt, m.paint, 0.1, 0.012, 0.064, 19.55, FL + 0.785, 11.6, 0x1a1a1a);
   { const rib = new THREE.TorusGeometry(0.06, 0.012, 4, 12); rib.rotateX(Math.PI / 2); rib.translate(wx(19.0), FL + 0.79, wz(11.5)); Dt.add(m.paint, rib, 0xb01a2a); }
-  doc(mk(512, 160, g => { g.fillStyle = '#c8a878'; g.fillRect(0, 0, 512, 160); g.fillStyle = '#1a1a1a'; g.font = 'bold 44px "Courier New"'; g.fillText('86-1031', 20, 60); g.font = '30px "Courier New"'; g.fillText('WHITLOCK, C.M.', 20, 110); g.fillStyle = '#a01010'; g.fillText('DO NOT OPEN', 250, 150); }), 0.36, 0.11, 19.1, FL + 0.95, 10.35, 0.2);
-  doc(paper('EVIDENCE LOG — CASE 86-1031', ['#1  Hair ribbon, red (from casket, 1993)', '#2  Polaroids x6 (Pruitt field, 10/31/86)', '#3  Chalk sample, Pruitt cellar', '#4  Statement — E. Pruitt Jr. (sealed)', '#5  Map, hand drawn, symbol', '#6  Search log 11/01/86 (pages 3–5 TORN OUT)', '#7  Audio cassette "10/31 22:01" — 911 call', '    → CHECKED OUT 11/10 by D. HUTTO', '    → RETURNED: ____', '#8  Dog collar "BUCK" (found in corn, 11/09)'], { size: 15, stamp: 'ITEM #7 MISSING' }), 0.6, 0.8, 16 + IT / 2 + 0.012, 1.55, 13.9, Math.PI / 2);
+  nm('Etiqueta da caixa 86-1031'); doc(mk(512, 160, g => { g.fillStyle = '#c8a878'; g.fillRect(0, 0, 512, 160); g.fillStyle = '#1a1a1a'; g.font = 'bold 44px "Courier New"'; g.fillText('86-1031', 20, 60); g.font = '30px "Courier New"'; g.fillText('WHITLOCK, C.M.', 20, 110); g.fillStyle = '#a01010'; g.fillText('DO NOT OPEN', 250, 150); }), 0.36, 0.11, 19.1, FL + 0.95, 10.35, 0.2);
+  nm('Livro de registro de evidências'); doc(paper('EVIDENCE LOG — CASE 86-1031', ['#1  Hair ribbon, red (from casket, 1993)', '#2  Polaroids x6 (Pruitt field, 10/31/86)', '#3  Chalk sample, Pruitt cellar', '#4  Statement — E. Pruitt Jr. (sealed)', '#5  Map, hand drawn, symbol', '#6  Search log 11/01/86 (pages 3–5 TORN OUT)', '#7  Audio cassette "10/31 22:01" — 911 call', '    → CHECKED OUT 11/10 by D. HUTTO', '    → RETURNED: ____', '#8  Dog collar "BUCK" (found in corn, 11/09)'], { size: 15, stamp: 'ITEM #7 MISSING' }), 0.6, 0.8, 16 + IT / 2 + 0.012, 1.55, 13.9, Math.PI / 2);
   light(wx(19), CEIL - 0.15, wz(11), 5, 7, 0xe8f0f0, { vtt: 5, flick: 1 });
 
   // =================== INTERROGATÓRIO (x 16..22, z 0..7) ===================
   later(instance('WoodenTable_01', [{ x: wx(19.5), y: FL, z: wz(3.5), ry: Math.PI / 2, s: 0.6, sy: 1.4 } as Xf], G));
   chairs([{ x: wx(18.6), y: FL, z: wz(3.5), ry: Math.PI / 2 }, { x: wx(20.4), y: FL, z: wz(3.5), ry: -Math.PI / 2 }]);
   later(place('cassette_player', wx(19.6), FL + 0.78, wz(3.9), 0.3, 1.2, G));
-  doc(paper('INTERVIEW TRANSCRIPT — D. "DOT" REYES (Dot\'s Diner)', ['Q: You saw Clara that night?', 'A: 9:40. She came in barefoot. Asked for the pay phone. Said she had to call her mama before ten.', 'Q: Did she call?', 'A: She dialed. Then she hung up and said "the scarecrow knows my name". Walked out toward Pruitt Rd.', 'Q: Anything else?', 'A: Last week the diner phone rang at 10:01. I picked up. Somebody said "Dot, tell Mama I\'m in the field." Sheriff, I KNOW that voice.', '[TAPE ENDS]'], { size: 15 }), 0.25, 0.33, 19.4, FL + 0.785, 3.1, -0.15, true);
+  nm('Transcrição do depoimento de Dot Reyes'); doc(paper('INTERVIEW TRANSCRIPT — D. "DOT" REYES (Dot\'s Diner)', ['Q: You saw Clara that night?', 'A: 9:40. She came in barefoot. Asked for the pay phone. Said she had to call her mama before ten.', 'Q: Did she call?', 'A: She dialed. Then she hung up and said "the scarecrow knows my name". Walked out toward Pruitt Rd.', 'Q: Anything else?', 'A: Last week the diner phone rang at 10:01. I picked up. Somebody said "Dot, tell Mama I\'m in the field." Sheriff, I KNOW that voice.', '[TAPE ENDS]'], { size: 15 }), 0.25, 0.33, 19.4, FL + 0.785, 3.1, -0.15, true);
   { const mir = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 0.9), new THREE.MeshStandardMaterial({ color: 0x1a1e22, roughness: 0.05, metalness: 0.9, envMapIntensity: 1.5 })); mir.position.set(wx(16 + IT / 2 + 0.012), 1.7, wz(5.6)); mir.rotation.y = Math.PI / 2; G.add(mir); }
   light(wx(19.5), CEIL - 0.6, wz(3.5), 5, 8, 0xfff0d0, { vtt: 4 }); halo(wx(19.5), CEIL - 0.5, wz(3.5), 0.5);
   later(instance('hanging_industrial_lamp', [{ x: wx(19.5), y: CEIL - 1.2, z: wz(3.5), ry: 0, s: 0.8 }], G));
@@ -322,8 +341,8 @@ export async function buildPolice(G: THREE.Group): Promise<Police> {
   // painel com luzinhas
   { const lightsTex = mk(256, 128, g => { g.fillStyle = '#2a2c2a'; g.fillRect(0, 0, 256, 128); for (let y = 0; y < 4; y++) for (let x = 0; x < 10; x++) { g.fillStyle = rnd() < 0.25 ? '#ff4030' : rnd() < 0.4 ? '#40ff60' : '#3a3a30'; g.beginPath(); g.arc(16 + x * 24, 20 + y * 28, 6, 0, 7); g.fill(); } });
     const pm = new THREE.MeshBasicMaterial({ map: lightsTex, toneMapped: false }); const pnl = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.6), pm); pnl.position.set(wx(T + 0.02), 1.6, wz(18.3)); pnl.rotation.y = Math.PI / 2; G.add(pnl); }
-  doc(paper('DISPATCH LOG — NIGHT OF 11/11', ['21:47  Hale ranch: lights in the corn.', '21:58  Courthouse clock alarm (no one inside).', '22:01  INCOMING — female, young: "Tell Mama I\'m at the field. Tell her to come get me." Line traced to: PRUITT RESIDENCE, Rt. 2.', '        (Southwestern Bell: line DISCONNECTED 03/1987)', '22:01  INCOMING — same voice — Diner.', '22:01  INCOMING — same voice — Whitlock residence.', '22:02  Lyle 10-8 to Pruitt Rd. against orders.', '22:19  Lyle no response.', '22:40  Lyle no response.', '— I.K.'], { size: 15, stamp: 'UNIT 4 SILENT' }), 0.75, 1.0, 4.8, 1.7, 16 + IT / 2 + 0.012, 0);
-  doc(mk(256, 256, g => { g.fillStyle = '#e8e2c0'; g.fillRect(0, 0, 256, 256); g.fillStyle = '#1a1a1a'; g.font = 'bold 26px Arial'; g.fillText('10-CODES', 20, 40); g.font = '20px "Courier New"'; ['10-4  OK', '10-8  in service', '10-20 location', '10-33 EMERGENCY', '10-99 ...don\'t', '      answer it'].forEach((l, i) => g.fillText(l, 20, 80 + i * 30)); }), 0.4, 0.4, T + 0.012, 1.75, 21.6, Math.PI / 2);
+  nm('Registro do despacho (rádio)'); doc(paper('DISPATCH LOG — NIGHT OF 11/11', ['21:47  Hale ranch: lights in the corn.', '21:58  Courthouse clock alarm (no one inside).', '22:01  INCOMING — female, young: "Tell Mama I\'m at the field. Tell her to come get me." Line traced to: PRUITT RESIDENCE, Rt. 2.', '        (Southwestern Bell: line DISCONNECTED 03/1987)', '22:01  INCOMING — same voice — Diner.', '22:01  INCOMING — same voice — Whitlock residence.', '22:02  Lyle 10-8 to Pruitt Rd. against orders.', '22:19  Lyle no response.', '22:40  Lyle no response.', '— I.K.'], { size: 15, stamp: 'UNIT 4 SILENT' }), 0.75, 1.0, 4.8, 1.7, 16 + IT / 2 + 0.012, 0);
+  nm('Cartão de códigos 10'); doc(mk(256, 256, g => { g.fillStyle = '#e8e2c0'; g.fillRect(0, 0, 256, 256); g.fillStyle = '#1a1a1a'; g.font = 'bold 26px Arial'; g.fillText('10-CODES', 20, 40); g.font = '20px "Courier New"'; ['10-4  OK', '10-8  in service', '10-20 location', '10-33 EMERGENCY', '10-99 ...don\'t', '      answer it'].forEach((l, i) => g.fillText(l, 20, 80 + i * 30)); }), 0.4, 0.4, T + 0.012, 1.75, 21.6, Math.PI / 2);
   light(wx(1.4), 1.7, wz(19.6), 3, 6, 0x9fdcff, { vtt: 4 });
 
   // =================== CELAS (x 16..22, z 15..24) ===================
@@ -338,8 +357,8 @@ export async function buildPolice(G: THREE.Group): Promise<Police> {
   vttWalls.push([[wx(18.4), wz(15)], [wx(18.4), wz(21.4)]], [[wx(18.4), wz(22.4)], [wx(18.4), wz(D - T)]]);
   [16.5, 19.5, 22.5].forEach((z, i) => { bx(Dt, m.plain, 2.6, 0.08, 0.8, 20.6, FL + 0.45, z - 0.9, 0x6a6a68); bx(Dt, m.plain, 2.6, 0.08, 0.75, 20.6, FL + 0.52, z - 0.9, i === 1 ? 0x8a7a68 : 0x6a7a8a); bx(Dt, m.paint, 0.45, 0.45, 0.45, 21.4, FL + 0.23, z + 0.9, 0xc8c8c4); });
   // cela 2: sigilo riscado na parede, marcas de contagem e um bilhete
-  doc(mk(512, 512, g => { g.clearRect(0, 0, 512, 512); sigil(g, 256, 230, 150, 'rgba(230,226,215,0.8)', 5); g.strokeStyle = 'rgba(230,226,215,0.75)'; g.lineWidth = 4; for (let k = 0; k < 4; k++) { for (let i = 0; i < 4; i++) { g.beginPath(); g.moveTo(40 + k * 60 + i * 10, 430); g.lineTo(40 + k * 60 + i * 10, 490); g.stroke(); } g.beginPath(); g.moveTo(32 + k * 60, 470); g.lineTo(80 + k * 60, 445); g.stroke(); } g.font = '30px "Comic Sans MS", cursive'; g.fillStyle = 'rgba(230,226,215,0.85)'; g.fillText('10:01', 330, 480); }), 1.6, 1.6, W - T - 0.012, 1.5, 19.5, -Math.PI / 2); (lastDoc!.material as THREE.MeshStandardMaterial).transparent = true;
-  doc(paper('(scrap of paper)', ['they all say the same thing at 10:01.', 'don\'t answer.', 'don\'t say your name out loud.', '— T.B.'], { size: 22, bg: '#ece6d0' }), 0.18, 0.22, 20.3, FL + 0.565, 18.7, 0.6, true);
+  nm('Símbolo riscado na cela 2'); doc(mk(512, 512, g => { g.clearRect(0, 0, 512, 512); sigil(g, 256, 230, 150, 'rgba(230,226,215,0.8)', 5); g.strokeStyle = 'rgba(230,226,215,0.75)'; g.lineWidth = 4; for (let k = 0; k < 4; k++) { for (let i = 0; i < 4; i++) { g.beginPath(); g.moveTo(40 + k * 60 + i * 10, 430); g.lineTo(40 + k * 60 + i * 10, 490); g.stroke(); } g.beginPath(); g.moveTo(32 + k * 60, 470); g.lineTo(80 + k * 60, 445); g.stroke(); } g.font = '30px "Comic Sans MS", cursive'; g.fillStyle = 'rgba(230,226,215,0.85)'; g.fillText('10:01', 330, 480); }), 1.6, 1.6, W - T - 0.012, 1.5, 19.5, -Math.PI / 2); (lastDoc!.material as THREE.MeshStandardMaterial).transparent = true;
+  nm('Bilhete na cela'); doc(paper('(scrap of paper)', ['they all say the same thing at 10:01.', 'don\'t answer.', 'don\'t say your name out loud.', '— T.B.'], { size: 22, bg: '#ece6d0' }), 0.18, 0.22, 20.3, FL + 0.565, 18.7, 0.6, true);
   light(wx(17.2), CEIL - 0.1, wz(19.5), 5, 8, 0xe0f0e8, { vtt: 5, flick: 3 });
 
   // luminárias fluorescentes (painéis emissivos no forro)
@@ -352,5 +371,5 @@ export async function buildPolice(G: THREE.Group): Promise<Police> {
   const floors = F.build(G, { shadow: false });
   R.build(roofs);
   await Promise.all(P);
-  return { solids, floors, roofs, vttWalls, portals, lamps };
+  return { docs, solids, floors, roofs, vttWalls, portals, lamps };
 }

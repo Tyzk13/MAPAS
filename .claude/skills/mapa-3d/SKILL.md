@@ -118,9 +118,25 @@ Leia `docs/NOVO-MAPA.md` antes de começar.
   joystick no limite, 2,5×) × altura (até 4×), teto 70 m/s. Não volte a limitar o passo da câmera livre a
   0,05 s: em celular lento isso a deixava em câmera lenta. Mapas grandes pedem câmera rápida no alto.
 
+## Lupa de documentos (`src/core/docs.ts`)
+
+- Todo documento importante vai em `M.docs = [{ o: mesh, n: 'Nome' }]` (plano com textura de canvas): passar o
+  mouse mostra a lupa, clicar abre ampliado com "Mostrar aos jogadores". Em police.ts/mystery.ts o padrão é
+  `nm('Nome'); doc(...)` / `nm('Nome'); plane(...)`. Canvas de 512–2048 px fica legível ampliado.
+- Teste: `npm run test:lupa` (espera a câmera chegar na vista — o navegador de teste é lento: use
+  `waitForFunction` na posição da câmera, não um tempo fixo).
+- A 1ª vista de `M.views` é onde o mapa abre: ponha lá o lugar da missão (Harlow abre na delegacia).
+
 ## Medir o peso (faça antes de publicar)
 
 - `npx vite build --outDir .cache/capturas-build && node tools/medir-peso.mjs <mapa>` (Baixa e Alta).
+  O que vale é a versão publicada: `npm run build:leve && node tools/medir-peso.mjs <mapa> --dist=dist-lite --lista`
+  (`--lista` = 20 malhas mais pesadas via `window.__peso()`, disponível com `?fps=1`).
+- `Batch` agrupa por região de 70 m (não só por material): sem isso uma malha cobria a cidade inteira e
+  nunca saía da tela nem da sombra. Instâncias espalhadas: sempre `tile` + `cullDist`.
+- Reduções feitas: `WoodenChair_01` 0.15, `covered_car` 0.4, `Rockingchair_01` 0.15, `cardboard_box_01` 0.05
+  (em `tools/orcamento.sh`). `boulder_01` não reduz (nem simplify nem Decimate do Blender passam de 28k): use
+  pouco ou pedra em código. Fontes ausentes em `assets-src/`: `npm run assets -- --force --only=<id>`.
 
 - Por dentro: abrir `?map=<id>&q=baixa&fps=1` no Playwright e ler `#fps` (draws e triângulos;
   fps no swiftshader não vale nada). Para achar culpados, percorra `M.G` somando triângulos × `count`

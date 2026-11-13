@@ -43,6 +43,8 @@ export interface MapRuntime {
   walkLimit?: number;
   /** fontes de som no lugar (velas crepitando, sino, porta que range quando a câmera passa) */
   sons?: { x: number; y: number; z: number; tipo: 'velas' | 'sino' | 'porta' }[];
+  /** documentos legíveis na cena: clicar abre ampliado (core/docs.ts) */
+  docs?: { o: THREE.Object3D; n: string }[];
   camMax?: number;
   fogScale?: number;
 }

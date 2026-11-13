@@ -253,3 +253,21 @@
   dentro dos prédios continua calmo. Teto de 70 m/s; roda do mouse vai até 60 m/s.
 - Quadros longos (celular a 10–15 fps) não deixam mais a câmera livre em câmera lenta (limite do passo de
   0,05 s → 0,12 s só na câmera livre).
+
+## Lupa de documentos, Harlow abre na delegacia, otimização geral
+
+- **Mecânica nova — documentos clicáveis** (`src/core/docs.ts`): passar o mouse num papel, quadro ou cartaz
+  da cena mostra a lupa; clicar abre o documento ampliado e legível, com **Mostrar aos jogadores** (vai para
+  a tela/janela deles como imagem mostrada). Paredes no caminho bloqueiam; só abre até 14 m. Mapas registram
+  em `M.docs`. Harlow tem 28 documentos registrados (delegacia + pistas da cidade). Teste: `npm run test:lupa`.
+- **Harlow abre na delegacia** (1ª vista), com os personagens na calçada da frente.
+- Delegacia: vidros e persianas nas janelas, portas de vidro abertas e toldo na entrada.
+- **Otimização** (versão leve, qualidade Baixa): México 3,7 → 0,65 M triângulos, Texas 0,9 → 0,44 M; Alta do
+  Texas 5,0 → 1,4 M. Como:
+  - o lote (`Batch`) junta peças por região de 70 m — o que sai da tela ou da área da sombra não é desenhado;
+  - vegetação, pedras, cactos e milharal em blocos com corte por distância (`tile`/`cullDist`);
+  - documentos da delegacia somem a 40 m;
+  - modelos mais leves: `WoodenChair_01` 20k → 3k, `covered_car` 12,6k → 5k, `Rockingchair_01` 3,5k → 1,8k,
+    `cardboard_box_01` 1,7k → 0,8k; saloon e fazenda trocam o trono gótico por cadeiras de madeira em código.
+- Ferramentas: `?fps=1` expõe `window.__peso()` (malhas mais pesadas); `node tools/medir-peso.mjs <mapa>
+  --dist=dist-lite --lista` mede a versão publicada e lista os vilões.

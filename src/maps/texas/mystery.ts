@@ -22,22 +22,28 @@ function sigil(g: CanvasRenderingContext2D, cx: number, cy: number, r: number, c
 }
 const plane = (G: THREE.Object3D, t: THREE.Texture, w: number, h: number, x: number, y: number, z: number, ry: number, o: THREE.MeshStandardMaterialParameters = {}) => {
   const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshStandardMaterial({ map: t, roughness: 0.85, transparent: true, depthWrite: false, ...o }));
-  m.position.set(x, y, z); m.rotation.y = ry; m.userData.ns = 1; G.add(m); return m;
+  m.position.set(x, y, z); m.rotation.y = ry; m.userData.ns = 1; G.add(m); m.geometry.computeBoundingSphere();
+  if (nextName) { DOCS.push({ o: m, n: nextName }); nextName = ''; }
+  return m;
 };
+/** documentos clicáveis (lupa) */
+export const DOCS: { o: THREE.Object3D; n: string }[] = [];
+let nextName = ''; const nm = (n: string) => { nextName = n; };
 
 export function buildMystery(G: THREE.Group, lamps: THREE.MeshBasicMaterial[]) {
+  DOCS.length = 0;
   const m = TM();
 
   // 1) Cemitério: lápide de Clara ao lado da cova aberta (o caixão de memória estava vazio)
   { const x = CEMETERY.x1 - 4, z = CEMETERY.z0 + 2.7;
     const st = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.0, 0.18), m.stone); st.position.set(x, 0.5, z); st.rotation.x = -0.08; st.castShadow = true; G.add(st);
-    plane(G, tex(256, 320, g => { g.fillStyle = '#9a968e'; g.fillRect(0, 0, 256, 320); g.fillStyle = '#3a3630'; g.textAlign = 'center';
+    nm('Lápide de Clara Mae Whitlock'); plane(G, tex(256, 320, g => { g.fillStyle = '#9a968e'; g.fillRect(0, 0, 256, 320); g.fillStyle = '#3a3630'; g.textAlign = 'center';
       g.font = 'bold 26px Georgia'; g.fillText('CLARA MAE', 128, 80); g.fillText('WHITLOCK', 128, 115); g.font = '22px Georgia'; g.fillText('1970 — 1986', 128, 165);
       g.font = 'italic 19px Georgia'; g.fillText('Until you come home', 128, 215); sigil(g, 128, 270, 26, 'rgba(120,20,15,0.8)', 3); }), 0.76, 0.95, x, 0.5, z + 0.1, 0, { transparent: false, depthWrite: true }); }
 
   // 2) Fazenda: mural de recortes com barbante vermelho na sala do ritual
   { const fx = FARM.x, z = FARM.z - 5 + 0.27;
-    plane(G, tex(512, 320, g => {
+    nm('Mural de recortes (fazenda)'); plane(G, tex(512, 320, g => {
       g.fillStyle = '#6a5440'; g.fillRect(0, 0, 512, 320);
       const cards: [number, number, number, number, string][] = [[20, 20, 140, 100, 'GIRL, 16, MISSING'], [190, 30, 130, 90, 'SEARCH CALLED OFF'], [350, 20, 140, 110, 'LIGHTS OVER PRUITT FARM?'], [40, 170, 120, 120, 'photo'], [200, 160, 120, 130, 'map'], [350, 170, 140, 110, 'UNDERTAKER LEAVES TOWN']];
       cards.forEach(([x, y, w, h, t]) => { g.save(); g.translate(x + w / 2, y + h / 2); g.rotate((rnd() - 0.5) * 0.12); g.fillStyle = t === 'photo' ? '#3a3a3a' : '#e0d8c4'; g.fillRect(-w / 2, -h / 2, w, h);
@@ -73,27 +79,27 @@ export function buildMystery(G: THREE.Group, lamps: THREE.MeshBasicMaterial[]) {
     [-4.2, 4.2].forEach(o => [-0.9, 0.9].forEach(s => { const w = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.2, 14), m.iron); w.rotation.x = Math.PI / 2; w.position.set(o + s, 0.55, 0.72); car.add(w); const w2 = w.clone(); w2.position.z = -0.72; car.add(w2); }));
     [-4.2, 4.2].forEach(o => { const t = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.5, 2.2), m.iron); t.position.set(o, 0.75, 0); car.add(t); });
     const door = new THREE.Mesh(new THREE.BoxGeometry(3.2, 2.8, 0.1), m.rust); door.position.set(0.9, 2.5, 1.55); car.add(door);
-    plane(car, tex(512, 512, g => sigil(g, 256, 256, 170, 'rgba(230,226,215,0.85)', 9, 6)), 2.2, 2.2, 0.9, 2.5, 1.61, 0);
+    nm('Símbolo no vagão'); plane(car, tex(512, 512, g => sigil(g, 256, 256, 170, 'rgba(230,226,215,0.85)', 9, 6)), 2.2, 2.2, 0.9, 2.5, 1.61, 0);
     plane(car, tex(512, 128, g => { g.font = 'bold 70px Georgia'; g.fillStyle = 'rgba(220,215,200,0.8)'; g.textAlign = 'center'; g.fillText('T & P  41077', 256, 90); }), 4, 1, -4, 3.7, 1.52, 0); }
 
   // 6) Caixa-d'água: o sigilo pichado (dá para ver da cidade)
-  plane(G, tex(512, 512, g => sigil(g, 256, 256, 180, 'rgba(140,20,15,0.85)', 14, 8)), 2.6, 2.6, TOWERW.x, 20.3, TOWERW.z + 3.62, 0);
+  nm('Símbolo na caixa-d\'água'); plane(G, tex(512, 512, g => sigil(g, 256, 256, 180, 'rgba(140,20,15,0.85)', 14, 8)), 2.6, 2.6, TOWERW.x, 20.3, TOWERW.z + 3.62, 0);
 
   // 7) Lanchonete: cartaz de desaparecida na parede, mesa posta para alguém que não veio
-  plane(G, tex(256, 340, g => { g.fillStyle = '#e8e0cc'; g.fillRect(0, 0, 256, 340); g.fillStyle = '#1a1a1a'; g.font = 'bold 34px Arial'; g.textAlign = 'center'; g.fillText('MISSING', 128, 46);
+  nm('Cartaz de desaparecida (lanchonete)'); plane(G, tex(256, 340, g => { g.fillStyle = '#e8e0cc'; g.fillRect(0, 0, 256, 340); g.fillStyle = '#1a1a1a'; g.font = 'bold 34px Arial'; g.textAlign = 'center'; g.fillText('MISSING', 128, 46);
     g.fillStyle = '#5a5a5a'; g.fillRect(58, 64, 140, 170); g.fillStyle = '#3a3a3a'; g.beginPath(); g.ellipse(128, 140, 42, 54, 0, 0, 7); g.fill();
     g.fillStyle = '#1a1a1a'; g.font = 'bold 22px Arial'; g.fillText('CLARA WHITLOCK', 128, 268); g.font = '16px Arial'; g.fillText('Last seen Oct 31, 1986', 128, 294); g.fillText('near Pruitt Rd.', 128, 316); }),
     0.5, 0.66, DINER.x0 + 4, 1.8, DINER.z0 + 0.27, 0, { transparent: false, depthWrite: true });
 
   // 8) Motel, quarto 7: polaroid sobre a cama
   { const rx = MOTEL.x0 + 8 + 6 * 4;
-    const pol = plane(G, tex(128, 150, g => { g.fillStyle = '#f0ece0'; g.fillRect(0, 0, 128, 150); g.fillStyle = '#2a2622'; g.fillRect(10, 10, 108, 100); g.fillStyle = '#5a1a14'; g.globalAlpha = 0.6; g.beginPath(); g.ellipse(64, 64, 18, 30, 0, 0, 7); g.fill(); g.globalAlpha = 1; g.fillStyle = '#3a3430'; g.font = 'italic 14px Georgia'; g.textAlign = 'center'; g.fillText('10·31·86', 64, 136); }),
+    nm('Polaroid sobre a cama (quarto 7)'); const pol = plane(G, tex(128, 150, g => { g.fillStyle = '#f0ece0'; g.fillRect(0, 0, 128, 150); g.fillStyle = '#2a2622'; g.fillRect(10, 10, 108, 100); g.fillStyle = '#5a1a14'; g.globalAlpha = 0.6; g.beginPath(); g.ellipse(64, 64, 18, 30, 0, 0, 7); g.fill(); g.globalAlpha = 1; g.fillStyle = '#3a3430'; g.font = 'italic 14px Georgia'; g.textAlign = 'center'; g.fillText('10·31·86', 64, 136); }),
       0.11, 0.13, rx + 2.4, 0.66, MOTEL.z0 + 1.6, 0, { transparent: false, depthWrite: true });
     pol.rotation.set(-Math.PI / 2, 0, 0.5); }
 
   // 9) Igreja: quadro de hinos com a data
   { const z = CHURCH.z - CHURCH.d / 2 + 0.27;
-    plane(G, tex(128, 200, g => { g.fillStyle = '#4a3020'; g.fillRect(0, 0, 128, 200); g.fillStyle = '#e8e0d0'; g.font = 'bold 15px Georgia'; g.textAlign = 'center'; g.fillText('HYMNS', 64, 26); g.font = 'bold 36px Georgia'; ['10', '31', '86'].forEach((s, i) => g.fillText(s, 64, 72 + i * 46)); }),
+    nm('Quadro de hinos (igreja)'); plane(G, tex(128, 200, g => { g.fillStyle = '#4a3020'; g.fillRect(0, 0, 128, 200); g.fillStyle = '#e8e0d0'; g.font = 'bold 15px Georgia'; g.textAlign = 'center'; g.fillText('HYMNS', 64, 26); g.font = 'bold 36px Georgia'; ['10', '31', '86'].forEach((s, i) => g.fillText(s, 64, 72 + i * 46)); }),
       0.5, 0.8, CHURCH.x + 3.2, 2.4, z, 0, { transparent: false, depthWrite: true }); }
 
   // brilho no túmulo e no círculo

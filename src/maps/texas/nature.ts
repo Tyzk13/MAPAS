@@ -75,25 +75,27 @@ export async function buildNature(G: THREE.Group, free: (x: number, z: number) =
     return out;
   };
   const cmat = MAT().cactus;
-  const placeGeo = (geo: THREE.BufferGeometry, list: Xf[], shadow = true) => {
+  const placeGeo: (geo: THREE.BufferGeometry, list: Xf[], shadow?: boolean) => void = (geo: THREE.BufferGeometry, list: Xf[], shadow = true) => {
     if (!list.length) return;
+    const by = new Map<string, Xf[]>(); list.forEach(t => { const k = Math.floor(t.x / 50) + ',' + Math.floor(t.z / 50); if (!by.has(k)) by.set(k, []); by.get(k)!.push(t); });
+    if (by.size > 1) { by.forEach(L => placeGeo(geo, L, shadow)); return; }
     const im = new THREE.InstancedMesh(geo, cmat, list.length), o = new THREE.Object3D();
     list.forEach((t, i) => { o.position.set(t.x, t.y, t.z); o.rotation.set(0, t.ry || 0, 0); o.scale.setScalar(t.s ?? 1); o.updateMatrix(); im.setMatrixAt(i, o.matrix); });
-    im.castShadow = shadow && Q.lights > 8; im.receiveShadow = true; im.computeBoundingSphere(); O.add(im);
+    im.castShadow = shadow && Q.lights > 8; im.receiveShadow = true; im.computeBoundingSphere(); im.userData.cullDist = 160; O.add(im);
   };
   const nop = scatter(Math.round(90 * Q.cacti), 40, 240, 4); for (let v = 0; v < 3; v++) placeGeo(nopal(v + 3), nop.filter((_, i) => i % 3 === v));
   const yuc = scatter(Math.round(80 * Q.cacti), 40, 240, 4); for (let v = 0; v < 2; v++) placeGeo(yucca(v), yuc.filter((_, i) => i % 2 === v));
   const agv = scatter(Math.round(60 * Q.cacti), 40, 240, 3); placeGeo(agave(5), agv, false);
   // algarobeiras (mesquite): árvores baixas e retorcidas
   const mq = scatter(Math.round(46 * Q.bushes + 10), 30, 230, 9);
-  (await instance(lod('tree_small_02'), mq.map(t => ({ ...t, s: 0.55 + rnd() * 0.3 })), O, { wind: { amp: 0.06, freq: 0.9, flutter: 0.015 } }).catch(() => [])).forEach(m => (m.userData.canopy = 1));
+  (await instance(lod('tree_small_02'), mq.map(t => ({ ...t, s: 0.55 + rnd() * 0.3 })), O, { wind: { amp: 0.06, freq: 0.9, flutter: 0.015 }, tile: 70, cullDist: 220 }).catch(() => [])).forEach(m => (m.userData.canopy = 1));
   const bush = scatter(Math.round(110 * Q.bushes), 30, 240, 4);
-  if (Q.bushes >= 1) await instance('searsia_lucida', bush.filter((_, i) => i % 3 === 0).map(b => ({ ...b, s: 0.6 + rnd() * 0.4 })), O, { wind: { amp: 0.05, freq: 1.2, flutter: 0.01 } }).catch(() => {});
-  await instance('wild_rooibos_bush', bush.filter((_, i) => Q.bushes < 1 || i % 3 !== 0).map(b => ({ ...b, s: 1.2 + rnd() * 0.8 })), O, { shadow: false, wind: { amp: 0.04, freq: 1.5, flutter: 0.01 } }).catch(() => {});
+  if (Q.bushes >= 1) await instance('searsia_lucida', bush.filter((_, i) => i % 3 === 0).map(b => ({ ...b, s: 0.6 + rnd() * 0.4 })), O, { wind: { amp: 0.05, freq: 1.2, flutter: 0.01 }, tile: 50, cullDist: 110 }).catch(() => {});
+  await instance('wild_rooibos_bush', bush.filter((_, i) => Q.bushes < 1 || i % 3 !== 0).map(b => ({ ...b, s: 1.2 + rnd() * 0.8 })), O, { shadow: false, wind: { amp: 0.04, freq: 1.5, flutter: 0.01 }, tile: 50, cullDist: 100 }).catch(() => {});
   const stones = scatter(80, 30, 250, 5).map(r => ({ ...r, s: 0.3 + rnd() * 0.9 }));
   for (let v = 0; v < 3; v++) placeRock(rockGeo(v + 4), stones.filter((_, i) => i % 3 === v), O);
-  await instanceVariants('namaqualand_boulder_02', scatter(Math.round(12 * Q.bushes), 120, 250, 10).map(r => ({ ...r, s: 0.8 + rnd(), y: r.y - 0.3 })), O, { shadow: Q.bushes >= 1 }).catch(() => {});
-  await instance('dead_tree_trunk', scatter(10, 40, 220, 14).map(d => ({ ...d, s: 0.9 + rnd() * 0.5 })), O).catch(() => {});
+  await instanceVariants('namaqualand_boulder_02', scatter(Math.round(12 * Q.bushes), 120, 250, 10).map(r => ({ ...r, s: 0.8 + rnd(), y: r.y - 0.3 })), O, { shadow: Q.bushes >= 1, tile: 60, cullDist: 170 }).catch(() => {});
+  await instance('dead_tree_trunk', scatter(10, 40, 220, 14).map(d => ({ ...d, s: 0.9 + rnd() * 0.5 })), O, { tile: 80, cullDist: 200 }).catch(() => {});
 
   O.add(grassField({
     count: Q.grass, area: [-130, 130, -130, 130], height: groundH, colors: [0x9a8a5a, 0xa89a66, 0x8a7a4a, 0xb0a070, 0x8a8456],
