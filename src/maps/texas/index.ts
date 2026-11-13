@@ -7,9 +7,10 @@ import { S, cam } from '../../core/engine';
 import { Builder } from './buildings';
 import { buildLandmarks } from './landmarks';
 import { buildMystery } from './mystery';
+import { buildPolice } from './police';
 import { buildNature, setBuilt, groundH } from './nature';
 import {
-  Q, rnd, reseed, sm, LREQ, TM, neonTexture, SQ, RING, ROW0, ROWD, HWY, RAIL, RES_Z, RES_X, EXT, CHURCH, CEMETERY, DINER, GAS, MOTEL, DEPOT, ELEVATOR, TOWERW, FARM, PUMPS, TAVERN,
+  Q, rnd, reseed, sm, LREQ, TM, neonTexture, SQ, RING, ROW0, ROWD, HWY, RAIL, RES_Z, RES_X, EXT, CHURCH, CEMETERY, DINER, GAS, MOTEL, DEPOT, ELEVATOR, TOWERW, FARM, PUMPS, TAVERN, POLICE,
 } from './common';
 
 const P = (x: number, y: number, z: number) => [x, y, z] as [number, number, number];
@@ -26,6 +27,17 @@ export const VIEWS: View[] = [
   { n: 'Estação', p: P(-10, 2.2, -86), t: P(30, 6, -108), fov: 55 },
   { n: 'Fazenda', p: P(140, 3, 18), t: P(168, 3, 26), fov: 55 },
   { n: 'Ritual', p: P(166.5, 1.7, 33), t: P(165.2, 0.1, 30), fov: 64 },
+  { n: 'Delegacia', p: P(-4, 2.0, 74), t: P(10, 2.6, 82), fov: 55 },
+  { n: 'Recepção', p: P(14.6, 1.65, 85.4), t: P(13, 1.7, 78), fov: 62 },
+  { n: 'Sala do xerife', p: P(15.3, 1.65, 77.3), t: P(11, 1.3, 73), fov: 64 },
+  { n: 'Agentes', p: P(17, 1.7, 82.8), t: P(24, 1.2, 74), fov: 64 },
+  { n: 'Sala do caso', p: P(21, 1.65, 85.2), t: P(21, 1.6, 94), fov: 66 },
+  { n: 'Evidências', p: P(26.8, 1.65, 78), t: P(31, 1.1, 83), fov: 64 },
+  { n: 'Interrogatório', p: P(31.3, 1.7, 76.3), t: P(27, 1.0, 72), fov: 64 },
+  { n: 'Rádio', p: P(14.5, 1.65, 87), t: P(10.5, 1.2, 90), fov: 64 },
+  { n: 'Celas', p: P(27.2, 1.65, 85.6), t: P(32, 1.3, 89.5), fov: 64 },
+  { n: 'Quadro do caso', p: P(21, 1.65, 91.2), t: P(21, 1.65, 94), fov: 62 },
+  { n: 'Mural da recepção', p: P(13, 1.7, 80.0), t: P(13, 1.7, 78), fov: 60 },
   { n: 'Milharal', p: P(186, 2.4, 50), t: P(199, 0, 60), fov: 58 },
   { n: 'Vagão', p: P(-58, 1.7, -96), t: P(-63, 2.4, -104), fov: 58 },
   { n: 'Geral', p: P(0, 70, 120), t: P(0, 0, 10) },
@@ -64,8 +76,8 @@ export async function build(M: MapRuntime) {
   [-1, 1].forEach(s => { const c = s * (ROW0 - RING.walk / 2); [[-ROW0, -6], [6, ROW0]].forEach(([a0, a1]) => { sw((a0 + a1) / 2, c, 'x', a1 - a0); sw((a0 + a1) / 2, c, 'z', a1 - a0); }); });
 
   // ---------- lojas em volta da praça ----------
-  const names = ["SHERIFF'S OFFICE", 'FIRST STATE BANK', 'ROXY', 'HARLOW HARDWARE', "RIDDLE'S DRUG STORE", 'FEED & SEED', 'BARBER SHOP', 'WESTERN WEAR', 'U.S. POST OFFICE', 'HARLOW GAZETTE', 'PRUITT FUNERAL HOME', 'PAWN & GUNS', 'FOR LEASE', 'CAFE', 'FIVE & DIME', 'ABSTRACT & TITLE', 'TAXIDERMY', 'BAIL BONDS'];
-  const sc: Record<string, [string, string]> = { "SHERIFF'S OFFICE": ['#e8e0cc', '#2a3a5a'], 'FIRST STATE BANK': ['#e0d8c0', '#2a2a2a'], 'PRUITT FUNERAL HOME': ['#1e1a18', '#d8c8a0'], 'PAWN & GUNS': ['#e8c040', '#2a1a10'] };
+  const names = ['HARLOW SAVINGS & LOAN', 'FIRST STATE BANK', 'ROXY', 'HARLOW HARDWARE', "RIDDLE'S DRUG STORE", 'FEED & SEED', 'BARBER SHOP', 'WESTERN WEAR', 'U.S. POST OFFICE', 'HARLOW GAZETTE', 'PRUITT FUNERAL HOME', 'PAWN & GUNS', 'FOR LEASE', 'CAFE', 'FIVE & DIME', 'ABSTRACT & TITLE', 'TAXIDERMY', 'BAIL BONDS'];
+  const sc: Record<string, [string, string]> = { 'HARLOW SAVINGS & LOAN': ['#e8e0cc', '#2a3a5a'], 'FIRST STATE BANK': ['#e0d8c0', '#2a2a2a'], 'PRUITT FUNERAL HOME': ['#1e1a18', '#d8c8a0'], 'PAWN & GUNS': ['#e8c040', '#2a1a10'] };
   let ni = 0, roxy: { x: number; z: number; ry: number } | null = null;
   const fill = (a: number, c: number, along: 'x' | 'z', ry: number, from: number, to: number) => {
     let t = from;
@@ -87,7 +99,7 @@ export async function build(M: MapRuntime) {
   // ---------- casas ----------
   const busy = (x: number, z: number) =>
     inR(x, z, -E - 6, E + 6, -E - 6, E + 6) || inR(x, z, CHURCH.x - 12, CHURCH.x + 12, -100, -60) || inR(x, z, CEMETERY.x0, CEMETERY.x1, CEMETERY.z0, CEMETERY.z1, 8) ||
-    inR(x, z, DINER.x0 - 6, GAS.x + 10, 70, 99) || inR(x, z, MOTEL.x0 - 6, MOTEL.x1 + 6, MOTEL.z0 - 6, 99) || Math.abs(x) < 10 || inR(x, z, DEPOT.x0, DEPOT.x1, DEPOT.z0, DEPOT.z1, 6);
+    inR(x, z, DINER.x0 - 6, GAS.x + 10, 70, 99) || inR(x, z, MOTEL.x0 - 6, MOTEL.x1 + 6, MOTEL.z0 - 6, 99) || Math.abs(x) < 10 || inR(x, z, DEPOT.x0, DEPOT.x1, DEPOT.z0, DEPOT.z1, 6) || inR(x, z, POLICE.x0, POLICE.x1, POLICE.z0, POLICE.z1, 7);
   const lot = (x: number, z: number, ry: number) => { if (busy(x, z)) return; b.house(x, z, ry, { w: 8 + rnd() * 3, d: 8 + rnd() * 2, ruin: rnd() < 0.1, two: rnd() < 0.18 }); };
   for (let x = -EXT + 10; x <= EXT - 10; x += 16 + rnd() * 3) {
     lot(x, RES_Z[1] + 11.5, Math.PI); lot(x, RES_Z[0] - 11.5, 0);
@@ -120,6 +132,8 @@ export async function build(M: MapRuntime) {
 
   const L = await buildLandmarks(G);
   buildMystery(G, L.lamps);
+  const PD = await buildPolice(G);
+  M.lamps.push(...PD.lamps);
   await b.finish();
   M.lamps.push(...L.lamps);
 
@@ -145,10 +159,10 @@ export async function build(M: MapRuntime) {
   });
 
   // ---------- registro ----------
-  M.walk.push(...N.floors, ...b.floors, ...L.floors);
-  const solids = [...b.colliders, ...L.solids];
+  M.walk.push(...N.floors, ...b.floors, ...L.floors, ...PD.floors);
+  const solids = [...b.colliders, ...L.solids, ...PD.solids];
   M.solid = () => solids;
-  M.layers = [{ n: 'Telhados', o: b.roofs, v: true }, { n: 'Telhados (marcos)', o: L.roofs, v: true }];
+  M.layers = [{ n: 'Telhados', o: b.roofs, v: true }, { n: 'Telhados (marcos)', o: L.roofs, v: true }, { n: 'Teto da delegacia', o: PD.roofs, v: true }];
   M.views = VIEWS;
   M.shadowRadius = Q.lights > 8 ? 80 : 55;
   M.walkLimit = 240; M.camMax = 240; M.fogScale = 0.5;
@@ -163,6 +177,7 @@ export async function build(M: MapRuntime) {
   ];
   M.vtt = {
     areas: [
+      { n: 'Delegacia (missão)', b: [POLICE.x0 - 8, POLICE.x1 + 1, POLICE.z0 - 1, POLICE.z1 + 1], lv: 1 },
       { n: 'Praça do tribunal', b: [-55, 55, -55, 55], lv: 1 },
       { n: 'Saloon', b: [TAVERN.x0 - 1, TAVERN.x1 + 5, TAVERN.z0 - 1, TAVERN.z1 + 1], lv: 1 },
       { n: 'Rodovia (lanchonete, posto, motel)', b: [-70, 85, 64, 112], lv: 1 },
@@ -173,11 +188,11 @@ export async function build(M: MapRuntime) {
       { n: 'Milharal (círculo)', b: [182, 218, 42, 82], lv: 1 },
       { n: 'Cidade inteira', b: [-160, 160, -125, 115], lv: 1 },
     ],
-    walls: [...b.vtt, ...L.vttWalls],
-    portals: L.portals,
+    walls: [...b.vtt, ...L.vttWalls, ...PD.vttWalls],
+    portals: [...L.portals, ...PD.portals],
     lights: req.filter(r => r.vtt).map(r => [+r.x.toFixed(2), +r.z.toFixed(2), r.vtt!, 0.8, r.color.toString(16).padStart(6, '0')] as [number, number, number, number, string]),
   };
-  M.exportHide = () => [b.roofs, L.roofs];
+  M.exportHide = () => [b.roofs, L.roofs, PD.roofs];
 
   // ---------- animação ----------
   let fogBase = 0.01, lampsOn = true;

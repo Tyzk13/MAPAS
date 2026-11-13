@@ -232,3 +232,15 @@
 - **Personagem oculto**: selecionar → Ocultar. O mestre vê meio transparente; a tela dos jogadores e quem só vê
   não veem até revelar (o Revelar do cinema já mostra). Vai pela rede (`o` na posição) e pelo espelho.
 - Tudo aparece na janela dos jogadores; dock só com ícones até 1240 px.
+
+## Harlow: Departamento do Xerife (local da missão)
+
+- Prédio de tijolo na Main St com interior completo: recepção (mural de avisos, balcão com vidro), sala do
+  xerife (memorando, carta de Pruitt, mapa do condado, fotos, cofre), sala dos agentes (4 mesas com
+  relatórios, quadro de chamadas, escala), **sala do caso** (quadro com mapa, fotos, barbantes, linha do tempo
+  e "o que sabemos"), evidências e arquivo (estantes, caixas, livro de registro com a fita nº 7 sumida),
+  interrogatório (transcrição, espelho), rádio (registro das ligações das 22:01) e celas (sigilo riscado,
+  bilhete). Viaturas com giroflex, letreiro, estrela, mastros e antena.
+- Vistas novas (Delegacia, Recepção, Sala do xerife, Agentes, Sala do caso, Quadro do caso, Mural da
+  recepção, Evidências, Interrogatório, Rádio, Celas), área VTT "Delegacia (missão)" com paredes e portas.
+- Dossiê do mestre com a tradução de todos os documentos.

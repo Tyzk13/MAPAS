@@ -63,3 +63,37 @@ Clara, mas não é mais ela. Elemento sugerido: **Sangue** (vermelho, fome, imit
 - Exportação para mesa virtual (VTT): áreas prontas "Saloon", "Rodovia", "Motel — quarto 7", "Igreja e
   cemitério", "Estação e silos", "Fazenda abandonada" e "Milharal (círculo)".
 - Os sigilos do mapa são inventados para este caso (não são sigilos oficiais do sistema).
+
+## Departamento do Xerife — onde a missão começa
+
+Prédio de tijolo na Main St, entre a praça e a rodovia (vistas **Delegacia**, **Recepção**, **Sala do
+xerife**, **Agentes**, **Sala do caso**, **Quadro do caso**, **Mural da recepção**, **Evidências**,
+**Interrogatório**, **Rádio**, **Celas**). Área de exportação VTT: "Delegacia (missão)". Os agentes chegam
+aqui; o xerife quer o caso fechado, mas a delegacia está cheia de pistas. Tudo abaixo está escrito no
+mapa (em inglês); aqui vai a tradução para o mestre.
+
+| Sala | Documento / objeto | O que diz (tradução) |
+|---|---|---|
+| Recepção | Mural de avisos | **Desaparecida:** Clara Mae Whitlock, 16 anos, vista pela última vez em 31/10/1986 perto da Pruitt Rd. · **Procura-se para interrogatório:** Elias Pruitt (~70 anos, ex-dono da funerária) por violação de túmulo; "não se aproxime" · **Toque de recolher** às 22h, "mantenham as crianças em casa" · **Reunião na prefeitura:** "quem ligou as bombas de petróleo?" — a companhia de energia diz que não há luz nessas linhas desde 1994 · **Cachorro perdido** "Buck", fugiu para o milharal e "não volta quando chamam" · **Vigília** na Igreja Batista por Clara e por Ray Collins |
+| Recepção | Foto emoldurada | "Grupo de busca, 1º/11/1986 — Xerife W. Hutto (à esquerda)" (pai do xerife atual) |
+| Sala do xerife | Memorando na mesa | "O caso Whitlock continua FECHADO. Ninguém puxa o arquivo, ninguém fala com a imprensa, ninguém vai à fazenda Pruitt depois que escurece. Meu pai enterrou isso em 86." — D.H. |
+| Sala do xerife | Carta manuscrita | De Elias Pruitt Jr. ao xerife: "Sei o que meu pai fez naquele campo e o que o seu pai ajudou a enterrar. O círculo nunca foi fechado. Está abrindo de novo. Precisa ser fechado de dentro do campo, às 22:01, com as mesmas palavras — estão no porão. Não deixe ninguém responder quando chamar com a voz dela." |
+| Sala do xerife | Mapa do condado na parede | Caixa-d'água, vagão 41077, milharal e o túmulo marcados com alfinetes; o triângulo vermelho entre eles; anotação "centro = ? (tribunal)" |
+| Sala do xerife | Fotos na parede · cofre Mosler | "Pai, 1986"; "W. Hutto e E. Pruitt Sr." juntos; "a casa dos Pruitt"; foto do campo com "queimem isto". O cofre está trancado (o mestre decide o que há dentro — sugestão: a fita nº 7) |
+| Agentes | 4 relatórios nas mesas | **Túmulo aberto** (terra jogada PARA FORA, caixão sempre esteve vazio, sem pegadas saindo) · **Ray Collins sumiu** do quarto 7 (cama feita, carro no estacionamento, espelho escrito com tinta antiga) · **Bombas de petróleo** funcionando sem energia ("os motores estão frios e se mexem mesmo assim") · **Gado sumido** no rancho Hale e "uma menina parada no milho chamando a mãe" |
+| Agentes | Quadro branco "chamadas da semana" | Seg túmulo · Ter Ray Collins · Qua bombas · Qui gado e "menina no milho" · **Sex 3 ligações da linha dos Pruitt (desligada em 1987)** · Sáb relógio do tribunal parou às 22:01 · Dom ??? |
+| Agentes | Escala de plantão · placa "dias sem incidentes: 0" | Patrulha da noite "só no asfalto"; o deputado **Lyle** "doente desde quarta (?)" |
+| Sala do caso | **Quadro do caso** | Mapa com o triângulo; fotos de Clara, Pruitt Sr., Ray Collins e dos 5 locais; "mesmo símbolo ×4"; **Irmandade do Véu?** (Pruitt Sr., W. Hutto?, Amos Kell Sr. — reuniam-se na funerária em 1984–86); **legista (1993):** "nenhum resto mortal enterrado; o caixão continha uma fita de cabelo e uma fita cassete"; linha do tempo 1986 → hoje; "QUEM ATENDEU O TELEFONE ÀS 22:01?" |
+| Sala do caso | Quadro branco "o que sabemos" | 1. Clara entrou no campo e não saiu · 2. Pruitt Sr. e "amigos" fizeram algo lá · 3. O pai do xerife encerrou a busca — ele sabia · 4. Caixão: fita de cabelo + FITA (evidência nº 7 — SUMIU?) · 5. O símbolo é o mapa dos 3 locais; e o centro? · 6. Tudo acontece às 22:01 · 7. Pruitt Jr. voltou e quer o campo FECHADO |
+| Sala do caso | Na mesa | Recibo da funerária: caixão lacrado, "conteúdo a pedido da família: nenhum", e à mão: "por W.H. — lacre. — E.P." |
+| Evidências | Livro de registro | Itens 86-1031: fita de cabelo vermelha, 6 polaroides do campo, giz do porão, depoimento lacrado de Pruitt Jr., mapa desenhado, registro da busca (**páginas 3–5 arrancadas**), **nº 7 fita cassete "31/10 22:01 — ligação para a emergência" — retirada por D. Hutto em 10/11, não devolvida**, coleira do cachorro Buck achada no milho |
+| Evidências | Mesa | Caixa "86-1031 WHITLOCK — NÃO ABRIR" aberta, fita vermelha e um toca-fitas (vazio) |
+| Interrogatório | Transcrição (Dot Reyes) | "Ela chegou às 21:40, descalça, pediu o telefone. Discou, desligou e disse 'o espantalho sabe meu nome'. Saiu para a Pruitt Rd." · "Semana passada o telefone da lanchonete tocou às 22:01: 'Dot, diz pra mamãe que eu tô no campo.' Xerife, eu CONHEÇO essa voz." |
+| Rádio | Registro do despacho | 21:47 luzes no milho · 21:58 alarme do relógio do tribunal · **22:01 três ligações com a mesma voz de menina** (da casa dos Pruitt — linha desligada desde 1987 —, para a lanchonete e para a casa dos Whitlock) · 22:02 Lyle vai à Pruitt Rd. contra ordens · 22:19 e 22:40 **Lyle não responde** |
+| Rádio | Cartão de códigos | "10-99 … não atenda" |
+| Celas | Cela 2 | O símbolo riscado na parede, marcas de contagem, "22:01" · bilhete do deputado Boone: "todos dizem a mesma coisa às 22:01. Não atenda. Não diga seu nome em voz alta." · A porta da cela 3 está aberta |
+| Fora | Viaturas | Uma com o giroflex ligado; a outra parada — é a do deputado Lyle? (o mestre decide) |
+
+**Ganchos para começar a missão aqui:** o xerife recebe os agentes friamente; a recepcionista Irene
+Kowalski (do rádio) passa o registro de ontem às escondidas; a fita nº 7 está no cofre do xerife; o
+deputado Lyle sumiu na Pruitt Rd.; às 22:01 o telefone da delegacia toca.

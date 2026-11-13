@@ -82,3 +82,16 @@ gramado (`grassField`), poças, névoa, poeira, feixes de luz.
 | Telha asfáltica | `grey_roof_01` (2) | casas |
 | Capim seco (terreno) | `withered_grass` (3.2) | base da planície |
 | Props | `Rockingchair_01` (simplificar 0.3 → 3,5k), `wooden_picnic_table` (0.3), `fire_hydrant` (86k! → 0.04), `security_light` (luz de celeiro), `hanging_industrial_lamp` (0.3), `CashRegister_01` (0.3), `metal_jerrycan` (0.15), `wooden_ladder` (0.3) | |
+
+## Acrescentados na delegacia (testados)
+
+| Uso | Id | Observação |
+|---|---|---|
+| Mesa de escritório de aço | `metal_office_desk` (simplificar 0.5 → 3,4k) | anos 70–80 |
+| TV/monitor de tubo | `Television_01` (1,9k) | serve de monitor (escala 0.7) |
+| Rádio de despacho | `vintage_radio_transceiver` (0.12 → 15k) | uma cópia só |
+| Caixas de arquivo | `cardboard_box_01` (0.1 → 1,7k) | estantes de evidência |
+| Luminária de mesa | `desk_lamp_arm_01` (0.15 → 4k) | |
+| Toca-fitas | `cassette_player` (4,8k) | evidência, interrogatório |
+| Relógio de parede · prancheta | `wall_clock`, `clipboard` | |
+| Descartados | `steel_frame_shelves_01` (escala 11 m), `drawer_cabinet` (moderno), `WoodenChair_01` em escritório (gótica) | estantes, arquivos e cadeiras em código |

@@ -52,4 +52,9 @@ CashRegister_01 0.3 512
 hanging_industrial_lamp 0.3 512
 wooden_ladder 0.3 512
 wooden_lantern_01 0.25 512
+vintage_radio_transceiver 0.12 512
+desk_lamp_arm_01 0.15 512
+cardboard_box_01 0.1 512
+clipboard 0.3 512
+metal_office_desk 0.5 512
 LIST

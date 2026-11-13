@@ -96,6 +96,22 @@ Leia `docs/NOVO-MAPA.md` antes de começar.
 - Animações baratas no `tick`: bombas de petróleo (grupo do balancim + manivela), roda do moinho,
   bandeira (vértices de um plano 12×6), rodadoras (LineSegments), neon piscando.
 
+## Interior cheio de informação (aprendido na delegacia, `src/maps/texas/police.ts`)
+
+- Documentos = planos com textura de canvas (`paperDraw`, `photo`, `cork`, `marker`); em 1600×900 ficam
+  legíveis com a câmera a ~2,5 m de um quadro de 8,8 m (2048 px de largura). Fonte monoespaçada ≥ 13 px no
+  canvas para folhas de 0,25 m sobre mesas. Plano em parede: afaste 0,012 m e use `polygonOffset`.
+- Quebra de linha: a altura do título vem do retorno do `wrap()`, não de conta aproximada (sobrepunha).
+- Cada documento importante ganha uma linha traduzida no dossiê e cada sala uma vista nomeada (inclua
+  vistas de perto dos quadros, ex.: "Quadro do caso").
+- Paredes internas: material **sem textura** (`plain`) com cor; concreto texturizado tingido fica escuro.
+  Faixa de rodapé verde + parede clara = repartição dos anos 80. Forro rebaixado na camada de telhado (some
+  na vista de cima/VTT) e painéis fluorescentes emissivos sem luz própria; poucas PointLights por sala.
+- Cornija/platibanda = 4 caixas nas bordas, nunca uma laje inteira fora da camada de telhado: ela esconde o
+  interior na exportação VTT. Confira a prévia `capturas/vtt/<mapa>-*_previa.jpg` (`node tools/testar-vtt.mjs --map=<id>`).
+- `WoodenChair_01` é uma cadeira **gótica tipo trono** — não serve para escritório; faça cadeira em código.
+  `steel_frame_shelves_01` vem em escala errada (11 m) e `drawer_cabinet` é móvel moderno: descartados.
+
 ## Medir o peso (faça antes de publicar)
 
 - `npx vite build --outDir .cache/capturas-build && node tools/medir-peso.mjs <mapa>` (Baixa e Alta).

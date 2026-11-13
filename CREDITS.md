@@ -112,5 +112,15 @@ Ferramentas usadas só no preparo (não distribuídas): Blender (GPL), gltf-tran
 | Cash Register 01 (`CashRegister_01`) | modelo | Joe Seabuhr | CC0 | https://polyhaven.com/a/CashRegister_01 |
 | Metal Jerrycan (`metal_jerrycan`) | modelo | Sean Buckley | CC0 | https://polyhaven.com/a/metal_jerrycan |
 | Wooden Ladder (`wooden_ladder`) | modelo | Miroslav Turura | CC0 | https://polyhaven.com/a/wooden_ladder |
+| Metal Office Desk (`metal_office_desk`) | modelo | Ulan Cabanilla | CC0 | https://polyhaven.com/a/metal_office_desk |
+| Steel Frame Shelves 01 (`steel_frame_shelves_01`) | modelo | James Ray Cock | CC0 | https://polyhaven.com/a/steel_frame_shelves_01 |
+| Cardboard Box 01 (`cardboard_box_01`) | modelo | Rahul Chaudhary | CC0 | https://polyhaven.com/a/cardboard_box_01 |
+| Wall Clock (`wall_clock`) | modelo | PierreB3D | CC0 | https://polyhaven.com/a/wall_clock |
+| Vintage Radio Transceiver (`vintage_radio_transceiver`) | modelo | Mateusz Sadek | CC0 | https://polyhaven.com/a/vintage_radio_transceiver |
+| Cassette Player (`cassette_player`) | modelo | Oday Abuzaeed | CC0 | https://polyhaven.com/a/cassette_player |
+| Drawer Cabinet (`drawer_cabinet`) | modelo | Ulan Cabanilla | CC0 | https://polyhaven.com/a/drawer_cabinet |
+| Desk Lamp Arm 01 (`desk_lamp_arm_01`) | modelo | Yann Kervran, Kuutti Siitonen | CC0 | https://polyhaven.com/a/desk_lamp_arm_01 |
+| Television 01 (`Television_01`) | modelo | Gabriel Radić | CC0 | https://polyhaven.com/a/Television_01 |
+| Clipboard (`clipboard`) | modelo | ProgrammerOnCoffee | CC0 | https://polyhaven.com/a/clipboard |
 
 <!-- polyhaven:fim -->

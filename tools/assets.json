@@ -98,6 +98,14 @@
     "hanging_industrial_lamp": 512,
     "CashRegister_01": 512,
     "metal_jerrycan": 512,
-    "wooden_ladder": 512
+    "wooden_ladder": 512,
+    "metal_office_desk": 512,
+    "cardboard_box_01": 512,
+    "wall_clock": 512,
+    "vintage_radio_transceiver": 512,
+    "cassette_player": 512,
+    "desk_lamp_arm_01": 512,
+    "Television_01": 512,
+    "clipboard": 512
   }
 }

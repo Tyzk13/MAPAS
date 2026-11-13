@@ -31,6 +31,8 @@ export const FARM = { x: 168, z: 30 };
 export const PUMPS: [number, number, number][] = [[130, -46, 0.4], [196, -6, 2.1], [214, 96, 1.2], [-150, 50, 3.0], [-190, -40, 0.9]];
 /** círculo amassado no milharal (centro do mistério) */
 export const CROP = { x: 199, z: 60, r: 7 };
+/** Departamento do Xerife (frente para a Main St, a oeste) */
+export const POLICE = { x0: 10, x1: 32, z0: 70, z1: 94 };
 export const TAVERN = { x0: -53.2, x1: -ROW0, z0: -36, z1: -18 };
 
 // ---------- materiais ----------
