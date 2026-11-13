@@ -40,6 +40,8 @@ export const FOREST = { x: -178, z: -168, r: 54, trail: [-158, -118] as [number,
 /** Camp Harlow (acampamento abandonado) e a árvore dos sapatos (deslocamento a partir do acampamento) */
 export const CAMP = { x: -176, z: -164, r: 14, shoes: [-19, -16] as [number, number] };
 export const TAVERN = { x0: -53.2, x1: -ROW0, z0: -36, z1: -18 };
+/** Harlow House: pousada na Commerce St oeste (quartos por semana, moradores fixos) */
+export const HOTEL = { x0: -140, x1: -116, z0: 10, z1: 26 };
 
 // ---------- materiais ----------
 const vc = (m: THREE.MeshStandardMaterial) => { const c = m.clone(); c.vertexColors = true; return c; };

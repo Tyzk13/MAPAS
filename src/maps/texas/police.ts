@@ -15,13 +15,13 @@ const wx = (x: number) => X0 + x, wz = (z: number) => Z0 + z;
 
 // ---------- papel, quadros e fotos (canvas) ----------
 type G2 = CanvasRenderingContext2D;
-const mk = (w: number, h: number, draw: (g: G2) => void) => {
+export const mk = (w: number, h: number, draw: (g: G2) => void) => {
   const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d')!);
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
 };
-const age = (g: G2, w: number, h: number, k = 60) => { for (let i = 0; i < k; i++) { g.fillStyle = `rgba(${rnd() < 0.5 ? '120,90,40' : '255,250,235'},${rnd() * 0.06})`; g.beginPath(); g.ellipse(rnd() * w, rnd() * h, 4 + rnd() * 30, 2 + rnd() * 12, rnd() * 3, 0, 7); g.fill(); } };
+export const age = (g: G2, w: number, h: number, k = 60) => { for (let i = 0; i < k; i++) { g.fillStyle = `rgba(${rnd() < 0.5 ? '120,90,40' : '255,250,235'},${rnd() * 0.06})`; g.beginPath(); g.ellipse(rnd() * w, rnd() * h, 4 + rnd() * 30, 2 + rnd() * 12, rnd() * 3, 0, 7); g.fill(); } };
 /** folha datilografada */
-function paperDraw(g: G2, x: number, y: number, w: number, h: number, title: string, lines: string[], o: { bg?: string; head?: string; size?: number; stamp?: string; rot?: number } = {}) {
+export function paperDraw(g: G2, x: number, y: number, w: number, h: number, title: string, lines: string[], o: { bg?: string; head?: string; size?: number; stamp?: string; rot?: number } = {}) {
   g.save(); g.translate(x + w / 2, y + h / 2); g.rotate(o.rot ?? (rnd() - 0.5) * 0.05); g.translate(-w / 2, -h / 2);
   g.fillStyle = 'rgba(0,0,0,0.25)'; g.fillRect(3, 4, w, h);
   g.fillStyle = o.bg || '#ece6d6'; g.fillRect(0, 0, w, h);
@@ -40,8 +40,8 @@ function wrap(g: G2, text: string, x: number, y: number, maxW: number, lh: numbe
   if (line) { g.fillText(line, x, y); y += lh; }
   return y;
 }
-const paper = (title: string, lines: string[], o: Parameters<typeof paperDraw>[7] & { w?: number; h?: number } = {}) => mk(o.w || 512, o.h || 680, g => paperDraw(g, 0, 0, o.w || 512, o.h || 680, title, lines, { ...o, rot: 0 }));
-function photo(g: G2, x: number, y: number, w: number, h: number, kind: string, cap?: string) {
+export const paper = (title: string, lines: string[], o: Parameters<typeof paperDraw>[7] & { w?: number; h?: number } = {}) => mk(o.w || 512, o.h || 680, g => paperDraw(g, 0, 0, o.w || 512, o.h || 680, title, lines, { ...o, rot: 0 }));
+export function photo(g: G2, x: number, y: number, w: number, h: number, kind: string, cap?: string) {
   g.save(); g.translate(x + w / 2, y + h / 2); g.rotate((rnd() - 0.5) * 0.15); g.translate(-w / 2, -h / 2);
   g.fillStyle = 'rgba(0,0,0,0.3)'; g.fillRect(3, 4, w, h); g.fillStyle = '#f2eee4'; g.fillRect(0, 0, w, h);
   const ix = w * 0.07, iy = w * 0.07, iw = w * 0.86, ih = h * (cap ? 0.72 : 0.86);

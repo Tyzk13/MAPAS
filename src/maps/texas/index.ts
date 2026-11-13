@@ -10,10 +10,11 @@ import { buildLandmarks } from './landmarks';
 import { buildMystery, DOCS } from './mystery';
 import { buildPolice } from './police';
 import { buildForest } from './forest';
+import { buildHotel } from './hotel';
 import { PISTAS, NOTAS } from './pistas';
 import { buildNature, setBuilt, groundH } from './nature';
 import {
-  Q, rnd, reseed, sm, LREQ, TM, neonTexture, SQ, RING, ROW0, ROWD, HWY, RAIL, RES_Z, RES_X, EXT, CHURCH, CEMETERY, DINER, GAS, MOTEL, DEPOT, ELEVATOR, TOWERW, FARM, PUMPS, TAVERN, POLICE, FOREST, CAMP,
+  Q, rnd, reseed, sm, LREQ, TM, neonTexture, SQ, RING, ROW0, ROWD, HWY, RAIL, RES_Z, RES_X, EXT, CHURCH, CEMETERY, DINER, GAS, MOTEL, DEPOT, ELEVATOR, TOWERW, FARM, PUMPS, TAVERN, POLICE, FOREST, CAMP, HOTEL,
 } from './common';
 
 const P = (x: number, y: number, z: number) => [x, y, z] as [number, number, number];
@@ -38,6 +39,11 @@ export const VIEWS: View[] = [
   { n: 'Sala do caso', p: P(21, 1.65, 85.2), t: P(21, 1.6, 94), fov: 66 },
   { n: 'Evidências', p: P(26.8, 1.65, 78), t: P(31, 1.1, 83), fov: 64 },
   { n: 'Interrogatório', p: P(31.3, 1.7, 76.3), t: P(27, 1.0, 72), fov: 64 },
+  { n: 'Pousada', p: P(-121, 1.8, 1.5), t: P(-128, 3, 12), fov: 55 },
+  { n: 'Pousada · Recepção', p: P(-130.9, 1.95, 10.9), t: P(-127, 1.4, 14.3), fov: 64 },
+  { n: 'Pousada · Corredor', p: P(-139.2, 1.95, 17), t: P(-118, 1.6, 17), fov: 60 },
+  { n: 'Quarto 2 (Mr. Vance)', p: P(-133, 1.95, 18.8), t: P(-136, 0.9, 22), fov: 66 },
+  { n: 'Quarto 6 (reservado)', p: P(-119.2, 1.95, 18.8), t: P(-117, 0.9, 24.4), fov: 66 },
   { n: 'Rádio', p: P(14.5, 1.65, 87), t: P(10.5, 1.2, 90), fov: 64 },
   { n: 'Celas', p: P(27.2, 1.65, 85.6), t: P(32, 1.3, 89.5), fov: 64 },
   { n: 'Quadro do caso', p: P(21, 1.65, 91.2), t: P(21, 1.65, 94), fov: 62 },
@@ -109,7 +115,7 @@ export async function build(M: MapRuntime) {
   // ---------- casas ----------
   const busy = (x: number, z: number) =>
     inR(x, z, -E - 6, E + 6, -E - 6, E + 6) || inR(x, z, CHURCH.x - 12, CHURCH.x + 12, -100, -60) || inR(x, z, CEMETERY.x0, CEMETERY.x1, CEMETERY.z0, CEMETERY.z1, 8) ||
-    inR(x, z, DINER.x0 - 6, GAS.x + 10, 70, 99) || inR(x, z, MOTEL.x0 - 6, MOTEL.x1 + 6, MOTEL.z0 - 6, 99) || Math.abs(x) < 10 || inR(x, z, DEPOT.x0, DEPOT.x1, DEPOT.z0, DEPOT.z1, 6) || inR(x, z, POLICE.x0, POLICE.x1, POLICE.z0, POLICE.z1, 7);
+    inR(x, z, DINER.x0 - 6, GAS.x + 10, 70, 99) || inR(x, z, HOTEL.x0, HOTEL.x1, HOTEL.z0 - 4, HOTEL.z1, 6) || inR(x, z, MOTEL.x0 - 6, MOTEL.x1 + 6, MOTEL.z0 - 6, 99) || Math.abs(x) < 10 || inR(x, z, DEPOT.x0, DEPOT.x1, DEPOT.z0, DEPOT.z1, 6) || inR(x, z, POLICE.x0, POLICE.x1, POLICE.z0, POLICE.z1, 7);
   const lot = (x: number, z: number, ry: number) => { if (busy(x, z)) return; b.house(x, z, ry, { w: 8 + rnd() * 3, d: 8 + rnd() * 2, ruin: rnd() < 0.1, two: rnd() < 0.18 }); };
   for (let x = -EXT + 10; x <= EXT - 10; x += 16 + rnd() * 3) {
     lot(x, RES_Z[1] + 11.5, Math.PI); lot(x, RES_Z[0] - 11.5, 0);
@@ -144,10 +150,12 @@ export async function build(M: MapRuntime) {
   buildMystery(G, L.lamps);
   const PD = await buildPolice(G);
   const FO = await buildForest(G);
+  const HO = await buildHotel(G);
+  M.lamps.push(...HO.lamps);
   M.lamps.push(...FO.lamps);
   M.lamps.push(...PD.lamps);
   // documentos clicáveis + tradução/nota do mestre; notas por vista (só na janela do mestre)
-  M.docs = [...PD.docs, ...DOCS, ...FO.docs].map(d => ({ ...d, ...(PISTAS[d.n] || {}) }));
+  M.docs = [...PD.docs, ...DOCS, ...FO.docs, ...HO.docs].map(d => ({ ...d, ...(PISTAS[d.n] || {}) }));
   M.notas = NOTAS;
   await b.finish();
   M.lamps.push(...L.lamps);
@@ -188,10 +196,10 @@ export async function build(M: MapRuntime) {
   });
 
   // ---------- registro ----------
-  M.walk.push(...N.floors, ...b.floors, ...L.floors, ...PD.floors, ...FO.floors);
-  const solids = [...b.colliders, ...L.solids, ...PD.solids, ...FO.solids];
+  M.walk.push(...N.floors, ...b.floors, ...L.floors, ...PD.floors, ...FO.floors, ...HO.floors);
+  const solids = [...b.colliders, ...L.solids, ...PD.solids, ...FO.solids, ...HO.solids];
   M.solid = () => solids;
-  M.layers = [{ n: 'Telhados', o: b.roofs, v: true }, { n: 'Telhados (marcos)', o: L.roofs, v: true }, { n: 'Teto da delegacia', o: PD.roofs, v: true }, { n: 'Telhados da floresta', o: FO.roofs, v: true }];
+  M.layers = [{ n: 'Telhados', o: b.roofs, v: true }, { n: 'Telhados (marcos)', o: L.roofs, v: true }, { n: 'Teto da delegacia', o: PD.roofs, v: true }, { n: 'Telhados da floresta', o: FO.roofs, v: true }, { n: 'Telhado da pousada', o: HO.roofs, v: true }];
   M.views = VIEWS;
   M.shadowRadius = Q.lights > 8 ? 80 : 55;
   M.walkLimit = 240; M.camMax = 240; M.fogScale = 0.5;
@@ -208,6 +216,7 @@ export async function build(M: MapRuntime) {
     areas: [
       { n: 'Floresta: Camp Harlow', b: [CAMP.x - 28, CAMP.x + 22, CAMP.z - 26, CAMP.z + 16], lv: 1 },
       { n: 'Floresta: Cedar Hollow inteira', b: [FOREST.x - FOREST.r - 6, FOREST.x + FOREST.r + 25, FOREST.z - FOREST.r - 6, FOREST.z + FOREST.r + 12], lv: 1 },
+      { n: 'Pousada Harlow House', b: [HOTEL.x0 - 1, HOTEL.x1 + 1, HOTEL.z0 - 4, HOTEL.z1 + 1], lv: 1 },
       { n: 'Delegacia (missão)', b: [POLICE.x0 - 8, POLICE.x1 + 1, POLICE.z0 - 1, POLICE.z1 + 1], lv: 1 },
       { n: 'Praça do tribunal', b: [-55, 55, -55, 55], lv: 1 },
       { n: 'Saloon', b: [TAVERN.x0 - 1, TAVERN.x1 + 5, TAVERN.z0 - 1, TAVERN.z1 + 1], lv: 1 },
@@ -219,11 +228,11 @@ export async function build(M: MapRuntime) {
       { n: 'Milharal (círculo)', b: [182, 218, 42, 82], lv: 1 },
       { n: 'Cidade inteira', b: [-160, 160, -125, 115], lv: 1 },
     ],
-    walls: [...b.vtt, ...L.vttWalls, ...PD.vttWalls, ...FO.vttWalls],
-    portals: [...L.portals, ...PD.portals, ...FO.portals],
+    walls: [...b.vtt, ...L.vttWalls, ...PD.vttWalls, ...FO.vttWalls, ...HO.vttWalls],
+    portals: [...L.portals, ...PD.portals, ...FO.portals, ...HO.portals],
     lights: req.filter(r => r.vtt).map(r => [+r.x.toFixed(2), +r.z.toFixed(2), r.vtt!, 0.8, r.color.toString(16).padStart(6, '0')] as [number, number, number, number, string]),
   };
-  M.exportHide = () => [b.roofs, L.roofs, PD.roofs, FO.roofs];
+  M.exportHide = () => [b.roofs, L.roofs, PD.roofs, FO.roofs, HO.roofs];
 
   // ---------- animação ----------
   let fogBase = 0.01, lampsOn = true;

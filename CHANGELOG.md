@@ -315,3 +315,11 @@
 - **Não há saída:** no modo caminhar/livre, passar de 215 m do centro leva a câmera ao lado oposto da cidade
   (desliga com `HARLOW_SAIDA = true` no console). Órbita e cinema não mudam.
 - Ano das crianças passa a 2025 ("um ano adiantado"). Dossiê com as regras novas e fichas para os 22 personagens.
+
+## Harlow: pousada Harlow House com quartos e moradores
+
+- Pousada de madeira (varanda, placa VACANCY, telhado de duas águas) na Commerce St oeste: recepção, sala de jantar,
+  apartamento da dona, corredor e 6 quartos mobiliados em código (cama, criado-mudo com abajur, armário, mesa).
+- Moradores com pertences legíveis (lupa): Ellen Price (dona), Vee Laroche, Mr. Vance (o organizador), Gil Navarro,
+  Juniper Fox, Frank Kowalski; o quarto 6 está reservado aos agentes. 12 documentos com tradução, 5 vistas, notas
+  do mestre, área VTT. Helpers de papel/foto da delegacia agora exportados (`police.ts`).

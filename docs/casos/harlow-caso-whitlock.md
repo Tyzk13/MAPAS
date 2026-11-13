@@ -84,17 +84,17 @@ sugestões para encaixar cada uma no caso. Na ordem em que foram enviadas:
 |---|---|---|---|
 | 1 | Loira de rabo de cavalo, uniforme escolar, braço enfaixado | **Becky Hale**, 15, irmã da Lily | viu a irmã "conversando com o milho"; o curativo esconde marcas de dedos frios |
 | 2 | Chapéu, colete, punhos machucados, terço na mão | **Frank Kowalski**, filho da Irene, ex-boxeador | caça a coisa sozinho à noite; violento, devoto |
-| 3 | Boina, blazer listrado, faixa vermelha, cigarreira | **Vivienne "Vee" Laroche**, fotógrafa de passagem | presa no laço há "uma semana" — na verdade há anos; tem fotos com datas impossíveis |
+| 3 | Boina, blazer listrado, faixa vermelha, cigarreira | **Vivienne "Vee" Laroche**, fotógrafa, quarto 1 da pousada | presa no laço há "uma semana" — na verdade há anos; tem fotos com datas impossíveis |
 | 4 | Loira desgrenhada, jaqueta verde, olhar cansado | **Marlene Whitlock** jovem / ou **Sarah Boone**, mãe do Danny | atende as ligações "da filha" |
 | 5 | Tranças, camiseta preta, coturno | **Dep. Tasha Boone** (ou irmã do deputado) | quer agir, desobedece o xerife |
 | 6 | Tranças, jaqueta militar, bermuda | **Wren**, adolescente que mora no vagão | conhece os túneis e a trilha; troca informação por comida |
-| 7 | Dreads, óculos, tatuagens, bolsa | **Juniper**, dona da loja de discos/ervas | coleciona fitas cassete; tem uma cópia de 22:01 |
+| 7 | Dreads, óculos, tatuagens, bolsa | **Juniper Fox**, ervas e fitas, mora no quarto 4 da pousada | coleciona fitas cassete; tem uma cópia de 22:01 |
 | 8 | Grande, jaqueta de segurança, chaves | **Otis Grant**, vigia noturno da cooperativa | já ouviu três berros de dia 20; tem a chave dos silos |
 | 9 | Idoso de bengala, jaqueta | **Amos Kell Sr.** (pai do pastor) | último vivo da Irmandade do Véu; sabe as palavras, tem medo |
 | 10 | Cabelo grisalho, jaqueta de couro, cigarro | **Xerife Dale Hutto** | quer o caso fechado; risca o calendário |
 | 11 | Camisa azul, distintivo, braços cruzados | **Dep. Manuel Garza**, pai do Tommy | desespero contido; vai querer ir à floresta |
 | 12 | Barba por fazer, camisa aberta | **Ray Collins** (o vendedor sumido) | pode reaparecer achando que é 1987 |
-| 13 | Ruiva, jaqueta jeans bordada | **Clara Whitlock** como a cidade lembra / professora **Ellen Price** | rosto do mistério; "ela sabe meu nome" |
+| 13 | Ruiva, jaqueta jeans bordada | **Ellen Price**, dona da pousada (ou Clara como a cidade lembra) | rosto do mistério; "ela sabe meu nome" |
 | 14 | Bigode, distintivo, óculos e paletó na mão | **Investigador Walt Hutto** (pai do xerife), em fotos de 1986 | aparece em fotos e talvez no laço |
 | 15 | Senhora de colar de pérolas com livro | **Irene Kowalski**, rádio da delegacia | arquivo vivo; passa o registro às escondidas |
 | 16 | Óculos, bolo-tie, terno marrom | **Prefeito Harold Briggs** | nega tudo; marcou reunião de quinta |
@@ -102,8 +102,27 @@ sugestões para encaixar cada uma no caso. Na ordem em que foram enviadas:
 | 18 | Motoqueiro barbudo de colete | **"Tank" McCready**, dono do Lone Star Tavern | boatos; tentou sair de moto e voltou pela outra ponta |
 | 19 | Cabelo longo, colete xadrez, bermuda de chamas | **Dusty**, frentista do posto | vende mapa da estrada que "termina em Harlow dos dois lados" |
 | 20 | Óculos, cigarro, jaqueta verde manchada | **Elias Pruitt Jr.** (versão jovem, ou o filho dele) | quer fechar o círculo |
-| 21 | Paletó verde, camisa vermelha, broche de lobo | **Mr. Vance**, hóspede do quarto 2 do motel | elegante demais, sabe demais: candidato a **quem organiza tudo** |
-| 22 | Óculos, camiseta de banda, sandália | **Gil**, radialista da KHRL | põe no ar as ligações das 22:01; aliado dos agentes |
+| 21 | Paletó verde, camisa vermelha, broche de lobo | **Mr. Vance**, hóspede do quarto 2 da pousada | elegante demais, sabe demais: candidato a **quem organiza tudo** |
+| 22 | Óculos, camiseta de banda, sandália | **Gil Navarro**, radialista da KHRL, mora no quarto 3 da pousada | põe no ar as ligações das 22:01; aliado dos agentes |
+
+## A pousada Harlow House (Commerce St oeste, a caminho da floresta)
+
+Pousada de madeira de 1911 com varanda e placa VACANCY. Térrea: recepção (livro de hóspedes, quadro de chaves,
+calendário de fevereiro de 1987), sala de jantar (mesa posta para 8, TV só com chuvisco, cardápio "sexta, dia 20:
+sem jantar"), apartamento da dona e um corredor com 6 quartos. Vistas: *Pousada*, *Pousada · Recepção*,
+*Pousada · Corredor*, *Quarto 2 (Mr. Vance)*, *Quarto 6 (reservado)*.
+
+| Quarto | Morador (imagem nº) | O que tem no quarto | Segredo |
+|---|---|---|---|
+| Dona | **Ellen Price** (13) | diário: "quarta de novo… o Mr. Vance nunca dorme"; fotos da pousada em 1946/66/86 | o mesmo hóspede aparece nas três fotos |
+| 1 | **Vivienne "Vee" Laroche** (3) | fotos da cidade, todas datadas 18/02/1987, uma com "15/11/2025?" | acha que chegou há uma semana; está há anos |
+| 2 | **Mr. Vance** (21) | quarto frio, cama intocada, maleta alinhada, caderno preto | lista os mortos dos dias 20 *antes* das mortes; "20/nov: um dos visitantes"; "as crianças são para ela, o dia 20 é meu" — **é quem organiza tudo** |
+| 3 | **Gil Navarro** (22), radialista | fitas do "Night Line" com as ligações das 22:01 e um berro de dia 20 | todas as fitas saem datadas 18/02/87 |
+| 4 | **Juniper Fox** (7) | linha de sal na porta, bilhete no armário | cópia da fita das 22:01 debaixo do colchão |
+| 5 | **Frank Kowalski** (2) | mapa com 7 cruzes onde caíram os mortos do dia 20 | "todos olhando para a praça" (o obelisco do 2002) |
+| 6 | **reservado aos agentes** | cama feita, toalhas, "Bem-vindos de volta" datado de 1987 | o livro de hóspedes já tem os nomes dos jogadores, na mesma tinta |
+
+Escreva os nomes dos personagens dos jogadores no livro de hóspedes quando eles abrirem.
 
 ## Premissa
 

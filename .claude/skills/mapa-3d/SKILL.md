@@ -189,6 +189,12 @@ Leia `docs/NOVO-MAPA.md` antes de começar.
 - Imagens de personagens que o dono manda costumam ter direitos de terceiros: não vão para o repositório; viram
   fichas (aparência → papel no caso) no dossiê.
 
+- Interior com paredes externas de `shell()`: **não cubra a face interna com um painel liso** (papel de parede)
+  — ele tapa os vãos das janelas. Ou deixe o material da casca aparente, ou faça o painel com os mesmos furos.
+- Prédio novo em Harlow: constante em `common.ts`, módulo próprio devolvendo a interface `Police` (docs, solids,
+  floors, roofs, vttWalls, portals, lamps) e somar em todas as listas do `index.ts` (docs, walk, solids, layers,
+  vtt, exportHide) + `busy()` para não nascer casa por cima.
+
 ## Erros que já custaram tempo (não repita)
 
 - **Modelos da Poly Haven são pesados** (árvores 1–4 M faces). Sempre rode `tools/arvores.sh`
