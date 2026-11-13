@@ -235,6 +235,9 @@ Meça antes de mexer: `node tools/medir.mjs --q=media` (chamadas, triângulos, e
   `files` = lista de `{path:"assets/<arquivo>"}` (~170 arquivos, ~34 MB; cabe no limite de 255 por envio).
 - Antes de publicar: confira os dois mapas na versão leve sem erros de página e rode o teste de funções.
 - Os links são privados: para os jogadores abrirem, o dono compartilha pelo menu da página.
+- Outra sessão pode ter publicado nos mesmos links: o publish é recusado e devolve a versão no ar. Se o seu
+  build vem da branch que já juntou tudo (confira os ids do HTML: `bjog`, `blimpa`, `mcine`…), publique de novo
+  igual; senão junte a branch primeiro. Publique os três links com o mesmo build (todos têm todos os mapas).
 
 ## Achar assets novos (só se o catálogo não tiver)
 
