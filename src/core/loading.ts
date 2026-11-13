@@ -26,5 +26,13 @@ export const loading = {
     }
   },
   done() { base = 1; draw(); const el = document.getElementById('load')!; el.classList.add('done'); setTimeout(() => el.remove(), 800); },
-  error(msg: string) { const t = txt(); if (t) t.textContent = 'Erro: ' + msg; else console.error(msg); },
+  error(msg: string) {
+    let t = txt();
+    if (!t) { // tela de carregamento já saiu: mostra um aviso por cima
+      const d = document.createElement('div'); d.id = 'erro';
+      Object.assign(d.style, { position: 'fixed', left: '12px', right: '12px', top: 'calc(12px + env(safe-area-inset-top,0px))', background: '#000c', color: '#ffb4a0', font: '13px system-ui', padding: '10px', borderRadius: '10px', zIndex: '30' });
+      document.body.appendChild(d); t = d;
+    }
+    t.textContent = 'Erro: ' + msg;
+  },
 };

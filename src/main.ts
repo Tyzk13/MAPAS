@@ -7,6 +7,7 @@ import { R, S, cam, ctl, fit } from './core/engine';
 import { st, $ } from './core/state';
 import { PRE, setTime, timeHooks, preloadSkies, driftSky } from './core/sky';
 import { anim } from './core/anim';
+import { updateCull } from './core/cull';
 import { DEF, makeToken, dropT, onChar, onPos, selT, sizeT, save, placeT, initTokenInput, tickTokens, snapTokens } from './core/tokens';
 import { NET, handlers, startNet } from './core/net';
 import { WM, setWalk, walkStep, walkPointer, initWalk, placeWalkCam } from './core/walk';
@@ -130,6 +131,7 @@ function frame(ts?: number) {
     if (cam.position.distanceTo(a.cp) < 0.1 && ctl.target.distanceTo(a.tp) < 0.1) st.anim = null;
   }
   if (WM.on) walkStep(); else ctl.update();
+  updateCull(cam);
   post.render(dt);
   if (fpsEl && ++fpsN >= 30) { const n = performance.now(); fpsEl.textContent = (30000 / (n - fpsT)).toFixed(0) + ' fps · ' + R.info.render.calls + ' draws · ' + (R.info.render.triangles / 1e6).toFixed(2) + ' M tri'; fpsT = n; fpsN = 0; }
 }
@@ -154,7 +156,14 @@ function captureApi() {
     },
     async time(i: number) { st.pi = i; await setTime(i); },
     map: (id: string) => loadMap(id),
-    frames(n = 1) { anim.time.value = 7.3; for (let i = 0; i < n; i++) { if (WM.on) placeWalkCam(); if (st.MP?.tick) st.MP.tick(1 / 60, 7.3); snapTokens(); tickTokens(WM.on, WM.third, WM.av); post.render(1 / 60); } },
+    frames(n = 1) { anim.time.value = 7.3; for (let i = 0; i < n; i++) { if (WM.on) placeWalkCam(); if (st.MP?.tick) st.MP.tick(1 / 60, 7.3); snapTokens(); updateCull(cam); tickTokens(WM.on, WM.third, WM.av); post.render(1 / 60); } },
+    scene: () => S, renderer: () => R, camera: () => cam,
+    stats() {
+      const a = R.info.autoReset; R.info.autoReset = false; R.info.reset();
+      this.frames(1);
+      const r = { calls: R.info.render.calls, triangles: R.info.render.triangles, programs: R.info.programs?.length, textures: R.info.memory.textures, geometries: R.info.memory.geometries, lights: (() => { let n = 0; S.traverse((o: any) => { if (o.isLight && o.visible && o.intensity > 0) n++; }); return n; })() };
+      R.info.autoReset = a; return r;
+    },
     shot(png = false) { this.frames(post.warmup()); return png ? R.domElement.toDataURL('image/png') : R.domElement.toDataURL('image/jpeg', 0.9); },
     vtt(area: number, ppg: number) { const c = xcalc(area, ppg), png = xrender(c, {}); return { png, json: dd2vtt(c, png) }; },
   };
@@ -188,6 +197,10 @@ async function start() {
   }
   loading.done();
 }
+// mostra qualquer erro na tela de carregamento (em vez de ficar parada) e avisa se a placa de vídeo cair
+addEventListener('error', e => loading.error(String(e.message || e)));
+addEventListener('unhandledrejection', e => loading.error(String((e as PromiseRejectionEvent).reason)));
+R.domElement.addEventListener('webglcontextlost', ev => { ev.preventDefault(); loading.error('a placa de vídeo do aparelho reiniciou (memória cheia?) — recarregue a página; use Qualidade: Baixa'); });
 start().catch(e => { console.error(e); loading.error(String(e)); });
 
 export { S };
