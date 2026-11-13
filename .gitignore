@@ -12,3 +12,6 @@ server/dados/
 # exportações do teste VTT (dezenas de MB): ficam só as prévias
 capturas/vtt/*.dd2vtt
 capturas/vtt/*.png
+
+# imagens dos NPCs (artes de terceiros, baixadas por tools/baixar-npcs.mjs)
+npcs-local/

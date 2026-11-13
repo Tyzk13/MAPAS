@@ -11,6 +11,7 @@ import { buildMystery, DOCS } from './mystery';
 import { buildPolice } from './police';
 import { buildForest } from './forest';
 import { buildHotel } from './hotel';
+import { buildNpcs } from './npcs';
 import { PISTAS, NOTAS } from './pistas';
 import { buildNature, setBuilt, groundH } from './nature';
 import {
@@ -151,6 +152,7 @@ export async function build(M: MapRuntime) {
   const PD = await buildPolice(G);
   const FO = await buildForest(G);
   const HO = await buildHotel(G);
+  const NP = buildNpcs(G);
   M.lamps.push(...HO.lamps);
   M.lamps.push(...FO.lamps);
   M.lamps.push(...PD.lamps);
@@ -199,7 +201,7 @@ export async function build(M: MapRuntime) {
   M.walk.push(...N.floors, ...b.floors, ...L.floors, ...PD.floors, ...FO.floors, ...HO.floors);
   const solids = [...b.colliders, ...L.solids, ...PD.solids, ...FO.solids, ...HO.solids];
   M.solid = () => solids;
-  M.layers = [{ n: 'Telhados', o: b.roofs, v: true }, { n: 'Telhados (marcos)', o: L.roofs, v: true }, { n: 'Teto da delegacia', o: PD.roofs, v: true }, { n: 'Telhados da floresta', o: FO.roofs, v: true }, { n: 'Telhado da pousada', o: HO.roofs, v: true }];
+  M.layers = [{ n: 'Telhados', o: b.roofs, v: true }, { n: 'Telhados (marcos)', o: L.roofs, v: true }, { n: 'Teto da delegacia', o: PD.roofs, v: true }, { n: 'Telhados da floresta', o: FO.roofs, v: true }, { n: 'Telhado da pousada', o: HO.roofs, v: true }, { n: 'Moradores (NPCs)', o: NP.group, v: true }];
   M.views = VIEWS;
   M.shadowRadius = Q.lights > 8 ? 80 : 55;
   M.walkLimit = 240; M.camMax = 240; M.fogScale = 0.5;
@@ -232,13 +234,14 @@ export async function build(M: MapRuntime) {
     portals: [...L.portals, ...PD.portals, ...FO.portals, ...HO.portals],
     lights: req.filter(r => r.vtt).map(r => [+r.x.toFixed(2), +r.z.toFixed(2), r.vtt!, 0.8, r.color.toString(16).padStart(6, '0')] as [number, number, number, number, string]),
   };
-  M.exportHide = () => [b.roofs, L.roofs, PD.roofs, FO.roofs, HO.roofs];
+  M.exportHide = () => [NP.group, b.roofs, L.roofs, PD.roofs, FO.roofs, HO.roofs];
 
   // ---------- animação ----------
   let fogBase = 0.01, lampsOn = true;
   M.onTime = p => { lampsOn = p.lamps > 0; lampF = p.lamps; fogBase = (S.fog as THREE.FogExp2 | null)?.density ?? fogBase; escolherLuzes(); };
   const fp = L.anim.flag?.geometry.attributes.position as THREE.BufferAttribute | undefined, fx0 = fp ? Float32Array.from(fp.array as Float32Array) : null;
   M.tick = (dt, t) => {
+    NP.face(cam);
     // NÃO HÁ SAÍDA: quem passa da borda da cidade (caminhando ou na câmera livre) reaparece do lado oposto,
     // voltando para Harlow. Só vale nos modos caminhar/livre; a órbita do mestre e o cinema ficam livres.
     if (WM.on && !(window as unknown as { HARLOW_SAIDA?: boolean }).HARLOW_SAIDA) {

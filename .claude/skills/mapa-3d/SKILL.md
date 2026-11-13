@@ -195,6 +195,16 @@ Leia `docs/NOVO-MAPA.md` antes de começar.
   floors, roofs, vttWalls, portals, lamps) e somar em todas as listas do `index.ts` (docs, walk, solids, layers,
   vtt, exportHide) + `busy()` para não nascer casa por cima.
 
+### NPCs com imagens de terceiros (Harlow)
+- Repositório é **público**: arte de terceiros (Pinterest etc.) nunca vai para o git. Padrão: script em `tools/`
+  baixa para uma pasta no `.gitignore` (`npcs-local/`), o mapa carrega com `import.meta.glob(..., { eager: true,
+  query: '?url', import: 'default' })` (não quebra se a pasta não existir) e cai numa silhueta.
+- `fetch` do Node não usa o proxy da sessão: baixe com `curl` (execFileSync). Pinterest precisa de pin.it,
+  www.pinterest.com e i.pinimg.com liberados; as imagens estão em `i.pinimg.com/originals/...` no HTML da pasta.
+- Recorte do fundo: flood-fill a partir das bordas (cor do canto ± tolerância ou quase branco) num canvas, depois
+  cortar a sobra transparente; `crop` por NPC tira marca d'água/quadros extras. Billboard: grupo no chão girado só
+  em Y para a câmera no `M.tick`; `customDepthMaterial` com alphaTest para sombra com a forma da figura.
+
 ## Erros que já custaram tempo (não repita)
 
 - **Modelos da Poly Haven são pesados** (árvores 1–4 M faces). Sempre rode `tools/arvores.sh`

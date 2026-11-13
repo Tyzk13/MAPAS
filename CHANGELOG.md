@@ -323,3 +323,15 @@
 - Moradores com pertences legíveis (lupa): Ellen Price (dona), Vee Laroche, Mr. Vance (o organizador), Gil Navarro,
   Juniper Fox, Frank Kowalski; o quarto 6 está reservado aos agentes. 12 documentos com tradução, 5 vistas, notas
   do mestre, área VTT. Helpers de papel/foto da delegacia agora exportados (`police.ts`).
+
+## Harlow — os NPCs da pasta "NPCs anos 80" em pé no mapa
+
+- Os moradores aparecem como figuras 2D (giram para a câmera, fazem sombra) nos lugares que combinam com cada um:
+  delegacia (xerife, Garza, Irene, Tasha), pousada (Ellen na recepção, Vee, Gil, Juniper e Frank nos quartos),
+  saloon, praça, igreja, cemitério, estação, silos, posto, motel, fazenda e vagão. Camada "Moradores (NPCs)".
+- As imagens (artes de terceiros) ficam fora do git: `node tools/baixar-npcs.mjs` baixa a pasta para `npcs-local/`;
+  sem elas aparece uma silhueta. Fundo branco/cinza é recortado no navegador.
+- Mais 7 enviados no chat: 5 no saloon (Rooster, Spike, o barman Jack Mercer, Old Hob, Big Red) e 2 na igreja
+  (Padre Thomas Kell e a Irmã Ruth). Total: 28 NPCs.
+- Elenco trocado pelo da pasta; Mr. Vance saiu (vira o hóspede sem rosto do quarto 2). Os 6 quartos da pousada
+  seguem com cama e documentos.
