@@ -8,6 +8,7 @@ import { Builder } from './buildings';
 import { buildLandmarks } from './landmarks';
 import { buildMystery, DOCS } from './mystery';
 import { buildPolice } from './police';
+import { PISTAS, NOTAS } from './pistas';
 import { buildNature, setBuilt, groundH } from './nature';
 import {
   Q, rnd, reseed, sm, LREQ, TM, neonTexture, SQ, RING, ROW0, ROWD, HWY, RAIL, RES_Z, RES_X, EXT, CHURCH, CEMETERY, DINER, GAS, MOTEL, DEPOT, ELEVATOR, TOWERW, FARM, PUMPS, TAVERN, POLICE,
@@ -135,7 +136,9 @@ export async function build(M: MapRuntime) {
   buildMystery(G, L.lamps);
   const PD = await buildPolice(G);
   M.lamps.push(...PD.lamps);
-  M.docs = [...PD.docs, ...DOCS];
+  // documentos clicáveis + tradução/nota do mestre; notas por vista (só na janela do mestre)
+  M.docs = [...PD.docs, ...DOCS].map(d => ({ ...d, ...(PISTAS[d.n] || {}) }));
+  M.notas = NOTAS;
   await b.finish();
   M.lamps.push(...L.lamps);
 

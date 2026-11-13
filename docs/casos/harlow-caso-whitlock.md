@@ -94,6 +94,11 @@ mapa (em inglês); aqui vai a tradução para o mestre.
 | Celas | Cela 2 | O símbolo riscado na parede, marcas de contagem, "22:01" · bilhete do deputado Boone: "todos dizem a mesma coisa às 22:01. Não atenda. Não diga seu nome em voz alta." · A porta da cela 3 está aberta |
 | Fora | Viaturas | Uma com o giroflex ligado; a outra parada — é a do deputado Lyle? (o mestre decide) |
 
+**Dois monitores:** abra Mais → Abrir janela dos jogadores e leve-a ao monitor transmitido (só a câmera). Na
+sua janela ficam o cartão **Mestre · <vista>** (resumo, segredos e ganchos de cada local, com o texto desta
+página) e **Mestre → Pistas do mapa** (todos os documentos com a tradução ao lado, abertos sem mexer na
+câmera; de lá, "Mostrar aos jogadores" ou "Levar a câmera até lá").
+
 **Na mesa:** o mapa abre na frente da delegacia. Passe o mouse em qualquer papel, quadro ou cartaz (aparece a
 lupa) e clique: ele abre ampliado; o botão **Mostrar aos jogadores** manda para a tela deles.
 

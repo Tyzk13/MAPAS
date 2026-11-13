@@ -271,3 +271,15 @@
     `cardboard_box_01` 1,7k → 0,8k; saloon e fazenda trocam o trono gótico por cadeiras de madeira em código.
 - Ferramentas: `?fps=1` expõe `window.__peso()` (malhas mais pesadas); `node tools/medir-peso.mjs <mapa>
   --dist=dist-lite --lista` mede a versão publicada e lista os vilões.
+
+## Dois monitores: informação só para o mestre
+
+- Pensado para transmitir: a **janela dos jogadores** (outro monitor) mostra só a imagem da câmera; tudo o que é
+  informação fica na **janela do mestre** (testado: a janela dos jogadores não mostra nota, lupa nem botões).
+- **Notas do mestre por vista** (`M.notas`): ao escolher uma vista, um cartão no canto mostra o que há no local,
+  segredos, NPCs e ganchos. Some na tela limpa e nunca aparece para os jogadores; × esconde até mudar de vista.
+- **Mestre → Pistas do mapa**: lista todos os documentos por local; clicar abre na lupa **sem mexer na
+  câmera** (os jogadores não percebem), com a **tradução/nota em português** ao lado.
+- Na lupa: **Mostrar aos jogadores** (imagem por cima da tela deles) ou **Levar a câmera até lá** (movimento de
+  cinema que enquadra o documento na cena).
+- Harlow: tradução e nota de todos os 31 documentos e notas para todas as vistas (`src/maps/texas/pistas.ts`).

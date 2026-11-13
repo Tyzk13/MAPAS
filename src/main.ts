@@ -15,7 +15,7 @@ import { menu, lista, fecharMenu, initMenus } from './core/menu';
 import { espelho, initEspelho, serJogadores, abrirJanelaJogadores, dentroDeOutraPagina, tickEspelho, enviarQuadro, avisarMapa, avisarClima } from './core/espelho';
 import { imersao, fx, tickImersao, aplicarSom, aplicarPreto, prepararLanterna, setNomeClima, setApagao, type SomModo, type Fx } from './core/imersao';
 import { mostrar, exibir, carregarImagem } from './core/mostrar';
-import { initDocs } from './core/docs';
+import { initDocs, listarPistas } from './core/docs';
 import { listaCenas, gravarCena, apagarCena } from './core/cenas';
 import { som } from './core/som';
 import { initCinema, rodar, cineHooks, tomadaAtual, sair, tickCinema, apontar, tomadaPara, gravarAtual, apagarTomada, listaTomadas, abortar, type Estilo, type Tomada } from './core/cinema';
@@ -154,6 +154,7 @@ function encherMestre() {
     mi.appendChild(b);
   });
   tg('dpapel', papel);
+  listarPistas($('dpistas') as HTMLElement);
 }
 function alternarImagem() {
   if (mostrar.atual) { exibir(''); return; }

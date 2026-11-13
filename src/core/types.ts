@@ -44,7 +44,9 @@ export interface MapRuntime {
   /** fontes de som no lugar (velas crepitando, sino, porta que range quando a câmera passa) */
   sons?: { x: number; y: number; z: number; tipo: 'velas' | 'sino' | 'porta' }[];
   /** documentos legíveis na cena: clicar abre ampliado (core/docs.ts) */
-  docs?: { o: THREE.Object3D; n: string }[];
+  docs?: { o: THREE.Object3D; n: string; /** tradução/nota para o mestre (só na janela dele) */ pt?: string; /** local, para agrupar na lista */ onde?: string }[];
+  /** notas do mestre por nome de vista: aparecem num cartão só na janela do mestre */
+  notas?: Record<string, string>;
   camMax?: number;
   fogScale?: number;
 }

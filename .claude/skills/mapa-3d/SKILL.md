@@ -118,6 +118,16 @@ Leia `docs/NOVO-MAPA.md` antes de começar.
   joystick no limite, 2,5×) × altura (até 4×), teto 70 m/s. Não volte a limitar o passo da câmera livre a
   0,05 s: em celular lento isso a deixava em câmera lenta. Mapas grandes pedem câmera rápida no alto.
 
+## Dois monitores (decisão do dono)
+
+- O dono transmite **um monitor só com a câmera** (janela dos jogadores, `?tela=jogadores`) e usa **o outro só
+  para ele**, com as informações. Regra: toda informação de mestre (notas, traduções, listas, lupa) aparece
+  só na janela do mestre — nunca na dos jogadores nem na tela limpa (`.jogadores`, `.limpa` no CSS).
+- Por mapa, preencha `M.notas` (texto por nome de vista: o que há, segredos, NPCs, gancho) e dê `pt`/`onde` a
+  cada documento de `M.docs` (tradução/nota e local). Modelo: `src/maps/texas/pistas.ts`.
+- Mestre → Pistas do mapa abre um documento sem mover a câmera; "Levar a câmera até lá" (cinema) é a forma de
+  mostrar na cena. `npm run test:lupa` confere tudo isso e que nada vaza para a janela dos jogadores.
+
 ## Lupa de documentos (`src/core/docs.ts`)
 
 - Todo documento importante vai em `M.docs = [{ o: mesh, n: 'Nome' }]` (plano com textura de canvas): passar o
