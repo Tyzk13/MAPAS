@@ -112,6 +112,12 @@ Leia `docs/NOVO-MAPA.md` antes de começar.
 - `WoodenChair_01` é uma cadeira **gótica tipo trono** — não serve para escritório; faça cadeira em código.
   `steel_frame_shelves_01` vem em escala errada (11 m) e `drawer_cabinet` é móvel moderno: descartados.
 
+## Câmera livre (decisão do dono: "estava muito devagar")
+
+- `src/core/walk.ts` `freeStep`: base `WM.speed` 5 m/s × aceleração por segurar (até 2,2×) × correr (Shift ou
+  joystick no limite, 2,5×) × altura (até 4×), teto 70 m/s. Não volte a limitar o passo da câmera livre a
+  0,05 s: em celular lento isso a deixava em câmera lenta. Mapas grandes pedem câmera rápida no alto.
+
 ## Medir o peso (faça antes de publicar)
 
 - `npx vite build --outDir .cache/capturas-build && node tools/medir-peso.mjs <mapa>` (Baixa e Alta).

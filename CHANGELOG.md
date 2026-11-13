@@ -244,3 +244,12 @@
 - Vistas novas (Delegacia, Recepção, Sala do xerife, Agentes, Sala do caso, Quadro do caso, Mural da
   recepção, Evidências, Interrogatório, Rádio, Celas), área VTT "Delegacia (missão)" com paredes e portas.
 - Dossiê do mestre com a tradução de todos os documentos.
+
+## Câmera livre mais rápida
+
+- Velocidade base 5 m/s (era 4) e **segurar o movimento acelera sozinho** até ~2,2× (no celular, sem Shift
+  nem roda, é o jeito de ir rápido); joystick no limite = correr (2,5×, como o Shift).
+- Quanto mais alto, mais rápido (até 4× a 34 m de altura) — atravessar as cidades grandes ficou rápido e
+  dentro dos prédios continua calmo. Teto de 70 m/s; roda do mouse vai até 60 m/s.
+- Quadros longos (celular a 10–15 fps) não deixam mais a câmera livre em câmera lenta (limite do passo de
+  0,05 s → 0,12 s só na câmera livre).

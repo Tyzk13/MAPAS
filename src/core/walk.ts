@@ -12,7 +12,8 @@ export const WM = {
   keys: {} as Record<string, number>, jx: 0, jy: 0,
   lk: null as null | { id: number; x: number; y: number },
   /** câmera livre */
-  free: false, ghost: false, speed: 4, fy: 0,
+  /** speed: velocidade base (m/s, roda do mouse muda); hold: segundos se movendo (acelera sozinho) */
+  free: false, ghost: false, speed: 5, fy: 0, hold: 0,
   fp: new THREE.Vector3(), vel: new THREE.Vector3(),
 };
 export type Modo = 'orbita' | 'caminhar' | 'livre';
@@ -22,7 +23,7 @@ export const modeHooks: ((m: Modo) => void)[] = [];
 const TIPS: Record<Modo, string> = {
   orbita: '',
   caminhar: 'WASD ou setas: andar · arrastar: olhar · Shift: correr · V: 1ª/3ª pessoa · Esc: sair',
-  livre: 'WASD: mover · arrastar: olhar · Q/E: descer/subir · Shift: rápido · roda: velocidade · G: atravessar paredes · Esc: sair',
+  livre: 'WASD: mover (segure para acelerar) · arrastar: olhar · Q/E: descer/subir · Shift: rápido · mais alto = mais rápido · roda: velocidade · G: atravessar paredes · Esc: sair',
 };
 const wr = new THREE.Raycaster(), DN = new V3(0, -1, 0), ray = new THREE.Raycaster();
 let lastT = performance.now();
@@ -111,7 +112,15 @@ function freeStep(dt: number) {
   right.set(Math.cos(WM.yaw), 0, -Math.sin(WM.yaw));
   want.set(0, 0, 0).addScaledVector(fwd, fw).addScaledVector(right, sd); want.y += up;
   if (want.lengthSq() > 1) want.normalize();
-  want.multiplyScalar(WM.speed * (k.ShiftLeft || k.ShiftRight ? 3 : 1));
+  // segurar o movimento acelera aos poucos (até 3×, como em jogo) — no celular é o jeito de ir rápido;
+  // joystick no limite também conta como "correr"
+  const moving = want.lengthSq() > 0.01;
+  WM.hold = moving ? WM.hold + dt : 0;
+  const boost = 1 + Math.min(1.2, Math.max(0, WM.hold - 0.5) * 0.9);
+  const run = k.ShiftLeft || k.ShiftRight || Math.hypot(WM.jx, WM.jy) > 0.97 ? 2.5 : 1;
+  // perto do chão e dentro de prédios fica mais calmo; no alto, mais rápido (mapas grandes)
+  const alt = 1 + Math.min(3, Math.max(0, WM.fp.y - 4) / 10);
+  want.multiplyScalar(Math.min(70, WM.speed * boost * run * alt));
   // aceleração/frenagem suaves (sensação de câmera de jogo)
   WM.vel.lerp(want, 1 - Math.exp(-dt * 7));
   if (WM.vel.lengthSq() < 1e-6) WM.vel.set(0, 0, 0);
@@ -146,8 +155,9 @@ function aviso(txt: string) {
 }
 
 export function walkStep() {
-  const n = performance.now(), dt = Math.min(0.05, (n - lastT) / 1000), k = WM.keys, M = st.MP!; lastT = n;
-  if (WM.free) { freeStep(dt); return; }
+  const n = performance.now(), raw = (n - lastT) / 1000, dt = Math.min(0.05, raw), k = WM.keys, M = st.MP!; lastT = n;
+  // câmera livre: aceita quadros longos (celular a 10–15 fps não fica em câmera lenta)
+  if (WM.free) { freeStep(Math.min(0.12, raw)); return; }
   if (k.ArrowLeft) WM.yaw += 1.8 * dt; if (k.ArrowRight) WM.yaw -= 1.8 * dt;
   let fw = (k.KeyW || k.ArrowUp ? 1 : 0) - (k.KeyS || k.ArrowDown ? 1 : 0) - WM.jy, sd2 = (k.KeyD ? 1 : 0) - (k.KeyA ? 1 : 0) + WM.jx;
   const L = Math.hypot(fw, sd2); if (L > 1) { fw /= L; sd2 /= L; }
@@ -193,7 +203,7 @@ export function initWalk() {
   cv.addEventListener('wheel', e => {
     if (!WM.free) return;
     e.preventDefault();
-    WM.speed = Math.max(0.5, Math.min(40, WM.speed * (e.deltaY > 0 ? 1 / 1.2 : 1.2)));
+    WM.speed = Math.max(0.5, Math.min(60, WM.speed * (e.deltaY > 0 ? 1 / 1.2 : 1.2)));
     aviso('Velocidade: ' + WM.speed.toFixed(1) + ' m/s');
   }, { passive: false });
   // botões ▲▼ da câmera livre no celular
