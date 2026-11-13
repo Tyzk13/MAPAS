@@ -2,7 +2,7 @@
 // Tudo sutil: sigilos inventados, recortes de jornal, uma cova aberta, um brilho vermelho no porão.
 import * as THREE from 'three';
 import { halo } from '../../core/kit';
-import { mtx, rnd, reseed, TM, light, CROP, CEMETERY, FARM, RAIL, TOWERW, DINER, MOTEL, CHURCH } from './common';
+import { mtx, rnd, reseed, TM, light, CROP, CEMETERY, FARM, RAIL, TOWERW, DINER, MOTEL, CHURCH, SQ } from './common';
 
 const tex = (w: number, h: number, draw: (g: CanvasRenderingContext2D) => void) => {
   const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d')!);
@@ -101,6 +101,22 @@ export function buildMystery(G: THREE.Group, lamps: THREE.MeshBasicMaterial[]) {
   { const z = CHURCH.z - CHURCH.d / 2 + 0.27;
     nm('Quadro de hinos (igreja)'); plane(G, tex(128, 200, g => { g.fillStyle = '#4a3020'; g.fillRect(0, 0, 128, 200); g.fillStyle = '#e8e0d0'; g.font = 'bold 15px Georgia'; g.textAlign = 'center'; g.fillText('HYMNS', 64, 26); g.font = 'bold 36px Georgia'; ['10', '31', '86'].forEach((s, i) => g.fillText(s, 64, 72 + i * 46)); }),
       0.5, 0.8, CHURCH.x + 3.2, 2.4, z, 0, { transparent: false, depthWrite: true }); }
+
+  // 10) O tempo parado: a cidade acredita que hoje é 18/02/1987 (os agentes sabem que é 15/11/2025)
+  //     e, no meio da cidade, o número 2002 gravado na base do obelisco (os jogadores não sabem o que é).
+  { const fg = (g: CanvasRenderingContext2D, w: number, h: number) => { g.fillStyle = 'rgba(40,30,20,0.12)'; for (let i = 0; i < 400; i++) g.fillRect(rnd() * w, rnd() * h, 2, 2); };
+    nm('Número gravado no obelisco'); plane(G, tex(256, 128, g => { g.fillStyle = '#cfc7b6'; g.fillRect(0, 0, 256, 128); fg(g, 256, 128); g.textAlign = 'center'; g.font = 'bold 78px Georgia'; g.fillStyle = '#6a6254'; g.fillText('2002', 128, 92); g.fillStyle = '#f2ece0'; g.globalAlpha = 0.35; g.fillText('2002', 129, 94); }),
+      0.95, 0.47, 9, 0.62, 9.81, 0, { transparent: false, depthWrite: true, polygonOffset: true, polygonOffsetFactor: -2 });
+    // jornal esquecido no banco da praça
+    nm('Jornal no banco da praça'); const jn = plane(G, tex(320, 420, g => { g.fillStyle = '#e6dfc8'; g.fillRect(0, 0, 320, 420); fg(g, 320, 420); g.fillStyle = '#1a1a1a'; g.textAlign = 'center'; g.font = 'bold 34px Georgia'; g.fillText('HARLOW GAZETTE', 160, 46); g.font = '16px Georgia'; g.fillText('WEDNESDAY, FEBRUARY 18, 1987 · 25¢', 160, 72); g.fillRect(16, 82, 288, 2);
+        g.font = 'bold 24px Georgia'; ['COLD SNAP HITS COUNTY', 'Camp Harlow to close', 'for good, board says'].forEach((l, i) => g.fillText(l, 160, 118 + i * 30)); g.textAlign = 'left'; g.font = '13px Georgia'; for (let i = 0; i < 12; i++) g.fillRect(18, 220 + i * 15, 130 + rnd() * 150, 6); }),
+      0.42, 0.55, 6.3, 0.66, 15.8, 0, { transparent: false, depthWrite: true });
+    jn.rotation.set(-Math.PI / 2, 0, 0.3);
+    // placa de hora/temperatura do banco (sempre a mesma data)
+    const px = -SQ + 2.2, pz = SQ - 2.2, pole = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 2.6, 6), m.tin); pole.position.set(px, 1.4, pz); G.add(pole);
+    const bt = tex(256, 128, g => { g.fillStyle = '#101010'; g.fillRect(0, 0, 256, 128); g.fillStyle = '#ffb030'; g.font = 'bold 34px "Courier New"'; g.textAlign = 'center'; g.fillText('WED FEB 18', 128, 52); g.fillText("1987 · 38°F", 128, 100); });
+    nm('Placa de data do banco'); plane(G, bt, 1.1, 0.55, px, 2.95, pz + 0.04, 0, { transparent: false, depthWrite: true, emissive: 0xffffff, emissiveMap: bt, emissiveIntensity: 0.6 });
+    plane(G, bt, 1.1, 0.55, px, 2.95, pz - 0.04, Math.PI, { transparent: false, depthWrite: true, emissive: 0xffffff, emissiveMap: bt, emissiveIntensity: 0.6 }); }
 
   // brilho no túmulo e no círculo
   halo(CROP.x, 0.5, CROP.z, 1.6);

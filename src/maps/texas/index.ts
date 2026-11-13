@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import type { MapRuntime, View } from '../../core/types';
 import { begin, mistTex } from '../../core/kit';
 import { S, cam } from '../../core/engine';
+import { WM } from '../../core/walk';
 import { Builder } from './buildings';
 import { buildLandmarks } from './landmarks';
 import { buildMystery, DOCS } from './mystery';
@@ -229,6 +230,13 @@ export async function build(M: MapRuntime) {
   M.onTime = p => { lampsOn = p.lamps > 0; lampF = p.lamps; fogBase = (S.fog as THREE.FogExp2 | null)?.density ?? fogBase; escolherLuzes(); };
   const fp = L.anim.flag?.geometry.attributes.position as THREE.BufferAttribute | undefined, fx0 = fp ? Float32Array.from(fp.array as Float32Array) : null;
   M.tick = (dt, t) => {
+    // NÃO HÁ SAÍDA: quem passa da borda da cidade (caminhando ou na câmera livre) reaparece do lado oposto,
+    // voltando para Harlow. Só vale nos modos caminhar/livre; a órbita do mestre e o cinema ficam livres.
+    if (WM.on && !(window as unknown as { HARLOW_SAIDA?: boolean }).HARLOW_SAIDA) {
+      const L = 215, volta = (v: number) => (Math.abs(v) > L ? -Math.sign(v) * (L - 8) : v);
+      if (WM.free) { const x = volta(WM.fp.x), z = volta(WM.fp.z); if (x !== WM.fp.x || z !== WM.fp.z) { WM.fp.x = x; WM.fp.z = z; } }
+      else { const x = volta(WM.x), z = volta(WM.z); if (x !== WM.x || z !== WM.z) { WM.x = x; WM.z = z; WM.y = groundH(x, z); } }
+    }
     // re-escolhe 3×/s ou quando a câmera pula (vistas, cinema, capturas)
     if (Math.floor(t * 3) !== ultimaEscolha || cam.position.distanceToSquared(posEscolha) > 25) { ultimaEscolha = Math.floor(t * 3); posEscolha.copy(cam.position); escolherLuzes(); }
     pool.forEach((e, k) => {

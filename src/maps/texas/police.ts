@@ -342,6 +342,16 @@ export async function buildPolice(G: THREE.Group): Promise<Police> {
   { const lightsTex = mk(256, 128, g => { g.fillStyle = '#2a2c2a'; g.fillRect(0, 0, 256, 128); for (let y = 0; y < 4; y++) for (let x = 0; x < 10; x++) { g.fillStyle = rnd() < 0.25 ? '#ff4030' : rnd() < 0.4 ? '#40ff60' : '#3a3a30'; g.beginPath(); g.arc(16 + x * 24, 20 + y * 28, 6, 0, 7); g.fill(); } });
     const pm = new THREE.MeshBasicMaterial({ map: lightsTex, toneMapped: false }); const pnl = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.6), pm); pnl.position.set(wx(T + 0.02), 1.6, wz(18.3)); pnl.rotation.y = Math.PI / 2; G.add(pnl); }
   nm('Registro do despacho (rádio)'); doc(paper('DISPATCH LOG — NIGHT OF 11/11', ['21:47  Hale ranch: lights in the corn.', '21:58  Courthouse clock alarm (no one inside).', '22:01  INCOMING — female, young: "Tell Mama I\'m at the field. Tell her to come get me." Line traced to: PRUITT RESIDENCE, Rt. 2.', '        (Southwestern Bell: line DISCONNECTED 03/1987)', '22:01  INCOMING — same voice — Diner.', '22:01  INCOMING — same voice — Whitlock residence.', '22:02  Lyle 10-8 to Pruitt Rd. against orders.', '22:19  Lyle no response.', '22:40  Lyle no response.', '— I.K.'], { size: 15, stamp: 'UNIT 4 SILENT' }), 0.75, 1.0, 4.8, 1.7, 16 + IT / 2 + 0.012, 0);
+  // o tempo parado: só a delegacia conta os dias de verdade (a cidade jura que é 18/02/1987)
+  nm('Calendário riscado do xerife'); doc(mk(512, 420, g => { g.fillStyle = '#f2eee2'; g.fillRect(0, 0, 512, 420); g.fillStyle = '#1a1a1a'; g.textAlign = 'center'; g.font = 'bold 34px Georgia'; g.fillText('NOVEMBER 2025', 256, 44); g.font = '20px Arial';
+    for (let d = 1; d <= 30; d++) { const c = (d + 5) % 7, r = Math.floor((d + 5) / 7), x = 40 + c * 72, y = 100 + r * 60; g.fillStyle = '#1a1a1a'; g.fillText(String(d), x, y);
+      if (d < 15) { g.strokeStyle = '#2a2a2a'; g.lineWidth = 3; g.beginPath(); g.moveTo(x - 18, y - 20); g.lineTo(x + 18, y + 8); g.moveTo(x + 18, y - 20); g.lineTo(x - 18, y + 8); g.stroke(); }
+      if (d === 20) { g.strokeStyle = '#b01010'; g.lineWidth = 4; g.beginPath(); g.arc(x, y - 7, 24, 0, 7); g.stroke(); } }
+    g.fillStyle = '#b01010'; g.font = 'italic 18px Georgia'; g.fillText('they say it\'s Feb 18, \'87. it is NOT. keep counting. — D.H.', 256, 405); }), 0.75, 0.62, 11, 1.75, 14 - IT / 2 - 0.012, Math.PI);
+  nm('Livro dos dias 20'); doc(paper('LOG — "THE 20th" (do not file)', ['Every 20th, after dark: one scream, one dead.', 'Found where they fell. No marks. Eyes open.', '', 'Oct 20  — W. Ames, 61, Main St. (porch)', 'Sep 20  — Dep. R. Sutter (cruiser, Rt. 2)', 'Aug 20  — L. Pike, 17 (water tower)', 'Jul 20  — Dep. C. Mayfield (Pruitt Rd.)', '...', 'Kids are NOT taken on the 20th. Different thing?', 'Not enough data. Never enough data.'], { size: 15, stamp: 'NEXT: NOV 20' }), 0.6, 0.8, 3.6, 1.7, 16 + IT / 2 + 0.012, 0);
+  nm('Quadro dos policiais mortos'); doc(mk(400, 520, g => { g.fillStyle = '#2a1e14'; g.fillRect(0, 0, 400, 520); g.fillStyle = '#e8d8a0'; g.textAlign = 'center'; g.font = 'bold 26px Georgia'; g.fillText('END OF WATCH', 200, 44);
+    [['Dep. C. Mayfield', 'Jul 20'], ['Dep. R. Sutter', 'Sep 20'], ['Sgt. H. Ochoa', 'Feb 20'], ['Dep. A. Lyle?', '—']].forEach(([n, d], i) => { photo(g, 30 + (i % 2) * 180, 70 + Math.floor(i / 2) * 220, 160, 150, 'man'); g.fillStyle = '#e8d8a0'; g.font = '17px Georgia'; g.fillText(n, 110 + (i % 2) * 180, 245 + Math.floor(i / 2) * 220); g.fillText(d, 110 + (i % 2) * 180, 265 + Math.floor(i / 2) * 220); }); }),
+    0.8, 1.04, T + 0.012, 1.8, 11.6, Math.PI / 2);
   nm('Cartão de códigos 10'); doc(mk(256, 256, g => { g.fillStyle = '#e8e2c0'; g.fillRect(0, 0, 256, 256); g.fillStyle = '#1a1a1a'; g.font = 'bold 26px Arial'; g.fillText('10-CODES', 20, 40); g.font = '20px "Courier New"'; ['10-4  OK', '10-8  in service', '10-20 location', '10-33 EMERGENCY', '10-99 ...don\'t', '      answer it'].forEach((l, i) => g.fillText(l, 20, 80 + i * 30)); }), 0.4, 0.4, T + 0.012, 1.75, 21.6, Math.PI / 2);
   light(wx(1.4), 1.7, wz(19.6), 3, 6, 0x9fdcff, { vtt: 4 });
 
@@ -371,12 +381,12 @@ export async function buildPolice(G: THREE.Group): Promise<Police> {
   // quadro "crianças desaparecidas" na sala do caso (parede leste)
   nm('Quadro das crianças desaparecidas'); doc(mk(2048, 1024, g => {
     cork(g, 2048, 1024);
-    marker(g, 'MISSING CHILDREN — HARLOW, FALL 2026', 50, 80, 58, '#1a1a1a');
+    marker(g, 'MISSING CHILDREN — HARLOW, FALL 2025', 50, 80, 58, '#1a1a1a');
     kids.forEach(([n, a2, d, onde, ach], i) => { const x = 50 + i * 495; photo(g, x + 90, 120, 300, 340, 'girl', n.split(' ')[0] + ', ' + a2);
       paperDraw(g, x, 480, 470, 250, n + ' (' + a2 + ') — ' + d, ['Last seen: ' + onde + '.', 'Found: ' + ach + '.'], { size: 19, bg: i === 3 ? '#f2d8d0' : '#f0ead8' }); pin(g, x + 240, 125); });
     // padrão: a cada 20 anos
     g.strokeStyle = '#1a1a1a'; g.lineWidth = 4; g.beginPath(); g.moveTo(60, 900); g.lineTo(1990, 900); g.stroke();
-    [['1946', '2 kids · "ran off"'], ['1966', '3 kids · CAMP HARLOW'], ['1986', 'Clara + 2 campers'], ['2006', '1 kid · "runaway"'], ['2026', '4 so far…']].forEach(([y, t2], i) => { const x = 120 + i * 440; g.fillStyle = '#1a1a1a'; g.beginPath(); g.arc(x, 900, 10, 0, 7); g.fill(); g.font = 'bold 34px "Courier New"'; g.fillText(y, x - 40, 870); g.font = '24px "Courier New"'; g.fillStyle = i === 4 ? '#a01a1a' : '#2a2a2a'; g.fillText(t2, x - 60, 950); });
+    [['1946', '2 kids · "ran off"'], ['1966', '3 kids · CAMP HARLOW'], ['1986', 'Clara + 2 campers'], ['2006', '1 kid · "runaway"'], ['2025', '4 so far… (1 yr early?)']].forEach(([y, t2], i) => { const x = 120 + i * 440; g.fillStyle = '#1a1a1a'; g.beginPath(); g.arc(x, 900, 10, 0, 7); g.fill(); g.font = 'bold 34px "Courier New"'; g.fillText(y, x - 40, 870); g.font = '24px "Courier New"'; g.fillStyle = i === 4 ? '#a01a1a' : '#2a2a2a'; g.fillText(t2, x - 60, 950); });
     marker(g, 'EVERY 20 YEARS · ALWAYS IN THE FALL · ALWAYS CEDAR HOLLOW', 300, 1000, 40, '#a01a1a');
     g.strokeStyle = '#b01818'; g.lineWidth = 3; [[290, 125], [785, 125], [1280, 125], [1775, 125]].reduce((p0, p1) => { g.beginPath(); g.moveTo(p0[0], p0[1]); g.lineTo(p1[0], p1[1]); g.stroke(); return p1; });
   }), 4.0, 2.0, 16 - IT / 2 - 0.012, 1.6, 16.8, -Math.PI / 2);
@@ -407,7 +417,7 @@ export async function buildPolice(G: THREE.Group): Promise<Police> {
   // cartazes das crianças na recepção (parede sul)
   nm('Cartazes das crianças (recepção)'); doc(mk(1024, 512, g => {
     cork(g, 1024, 512);
-    kids.forEach(([n, a2, d], i) => { const x = 20 + i * 250; paperDraw(g, x, 30, 235, 450, 'MISSING', [n, 'Age ' + a2, 'Since ' + d + ', 2026', '', '', '', '', '', 'Any info: Sheriff Dept.'], { size: 14, bg: '#f2eee0' }); photo(g, x + 40, 160, 155, 175, 'girl'); pin(g, x + 117, 40); });
+    kids.forEach(([n, a2, d], i) => { const x = 20 + i * 250; paperDraw(g, x, 30, 235, 450, 'MISSING', [n, 'Age ' + a2, 'Since ' + d + ', 2025', '', '', '', '', '', 'Any info: Sheriff Dept.'], { size: 14, bg: '#f2eee0' }); photo(g, x + 40, 160, 155, 175, 'girl'); pin(g, x + 117, 40); });
   }), 1.7, 0.85, 4.6, 1.75, 16 - IT / 2 - 0.012, Math.PI);
   // recorte de 1966 na mesa do xerife
   nm('Recorte do jornal de 1966'); doc(paper('HARLOW GAZETTE — NOV. 3, 1966', ['THREE CHILDREN VANISH FROM CAMP HARLOW', 'Search of Cedar Hollow called off after 4 days. "They walked into the trees singing," said a counselor.', 'Funeral director Elias Pruitt Sr. leads prayer vigil.', 'Sheriff: "The boys ran off. They\'ll turn up."', '(same story printed in 1946, see archive)'], { size: 15, bg: '#e2d8bc' }), 0.26, 0.34, 3.85, FL + 0.796, 3.0, 0.5, true);

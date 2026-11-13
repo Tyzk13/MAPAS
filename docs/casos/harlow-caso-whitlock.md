@@ -18,14 +18,14 @@ levando as crianças. O caso Whitlock, de 1986, é a chave: aconteceu antes, a c
 | Danny Boone | 11 | 9/nov | foi de bicicleta procurar o Tommy | a bicicleta na trilha, virada para fora | filho do deputado T. Boone |
 
 **O padrão (quadro na sala do caso):** 1946 (2 crianças, "fugiram"), 1966 (3 crianças do Camp Harlow), 1986
-(Clara e 2 acampantes — o acampamento fecha em 1987), 2006 (1 criança, "fugiu de casa"), 2026 (4 até agora).
+(Clara e 2 acampantes — o acampamento fecha em 1987), 2006 (1 criança, "fugiu de casa"), 2025 (4 até agora — um ano adiantado).
 Sempre no outono, sempre em Cedar Hollow. A família **Pruitt** estava na cidade em todos esses anos.
 
 **A verdade (só o mestre):** algo muito antigo vive em Cedar Hollow — uma "menina de vestido branco" que chama as
 crianças pelo nome entre as árvores ("não dói, só é frio"). A cada 20 anos, Elias Pruitt Sr. (e antes o pai dele)
 a "alimentava" em troca da prosperidade da cidade (o petróleo veio em 1946). Em 1986 Clara viu o ritual e foi
 levada; desde então a coisa usa o rosto e a voz dela. Pruitt Sr. morreu e o pacto ficou sem dono: agora ela leva
-quantas quiser. As crianças de 2026 ainda podem voltar se o círculo for fechado — dentro do círculo da árvore dos
+quantas quiser. As crianças de 2025 ainda podem voltar se o círculo for fechado — dentro do círculo da árvore dos
 sapatos (ou do milharal), às 22:01, com as palavras que Pruitt Jr. escondeu no porão da fazenda.
 
 **Locais da floresta (vistas Floresta, Acampamento, Árvore dos sapatos, Cabana 1):**
@@ -46,6 +46,64 @@ jornal de 1966 (mesa do xerife) e o depoimento de Rosa Garza, mãe do Tommy (int
 **Estrutura sugerida:** 1) delegacia: quadros, cartazes, depoimentos, o xerife fechado; 2) cidade: famílias das
 crianças, lanchonete, igreja, cemitério (o túmulo vazio de Clara); 3) floresta de dia: acampamento, diário,
 árvore dos sapatos; 4) fazenda: porão com as palavras; 5) floresta às 22:01: fechar o círculo.
+
+## As ideias do mestre: o tempo parado, a cidade sem saída e o 2002
+
+Estas regras vieram do áudio do dono da mesa e estão no mapa.
+
+- **Data real × data da cidade.** Os agentes sabem que hoje é **15 de novembro de 2025**. Todo mundo em Harlow
+  jura que é **quarta, 18 de fevereiro de 1987**: o jornal no banco da praça, a placa de data do banco (que nunca
+  muda, nem a temperatura) e o que os moradores dizem. A linha dos Pruitt foi cortada em março de 1987, ou seja,
+  a cidade parou logo antes disso. **A delegacia é a exceção**: o xerife risca um calendário de novembro de 2025
+  e escreveu "dizem que é 18/02/87, NÃO é, continue contando". A polícia sabe a verdade e por isso não se mete.
+- **Não há saída.** Quem tenta sair pela estrada volta a entrar em Harlow pelo lado oposto. *No mapa:* no modo
+  caminhar ou na câmera livre, passar da borda (215 m do centro) leva a câmera para o outro lado da cidade, de
+  frente para Harlow de novo. A órbita do mestre e o cinema não são afetados. Para desligar numa sessão, rode
+  `HARLOW_SAIDA = true` no console da janela.
+- **O número 2002.** Gravado na base do obelisco da praça, no meio da cidade. "Sempre esteve aí." Os jogadores não
+  sabem o que é: **é quantas pessoas morreram nas noites de dia 20**. Se eles voltarem depois de um dia 20, o
+  número subiu.
+- **Os dias 20.** Todo dia 20, depois que escurece, a cidade ouve **um berro** e alguém aparece morto onde caiu,
+  sem marcas, de olhos abertos. A delegacia guarda o **Livro dos dias 20** (sala do rádio) e o quadro
+  **"End of Watch"** com os policiais que tentaram investigar e morreram num dia 20. O próximo é **20 de novembro**:
+  cinco dias depois da chegada dos agentes. Isso dá um relógio para a campanha.
+- **As crianças não são levadas no dia 20.** O livro anota: "outra coisa?". São dois fenômenos ligados, mas
+  diferentes, e a polícia não tem dados suficientes para entender nenhum deles.
+- **O verdadeiro desafio.** A investigação (Whitlock, Pruitt, a floresta) leva os agentes até quem organiza
+  tudo: a entidade que fala com a voz de Clara. Revele aos poucos; nada de monstro aparecendo de cara.
+
+Sugestão para fechar a conta (opcional): a cidade revive o mesmo fim de fevereiro de 1987 em laço, e cada
+"noite de 20" cobra uma vida. 2002 noites desde o primeiro laço.
+
+## Personagens (fichas para as imagens que o mestre mandou)
+
+As imagens não vão para o repositório (direitos dos artistas). Use-as na sua janela; nomes e papéis abaixo são
+sugestões para encaixar cada uma no caso. Na ordem em que foram enviadas:
+
+| # | Aparência | Quem é em Harlow | Para que serve |
+|---|---|---|---|
+| 1 | Loira de rabo de cavalo, uniforme escolar, braço enfaixado | **Becky Hale**, 15, irmã da Lily | viu a irmã "conversando com o milho"; o curativo esconde marcas de dedos frios |
+| 2 | Chapéu, colete, punhos machucados, terço na mão | **Frank Kowalski**, filho da Irene, ex-boxeador | caça a coisa sozinho à noite; violento, devoto |
+| 3 | Boina, blazer listrado, faixa vermelha, cigarreira | **Vivienne "Vee" Laroche**, fotógrafa de passagem | presa no laço há "uma semana" — na verdade há anos; tem fotos com datas impossíveis |
+| 4 | Loira desgrenhada, jaqueta verde, olhar cansado | **Marlene Whitlock** jovem / ou **Sarah Boone**, mãe do Danny | atende as ligações "da filha" |
+| 5 | Tranças, camiseta preta, coturno | **Dep. Tasha Boone** (ou irmã do deputado) | quer agir, desobedece o xerife |
+| 6 | Tranças, jaqueta militar, bermuda | **Wren**, adolescente que mora no vagão | conhece os túneis e a trilha; troca informação por comida |
+| 7 | Dreads, óculos, tatuagens, bolsa | **Juniper**, dona da loja de discos/ervas | coleciona fitas cassete; tem uma cópia de 22:01 |
+| 8 | Grande, jaqueta de segurança, chaves | **Otis Grant**, vigia noturno da cooperativa | já ouviu três berros de dia 20; tem a chave dos silos |
+| 9 | Idoso de bengala, jaqueta | **Amos Kell Sr.** (pai do pastor) | último vivo da Irmandade do Véu; sabe as palavras, tem medo |
+| 10 | Cabelo grisalho, jaqueta de couro, cigarro | **Xerife Dale Hutto** | quer o caso fechado; risca o calendário |
+| 11 | Camisa azul, distintivo, braços cruzados | **Dep. Manuel Garza**, pai do Tommy | desespero contido; vai querer ir à floresta |
+| 12 | Barba por fazer, camisa aberta | **Ray Collins** (o vendedor sumido) | pode reaparecer achando que é 1987 |
+| 13 | Ruiva, jaqueta jeans bordada | **Clara Whitlock** como a cidade lembra / professora **Ellen Price** | rosto do mistério; "ela sabe meu nome" |
+| 14 | Bigode, distintivo, óculos e paletó na mão | **Investigador Walt Hutto** (pai do xerife), em fotos de 1986 | aparece em fotos e talvez no laço |
+| 15 | Senhora de colar de pérolas com livro | **Irene Kowalski**, rádio da delegacia | arquivo vivo; passa o registro às escondidas |
+| 16 | Óculos, bolo-tie, terno marrom | **Prefeito Harold Briggs** | nega tudo; marcou reunião de quinta |
+| 17 | Grisalho, regata, cicatrizes | **Earl Hale**, fazendeiro, pai da Lily | viu "a menina no milho" |
+| 18 | Motoqueiro barbudo de colete | **"Tank" McCready**, dono do Lone Star Tavern | boatos; tentou sair de moto e voltou pela outra ponta |
+| 19 | Cabelo longo, colete xadrez, bermuda de chamas | **Dusty**, frentista do posto | vende mapa da estrada que "termina em Harlow dos dois lados" |
+| 20 | Óculos, cigarro, jaqueta verde manchada | **Elias Pruitt Jr.** (versão jovem, ou o filho dele) | quer fechar o círculo |
+| 21 | Paletó verde, camisa vermelha, broche de lobo | **Mr. Vance**, hóspede do quarto 2 do motel | elegante demais, sabe demais: candidato a **quem organiza tudo** |
+| 22 | Óculos, camiseta de banda, sandália | **Gil**, radialista da KHRL | põe no ar as ligações das 22:01; aliado dos agentes |
 
 ## Premissa
 

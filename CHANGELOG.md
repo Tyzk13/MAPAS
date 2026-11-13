@@ -305,3 +305,13 @@
   resolução a cada troca de clima, quase sem voltar (exigia 57 fps). Agora: quadros acima de 250 ms descartam a
   medição; trocar de clima recomeça a medir; baixa só abaixo de 30 fps e volta a subir acima de 48 fps.
 - Harlow: personagens nascem na calçada ao lado da porta da delegacia (não mais atrás da viatura).
+
+## Harlow: o tempo parado, a cidade sem saída e o 2002 (ideias do áudio do mestre)
+
+- A cidade acha que é **18/02/1987**: jornal no banco da praça, placa de data do banco (frente e verso). A delegacia
+  sabe a data real (**15/11/2025**): calendário riscado do xerife com o dia 20 circulado.
+- **"2002"** gravado na base do obelisco da praça (mortos das noites de dia 20 — segredo do mestre).
+- Delegacia: **Livro dos dias 20** (um berro, um morto, todo dia 20) e quadro **End of Watch** dos policiais mortos.
+- **Não há saída:** no modo caminhar/livre, passar de 215 m do centro leva a câmera ao lado oposto da cidade
+  (desliga com `HARLOW_SAIDA = true` no console). Órbita e cinema não mudam.
+- Ano das crianças passa a 2025 ("um ano adiantado"). Dossiê com as regras novas e fichas para os 22 personagens.

@@ -179,6 +179,16 @@ Leia `docs/NOVO-MAPA.md` antes de começar.
 - Na versão leve (`build:leve`) os arquivos `_lod1` somem (viram o id normal): use `lod(id)` de
   `mexico/common.ts` (`hasModel(id+'_lod1') ? ... : id`), senão as árvores não aparecem no site.
 
+## Mecânicas de história no mapa (sem mexer no núcleo)
+
+- Regra de mundo que mexe na câmera (ex.: "não há saída" de Harlow) vai no `M.tick` do mapa, lendo/escrevendo
+  `WM` de `core/walk.ts`: caminhar usa `WM.x/z/y`, câmera livre usa `WM.fp`. Só aja com `WM.on`; deixe órbita e
+  cinema livres para o mestre. Dê sempre um jeito de desligar (flag em `window`) e explique no dossiê.
+- Áudio do dono: transcreva com faster-whisper (decodifique com ffmpeg para f32 16 kHz). Trechos confusos: rode de
+  novo só o trecho com `large-v3`; o que ainda ficar ambíguo, interprete e diga ao dono o que foi suposto.
+- Imagens de personagens que o dono manda costumam ter direitos de terceiros: não vão para o repositório; viram
+  fichas (aparência → papel no caso) no dossiê.
+
 ## Erros que já custaram tempo (não repita)
 
 - **Modelos da Poly Haven são pesados** (árvores 1–4 M faces). Sempre rode `tools/arvores.sh`
