@@ -76,7 +76,8 @@ async function addChar(d: { name: string; h: number; c: number; img: string }) {
 // ---------- interface (dock, menus e painéis) ----------
 const QN = { baixa: 'Baixa', media: 'Média', alta: 'Alta' } as const;
 const marcarQ = () => { for (const b of $('bq').children as HTMLCollectionOf<HTMLElement>) b.classList.toggle('act', b.dataset.q === CFG.quality); };
-function escolherClima(i: number) { st.pi = i; setTime(i); $('bn').textContent = PRE[i].n; }
+// trocar de clima carrega outro céu (trava um instante): a resolução automática recomeça a medir
+function escolherClima(i: number) { st.pi = i; desempenho.reiniciar(); setTime(i).then(() => desempenho.reiniciar()); $('bn').textContent = PRE[i].n; }
 function irParaVista(i: number) {
   const v = st.V[i]; if (!v) return;
   st.vi = i; $('bv').textContent = v.n;

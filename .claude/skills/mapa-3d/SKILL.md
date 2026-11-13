@@ -152,6 +152,13 @@ Leia `docs/NOVO-MAPA.md` antes de começar.
 - `node tools/testar-vtt.mjs` grava `.dd2vtt`/`.png` de dezenas de MB em `capturas/vtt/`: estão no `.gitignore`
   (só as `_previa.jpg` vão para o git). Nunca faça `git add` deles.
 
+## Resolução automática (`src/core/desempenho.ts`)
+
+- Travadas pontuais (carregar HDRI ao trocar clima, sonda de ambiente, compilar shader) não podem baixar a
+  resolução: quadros > 250 ms descartam a janela e `escolherClima` chama `desempenho.reiniciar()`. Limites:
+  baixa < 30 fps, sobe > 48 fps (2 janelas). Para testar a imagem sem esse efeito: `?auto=0`.
+- Bug relatado pelo dono: "a qualidade está bugando ao trocar o tempo" = isso.
+
 ## Medir o peso (faça antes de publicar)
 
 - `npx vite build --outDir .cache/capturas-build && node tools/medir-peso.mjs <mapa>` (Baixa e Alta).

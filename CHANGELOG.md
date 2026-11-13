@@ -298,3 +298,10 @@
 - **Luzes que acompanham a câmera:** o conjunto de luzes (8/14/22 pela qualidade) vai para as luzes mais perto da
   câmera, 3×/s ou quando ela pula — delegacia, floresta e fazenda ficam iluminadas quando você está nelas, mesmo
   na qualidade Baixa (antes só as de maior prioridade no mapa todo acendiam).
+
+## Correção: qualidade caía ao trocar o clima
+
+- A resolução automática tratava a travada de carregar o céu novo (HDRI) como "aparelho lento" e baixava a
+  resolução a cada troca de clima, quase sem voltar (exigia 57 fps). Agora: quadros acima de 250 ms descartam a
+  medição; trocar de clima recomeça a medir; baixa só abaixo de 30 fps e volta a subir acima de 48 fps.
+- Harlow: personagens nascem na calçada ao lado da porta da delegacia (não mais atrás da viatura).

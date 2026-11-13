@@ -194,7 +194,7 @@ export async function build(M: MapRuntime) {
   M.views = VIEWS;
   M.shadowRadius = Q.lights > 8 ? 80 : 55;
   M.walkLimit = 240; M.camMax = 240; M.fogScale = 0.5;
-  M.spawn = i => ({ x: 7.2 + (i % 3) * 1.0, z: 77.4 - Math.floor(i / 3) * 1.1, y: 0.12 }); // calçada da delegacia
+  M.spawn = i => ({ x: 7.4 + (i % 2) * 1.0, z: 79.6 + Math.floor(i / 2) * 1.0, y: 0.12 }); // calçada da delegacia, ao lado da porta
   M.walkStart = { x: 7, z: 82 };
   // som no lugar: velas do ritual na fazenda e do porão, sino do campanário, portas do saloon e do quarto 7
   M.sons = [
