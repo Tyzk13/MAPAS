@@ -11,6 +11,7 @@ import { buildHotel, CELLAR } from './hotel';
 import { buildMorgue } from './morgue';
 import { buildLandmarks } from './landmarks';
 import { buildCasas, CASA_EVA, CASA_MOREAU, DENTRO } from './casas';
+import { moradores, buildRetratos } from './npcs';
 import { PISTAS, NOTAS } from './pistas';
 import { Q, rnd, reseed, sm, LREQ, ROW0, ROWD, KING, QUEEN, ELM, BIRCH, MAPLE, SPRUCE, CEDAR, EXT, RIVER, riverZ, RAIL, STATION, HOTEL, MORGUE, CHURCH, CEMETERY, MILL, GAS, DINER } from './common';
 import type { Xf } from '../../core/models';
@@ -56,6 +57,8 @@ export const VIEWS: View[] = [
   { n: 'Fábrica · escritório do capataz', p: P(67.0, 1.75, -170.0), t: P(71, 0.9, -164.6), fov: 66 },
   { n: 'Casa de Eva Pelletier', p: P(-76.0, 1.9, -4.8), t: P(-72.2, 1.2, -10.3), fov: 68 },
   { n: 'Casa dos Moreau', p: P(76.0, 1.9, 51.0), t: P(73.2, 0.9, 46), fov: 68 },
+  { n: 'Retrato de Margaret (saguão)', p: P(13.5, 1.8, -21.6), t: P(13.5, 2.1, -24.9), fov: 55 },
+  { n: 'Personagens', p: P(-6, 2.2, -44), t: P(14, 1.6, -16), fov: 60 },
   { n: 'Resumo do caso', p: P(-40, 60, 120), t: P(10, 0, -20), fov: 50 },
   { n: 'Geral', p: P(70, 85, 170), t: P(0, 0, 0) },
   { n: 'Tática', p: P(0, 210, 0.1), t: P(0, 0, 0) },
@@ -132,7 +135,8 @@ export async function build(M: MapRuntime) {
   const CA = await buildCasas(G);
   await b.finish();
   M.lamps.push(...HO.lamps, ...MO.lamps, ...L.lamps, ...CA.lamps);
-  M.docs = [...HO.docs, ...MO.docs, ...L.docs, ...CA.docs].map(d => ({ ...d, ...(PISTAS[d.n] || {}) }));
+  M.npcs = moradores;
+  M.docs = [...HO.docs, ...MO.docs, ...L.docs, ...CA.docs, ...buildRetratos(G)].map(d => ({ ...d, ...(PISTAS[d.n] || {}) }));
   M.notas = NOTAS;
 
   // ---------- natureza ----------

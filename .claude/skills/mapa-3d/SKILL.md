@@ -257,6 +257,13 @@ Leia `docs/NOVO-MAPA.md` antes de começar.
   `meia-profundidade·sen(inclinação)`. Os HDRIs não passam de 156 (conferido): não é estouro do céu.
 - Som do mestre baixo/mudo: modo "Jogadores" sem janela dos jogadores ligada agora toca aqui (`somAqui` em imersao.ts);
   efeitos passam por `efeitosG` (×3,2) e um compressor no fim (`som.ts`).
+- NPCs de Greywater: `canada/npcs.ts` (lista `MORADORES`, imagens em `npcs-local/canada/cut/NN.png` já recortadas com
+  `recorte.py` + limpeza: só o maior pedaço, sombra branca neutra no pé, buraco claro entre as pernas). `pos.oc: true`
+  faz o NPC nascer oculto (a entidade). Cartazes/retratos com a mesma imagem: `texCom()` desenha sem imagem e redesenha
+  quando ela carrega (`needsUpdate`).
+- `__cap.third()` põe a câmera no andar mais ALTO (raycast de cima) e os personagens sobem/descem interpolando: chame
+  `__cap.frames(40)` antes do print, senão aparecem no térreo.
+- Decisão do dono (nov/2026): os personagens antigos dos jogadores saíram; sem imagem nova, silhueta neutra.
 - Lugares para entrar fora do hotel ficam em `canada/casas.ts` (fábrica, lanchonete, casas das vítimas): `shell()` + `Kit`.
 - `scatter` com milhares de árvores: use grade de vizinhança (hash por célula), não `out.some(...)` (O(n²)).
 

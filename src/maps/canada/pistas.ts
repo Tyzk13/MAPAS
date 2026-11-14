@@ -36,6 +36,14 @@ export const PISTAS: Record<string, { onde: string; pt: string }> = {
   'Fotos na sala de Eva Pelletier': { onde: 'Casa de Eva Pelletier', pt: '"recital 1974" e "meus alunos". Nas fotos, as mãos dela no piano: dedos longos, mãos pequenas.' },
   'Bilhete de Lise Moreau': { onde: 'Casa dos Moreau', pt: '"Jean — sua janta está no forno desde domingo. Mantenho quente. Eu sei. O Sr. Ashdown veio segunda com flores e disse que sentia muito. Perguntou se você tinha um irmão. Por que ele perguntaria isso? Volte para casa. — Lise"' },
   'Cartão de prova de roupa (Moreau)': { onde: 'Casa dos Moreau', pt: 'ASHDOWN & SON — cartão de prova: cliente MOREAU, Jean · altura 1,65 m · tórax 36 · manga 31 · "Prova: sáb 15/nov, quarto 307, Laurentian Hotel" · "Sem custo."' },
+  // ---------- cartazes e retratos (imagens da pasta do mestre) ----------
+  'Cartaz: Jean Moreau desaparecido (estação)': { onde: 'Estação', pt: '"DESAPARECIDO / DISPARU — JEAN MOREAU, 34 anos, 1,65 m, operário da fábrica. Visto pela última vez domingo, 16/nov, depois das 23h, perto da ponte. Ligue para o policial A. Roy, O.P.P." (Lise colou cartazes pela cidade toda.)' },
+  'Cartaz: Jean Moreau desaparecido (hotel, King St)': { onde: 'Hotel · fachada da King St', pt: 'O mesmo cartaz do Moreau, colado na parede do próprio hotel — William passa por ele todo dia.' },
+  'Cartaz: Jean Moreau desaparecido (fábrica)': { onde: 'Fábrica · salão', pt: 'O cartaz do Moreau na parede da fábrica, perto da porta grande.' },
+  'Cartaz: Jean Moreau desaparecido (Main St)': { onde: 'Main Street', pt: 'O cartaz do Moreau colado numa vitrine da Main Street.' },
+  'Retrato "In memoriam" de Margaret (saguão)': { onde: 'Hotel · Saguão', pt: '"In memoriam — Margaret Ashdown, 1943–1974", com uma fita preta no canto. William mandou pendurar no saguão. Às vezes, quem passa sente que o retrato acompanha com os olhos; à noite, o dourado da moldura brilha um pouco.' },
+  'Foto do casamento (304)': { onde: 'Hotel · Quarto 304', pt: '"William & Margaret — junho de 1969". O rosto DELE está riscado em X, com força, em vermelho. William diz que não foi ele.' },
+  'Foto de Jean Moreau (casa dos Moreau)': { onde: 'Casa dos Moreau', pt: '"Jean, 1974". A foto que Lise usou para fazer os cartazes.' },
   // ---------- igreja, cemitério e a casa ----------
   'Lápide de Margaret Ashdown': { onde: 'Cemitério', pt: '"MARGARET ASHDOWN, nascida Lafleur, 1943–1974. Esposa amada. \'Até nos encontrarmos de novo\'". Lírios frescos todos os dias.\nSEGREDO: o caixão está VAZIO desde outubro. A grama foi recolocada com perfeição.' },
   'Lápide de Eva Pelletier (cova reaberta)': { onde: 'Cemitério', pt: '"EVA PELLETIER, 1917–1975. \'Sua música permanece\'." Professora de piano. A cova está isolada com corda da polícia; terra recolocada, um lampião deixado pelo coveiro.' },
@@ -45,6 +53,9 @@ export const PISTAS: Record<string, { onde: string; pt: string }> = {
 };
 
 export const NOTAS: Record<string, string> = {
+  'Personagens': 'PERSONAGENS (fichas móveis no menu Personagens; arraste, oculte, mude o tamanho):\n' +
+    'IMPORTANTES — William Ashdown (dono do hotel; beverage room) · Margaret Ashdown (COMEÇA OCULTA no 307; clique Mostrar para revelar) · Dr. Harold Finch (legista; necrotério) · Sra. Agathe Doucette (303; a próxima vítima) · Émile Brodeur (recepcionista da noite) · Lucien Gauthier (gerente) · Policial André Roy (cemitério) · René Tremblay (capataz; fábrica) · Lise Moreau (esposa do Jean) · Dot (garçonete).\n' +
+    'COLORIDO — Sophie Ste-Marie (camareira) · Marcel Lavoie, "Big Gus" Bouchard e Pete Ouellet (operários no bar) · Hélène Côté (piloto, hóspede) · Luc Moreau (filho) · Claire Pelletier (sobrinha de Eva) · Yves Dumont (entregador de gelo) · Jo Lacroix (frentista) · Theo (andarilho da estação) · Tommy Gagnon (jornaleiro) · Nadine Brault (repórter).',
   'Resumo do caso': 'RESUMO — O CASO ASHDOWN (Greywater Falls, Ontário, quarta 19/11/1975).\n' +
     'A HISTÓRIA: William Ashdown (34), ex-alfaiate, casou com Margaret Lafleur e foi tocar o hotel dela, o Laurentian — o hotel e bar aonde a cidade inteira vai. No Natal de 1974, bêbado depois da festa, brigou com Margaret (ela ia deixá-lo) e a empurrou da escada do PORÃO do hotel. O legista deu como acidente.\n' +
     'Margaret voltou como uma entidade de CONHECIMENTO (marca: olho num livro aberto, escrita dourada). Sabe tudo o que ele fez e os segredos de todos. Por raiva, obriga William a refazer o corpo dela com partes de outros. Em outubro ele desenterrou o corpo dela (o caixão está vazio) e o guarda no quarto 307, no gelo.\n' +

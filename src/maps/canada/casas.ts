@@ -71,7 +71,7 @@ export async function buildCasas(G: THREE.Group): Promise<Interior> {
       note(520, 40, 460, 260, 'UNION MEETING', ['Thursday 8 pm, Laurentian', 'Beverage Room. Mr. Ashdown', 'offers the first round.', '"Everybody comes to the', 'Laurentian."']);
       note(40, 380, 440, 300, 'WORK UNIFORMS — FREE', ['Mr. W. Ashdown (tailor, now of', 'the Laurentian) will measure', 'night-shift men for new work', 'clothes, at no charge.', 'Fittings Saturdays, room 307.']);
       note(540, 360, 430, 300, 'SAFETY FIRST', ['Days without accident:', '', '        0', '', 'Wear your gloves on the press.'], '#e8e0a0'); }),
-      2.4, 1.7, 55, 1.9, z1 - T - 0.012, Math.PI, 'Quadro de avisos da fábrica');
+      2.4, 1.7, 57.6, 1.9, z1 - T - 0.012, Math.PI, 'Quadro de avisos da fábrica');
     // escritório do capataz (canto sudeste, divisória com vidro)
     const ox0 = 66, oz0 = -171, ox1 = x1 - T, oz1 = z1 - T;
     K.wall('x', oz0, ox0, ox1, y, 3.0, [[ox0 + 1.4, 0.9, 2.1]], { col: 0xb8c0a8, lambri: 1.1, lambriCol: 0x4a5a4a });

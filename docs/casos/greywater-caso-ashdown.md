@@ -115,19 +115,41 @@ que conhece os segredos de cada agente e os usa contra eles. Depois disso Willia
 Camadas (botão Camadas): **Telhado do hotel**, **Hotel: 3º andar**, **Hotel: 2º andar**. Esconda as de cima para ver um
 andar de cima e arrastar fichas nele (o arrastar só pisa em andares visíveis). Na exportação VTT há uma área por andar.
 
-## Personagens (sem imagem; o mestre pode pôr fichas pelo menu Personagens)
+## Personagens (fichas no menu Personagens, com as aparências da pasta do mestre)
 
-| Quem | Onde | Para que serve |
-|---|---|---|
-| **William Ashdown**, 34, alfaiate | Quarto 304 / beverage room / cemitério à tarde | O culpado e a vítima dela. Educado, bêbado, exausto, apavorado. Chora se pressionado: "ela sabe tudo". |
-| **Margaret Ashdown** (Lafleur), 31 | Espelhos, paredes, o 307 | A entidade de Conhecimento. Fala segredos verdadeiros dos agentes. |
-| **Lucien Gauthier**, gerente do hotel | Recepção / escritório | Quer evitar escândalo; aceitou o dinheiro adiantado do 307. Irmão do dono da funerária. |
-| **Émile Brodeur**, 19, recepcionista da noite | Quarto 205 / recepção à noite | Viu William subir com "um tapete enrolado" (era o Moreau). |
-| **Sra. Agathe Doucette**, 70, viúva | Quarto 303 | Ouve tudo pela parede. Olhos cinza-esverdeados: a próxima. |
-| **Dr. Harold Finch**, 61, legista | Quarto 204 / necrotério | Desconfia; tem vergonha do laudo de 1974. Aliado possível; pode pedir a exumação. |
-| **Policial André Roy**, O.P.P. | Delegacia (fora do mapa) / cemitério | Acha que é um ladrão de túmulos "doente". Recebe a confissão, se houver. |
-| **Rev. Martin Hale**, anglicano | Igreja de St. Columba | Celebrou os enterros; pode autorizar a exumação e fazer o rito. |
-| **F. H. Gauthier**, agente funerário | Funerária Gauthier & Fils | William fez as roupas dos mortos para ele por anos e tem cópia da chave dos fundos do necrotério. |
+As imagens vêm da pasta do Pinterest do mestre (https://pin.it/6FDe5jQ5t) e **não vão para o git** (são de terceiros):
+`node tools/baixar-npcs.mjs https://pin.it/6FDe5jQ5t npcs-local/canada` e o recorte em `npcs-local/canada/cut/`. O
+arquivo offline já sai com elas. Sem as imagens, cada um vira uma silhueta.
+
+### Os importantes para a história
+
+| Quem (imagem da pasta) | Aparência | Onde começa | Para que serve |
+|---|---|---|---|
+| **William Ashdown** (15) | homem de camisa cinza aberta, cigarro, mão na cabeça: cansado, bêbado | Beverage room | O dono do hotel e o assassino. Educado, exausto, apavorado: "ela sabe tudo". |
+| **Margaret Ashdown** (03) | mulher ruiva dos anos 70, saia longa, cardigã verde, bolsa | Quarto 307, **oculta** | A entidade. Só o mestre vê (meio transparente) até clicar **Mostrar**. |
+| **Dr. Harold Finch** (02) | senhor negro de paletó de tweed | Necrotério · gabinete | O legista; aliado possível; tem vergonha do laudo de 1974. |
+| **Sra. Agathe Doucette** (14) | senhora de terninho preto e blusa roxa (luto) | Quarto 303 | A vizinha; olhos cinza-esverdeados: a próxima vítima. |
+| **Émile Brodeur** (06) | rapaz de óculos, cardigã azul, mochila | Atrás do balcão | Recepcionista da noite; viu o "tapete enrolado". |
+| **Lucien Gauthier** (22) | homem de jaqueta branca, camiseta verde | Escritório do hotel | Gerente; quer abafar tudo. |
+| **Policial André Roy** (19) | homem grande de sobretudo, coldre | Cemitério | Polícia provincial; recebe a confissão, se houver. |
+| **René Tremblay** (12) | senhor de colete de trabalho, botas | Fábrica · escritório | Capataz; viu William esperar o Moreau no portão. |
+| **Lise Moreau** (24) | mulher de jaqueta verde militar | Casa dos Moreau | Esposa do operário morto. |
+| **Dot** (18) | garçonete de suéter, bandana, botas | Lanchonete | Serviu William e Moreau no domingo 23h20. |
+
+### Os de cor local
+
+Sophie Ste-Marie, camareira (20) · Marcel Lavoie (07), "Big Gus" Bouchard (16) e Pete Ouellet (17), operários no bar ·
+Hélène Côté, piloto de hidroavião hospedada (25) · Luc Moreau, filho (10) · Claire Pelletier, sobrinha de Eva (04) ·
+Yves Dumont, entregador de gelo (13) · Jo Lacroix, frentista (05) · Theo, andarilho da estação (23) · Tommy Gagnon,
+jornaleiro (26) · Nadine Brault, repórter (09). A imagem 08 (andarilho de capuz) é como era o Kowalczyk.
+
+### Cartazes e retratos feitos com as imagens
+
+- **DESAPARECIDO — Jean Moreau** (rosto da imagem 21): na estação, na parede do hotel (King St), na fábrica e numa
+  vitrine da Main Street.
+- **"In memoriam" de Margaret** (03) no saguão do hotel (vista "Retrato de Margaret (saguão)").
+- **Foto do casamento** William & Margaret no 304, com o rosto dele riscado.
+- **Foto do Jean** na casa dos Moreau.
 
 ## Documentos na cena (tradução)
 

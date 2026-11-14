@@ -51,7 +51,7 @@ export const NPCS: Npc[] = [
 ];
 
 /** apaga o fundo liso (branco/cinza) a partir das bordas e corta a sobra transparente */
-function cutout(im: HTMLImageElement, crop = [0, 0, 1, 1]) {
+export function cutout(im: HTMLImageElement, crop = [0, 0, 1, 1]) {
   const sx = Math.round(crop[0] * im.width), sy = Math.round(crop[1] * im.height);
   let w = Math.round((crop[2] - crop[0]) * im.width), h = Math.round((crop[3] - crop[1]) * im.height);
   const k = Math.min(1, 512 / h); w = Math.max(1, Math.round(w * k)); h = Math.round(h * k);
@@ -84,7 +84,7 @@ function cutout(im: HTMLImageElement, crop = [0, 0, 1, 1]) {
 }
 
 /** silhueta neutra (quando a imagem não foi baixada) */
-function silhouette() {
+export function silhouette() {
   const c = document.createElement('canvas'); c.width = 128; c.height = 360; const g = c.getContext('2d')!;
   g.fillStyle = '#1c1a18'; g.beginPath(); g.arc(64, 34, 24, 0, 7); g.fill();
   g.beginPath(); g.moveTo(30, 70); g.lineTo(98, 70); g.lineTo(108, 200); g.lineTo(90, 205); g.lineTo(88, 352); g.lineTo(68, 352); g.lineTo(64, 230); g.lineTo(60, 352); g.lineTo(40, 352); g.lineTo(38, 205); g.lineTo(20, 200); g.closePath(); g.fill();

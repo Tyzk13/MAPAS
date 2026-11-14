@@ -402,3 +402,15 @@
   janela dos jogadores aberta, o som toca na janela do mestre (antes ficava mudo).
 - Manchas brancas nos telhados à noite: o telhado de zinco cruzava o topo das lojas (duas faces brigando) e era metálico
   (espelhava a lua). O telhado subiu e o zinco deixou de ser metal.
+
+## Greywater Falls — moradores com as aparências do mestre, cartazes e retratos
+
+- 22 moradores viram personagens móveis com as imagens da pasta do mestre no Pinterest (fora do git, em
+  `npcs-local/canada/`, recortadas para `cut/`): William no bar, **Margaret oculta no 307** (novo: `pos.oc` faz um NPC
+  nascer oculto), Dr. Finch, Sra. Doucette, a equipe do hotel, operários, Lise e Luc Moreau, Dot, o policial Roy etc.
+- Cartazes de DESAPARECIDO do Jean Moreau (estação, hotel, fábrica, Main St), retrato "In memoriam" de Margaret no
+  saguão, foto do casamento com o rosto dele riscado no 304 e foto do Jean na casa dos Moreau — desenhados com as
+  mesmas imagens (sem elas, ficam só com o texto).
+- Vistas "Personagens" (lista dos importantes) e "Retrato de Margaret (saguão)".
+- Os personagens antigos dos jogadores saíram (pedido do dono): sem `npcs-local/jogadorN.png` as fichas são silhuetas
+  neutras até chegarem as imagens novas.

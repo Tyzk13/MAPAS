@@ -7,28 +7,33 @@ import { mat } from './kit';
 import { NET } from './net';
 // Imagens dos jogadores: artes de terceiros, ficam fora do git em npcs-local/jogadorN.png (repositório público).
 // Sem elas, usa as fichas antigas do repositório.
-import dante from '@assets/tokens/dante.png';
-import luis from '@assets/tokens/luis.png';
-import leo from '@assets/tokens/leo.png';
 const LOCAL = import.meta.glob('../../npcs-local/jogador*.png', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
-const jog = (n: number, alt: string) => Object.entries(LOCAL).find(([k]) => k.endsWith('/jogador' + n + '.png'))?.[1] ?? alt;
+// sem imagem: silhueta neutra (os personagens antigos saíram por decisão do dono; os novos vêm em npcs-local/jogadorN.png)
+function silhueta(cor: string) {
+  if (typeof document === 'undefined') return '';
+  const c = document.createElement('canvas'); c.width = 128; c.height = 360; const g = c.getContext('2d')!;
+  g.fillStyle = cor; g.beginPath(); g.arc(64, 34, 24, 0, 7); g.fill();
+  g.beginPath(); g.moveTo(30, 70); g.lineTo(98, 70); g.lineTo(108, 200); g.lineTo(90, 205); g.lineTo(88, 352); g.lineTo(68, 352); g.lineTo(64, 230); g.lineTo(60, 352); g.lineTo(40, 352); g.lineTo(38, 205); g.lineTo(20, 200); g.closePath(); g.fill();
+  return c.toDataURL('image/png');
+}
+const jog = (n: number, cor: string) => Object.entries(LOCAL).find(([k]) => k.endsWith('/jogador' + n + '.png'))?.[1] ?? silhueta(cor);
 
 export interface TokenDef { id: string; name: string; h: number; c: number; img: string; custom?: boolean;
   /** NPC do mapa: nasce em `pos` (até o mestre mover) e some ao trocar de mapa */
-  npc?: boolean; pos?: { x: number; z: number; y?: number } }
+  npc?: boolean; pos?: { x: number; z: number; y?: number; /** nasce oculto (só o mestre vê) */ oc?: boolean } }
 export interface Token {
   id: string; name: string; h: number; h0: number; fl: boolean; idx: number; custom: boolean;
   g: THREE.Group; sp: THREE.Group; base: THREE.Mesh; mesh: THREE.Mesh | null; hit: THREE.Mesh; ring: THREE.Mesh; btn: HTMLButtonElement;
   target: THREE.Vector2; ty: number; ls: number;
   /** oculto: só o mestre vê (meio transparente) até revelar */
   oc: boolean;
-  npc?: boolean; pos0?: { x: number; z: number; y?: number };
+  npc?: boolean; pos0?: { x: number; z: number; y?: number; oc?: boolean };
 }
 
 export const DEF: TokenDef[] = [
-  { id: 'j1', name: 'Jogadora 1', h: 1.68, c: 0x8a6ad8, img: jog(1, dante) },
-  { id: 'j2', name: 'Jogador 2', h: 1.78, c: 0xd9a93a, img: jog(2, luis) },
-  { id: 'j3', name: 'Jogador 3', h: 1.85, c: 0x3aa86b, img: jog(3, leo) },
+  { id: 'j1', name: 'Jogadora 1', h: 1.68, c: 0x8a6ad8, img: jog(1, '#3a3446') },
+  { id: 'j2', name: 'Jogador 2', h: 1.78, c: 0xd9a93a, img: jog(2, '#463e2c') },
+  { id: 'j3', name: 'Jogador 3', h: 1.85, c: 0x3aa86b, img: jog(3, '#2c4034') },
 ];
 
 const V3 = THREE.Vector3;
@@ -46,7 +51,7 @@ export function placeT(t: Token, i?: number) {
   const p = st.pos[st.curMap + '__' + t.id];
   if (typeof i === 'number') t.idx = i;
   if (p) { t.target.set(p.x, p.z); t.ty = p.y || 0; if (typeof p.h === 'number') t.h = p.h; t.fl = !!p.f; t.oc = !!p.o; }
-  else if (t.pos0) { t.target.set(t.pos0.x, t.pos0.z); t.ty = t.pos0.y ?? 0; t.h = t.h0; t.fl = false; t.oc = false; }
+  else if (t.pos0) { t.target.set(t.pos0.x, t.pos0.z); t.ty = t.pos0.y ?? 0; t.h = t.h0; t.fl = false; t.oc = !!t.pos0.oc; }
   else { const s = st.MP!.spawn(t.idx); t.target.set(s.x, s.z); t.ty = s.y || 0; t.h = t.h0; t.fl = false; t.oc = false; }
   t.g.position.set(t.target.x, t.ty, t.target.y); sizeT(t);
 }
