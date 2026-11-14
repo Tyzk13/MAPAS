@@ -1,5 +1,5 @@
-// Mapa: Greywater Falls, Ontário — novembro de 1965. Cidade de fábrica de papel, triste e cinzenta: Main Street
-// de tijolo, Hotel Laurentian (3 andares por dentro), necrotério do distrito, igreja e cemitério, a casa da Elm St,
+// Mapa: Greywater Falls, Ontário — novembro de 1975. Cidade de fábrica de papel, triste e cinzenta: Main Street
+// de tijolo, Hotel Laurentian (3 andares por dentro), necrotério do distrito, igreja e cemitério,
 // rio escuro com represa, ponte de treliça, estação. Caso: William Ashdown e Margaret (docs/casos/greywater-caso-ashdown.md).
 import * as THREE from 'three';
 import type { MapRuntime, View } from '../../core/types';
@@ -7,11 +7,12 @@ import { begin, mistTex } from '../../core/kit';
 import { S, cam } from '../../core/engine';
 import { Builder } from '../texas/buildings';
 import { buildNature, setBuilt, groundH } from './nature';
-import { buildHotel } from './hotel';
+import { buildHotel, CELLAR } from './hotel';
 import { buildMorgue } from './morgue';
 import { buildLandmarks } from './landmarks';
+import { buildCasas, CASA_EVA, CASA_MOREAU, DENTRO } from './casas';
 import { PISTAS, NOTAS } from './pistas';
-import { Q, rnd, reseed, sm, LREQ, ROW0, ROWD, KING, QUEEN, ELM, BIRCH, MAPLE, SPRUCE, CEDAR, EXT, RIVER, riverZ, RAIL, STATION, HOTEL, MORGUE, CHURCH, CEMETERY, ASHDOWN, MILL, GAS, DINER } from './common';
+import { Q, rnd, reseed, sm, LREQ, ROW0, ROWD, KING, QUEEN, ELM, BIRCH, MAPLE, SPRUCE, CEDAR, EXT, RIVER, riverZ, RAIL, STATION, HOTEL, MORGUE, CHURCH, CEMETERY, MILL, GAS, DINER } from './common';
 import type { Xf } from '../../core/models';
 
 const P = (x: number, y: number, z: number) => [x, y, z] as [number, number, number];
@@ -35,20 +36,27 @@ export const VIEWS: View[] = [
   { n: 'Espelho (304)', p: P(17.1, 9.55, -8.3), t: P(17.1, 9.35, -6.4), fov: 60 },
   { n: 'Quarto 307 (trancado)', p: P(29.2, 9.7, -7.4), t: P(22, 9.0, -10.2), fov: 66 },
   { n: 'Quarto 303 (Sra. Doucette)', p: P(19.0, 9.7, -18.4), t: P(12.5, 8.6, -16), fov: 64 },
+  { n: 'Escada do porão', p: P(22.3, 1.9, -9.2), t: P(27.6, -2.4, -7), fov: 64 },
+  { n: 'Porão do hotel', p: P(23.7, -0.95, -17), t: P(29.2, -1.9, -9.0), fov: 68 },
   { n: 'Telhado do hotel', p: P(15, 13.6, -37), t: P(24, 11.2, -18), fov: 58 },
   { n: 'Necrotério', p: P(-27.5, 1.75, 23.0), t: P(-35, 2.2, 40), fov: 56 },
   { n: 'Necrotério · recepção', p: P(-37.2, 2.0, 39.0), t: P(-40.2, 1.3, 41), fov: 64 },
   { n: 'Gabinete do legista', p: P(-34.6, 2.0, 43.3), t: P(-30, 1.2, 40.6), fov: 64 },
   { n: 'Autópsia', p: P(-35.2, 2.0, 47.0), t: P(-41, 1.0, 50.5), fov: 64 },
   { n: 'Câmara fria', p: P(-32.8, 2.0, 46.8), t: P(-26.4, 1.6, 50.8), fov: 64 },
-  { n: 'Casa da Elm Street', p: P(-58, 1.8, 2), t: P(-74, 2.5, -7), fov: 56 },
-  { n: 'Porão (Elm St)', p: P(-78.3, 2.0, -10.9), t: P(-78.5, 0.6, -5.0), fov: 70 },
   { n: 'Igreja', p: P(-85, 1.8, -38.5), t: P(-96, 8, -58), fov: 58 },
   { n: 'Cemitério', p: P(-105.6, 1.7, -52.6), t: P(-111, 0.6, -60.5), fov: 62 },
   { n: 'Ponte', p: P(5, 1.8, -96), t: P(0, 3, -128), fov: 58 },
   { n: 'Fábrica de papel', p: P(-8, 3.5, -104), t: P(42, 14, -176), fov: 55 },
   { n: 'Cataratas', p: P(-14, 1.6, -110), t: P(-30, -2.2, -129), fov: 56 },
   { n: 'Lanchonete', p: P(84, 1.7, 29), t: P(90, 2.2, 38), fov: 58 },
+  { n: 'Lanchonete · por dentro', p: P(84.0, 1.7, 39.0), t: P(94, 1.0, 43), fov: 66 },
+  { n: 'Fábrica · salão', p: P(62, 2.0, -165), t: P(38, 2.5, -184), fov: 64 },
+  { n: 'Fábrica · relógio de ponto', p: P(59.4, 1.7, -165.0), t: P(59.4, 1.6, -162.4), fov: 62 },
+  { n: 'Fábrica · escritório do capataz', p: P(67.0, 1.75, -170.0), t: P(71, 0.9, -164.6), fov: 66 },
+  { n: 'Casa de Eva Pelletier', p: P(-76.0, 1.9, -4.8), t: P(-72.2, 1.2, -10.3), fov: 68 },
+  { n: 'Casa dos Moreau', p: P(76.0, 1.9, 51.0), t: P(73.2, 0.9, 46), fov: 68 },
+  { n: 'Resumo do caso', p: P(-40, 60, 120), t: P(10, 0, -20), fov: 50 },
   { n: 'Geral', p: P(70, 85, 170), t: P(0, 0, 0) },
   { n: 'Tática', p: P(0, 210, 0.1), t: P(0, 0, 0) },
 ];
@@ -96,7 +104,8 @@ export async function build(M: MapRuntime) {
   // ---------- casas de madeira ----------
   const busy = (x: number, z: number) =>
     inR(x, z, -ROW0 - ROWD - 3, ROW0 + ROWD + 3, NORTH0, QUEEN + 73) || inR(x, z, HOTEL.x0, HOTEL.x1, HOTEL.z0, HOTEL.z1, 8) || inR(x, z, MORGUE.x0, MORGUE.x1, MORGUE.z0, MORGUE.z1, 14) ||
-    inR(x, z, CHURCH.x - 12, CHURCH.x + 12, CHURCH.z - 14, CHURCH.z + 20) || inR(x, z, CEMETERY.x0, CEMETERY.x1, CEMETERY.z0, CEMETERY.z1, 6) || Math.hypot(x - ASHDOWN.x, z - ASHDOWN.z) < 12 ||
+    Math.hypot(x - CASA_EVA.x, z - CASA_EVA.z) < 13 || Math.hypot(x - CASA_MOREAU.x, z - CASA_MOREAU.z) < 13 ||
+    inR(x, z, CHURCH.x - 12, CHURCH.x + 12, CHURCH.z - 14, CHURCH.z + 20) || inR(x, z, CEMETERY.x0, CEMETERY.x1, CEMETERY.z0, CEMETERY.z1, 6) ||
     inR(x, z, GAS.x - 10, DINER.x1 + 4, QUEEN + 5, DINER.z1 + 6) || inR(x, z, STATION.x0 - 14, STATION.x1 + 4, STATION.z0 - 8, RAIL + 4) || Math.abs(x) < 9;
   const streetTrees: Xf[] = [];
   const lot = (x: number, z: number, ry: number) => { if (busy(x, z)) return; b.house(x, z, ry, { w: 8 + rnd() * 3, d: 8 + rnd() * 2, ruin: rnd() < 0.06, two: rnd() < 0.4, lit: 0.25 }); if (rnd() < 0.6) { const p = new THREE.Vector3(rnd() * 6 - 3, 0, 9).applyAxisAngle(new THREE.Vector3(0, 1, 0), ry); streetTrees.push({ x: x + p.x, y: groundH(x + p.x, z + p.z) - 0.2, z: z + p.z, ry: rnd() * 6, s: 0.9 + rnd() * 0.4 }); } };
@@ -120,15 +129,20 @@ export async function build(M: MapRuntime) {
   const HO = await buildHotel(G);
   const MO = await buildMorgue(G);
   const L = await buildLandmarks(G);
+  const CA = await buildCasas(G);
   await b.finish();
-  M.lamps.push(...HO.lamps, ...MO.lamps, ...L.lamps);
-  M.docs = [...HO.docs, ...MO.docs, ...L.docs].map(d => ({ ...d, ...(PISTAS[d.n] || {}) }));
+  M.lamps.push(...HO.lamps, ...MO.lamps, ...L.lamps, ...CA.lamps);
+  M.docs = [...HO.docs, ...MO.docs, ...L.docs, ...CA.docs].map(d => ({ ...d, ...(PISTAS[d.n] || {}) }));
   M.notas = NOTAS;
 
   // ---------- natureza ----------
   const free = (x: number, z: number) => !busy(x, z) && !inR(x, z, MILL.x0 - 8, MILL.x1 + 8, MILL.z0 - 8, MILL.z1 + 20) && !(Math.abs(x) < EXT + 4 && ZS.some(zz => Math.abs(z - zz) < 22)) &&
     !(z > -100 && z < 120 && XS.some(xx => Math.abs(x - xx) < 22)) && Math.abs(x) > 12 && !inR(x, z, STATION.x0 - 20, STATION.x1 + 10, STATION.z0 - 10, RAIL + 5);
   const N = await buildNature(G, free, streetTrees);
+  // o terreno é recortado em cima do porão do hotel (senão a grama tapa a escada que desce)
+  { const tm = N.ground.material as THREE.MeshStandardMaterial, prev = tm.onBeforeCompile, f = (v: number) => v.toFixed(2);
+    tm.customProgramCacheKey = () => 'terreno3-porao-canada';
+    tm.onBeforeCompile = (sh, r) => { prev.call(tm, sh, r); sh.fragmentShader = sh.fragmentShader.replace('void main() {', `void main() {\n  if (vTUv.x > ${f(CELLAR.x0)} && vTUv.x < ${f(CELLAR.x1)} && -vTUv.y > ${f(CELLAR.z0)} && -vTUv.y < ${f(CELLAR.z1)}) discard;`); }; }
 
   // ---------- luzes que acompanham a câmera (como em Harlow) ----------
   const pool = Array.from({ length: Q.lights }, () => { const l = new THREE.PointLight(0xffffff, 0, 0, 2); G.add(l); const e = { l, d: 0, n: 0 }; M.lights.push(e); return e; });
@@ -145,7 +159,7 @@ export async function build(M: MapRuntime) {
       e.l.intensity = r.n * Math.max(lampF, dentro(r.x, r.z) ? 0.6 : 0);
     });
   };
-  const dentro = (x: number, z: number) => inR(x, z, HOTEL.x0, HOTEL.x1, HOTEL.z0, HOTEL.z1) || inR(x, z, MORGUE.x0, MORGUE.x1, MORGUE.z0, MORGUE.z1) || Math.hypot(x - ASHDOWN.x, z - ASHDOWN.z) < 6;
+  const dentro = (x: number, z: number) => inR(x, z, HOTEL.x0, HOTEL.x1, HOTEL.z0, HOTEL.z1) || inR(x, z, MORGUE.x0, MORGUE.x1, MORGUE.z0, MORGUE.z1) || DENTRO.some(r => inR(x, z, r[0], r[1], r[2], r[3]));
   escolherLuzes();
 
   // névoa baixa em sprites (rio e ruas)
@@ -157,10 +171,10 @@ export async function build(M: MapRuntime) {
   }
 
   // ---------- registro ----------
-  M.walk.push(...N.floors, ...b.floors, ...HO.floors, ...MO.floors, ...L.floors);
-  const solids = [...b.colliders, ...HO.solids, ...MO.solids, ...L.solids];
+  M.walk.push(...N.floors, ...b.floors, ...HO.floors, ...MO.floors, ...L.floors, ...CA.floors);
+  const solids = [...b.colliders, ...HO.solids, ...MO.solids, ...L.solids, ...CA.solids];
   M.solid = () => solids;
-  M.layers = [...HO.layers, { n: 'Telhados', o: b.roofs, v: true }, { n: 'Telhados (marcos)', o: L.roofs, v: true }, { n: 'Telhado do necrotério', o: MO.roofs, v: true }, { n: 'Carros', o: L.cars, v: true }];
+  M.layers = [...HO.layers, { n: 'Telhados', o: b.roofs, v: true }, { n: 'Telhados (marcos)', o: L.roofs, v: true }, { n: 'Telhado do necrotério', o: MO.roofs, v: true }, ...CA.layers, { n: 'Carros', o: L.cars, v: true }];
   M.views = VIEWS;
   M.shadowRadius = Q.lights > 8 ? 80 : 55;
   M.walkLimit = 260; M.camMax = 260; M.fogScale = 0.55;
@@ -171,7 +185,7 @@ export async function build(M: MapRuntime) {
     { x: CHURCH.x, y: 14, z: CHURCH.z + CHURCH.d / 2 + 2.2, tipo: 'sino' },
     { x: HOTEL.x0, y: 1.4, z: HOTEL.z0 + 13, tipo: 'porta' },
     { x: MORGUE.x0 + 13.4, y: 1.4, z: MORGUE.z0 + 8, tipo: 'porta' },
-    { x: ASHDOWN.x - 2.6, y: 0.2, z: ASHDOWN.z - 1.2, tipo: 'porta' },
+    { x: CELLAR.x0 + 2.4, y: 0.2, z: CELLAR.z1 - 0.6, tipo: 'porta' },
   ];
   // exportação VTT: cada andar do hotel é uma área; os andares de cima somem conforme a área escolhida
   const hoGroups = HO.layers.map(l => l.o); // [telhado, 3º, 2º]
@@ -181,19 +195,22 @@ export async function build(M: MapRuntime) {
       { n: 'Hotel Laurentian — 2º andar', b: [HOTEL.x0 - 1, HOTEL.x1 + 1, HOTEL.z0 - 2, HOTEL.z1 + 1], lv: 1 },
       { n: 'Hotel Laurentian — 3º andar', b: [HOTEL.x0 - 1, HOTEL.x1 + 1, HOTEL.z0 - 2, HOTEL.z1 + 1], lv: 1 },
       { n: 'Necrotério', b: [MORGUE.x0 - 2, MORGUE.x1 + 2, MORGUE.z0 - 3, MORGUE.z1 + 10], lv: 1 },
-      { n: 'Casa da Elm Street', b: [ASHDOWN.x - 7, ASHDOWN.x + 10, ASHDOWN.z - 7, ASHDOWN.z + 7], lv: 1 },
+      { n: 'Fábrica de papel (por dentro)', b: [MILL.x0 - 1, MILL.x1 + 1, MILL.z0 - 1, MILL.z1 + 4], lv: 1 },
+      { n: 'Lanchonete', b: [DINER.x0 - 2, DINER.x1 + 2, DINER.z0 - 4, DINER.z1 + 1], lv: 1 },
+      { n: 'Casa de Eva Pelletier', b: [CASA_EVA.x - 6, CASA_EVA.x + 9, CASA_EVA.z - 6, CASA_EVA.z + 6], lv: 1 },
+      { n: 'Casa dos Moreau', b: [CASA_MOREAU.x - 9, CASA_MOREAU.x + 6, CASA_MOREAU.z - 6, CASA_MOREAU.z + 6], lv: 1 },
       { n: 'Igreja e cemitério', b: [CEMETERY.x0 - 3, CHURCH.x + 10, CEMETERY.z0 - 3, CHURCH.z + 20], lv: 1 },
       { n: 'Centro (Main St, King, Queen)', b: [-40, 40, -60, 60], lv: 1 },
       { n: 'Estação', b: [STATION.x0 - 20, STATION.x1 + 20, STATION.z0 - 10, RAIL + 6], lv: 1 },
       { n: 'Cidade inteira', b: [-140, 140, -150, 150], lv: 1 },
     ],
-    walls: [...b.vtt, ...HO.vttWalls, ...MO.vttWalls, ...L.vttWalls],
-    portals: [...HO.portals, ...MO.portals, ...L.portals],
+    walls: [...b.vtt, ...HO.vttWalls, ...MO.vttWalls, ...L.vttWalls, ...CA.vttWalls],
+    portals: [...HO.portals, ...MO.portals, ...L.portals, ...CA.portals],
     lights: LREQ.filter(r => r.vtt).map(r => [+r.x.toFixed(2), +r.z.toFixed(2), r.vtt!, 0.8, r.color.toString(16).padStart(6, '0')] as [number, number, number, number, string]),
   };
   M.exportHide = () => {
     const sel = document.getElementById('xa') as HTMLSelectElement | null, n = sel?.selectedOptions[0]?.textContent || '';
-    const out: THREE.Object3D[] = [b.roofs, L.roofs, MO.roofs, hoGroups[0], L.cars];
+    const out: THREE.Object3D[] = [b.roofs, L.roofs, MO.roofs, CA.roofs, hoGroups[0], L.cars];
     if (/térreo/.test(n)) out.push(hoGroups[1], hoGroups[2]); else if (/2º/.test(n)) out.push(hoGroups[1]);
     return out;
   };

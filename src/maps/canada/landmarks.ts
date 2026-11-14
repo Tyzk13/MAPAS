@@ -1,18 +1,18 @@
 // Marcos de Greywater Falls: igreja anglicana de pedra com cemitério (túmulo de Margaret e a cova reaberta de
-// Eva Pelletier), a casa da Elm Street (onde Margaret "caiu" da escada do porão), fábrica de papel com chaminé,
-// ponte de treliça sobre o rio, estação, posto, lanchonete e carros de 1965.
+// Eva Pelletier), fábrica de papel com chaminé,
+// ponte de treliça sobre o rio, estação, posto, lanchonete e carros dos anos 70.
 import * as THREE from 'three';
 import { boxUV } from '../../core/pbr';
 import { place, instance } from '../../core/models';
 import { halo, mistTex } from '../../core/kit';
-import { Batch, mtx, rnd, reseed, pick, TM, shell, gableRoof, light, sign, neonTexture, bxM, CHURCH, CEMETERY, ASHDOWN, MILL, RIVER, riverZ, RAIL, STATION, GAS, DINER, Q } from './common';
+import { Batch, mtx, rnd, reseed, pick, TM, shell, gableRoof, light, sign, neonTexture, bxM, CHURCH, CEMETERY, MILL, RIVER, riverZ, RAIL, STATION, GAS, DINER, Q } from './common';
 import { Kit, IM, canvasTex, docPlane, sigilKnow, scrawl, type Interior } from './interior';
 import { paper, age } from '../texas/police';
 import { groundH } from './nature';
 
 export interface Landmarks extends Interior { smoke: THREE.Sprite[]; cars: THREE.Group }
 
-/** carro de 1965 em código (sedã com rabo de peixe discreto), frente = +x local */
+/** carro dos anos 70 em código (sedã com rabo de peixe discreto), frente = +x local */
 export function car(B: Batch, x: number, z: number, ry: number, col: number) {
   const m = TM(), I = IM(), M = mtx(x, 0, z, ry);
   bxM(B, m.paint, 5.2, 0.62, 1.95, 0, 0.62, 0, col, M);
@@ -70,11 +70,11 @@ export async function buildLandmarks(G: THREE.Group): Promise<Landmarks> {
     // túmulo de Margaret Ashdown (lírios frescos) e cova de Eva Pelletier reaberta
     const mx = x1 - 5, mz = (z0 + z1) / 2 + 1.4;
     stone(mx, mz, 0.9, 1.1, 0, 0xb8b4aa);
-    docPlane(G, docs, canvasTex(360, 440, g => { g.fillStyle = '#b8b4aa'; g.fillRect(0, 0, 360, 440); for (let i = 0; i < 800; i++) { g.fillStyle = `rgba(${rnd() < 0.5 ? '60,60,55' : '230,230,220'},${rnd() * 0.15})`; g.fillRect(rnd() * 360, rnd() * 440, 3, 3); } g.fillStyle = '#3a3832'; g.textAlign = 'center'; g.font = 'bold 34px Georgia'; g.fillText('MARGARET', 180, 110); g.fillText('ASHDOWN', 180, 154); g.font = '24px Georgia'; g.fillText('née Lafleur', 180, 196); g.fillText('1933 — 1964', 180, 250); g.font = 'italic 24px Georgia'; g.fillText('Beloved wife.', 180, 310); g.fillText('"Until we meet again"', 180, 350); }), 0.82, 1.0, mx, groundH(mx, mz) + 0.6, mz + 0.075, 0, 'Lápide de Margaret Ashdown');
+    docPlane(G, docs, canvasTex(360, 440, g => { g.fillStyle = '#b8b4aa'; g.fillRect(0, 0, 360, 440); for (let i = 0; i < 800; i++) { g.fillStyle = `rgba(${rnd() < 0.5 ? '60,60,55' : '230,230,220'},${rnd() * 0.15})`; g.fillRect(rnd() * 360, rnd() * 440, 3, 3); } g.fillStyle = '#3a3832'; g.textAlign = 'center'; g.font = 'bold 34px Georgia'; g.fillText('MARGARET', 180, 110); g.fillText('ASHDOWN', 180, 154); g.font = '24px Georgia'; g.fillText('née Lafleur', 180, 196); g.fillText('1943 — 1974', 180, 250); g.font = 'italic 24px Georgia'; g.fillText('Beloved wife.', 180, 310); g.fillText('"Until we meet again"', 180, 350); }), 0.82, 1.0, mx, groundH(mx, mz) + 0.6, mz + 0.075, 0, 'Lápide de Margaret Ashdown');
     for (let i = 0; i < 6; i++) { const g = new THREE.CylinderGeometry(0.006, 0.006, 0.45, 4); g.rotateZ(0.3 + rnd() * 0.3); g.translate(mx + (rnd() - 0.5) * 0.3, groundH(mx, mz) + 0.05, mz + 0.35); D.add(m.veg, g, 0x3a5a2a); const f = new THREE.SphereGeometry(0.045, 6, 4); f.translate(mx - 0.15 + i * 0.06, groundH(mx, mz) + 0.12, mz + 0.4 + (rnd() - 0.5) * 0.15); D.add(I.cloth, f, 0xf0ece0); }
     const ex = mx - 5, ez = mz + 4;
     stone(ex, ez - 1.3, 0.7, 0.9, 0.12, 0x8a8680);
-    docPlane(G, docs, canvasTex(300, 360, g => { g.fillStyle = '#8a8680'; g.fillRect(0, 0, 300, 360); g.fillStyle = '#2a2824'; g.textAlign = 'center'; g.font = 'bold 30px Georgia'; g.fillText('EVA', 150, 100); g.fillText('PELLETIER', 150, 140); g.font = '22px Georgia'; g.fillText('1907 — 1965', 150, 200); g.font = 'italic 20px Georgia'; g.fillText('Her music remains', 150, 260); }), 0.64, 0.77, ex, groundH(ex, ez - 1.3) + 0.47, ez - 1.3 + 0.08, 0, 'Lápide de Eva Pelletier (cova reaberta)');
+    docPlane(G, docs, canvasTex(300, 360, g => { g.fillStyle = '#8a8680'; g.fillRect(0, 0, 300, 360); g.fillStyle = '#2a2824'; g.textAlign = 'center'; g.font = 'bold 30px Georgia'; g.fillText('EVA', 150, 100); g.fillText('PELLETIER', 150, 140); g.font = '22px Georgia'; g.fillText('1917 — 1975', 150, 200); g.font = 'italic 20px Georgia'; g.fillText('Her music remains', 150, 260); }), 0.64, 0.77, ex, groundH(ex, ez - 1.3) + 0.47, ez - 1.3 + 0.08, 0, 'Lápide de Eva Pelletier (cova reaberta)');
     D.box(m.plain, 1.0, 0.02, 2.0, ex, groundH(ex, ez) + 0.012, ez + 0.2, 0x1a140e);
     { const g = new THREE.SphereGeometry(1, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2); g.scale(0.7, 0.5, 1.2); g.translate(ex + 1.3, groundH(ex, ez), ez + 0.2); D.add(m.plain, g, 0x3a2a1c); }
     // corda de isolamento da polícia em estacas
@@ -83,56 +83,12 @@ export async function buildLandmarks(G: THREE.Group): Promise<Landmarks> {
     later(place('wooden_lantern_01', ex - 1.2, groundH(ex, ez) + 0.0, ez + 1.4, 0, 1, G));
   }
 
-  // ---------- casa da Elm Street (porão aberto; ninguém mora desde o Natal de 1964) ----------
-  {
-    const { x, z } = ASHDOWN, w = 9, d = 8, x0 = x - w / 2, z0 = z - d / 2, x1 = x + w / 2, z1 = z + d / 2, base = 0.6, h = 2.9;
-    // frente para a Elm St (leste, +x)
-    const K = new Kit(G, 'casa-ashdown', 0.12);
-    shell(B, m.siding, 0x9aa49a, x0, z0, x1, z1, h, 0.18, [{ side: 'E', at: z + 1.5, w: 1.0, h: 2.15, sill: 0 }, { side: 'E', at: z - 2, w: 1.1, h: 1.4, sill: 0.85 }, { side: 'N', at: x - 2, w: 1.0, h: 1.3, sill: 0.9 }, { side: 'S', at: x + 1, w: 1.0, h: 1.3, sill: 0.9 }, { side: 'W', at: z, w: 1.0, h: 1.3, sill: 0.9 }], { sides: ['N', 'S'], rise: 2.4 }, base);
-    gableRoof(R, m.shingle, 0x5a5a5c, x0, z0, x1, z1, base + h, 2.4, 'z', 0.4);
-    R.box(m.plain, w - 0.36, 0.04, d - 0.36, x, base + h - 0.02, z, 0xd8d0c4);
-    { const hx0 = x - 3.1, hx1 = x - 2.1, hz0 = z + 0.6, hz1 = z + 2.4, X0 = x0 + 0.18, X1 = x1 - 0.18, Z0 = z0 + 0.18, Z1 = z1 - 0.18; // piso com o vão do alçapão
-      F.box(m.floor, hx0 - X0, 0.04, Z1 - Z0, (X0 + hx0) / 2, base, z, 0x8a7a68); F.box(m.floor, X1 - hx1, 0.04, Z1 - Z0, (hx1 + X1) / 2, base, z, 0x8a7a68);
-      F.box(m.floor, hx1 - hx0, 0.04, hz0 - Z0, (hx0 + hx1) / 2, base, (Z0 + hz0) / 2, 0x8a7a68); F.box(m.floor, hx1 - hx0, 0.04, Z1 - hz1, (hx0 + hx1) / 2, base, (hz1 + Z1) / 2, 0x8a7a68);
-      B.box(m.concrete, w, base, hz0 - z0, x, base / 2, (z0 + hz0) / 2, 0x7a766e); B.box(m.concrete, w, base, z1 - hz1, x, base / 2, (hz1 + z1) / 2, 0x7a766e); B.box(m.concrete, hx0 - x0, base, hz1 - hz0, (x0 + hx0) / 2, base / 2, (hz0 + hz1) / 2, 0x7a766e); B.box(m.concrete, x1 - hx1, base, hz1 - hz0, (hx1 + x1) / 2, base / 2, (hz0 + hz1) / 2, 0x7a766e); }
-    // tábuas pregadas nas janelas da frente, aviso da prefeitura, varanda
-    [[-0.3, 0.2], [0.1, -0.25], [0.35, 0.1]].forEach(([dy, r]) => { const g = new THREE.BoxGeometry(0.04, 0.16, 1.4); g.rotateX(r); g.translate(x1 + 0.04, base + 1.55 + dy, z - 2); boxUV(g); D.add(m.wood, g, 0x8a7a60); });
-    F.box(m.wood, 2.4, 0.12, 2.2, x1 + 1.1, base - 0.06, z + 1.5, 0x7a6a58); [0.2, 0.4].forEach((hh, i) => F.box(m.wood, 0.4, hh, 1.4, x1 + 2.5 + (1 - i) * 0.4, hh / 2, z + 1.5, 0x6a5a48));
-    docPlane(G, docs, paper('NOTICE', ['This property is held by the', 'Town of Greywater Falls', 'pending settlement of the', 'estate of M. ASHDOWN (dec.).', 'NO TRESPASSING.', 'By order — Town Clerk, Feb 1965'], { w: 360, h: 420, size: 20, stamp: 'TOWN' }), 0.36, 0.42, x1 + 0.05, base + 1.4, z + 0.6, Math.PI / 2, 'Aviso na casa da Elm Street');
-    // dentro: sala com móveis cobertos, o porão aberto (escada descendo para o escuro), escrita dourada
-    K.wall('z', x - 0.5, z0 + 0.18, z1 - 0.18, base, h, [[z + 1.0, 1.0, 2.1]], { col: 0xc8c0a8 });
-    K.armchair(mtx(x + 2.5, base, z - 2.2, 0.4), 0xe0dcd0); K.armchair(mtx(x + 1.4, base, z - 2.6, -0.3), 0xe0dcd0); // cobertos por lençóis
-    K.table(mtx(x + 2.2, base, z - 0.8, 0), 0.9, 0.6, 0.45);
-    K.D.box(IM().cloth, 2.0, 0.45, 0.85, x + 3.6, base + 0.23, z + 2.6, 0xdcd8cc); K.D.box(IM().cloth, 2.0, 0.5, 0.2, x + 3.6, base + 0.65, z + 3.0, 0xdcd8cc); // sofá coberto
-    // alçapão do porão aberto: buraco no piso, escada descendo para o escuro, a tampa deitada ao lado
-    const cx = x - 2.6, cz = z + 1.5, hw = 0.5, hd = 0.9;
-    const pit = new Batch('porao');
-    [[-1, 0], [1, 0]].forEach(([s2]) => pit.box(m.woodDark, 0.06, 2.6, 2 * hd, cx + s2 * hw, base - 1.3, cz, 0x1a140e));
-    [-1, 1].forEach(s2 => pit.box(m.woodDark, 2 * hw, 2.6, 0.06, cx, base - 1.3, cz + s2 * hd, 0x1a140e));
-    pit.box(m.plain, 2 * hw, 0.05, 2 * hd, cx, base - 2.6, cz, 0x050505);
-    for (let i = 0; i < 7; i++) pit.box(m.woodDark, 2 * hw - 0.1, 0.04, 0.24, cx, base - 0.25 - i * 0.32, cz - hd + 0.2 + i * 0.22, 0x5a4a38);
-    [-1, 1].forEach(s2 => { const g = new THREE.BoxGeometry(0.05, 0.05, 2.0); g.rotateX(-0.95); g.translate(cx + s2 * (hw - 0.08), base - 1.05, cz - 0.1); pit.add(m.woodDark, g, 0x4a3a2a); });
-    pit.build(G, { shadow: false });
-    K.D.box(m.wood, 2 * hw, 0.05, 2 * hd, cx, base + 0.03, cz - 2 * hd - 0.05, 0x6a5440); // tampa aberta, deitada
-    K.D.box(IM().brass, 0.12, 0.03, 0.04, cx, base + 0.065, cz - 2 * hd - 0.75, 0xffffff);
-    docPlane(G, docs, canvasTex(1024, 512, g => { g.clearRect(0, 0, 1024, 512); scrawl(g, 'you pushed me', 1024, 512, 'rgba(230,185,70,0.9)', 30, 46); sigilKnow(g, 512, 300, 120, 'rgba(225,185,70,0.9)', 6); }), 3.2, 1.6, x - 2.4, base + 1.45, z1 - 0.2, Math.PI, 'Parede da sala (casa da Elm St)', false, 0.55);
-    docPlane(G, docs, paper('O.P.P. — OCCURRENCE (copy)', ['Dec 26 1964 · 23:40', 'ASHDOWN, Margaret, 31', 'Found at foot of cellar stairs.', 'Husband William states she fell', 'carrying preserves. Husband', 'intoxicated, "inconsolable".', 'Bruising to wrists — noted.', 'Ruled accidental — H. Finch, Coroner'], { w: 420, h: 560, size: 18, stamp: 'CLOSED' }), 0.26, 0.34, x + 2.2, base + 0.46, z - 0.8, 0.3, 'Ocorrência de 1964 (casa da Elm St)', true);
-    light(x + 2, base + 2.4, z - 1, 2, 2, 0xd8c8a0); light(cx, base - 1.2, cz, 1.5, 3, 0xd8a840, { flick: 1 });
-    later(place('Lantern_01', x + 2.0, base + 0.45, z - 0.6, 0, 0.5, G));
-    K.build(false);
-    outline(x0, z0, x1, z1);
-    portals.push({ p: [x1, z + 1.5], a: [x1, z + 1.0], b: [x1, z + 2.0] });
-  }
-
   // ---------- fábrica de papel: galpões de tijolo, chaminé com fumaça, pilhas de toras, cerca ----------
   const smoke: THREE.Sprite[] = [];
   {
     const { x0, x1, z0, z1 } = MILL, brick = 0x8a6050;
-    B.box(m.brick, x1 - x0, 12, z1 - z0, (x0 + x1) / 2, 6, (z0 + z1) / 2, brick);
-    gableRoof(R, m.tin, 0x6a6660, x0, z0, x1, z1, 12, 3, 'x', 0.4);
     B.box(m.brick, 16, 18, 14, x0 + 8, 9, z1 + 7, brick);
     R.box(m.tin, 16.6, 0.3, 14.6, x0 + 8, 18.1, z1 + 7, 0x5a5650);
-    for (let xx = x0 + 3; xx < x1 - 1; xx += 4) for (const yy of [3, 8]) { W.box(rnd() < 0.4 ? m.lit : m.glass, 1.8, 2.6, 0.06, xx, yy, z1 + 0.04, 0xffffff); }
     for (let xx = x0 + 2; xx < x0 + 15; xx += 3.5) for (const yy of [4, 10, 15]) W.box(rnd() < 0.5 ? m.lit : m.glass, 1.6, 2.4, 0.06, xx, yy, z1 + 14.04, 0xffffff);
     const cx = x1 - 6, cz = z0 + 6, hc = 42;
     { const g = new THREE.CylinderGeometry(1.4, 2.4, hc, 16); g.translate(cx, hc / 2, cz); boxUV(g); B.add(m.brick, g, 0x7a5040); }
@@ -140,7 +96,7 @@ export async function buildLandmarks(G: THREE.Group): Promise<Landmarks> {
     light(cx, hc + 0.5, cz, 4, 2, 0xff2010, { flick: 4 }); halo(cx, hc + 0.6, cz, 1.2);
     const st = new THREE.SpriteMaterial({ map: mistTex(), color: 0x8a8884, transparent: true, depthWrite: false, opacity: 0.35 });
     for (let i = 0; i < (Q.lights > 8 ? 14 : 7); i++) { const sp = new THREE.Sprite(st.clone()); sp.userData = { cx, cz, y0: hc + 1, k: i / 14, ns: 1, noExport: 1 }; G.add(sp); smoke.push(sp); }
-    const sg = sign('GREYWATER PULP & PAPER CO.', 22, 2.0, { bg: '#e8e0cc', fg: '#2a2a2a', font: '"Rockwell", Georgia, serif', sub: 'EST. 1898 · SAFETY FIRST' }); sg.position.set((x0 + x1) / 2 + 6, 10, z1 + 0.06); G.add(sg);
+    const sg = sign('GREYWATER PULP & PAPER CO.', 22, 2.0, { bg: '#e8e0cc', fg: '#2a2a2a', font: '"Rockwell", Georgia, serif', sub: 'EST. 1898 · SAFETY FIRST' }); sg.position.set((x0 + x1) / 2 + 6, 10.2, z1 + 0.06); // fábrica por dentro: casas.ts G.add(sg);
     // pilhas de toras na margem
     const logs: THREE.BufferGeometry[] = [];
     for (let p = 0; p < 4; p++) { const px = x0 + 26 + p * 8, pz = z1 + 8; for (let r = 0; r < 4; r++) for (let i = 0; i < 6 - r; i++) { const g = new THREE.CylinderGeometry(0.3, 0.3, 5, 8); g.rotateZ(Math.PI / 2); g.rotateY(Math.PI / 2); g.translate(px + (i - (5 - r) / 2) * 0.62, 0.3 + r * 0.53 + groundH(px, pz), pz); logs.push(g); } }
@@ -148,7 +104,6 @@ export async function buildLandmarks(G: THREE.Group): Promise<Landmarks> {
     for (let xx = x0 - 6; xx < x1 + 8; xx += 3) D.box(m.iron, 0.05, 2.0, 0.05, xx, 1.0, z1 + 18, 0x3a3a3a);
     D.box(m.iron, x1 - x0 + 14, 0.05, 0.05, (x0 + x1) / 2 + 1, 1.9, z1 + 18, 0x3a3a3a);
     [[x0 + 10, z1 + 3], [x1 - 10, z1 + 3], [x0 + 28, z1 + 12]].forEach(([a, b]) => { light(a, 6, b, 8, 2, 0xffb070, { vtt: 9 }); halo(a, 6.2, b, 1.2); D.box(m.iron, 0.12, 6.2, 0.12, a, 3.1, b - 0.6, 0x2a2a2a); });
-    outline(x0, z0, x1, z1);
   }
 
   // ---------- ponte de treliça de aço sobre o rio (Main St) ----------
@@ -182,7 +137,7 @@ export async function buildLandmarks(G: THREE.Group): Promise<Landmarks> {
     const s = sign('GREYWATER FALLS', 5, 0.6, { bg: '#e8e0c8', fg: '#2a1a10', border: '#2a1a10', font: 'Georgia, serif' }); s.position.set((x0 + x1) / 2, 3.7, z1 + 0.1); G.add(s);
     const s2 = sign('GREYWATER FALLS', 5, 0.6, { bg: '#e8e0c8', fg: '#2a1a10', border: '#2a1a10', font: 'Georgia, serif' }); s2.position.set((x0 + x1) / 2, 3.7, z0 - 0.1); s2.rotation.y = Math.PI; G.add(s2);
     light((x0 + x1) / 2, 3.4, z1 + 2, 6, 4, 0xffc070, { vtt: 8 }); halo((x0 + x1) / 2, 3.5, z1 + 1.5, 0.8);
-    docPlane(G, docs, paper('TIMETABLE — WINTER 1965', ['Northbound 6:12 (Mon-Sat)', 'Southbound 19:48 daily', '', 'Nov 19: evening train', 'arrives 19:48 — 3 passengers', 'from Ottawa (party of agents)', '', 'Freight Tue / Fri'], { w: 360, h: 480, size: 19 }), 0.5, 0.66, x0 + 6, 1.8, z1 + 0.1, 0, 'Horário dos trens (estação)');
+    docPlane(G, docs, paper('TIMETABLE — WINTER 1975', ['Northbound 6:12 (Mon-Sat)', 'Southbound 19:48 daily', '', 'Nov 19: evening train', 'arrives 19:48 — 3 passengers', 'from Ottawa (party of agents)', '', 'Freight Tue / Fri'], { w: 360, h: 480, size: 19 }), 0.5, 0.66, x0 + 6, 1.8, z1 + 0.1, 0, 'Horário dos trens (estação)');
     outline(x0, z0, x1, z1);
     // trilhos e dormentes
     const len = 560;
@@ -200,21 +155,16 @@ export async function buildLandmarks(G: THREE.Group): Promise<Landmarks> {
     light(x - 3, 4.2, z + 1, 8, 3, 0xe8f0ff, { vtt: 9 }); halo(x - 3, 4.3, z + 1, 1.4);
     W.box(m.lit, 3.0, 1.6, 0.05, x + 3, 1.6, z + 0.48, 0xffffff);
     outline(x + 0.5, z + 0.5, x + 7.5, z + 5.5);
-    const { x0, x1, z0, z1 } = DINER;
-    B.box(m.plain, x1 - x0, 3.6, z1 - z0, (x0 + x1) / 2, 1.8, (z0 + z1) / 2, 0xd8d4c8); R.box(m.tin, x1 - x0 + 0.6, 0.3, z1 - z0 + 0.6, (x0 + x1) / 2, 3.75, (z0 + z1) / 2, 0x9a9a92);
-    D.box(m.paint, x1 - x0 + 0.1, 0.4, 0.1, (x0 + x1) / 2, 1.0, z0 - 0.02, 0x8a2a24);
-    for (let xx = x0 + 1.5; xx < x1 - 1; xx += 2.2) W.box(m.lit, 1.8, 1.2, 0.05, xx, 2.1, z0 - 0.03, 0xffffff);
-    const nm = new THREE.Mesh(new THREE.PlaneGeometry(6, 1.2), new THREE.MeshBasicMaterial({ map: neonTexture('Lucky Star Diner', '#ff6a3a', { w: 640, h: 128, sub: 'OPEN ALL NIGHT · CAFÉ' }), toneMapped: false })); nm.position.set((x0 + x1) / 2, 4.6, z0 - 0.1); nm.rotation.y = Math.PI; G.add(nm); lamps.push(nm.material as THREE.MeshBasicMaterial);
-    light((x0 + x1) / 2, 2.8, z0 - 1.2, 6, 4, 0xffa070, { vtt: 8, flick: 1 });
-    outline(x0, z0, x1, z1);
+    const { x0, x1, z0 } = DINER;
+    light((x0 + x1) / 2, 2.8, z0 - 1.2, 6, 4, 0xffa070, { vtt: 8, flick: 1 }); // a lanchonete por dentro está em casas.ts
   }
   // cabine telefônica e caixa de correio na esquina do hotel
   { D.box(m.paint, 0.95, 2.3, 0.95, 7.8, 1.15, -33, 0x8a1e1a); W.box(m.glass, 0.8, 1.4, 0.98, 7.8, 1.3, -33, 0xffffff); W.box(m.lit, 0.6, 0.15, 1.0, 7.8, 2.2, -33, 0xffffff);
     D.box(m.paint, 0.5, 1.0, 0.45, 7.8, 0.5, -35.6, 0xb02a1e); D.box(m.paint, 0.55, 0.15, 0.5, 7.8, 1.05, -35.6, 0xb02a1e); }
 
-  // ---------- carros estacionados (1965) ----------
+  // ---------- carros estacionados ----------
   const cB = new Batch('carros'), cc = [0x2a3a4a, 0x5a1e1a, 0x1a1a1a, 0x8a8a7a, 0x3a4a3a, 0xc8c0a8, 0x4a3a2a];
-  [[-5.4, -20, -Math.PI / 2], [-5.4, -6, -Math.PI / 2], [5.4, 6, Math.PI / 2], [5.4, 18, Math.PI / 2], [-5.4, 44, -Math.PI / 2], [5.4, -52, Math.PI / 2], [-36, QUEEN_Z() - 3.5, 0], [-54, QUEEN_Z() + 3.5, Math.PI], [ASHDOWN.x + 10, ASHDOWN.z + 8, -Math.PI / 2], [GAS.x - 3, GAS.z + 1, 0.2], [DINER.x0 + 4, DINER.z0 - 4, Math.PI], [STATION.x0 - 6, STATION.z0 - 5, 0]].forEach(([a, b, r]) => car(cB, a, b, r, pick(cc)));
+  [[-5.4, -20, -Math.PI / 2], [-5.4, -6, -Math.PI / 2], [5.4, 6, Math.PI / 2], [5.4, 18, Math.PI / 2], [-5.4, 44, -Math.PI / 2], [5.4, -52, Math.PI / 2], [-36, QUEEN_Z() - 3.5, 0], [-54, QUEEN_Z() + 3.5, Math.PI], [GAS.x - 3, GAS.z + 1, 0.2], [DINER.x0 + 4, DINER.z0 - 4, Math.PI], [STATION.x0 - 6, STATION.z0 - 5, 0]].forEach(([a, b, r]) => car(cB, a, b, r, pick(cc)));
   cB.build(cars, { shadow: true });
 
   // ---------- montar ----------

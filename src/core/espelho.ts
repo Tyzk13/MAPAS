@@ -115,7 +115,7 @@ export function enviarQuadro() {
   if (!canal || espelho.jogadores) return;
   const agora = performance.now();
   const vivo = agora - vivoEm < 5000;
-  if (vivo !== eraVivo) { eraVivo = vivo; imersao.temJogadores = vivo; aplicarPreto(); avisos.jogadores(vivo); }
+  if (vivo !== eraVivo) { eraVivo = vivo; imersao.temJogadores = vivo; aplicarPreto(); aplicarSom(); avisos.jogadores(vivo); }
   let t: THREE.Vector3;
   if (post.focus) t = post.focus;
   else if (!WM.on) t = ctl.target;

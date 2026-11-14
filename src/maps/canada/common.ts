@@ -1,4 +1,4 @@
-// Greywater Falls, Ontário (novembro de 1965) — cidade de fábrica de papel à beira de um rio escuro.
+// Greywater Falls, Ontário (novembro de 1975) — cidade de fábrica de papel à beira de um rio escuro.
 // Planta em metros (1 quadrado = 1 m; chão y=0; +z = sul). Reaproveita materiais, lote (Batch), casca de prédio,
 // placas e luzes pedidas do mapa do Texas.
 export { Batch, mtx, rnd, reseed, pick, sm, sign, signTexture, lod, Q, TM, shell, gableRoof, bxM, light, LREQ, neonTexture, rect } from '../texas/common';
@@ -27,8 +27,6 @@ export const MORGUE = { x0: -44, x1: -26, z0: QUEEN + 8, z1: QUEEN + 24 };
 /** Igreja anglicana de St. Columba e cemitério (oeste da King St) */
 export const CHURCH = { x: -96, z: -64, w: 11, d: 22 };
 export const CEMETERY = { x0: -126, x1: -104, z0: -76, z1: -48 };
-/** casa da Elm Street — onde Margaret Ashdown morreu (dezembro de 1964) */
-export const ASHDOWN = { x: ELM - 12, z: -8 };
 /** fábrica de papel (outro lado do rio) */
 export const MILL = { x0: 18, x1: 74, z0: -196, z1: -162 };
 /** posto e lanchonete na Queen St leste */

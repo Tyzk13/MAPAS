@@ -249,6 +249,15 @@ Leia `docs/NOVO-MAPA.md` antes de começar.
 - Escrita sobrenatural legível no escuro: `docPlane(..., glow)` usa a própria textura como `emissiveMap`.
 - Ruas novas cruzam marcos: confira igreja/cemitério × ruas transversais (a igreja nasceu em cima da King St; a rua
   oeste foi cortada antes dela).
+- Porão debaixo de prédio: o terreno tapa a escada. Recorte o terreno no shader do mapa: encadeie o `onBeforeCompile` do
+  material do terreno e dê `discard` no retângulo (o `vTUv` do terreno é (x, −z) do mundo); troque o
+  `customProgramCacheKey`. O colisor do terreno continua inteiro (arrastar ficha para o porão pode parar em y≈0).
+- Manchas brancas "com borda de ruído" nos telhados à noite: telhado inclinado cruzando o topo da caixa do prédio
+  (z-fighting de dois materiais) + zinco com `metalMap` refletindo a lua. Telhado inclinado: suba o centro em
+  `meia-profundidade·sen(inclinação)`. Os HDRIs não passam de 156 (conferido): não é estouro do céu.
+- Som do mestre baixo/mudo: modo "Jogadores" sem janela dos jogadores ligada agora toca aqui (`somAqui` em imersao.ts);
+  efeitos passam por `efeitosG` (×3,2) e um compressor no fim (`som.ts`).
+- Lugares para entrar fora do hotel ficam em `canada/casas.ts` (fábrica, lanchonete, casas das vítimas): `shell()` + `Kit`.
 - `scatter` com milhares de árvores: use grade de vizinhança (hash por célula), não `out.some(...)` (O(n²)).
 
 ## Erros que já custaram tempo (não repita)

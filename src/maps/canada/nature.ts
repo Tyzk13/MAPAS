@@ -122,5 +122,5 @@ export async function buildNature(G: THREE.Group, free: (x: number, z: number) =
     count: Q.grass, area: [-150, 150, -150, 150], height: groundH, colors: [0x7a7050, 0x8a7e58, 0x6a6244, 0x9a8a60, 0x6e6a4a],
     allow: (x, z) => (ok(x, z) ? 0.25 + 0.75 * sm(0.4, 0.66, fbm(x * 0.05, z * 0.05, 3)) : 0), tall: (x, z) => 1 + riverBed(x, z) * 0.6 + sm(0.3, 0.8, noise2(x * 0.03, z * 0.03)) * 0.8,
   }));
-  return { floors: [ter.collider], foam: O.userData.foam as THREE.Texture };
+  return { floors: [ter.collider], ground: ter.mesh, foam: O.userData.foam as THREE.Texture };
 }

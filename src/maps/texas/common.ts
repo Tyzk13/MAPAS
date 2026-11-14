@@ -59,7 +59,8 @@ function make() {
     sidewalk: vc(pbr('concrete_wall_006', { size: 2.5, envMapIntensity: 0.4 })),
     asphalt: pbr('asphalt_02', { size: 5, color: 0x9a9894, envMapIntensity: 0.5 }),
     shingle: vc(pbr('grey_roof_01', { size: 2.0, envMapIntensity: 0.4 })),
-    tin: vc(pbr('rusty_corrugated_iron', { size: 2.0, metalMap: true, envMapIntensity: 0.6 })),
+    // zinco SEM mapa de metal: com metal + partes lisas ele espelhava a lua como manchas brancas nos telhados à noite
+    tin: vc(pbr('rusty_corrugated_iron', { size: 2.0, envMapIntensity: 0.35 })),
     wood: vc(pbr('weathered_brown_planks', { size: 1.6, envMapIntensity: 0.35 })),
     woodDark: vc(pbr('dark_wooden_planks', { size: 2, envMapIntensity: 0.35 })),
     floor: pbr('old_wooden_floor_02', { size: 2.4, color: 0x9a8a80, envMapIntensity: 0.4 }),

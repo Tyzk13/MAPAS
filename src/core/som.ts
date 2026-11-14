@@ -15,13 +15,17 @@ const NIVEIS: Record<string, Nivel> = {
   Noite: { vento: 0.25, zumbido: 0.45, trovao: true, grilos: 0.6 },
 };
 
-let ctx: AudioContext | null = null, mestre: GainNode, ventoG: GainNode, zumbG: GainNode, ruido: AudioBuffer;
+let ctx: AudioContext | null = null, mestre: GainNode, efeitosG: GainNode, ventoG: GainNode, zumbG: GainNode, ruido: AudioBuffer;
 let nivel: Nivel = NIVEIS.Terror, ativo = false, volume = 0.6, proxTrovao = 0, proxGrilo = 0, relogio = 0;
 
 function montar() {
   const c = new AudioContext();
   ctx = c;
-  mestre = c.createGain(); mestre.gain.value = 0; mestre.connect(c.destination);
+  // limitador no fim: dá para subir o volume sem estourar
+  const lim = c.createDynamicsCompressor(); lim.threshold.value = -10; lim.knee.value = 6; lim.ratio.value = 12; lim.attack.value = 0.003; lim.release.value = 0.25; lim.connect(c.destination);
+  mestre = c.createGain(); mestre.gain.value = 0; mestre.connect(lim);
+  // sons do mestre (batida, passos, sussurro…) bem mais altos que o ambiente
+  efeitosG = c.createGain(); efeitosG.gain.value = 3.2; efeitosG.connect(mestre);
   // ruído branco (2 s, em laço) — base do vento, trovões e chiados
   ruido = c.createBuffer(1, c.sampleRate * 2, c.sampleRate);
   const d = ruido.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
@@ -145,25 +149,14 @@ export const som = {
   /** Clima atual (nome do preset): muda o ambiente com transição de 3 s. */
   setClima(nome: string) { nivel = NIVEIS[nome] || NIVEIS.Terror; aplicar(3); },
   efeito(e: Efeito) {
-    if (!ctx || !ativo || ctx.state !== 'running') return;
+    if (!ctx || !ativo) return;
+    if (ctx.state !== 'running') ctx.resume().catch(() => {});
     const t0 = ctx.currentTime;
-    if (e === 'susto') {
-      rajadaRuido(t0, 0.45, 'highpass', 2200, 0.35, 0.005);
-      tom(t0, 'sine', 75, 32, 1.4, 0.9, 0.01);
-      for (const f of [220, 233, 311]) tom(t0, 'sawtooth', f, f * 0.97, 1.9, 0.05, 0.02, 1600);
-    } else if (e === 'corte') {
-      const f = rajadaRuido(t0, 0.55, 'bandpass', 300, 0.22, 0.25, 1.2); f.frequency.exponentialRampToValueAtTime(2200, t0 + 0.45);
-    } else if (e === 'suave') {
-      tom(t0, 'sine', 110, 108, 4.5, 0.06, 1.6); tom(t0, 'sine', 164.8, 162, 4.5, 0.04, 2);
-    } else if (e === 'raio') {
-      trovao(0.7 + Math.random() * 1.4, 0.7);
-    } else if (e === 'trovao') trovao(0, 0.75);
-    else if (e === 'batida') batida(t0);
-    else if (e === 'passos') passos(t0);
-    else if (e === 'sussurro') sussurro(t0);
-    else if (e === 'rangido') rangido(t0);
-    else if (e === 'sino') { const f = fontes.find(x => x.tipo === 'sino'); sino(t0, f ? f.pan : mestre, 3); }
+    // os sons usam `mestre` como saída padrão: durante o efeito, aponta para o ganho dos efeitos
+    const m0 = mestre; mestre = efeitosG;
+    try { tocarEfeito(e, t0); } finally { mestre = m0; }
   },
+  /** (interno) */
   /** A cada quadro: trovões distantes e grilos ao acaso. */
   tick(dt: number) {
     if (!ctx || !ativo || ctx.state !== 'running') return;
@@ -191,9 +184,28 @@ export const som = {
   },
 };
 
+function tocarEfeito(e: Efeito, t0: number) {
+    if (e === 'susto') {
+      rajadaRuido(t0, 0.45, 'highpass', 2200, 0.35, 0.005);
+      tom(t0, 'sine', 75, 32, 1.4, 0.9, 0.01);
+      for (const f of [220, 233, 311]) tom(t0, 'sawtooth', f, f * 0.97, 1.9, 0.05, 0.02, 1600);
+    } else if (e === 'corte') {
+      const f = rajadaRuido(t0, 0.55, 'bandpass', 300, 0.22, 0.25, 1.2); f.frequency.exponentialRampToValueAtTime(2200, t0 + 0.45);
+    } else if (e === 'suave') {
+      tom(t0, 'sine', 110, 108, 4.5, 0.06, 1.6); tom(t0, 'sine', 164.8, 162, 4.5, 0.04, 2);
+    } else if (e === 'raio') {
+      trovao(0.7 + Math.random() * 1.4, 0.7);
+    } else if (e === 'trovao') trovao(0, 0.75);
+    else if (e === 'batida') batida(t0);
+    else if (e === 'passos') passos(t0);
+    else if (e === 'sussurro') sussurro(t0);
+    else if (e === 'rangido') rangido(t0);
+    else if (e === 'sino') { const f = fontes.find(x => x.tipo === 'sino'); sino(t0, f ? f.pan : mestre, 3); }
+  }
+
 function aplicar(trans = 0.8) {
   if (!ctx) return;
   const t = ctx.currentTime;
-  mestre.gain.cancelScheduledValues(t); mestre.gain.setTargetAtTime(ativo ? volume : 0, t, 0.3);
+  mestre.gain.cancelScheduledValues(t); mestre.gain.setTargetAtTime(ativo ? volume * 1.6 : 0, t, 0.3);
   ventoG.gain.setTargetAtTime(nivel.vento, t, trans); zumbG.gain.setTargetAtTime(nivel.zumbido, t, trans);
 }

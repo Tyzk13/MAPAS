@@ -44,7 +44,9 @@ export class Builder {
     // cornija e telhado de zinco quase plano
     bxM(this.D, m.plain, o.w + 0.2, 0.3, 0.45, 0, front, 0.0, 0xe0d8c8, M);
     if (rnd() < 0.5) bxM(this.D, m.plain, o.w * 0.4, 0.5, 0.25, 0, front + 0.35, -0.05, 0xe0d8c8, M);
-    bxM(this.R, m.tin, o.w - 0.3, 0.08, o.d - 0.4, 0, h + 0.1, -o.d / 2 - 0.1, 0xb0a8a0, M, 0.04);
+    // inclinado 0,04 rad: o centro sobe o bastante para a borda baixa não entrar no topo do prédio (as duas faces
+    // brigavam no mesmo plano e a metade de baixo aparecia como mancha)
+    bxM(this.R, m.tin, o.w - 0.3, 0.08, o.d - 0.4, 0, h + 0.12 + (o.d - 0.4) / 2 * Math.sin(0.04), -o.d / 2 - 0.1, 0xb0a8a0, M, 0.04);
     // vitrine com rodapé, porta recuada e vidro superior (transom)
     const lit = !o.dark && rnd() < (o.lit ?? 0.5);
     const dw = 1.1, sw = Math.max(1.2, (o.w - dw - 1.4) / 2);

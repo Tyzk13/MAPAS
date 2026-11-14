@@ -1,7 +1,8 @@
-// Hotel Laurentian (1912) — tijolo escuro, 3 andares, esquina da Main St com a King St. Térreo: saguão com
+// Hotel Laurentian (1912) — a casa e o negócio de William Ashdown; o hotel aonde a cidade inteira vai. Tijolo escuro, 3 andares, esquina da Main St com a King St. Térreo: saguão com
 // recepção, sala de jantar, "beverage room" (bar com entradas separadas MEN / LADIES & ESCORTS, como em
 // Ontário nos anos 60), escritório do gerente e cozinha. 2º e 3º andares: corredor central e 7 quartos cada
-// (x06 é o banheiro coletivo). Quarto 304 = William Ashdown; 307 = trancado (onde ele "trabalha").
+// (x06 é o banheiro coletivo). Quarto 304 = apartamento do dono, William Ashdown; 307 = trancado (onde ele "trabalha"); porão sob a cozinha = onde
+// Margaret morreu.
 // Cada andar é uma camada: esconder o 3º mostra o 2º de cima (e o arrastar de personagens pisa no andar visível).
 import * as THREE from 'three';
 import { boxUV } from '../../core/pbr';
@@ -136,10 +137,10 @@ export async function buildHotel(G: THREE.Group): Promise<Interior> {
     }
   };
   const ST1: [number, number, number, number] = [11.8, 18.2, 7.9, 9.6], ST2: [number, number, number, number] = [12.6, 18.2, 9.9, 11.6];
-  slab(0, []); slab(1, [ST1]); slab(2, [ST2]);
+  slab(0, [[12.9, 17.3, 24.3, D - T]]); slab(1, [ST1]); slab(2, [ST2]);
   // revestimentos: tábuas nos quartos e salão, pedra no saguão, linóleo na cozinha e banheiros, passadeira vermelha
   const cover = (k: number, mat: THREE.Material, x0: number, x1: number, z0: number, z1: number, c = 0xffffff) => kits[k].F.box(mat, x1 - x0, 0.02, z1 - z0, wx((x0 + x1) / 2), LV[k].y + 0.01, wz((z0 + z1) / 2), c);
-  cover(0, m.floor, T, 11, T, 7); cover(0, I.stone, T, 11, 7, 19); cover(0, m.floor, T, 11, 19, D - T, 0x8a7060); cover(0, I.lino, 11, W - T, 12, D - T); cover(0, m.floor, 11, W - T, T, 7); cover(0, I.stone, 11, W - T, 7, 12);
+  cover(0, m.floor, T, 11, T, 7); cover(0, I.stone, T, 11, 7, 19); cover(0, m.floor, T, 11, 19, D - T, 0x8a7060); cover(0, I.lino, 11, W - T, 12, 24.3); cover(0, I.lino, 11, 12.9, 24.3, D - T); cover(0, I.lino, 17.3, W - T, 24.3, D - T); cover(0, m.floor, 11, W - T, T, 7); cover(0, I.stone, 11, W - T, 7, 12);
   [1, 2].forEach(k => {
     ROOMS_W.forEach(([a, b]) => cover(k, m.floor, T, 9, a, b)); ROOMS_E.forEach(([a, b], i) => cover(k, i === 1 ? I.lino : m.floor, 11, W - T, a, b));
     cover(k, m.floor, 9, 11, T, D - T, 0x7a6050); kits[k].F.box(I.carpet, 1.3, 0.025, D - 2 * T - 0.6, wx(10), LV[k].y + 0.02, wz(D / 2), 0x6a1e1e);
@@ -181,17 +182,17 @@ export async function buildHotel(G: THREE.Group): Promise<Interior> {
     docPlane(grp[0], docs, canvasTex(768, 400, g => { g.fillStyle = '#3a2416'; g.fillRect(0, 0, 768, 400); for (let r = 0; r < 3; r++) for (let c = 0; c < 7; c++) { const x = 18 + c * 106, y = 20 + r * 124; g.fillStyle = '#1a100a'; g.fillRect(x, y, 96, 108); g.fillStyle = '#c8b080'; g.font = 'bold 22px Georgia'; g.textAlign = 'center'; const num = String((r + 1) * 100 + c + 1); g.fillText(num, x + 48, y + 100); const has = !(num === '304' || num === '307' || num === '106' || num === '206' || num === '306' || (r === 1 && c === 3)); if (num.endsWith('6')) { g.fillStyle = '#6a5a40'; g.font = '14px Georgia'; g.fillText('BATH', x + 48, y + 50); } else if (has) { g.strokeStyle = '#b08a3a'; g.lineWidth = 4; g.beginPath(); g.arc(x + 48, y + 30, 9, 0, 7); g.stroke(); g.fillStyle = '#b08a3a'; g.fillRect(x + 45, y + 38, 6, 30); g.fillStyle = '#d8d0b8'; g.fillRect(x + 34, y + 62, 28, 14); } else if (num === '307') { g.fillStyle = '#a02a1a'; g.font = 'bold 13px Georgia'; g.fillText('DO NOT', x + 48, y + 40); g.fillText('ENTER', x + 48, y + 58); } } }), 2.2, 1.15, wx(10.92), y0 + 1.9, wz(16), -Math.PI / 2, 'Quadro de chaves da recepção');
     // livro de hóspedes aberto no balcão
     docPlane(grp[0], docs, canvasTex(1024, 640, g => { g.fillStyle = '#e8e0c8'; g.fillRect(0, 0, 1024, 640); g.strokeStyle = '#3a2a1a'; g.lineWidth = 3; g.beginPath(); g.moveTo(512, 0); g.lineTo(512, 640); g.stroke();
-      g.fillStyle = '#2a1e14'; g.font = 'bold 26px Georgia'; g.fillText('HOTEL LAURENTIAN — REGISTER', 30, 42); g.fillText('November 1965', 560, 42);
-      g.font = '20px "Courier New"'; const rows: [string, string, string][] = [['Nov 2', 'W. Ashdown', '304 (monthly)'], ['Nov 2', 'W. Ashdown', '307 (storage)'], ['Nov 5', 'Mrs. A. Doucette', '303 (perm.)'], ['Nov 8', 'Dr. H. Finch', '204 (perm.)'], ['Nov 11', 'R. Leduc (Eaton\'s)', '302'], ['Nov 13', 'Mr & Mrs Pelletier', '305 — LEFT'], ['Nov 16', 'E. Brodeur (night clerk)', '205'], ['Nov 19', 'RESERVED: Ottawa', '202, 203'], ['Nov 19', '"for the agents"', 'paid in cash']];
+      g.fillStyle = '#2a1e14'; g.font = 'bold 26px Georgia'; g.fillText('HOTEL LAURENTIAN — REGISTER', 30, 42); g.fillText('November 1975', 560, 42);
+      g.font = '20px "Courier New"'; const rows: [string, string, string][] = [['OWNER', 'W. Ashdown', '304 (apt.)'], ['OWNER', 'W. Ashdown', '307 — PRIVATE'], ['Nov 5', 'Mrs. A. Doucette', '303 (perm.)'], ['Nov 8', 'Dr. H. Finch', '204 (perm.)'], ['Nov 11', 'R. Leduc (Eaton\'s)', '302'], ['Nov 13', 'Mr & Mrs Pelletier', '305 — LEFT'], ['Nov 16', 'E. Brodeur (night clerk)', '205'], ['Nov 19', 'RESERVED: Ottawa', '202, 203'], ['Nov 19', '"for the agents"', 'paid in cash']];
       rows.forEach(([d, n, r], i) => { const x = i < 5 ? 30 : 560, y = 100 + (i % 5) * 92; g.fillStyle = '#2a2a6a'; g.font = 'italic 26px "Brush Script MT", cursive'; g.fillText(n, x + 90, y + 4); g.fillStyle = '#2a1e14'; g.font = '18px "Courier New"'; g.fillText(d, x, y); g.fillText('Room ' + r, x + 90, y + 34); g.strokeStyle = '#b8a888'; g.lineWidth = 1; g.beginPath(); g.moveTo(x, y + 50); g.lineTo(x + 440, y + 50); g.stroke(); });
       g.save(); g.translate(300, 300); g.rotate(-0.2); g.strokeStyle = 'rgba(200,150,40,0.35)'; g.lineWidth = 2; sigilKnow(g, 0, 0, 40, 'rgba(190,140,40,0.35)', 2); g.restore(); age(g, 1024, 640, 30); }), 0.62, 0.39, wx(8.45), y0 + 1.115, wz(15.3), -Math.PI / 2 + 0.1, 'Livro de hóspedes (recepção)', true);
     [[3.0, 9.0, 0.6], [3.0, 11.2, -0.5]].forEach(([x, z, r]) => K0.armchair(mtx(wx(x), y0, wz(z), Math.PI / 2 + r), 0x5a2a24));
     K0.table(mtx(wx(1.8), y0, wz(10.1), 0), 0.7, 0.7, 0.55, 0x3a2418);
-    docPlane(grp[0], docs, canvasTex(640, 860, g => { g.fillStyle = '#e4dece'; g.fillRect(0, 0, 640, 860); g.fillStyle = '#1a1a1a'; g.font = 'bold 64px "Times New Roman"'; g.textAlign = 'center'; g.fillText('The Greywater Examiner', 320, 76); g.font = '18px "Times New Roman"'; g.fillText('FRIDAY, NOVEMBER 19, 1965 · TEN CENTS', 320, 104); g.fillRect(20, 114, 600, 3);
+    docPlane(grp[0], docs, canvasTex(640, 860, g => { g.fillStyle = '#e4dece'; g.fillRect(0, 0, 640, 860); g.fillStyle = '#1a1a1a'; g.font = 'bold 64px "Times New Roman"'; g.textAlign = 'center'; g.fillText('The Greywater Examiner', 320, 76); g.font = '18px "Times New Roman"'; g.fillText('WEDNESDAY, NOVEMBER 19, 1975 · 25 CENTS', 320, 104); g.fillRect(20, 114, 600, 3);
       g.font = 'bold 44px "Times New Roman"'; g.fillText('GRAVE FOUND DISTURBED', 320, 168); g.fillText('AT ST. COLUMBA', 320, 214);
-      g.textAlign = 'left'; g.font = '19px "Times New Roman"'; ['Police say the grave of Mrs. Eva Pelletier, buried', 'Nov. 9, was "carefully reopened and closed again".', 'Sexton: "The Ashdown plot was re-sodded in', 'October. Not by me."', 'MILL HAND MISSING SINCE TUESDAY — Jean Moreau, 34,', 'did not return from the night shift. His lunch pail', 'was found on the Falls bridge.', '', 'CORONER ASKS FOR CALM — Dr. H. Finch denies rumours', 'about "irregularities" at the District Morgue.'].forEach((l, i) => g.fillText(l, 30, 262 + i * 30));
+      g.textAlign = 'left'; g.font = '19px "Times New Roman"'; ['Police say the grave of Mrs. Eva Pelletier, buried', 'Nov. 8, was "carefully reopened and closed again".', 'Sexton: "The Ashdown plot was re-sodded in', 'October. Not by me."', 'MILL HAND MISSING SINCE SUNDAY — Jean Moreau, 34,', 'did not return from the night shift. His lunch pail', 'was found on the Falls bridge.', '', 'CORONER ASKS FOR CALM — Dr. H. Finch denies rumours', 'about "irregularities" at the District Morgue.'].forEach((l, i) => g.fillText(l, 30, 262 + i * 30));
       g.fillStyle = '#7a7a72'; g.fillRect(380, 560, 230, 190); g.fillStyle = '#1a1a1a'; g.font = 'italic 16px "Times New Roman"'; g.fillText('The Falls bridge, Wednesday.', 384, 772);
-      g.font = '18px "Times New Roman"'; ['A year ago: Margaret Ashdown, 31,', 'dies in fall at her Elm St. home.', 'Husband "inconsolable".', '', 'WEATHER: Freezing rain, fog.'].forEach((l, i) => g.fillText(l, 30, 580 + i * 30)); age(g, 640, 860, 40); }), 0.42, 0.56, wx(1.8), y0 + 0.565, wz(10.1), 0.4, 'Jornal na mesa do saguão', true);
+      g.font = '18px "Times New Roman"'; ['Last Christmas: Margaret Ashdown, 31,', 'of the Laurentian, dies in a fall', 'down the hotel cellar stairs.', 'Husband "inconsolable".', 'WEATHER: Freezing rain, fog.'].forEach((l, i) => g.fillText(l, 30, 580 + i * 30)); age(g, 640, 860, 40); }), 0.42, 0.56, wx(1.8), y0 + 0.565, wz(10.1), 0.4, 'Jornal na mesa do saguão', true);
     later(place('planter_pot_clay', wx(1.0), y0, wz(12.0), 0, 1.3, grp[0]));
     later(place('Chandelier_03', wx(5.5), y0 + h0 - 0.05, wz(13), 0, 1, grp[0]));
     later(place('Rockingchair_01', wx(2.0), y0, wz(17.5), 2.2, 1, grp[0]));
@@ -213,15 +214,16 @@ export async function buildHotel(G: THREE.Group): Promise<Interior> {
     K0.D.box(m.woodDark, 5.5, 1.5, 0.08, wx(3.1), y0 + 0.75, wz(22.7), 0x3a2014);
     later(place('Television_01', wx(1.0), y0 + 2.2, wz(25.2), 0.5, 0.8, grp[0]));
     K0.D.box(m.woodDark, 0.8, 0.05, 0.5, wx(1.0), y0 + 2.18, wz(25.3), 0x2a160c);
-    docPlane(grp[0], docs, canvasTex(512, 384, g => { g.fillStyle = '#1e2420'; g.fillRect(0, 0, 512, 384); g.strokeStyle = '#6a4a2a'; g.lineWidth = 14; g.strokeRect(0, 0, 512, 384); g.fillStyle = '#e8e4d8'; g.font = '34px "Comic Sans MS", cursive'; g.fillText('DRAUGHT ........ 15¢', 40, 70); g.fillText('2 FOR ............ 25¢', 40, 120); g.font = '24px "Comic Sans MS", cursive'; g.fillText('No standing · No singing', 40, 180); g.fillText('Ladies admitted with', 40, 230); g.fillText('escort only (other door)', 40, 264); g.fillStyle = '#d8c060'; g.fillText('Nov 19 — CLOSED AT 11', 40, 330); }), 1.0, 0.75, wx(5.5), y0 + 2.1, wz(19.08), 0, 'Quadro-negro do beverage room');
+    docPlane(grp[0], docs, canvasTex(512, 384, g => { g.fillStyle = '#1e2420'; g.fillRect(0, 0, 512, 384); g.strokeStyle = '#6a4a2a'; g.lineWidth = 14; g.strokeRect(0, 0, 512, 384); g.fillStyle = '#e8e4d8'; g.font = '34px "Comic Sans MS", cursive'; g.fillText('DRAUGHT ........ 45¢', 40, 70); g.fillText('2 FOR ............ 85¢', 40, 120); g.font = '24px "Comic Sans MS", cursive'; g.fillText('No standing · No singing', 40, 180); g.fillText('Ladies admitted with', 40, 230); g.fillText('escort only (other door)', 40, 264); g.fillStyle = '#d8c060'; g.fillText('Nov 19 — CLOSED AT 11', 40, 330); }), 1.0, 0.75, wx(5.5), y0 + 2.1, wz(19.08), 0, 'Quadro-negro do beverage room');
     light(wx(5), y0 + 3.0, wz(22.6), 8, 4, 0xffb060, { flick: 1, vtt: 7 }); }
   // escritório do gerente: escrivaninha, cofre, arquivo, livro de reclamações
   { later(place('metal_office_desk', wx(15.5), y0, wz(3.2), Math.PI, 1, grp[0]));
     K0.chair(mtx(wx(15.5), y0, wz(2.2), 0));
     K0.D.box(m.iron, 0.8, 1.0, 0.7, wx(19.1), y0 + 0.5, wz(1.2), 0x2a3a2a); K0.D.box(IM().brass, 0.12, 0.12, 0.04, wx(19.1), y0 + 0.65, wz(1.57), 0xffffff);
     K0.D.box(m.iron, 0.5, 1.35, 0.6, wx(11.5), y0 + 0.68, wz(1.0), 0x5a5a52);
-    docPlane(grp[0], docs, paper('COMPLAINTS — HOTEL LAURENTIAN', ['Nov 3 — Rm 303 (Doucette): sewing machine in 304 after midnight. Spoke to Mr. A.', 'Nov 7 — Maid refuses to do 304. "Smell of ice and lilies."', 'Nov 9 — 2 blocks of ice delivered to 307 "for the radiator". ???', 'Nov 13 — Pelletiers (305) left at 4 a.m. without paying. Said a woman was singing in the wall.', 'Nov 16 — Mr. Ashdown asks that no one enter 307. Paid 6 months in advance. In CASH.', 'Nov 18 — Night clerk saw Mr. A. carrying a rolled carpet up the back stairs. Says it was heavy.'], { size: 16, stamp: 'MANAGER' }), 0.3, 0.4, wx(15.4), y0 + 0.8, wz(3.3), Math.PI, 'Livro de reclamações (gerência)', true);
+    docPlane(grp[0], docs, paper('COMPLAINTS — HOTEL LAURENTIAN', ['Nov 3 — Rm 303 (Doucette): sewing machine in 304 after midnight. Spoke to Mr. A.', 'Nov 7 — Maid refuses to do 304. "Smell of ice and lilies."', 'Nov 9 — 2 blocks of ice delivered to 307 "for the radiator". ???', 'Nov 13 — Pelletiers (305) left at 4 a.m. without paying. Said a woman was singing in the wall.', 'Nov 16 — Mr. Ashdown (owner) orders: NO ONE enters 307. He took the only key.', 'Nov 18 — Night clerk saw Mr. A. carrying a rolled carpet up the back stairs. Says it was heavy.'], { size: 16, stamp: 'MANAGER' }), 0.3, 0.4, wx(15.4), y0 + 0.8, wz(3.3), Math.PI, 'Livro de reclamações (gerência)', true);
     later(place('desk_lamp_arm_01', wx(16.1), y0 + 0.78, wz(3.5), 2.4, 1, grp[0]));
+    docPlane(grp[0], docs, paper('O.P.P. — OCCURRENCE (copy)', ['Dec 26 1974 · 23:40', 'ASHDOWN, Margaret, 31 (owner)', 'Laurentian Hotel — found at foot', 'of the CELLAR stairs after the', 'Boxing Day party. Husband William', 'states she fell carrying preserves.', 'Husband intoxicated, "inconsolable".', 'Bruising to wrists — noted.', 'Ruled accidental — H. Finch, Coroner'], { w: 420, h: 560, size: 18, stamp: 'CLOSED' }), 0.26, 0.34, wx(14.9), y0 + 0.8, wz(3.1), Math.PI - 0.2, 'Ocorrência de 1974 (escritório)', true);
     light(wx(15.5), y0 + 2.4, wz(3.4), 5, 3, 0xffd8a0); }
   // cozinha: fogão, bancadas, pia, porta dos fundos
   { K0.D.box(m.iron, 1.6, 0.9, 0.8, wx(19.2), y0 + 0.45, wz(15.5), 0x1a1a1a); K0.D.box(m.iron, 1.4, 0.04, 0.6, wx(19.2), y0 + 0.92, wz(15.5), 0x3a3a3a);
@@ -229,6 +231,30 @@ export async function buildHotel(G: THREE.Group): Promise<Interior> {
     K0.D.box(m.woodDark, 2.0, 0.9, 1.0, wx(15), y0 + 0.45, wz(18), 0x6a4a30);
     for (let i = 0; i < 4; i++) { const g = new THREE.CylinderGeometry(0.16, 0.15, 0.22, 10); g.translate(wx(14.4 + i * 0.4), y0 + 1.02, wz(18)); K0.D.add(IM().steel, g, 0x9a9a92); }
     light(wx(16), y0 + 3.0, wz(18), 5, 2, 0xe8f0ff); }
+
+  // ---------- porão (debaixo da cozinha): onde Margaret morreu, em 26/12/1974 ----------
+  { const yb = -2.6, Kc = K0;
+    Kc.B.box(m.stone, 0.3, 2.7, 13.9, wx(10.95), -1.35, wz(18.9), 0x8a8478); Kc.B.box(m.stone, 0.3, 2.7, 13.9, wx(19.8), -1.35, wz(18.9), 0x8a8478);
+    Kc.B.box(m.stone, 9.15, 2.7, 0.3, wx(15.4), -1.35, wz(11.95), 0x8a8478); Kc.B.box(m.stone, 9.15, 2.7, 0.3, wx(15.4), -1.35, wz(25.8), 0x8a8478);
+    Kc.F.box(m.concrete, 8.7, 0.1, 13.7, wx(15.4), yb - 0.05, wz(18.9), 0x6a665e);
+    stair(0, 17.3, 12.9, 24.4, 25.6, yb, LV[0].y);
+    rail(0, 12.9, 17.3, 24.24);
+    // caldeira do hotel e canos
+    { const g = new THREE.CylinderGeometry(0.75, 0.75, 1.9, 14); g.translate(wx(12.6), yb + 0.95, wz(13.6)); Kc.D.add(m.iron, g, 0x2a2622); }
+    [12.6, 13.2].forEach(x => Kc.D.box(m.iron, 0.12, 0.8, 0.12, wx(x), yb + 2.3, wz(13.6), 0x3a3430)); Kc.D.box(m.iron, 0.12, 0.12, 6.0, wx(13.2), -0.3, wz(16.5), 0x3a3430);
+    // prateleiras de conservas (vidros de geleia) na parede leste
+    for (let i = 0; i < 4; i++) Kc.D.box(m.wood, 0.45, 0.04, 6.0, wx(19.35), yb + 0.4 + i * 0.5, wz(17), 0x6a5038);
+    for (let i = 0; i < 4; i++) for (let j = 0; j < 22; j++) { if (rnd() < 0.25) continue; const g = new THREE.CylinderGeometry(0.05, 0.05, 0.16, 8); g.translate(wx(19.3 + (rnd() - 0.5) * 0.15), yb + 0.5 + i * 0.5, wz(14.2 + j * 0.26)); Kc.D.add(I.bottle, g, [0x8a2a1a, 0xa86a20, 0x5a1a2a, 0xc8a040][(rnd() * 4) | 0]); }
+    later(place('wine_barrel_01', wx(15.2), yb, wz(13.4), 0.3, 1, grp[0])); later(place('Barrel_01', wx(16.8), yb, wz(13.3), 0, 1, grp[0]));
+    later(place('wooden_crate_01', wx(12.3), yb, wz(19.5), 0.4, 1, grp[0])); later(place('wooden_crate_01', wx(12.4), yb, wz(20.6), 0.1, 1, grp[0]));
+    // ao pé da escada: vidros de conserva quebrados e uma mancha velha de geleia, nunca limpa
+    Kc.F.box(m.plain, 1.1, 0.006, 0.8, wx(18.6), yb + 0.004, wz(24.9), 0x2a1410);
+    for (let i = 0; i < 9; i++) { const g = new THREE.BoxGeometry(0.04 + rnd() * 0.05, 0.01, 0.03 + rnd() * 0.05); g.rotateY(rnd() * 3); g.translate(wx(18.2 + rnd() * 1.2), yb + 0.01, wz(24.5 + rnd() * 0.9)); Kc.D.add(I.bottle, g, 0xa86a20); }
+    // a parede escrita: "you pushed me" e o sigilo
+    docPlane(grp[0], docs, canvasTex(1024, 512, g => { g.clearRect(0, 0, 1024, 512); scrawl(g, 'you pushed me', 1024, 512, 'rgba(230,185,70,0.9)', 30, 46); sigilKnow(g, 512, 300, 120, 'rgba(225,185,70,0.9)', 6); }), 3.2, 1.6, wx(19.62), yb + 1.5, wz(21.6), -Math.PI / 2, 'Parede do porão (hotel)', false, 0.55);
+    { const g = new THREE.SphereGeometry(0.06, 8, 6); g.translate(wx(15.4), -0.25, wz(19)); Kc.D.add(m.lit, g, 0xffffff); }
+    light(wx(15.4), -0.5, wz(19), 3, 4, 0xffc890, { flick: 3 }); light(wx(18.6), yb + 0.8, wz(23.6), 1.8, 4, 0xd8a840, { flick: 1 });
+  }
   // escadaria: luz e quadro
   light(wx(15), y0 + 3.5, wz(9.6), 5, 4, 0xffc080);
 
@@ -303,14 +329,14 @@ export async function buildHotel(G: THREE.Group): Promise<Interior> {
     { const g = new THREE.TorusGeometry(0.012, 0.003, 6, 16); g.rotateX(Math.PI / 2); g.translate(wx(3.2), y + 0.605, wz(z0 + 0.45)); Kt.D.add(IM().brass, g, 0xffd060); }
     // parede com fotos de Margaret e a folha de "medidas"
     docPlane(Gk, docs, canvasTex(1024, 720, g => { g.fillStyle = 'rgba(0,0,0,0)'; g.clearRect(0, 0, 1024, 720);
-      photo(g, 30, 40, 260, 320, 'girl', 'Maggie, 1958'); photo(g, 320, 20, 300, 260, 'group', 'our wedding'); photo(g, 660, 50, 240, 300, 'girl', 'M.');
+      photo(g, 30, 40, 260, 320, 'girl', 'Maggie, 1968'); photo(g, 320, 20, 300, 260, 'group', 'our wedding'); photo(g, 660, 50, 240, 300, 'girl', 'M.');
       paperDraw(g, 340, 300, 380, 400, 'MAGGIE — measurements', ['height 5 ft 5 — J.M. ✓', 'hands: small, long fingers — E.P. ✓', 'shoulders, back — S.K. ✓', 'voice: — she has her own', 'eyes: grey-green — not yet (20th)', '', '"bring me the rest, Willy"'], { size: 19, rot: 0.03 });
       g.strokeStyle = 'rgba(200,30,20,0.8)'; g.lineWidth = 4; g.beginPath(); g.ellipse(160, 200, 100, 140, 0, 0, 7); g.stroke();
       g.save(); g.strokeStyle = '#a02a1a'; g.lineWidth = 2; g.beginPath(); g.moveTo(160, 340); g.lineTo(420, 420); g.moveTo(780, 340); g.lineTo(640, 440); g.stroke(); g.restore(); }),
       2.4, 1.69, wx(xb - 0.09), y + 1.65, wz(23.3), -Math.PI / 2, 'Fotos de Margaret e a lista de "medidas" (304)');
     // calendário de novembro com dias marcados
-    docPlane(Gk, docs, canvasTex(400, 520, g => { g.fillStyle = '#ece6d6'; g.fillRect(0, 0, 400, 520); g.fillStyle = '#5a6a7a'; g.fillRect(0, 0, 400, 150); g.fillStyle = '#e8e4d8'; g.font = 'bold 34px Georgia'; g.textAlign = 'center'; g.fillText('NOVEMBER 1965', 200, 60); g.font = '18px Georgia'; g.fillText('Greywater Pulp & Paper Co.', 200, 100);
-      g.fillStyle = '#2a2a2a'; g.font = '15px Georgia'; ['S', 'M', 'T', 'W', 'T', 'F', 'S'].forEach((d, i) => g.fillText(d, 30 + i * 52, 180)); for (let d = 1; d <= 30; d++) { const c = (d) % 7, r = Math.floor(d / 7); const x = 30 + c * 52, yy = 215 + r * 56; g.fillStyle = '#2a2a2a'; g.font = '20px Georgia'; g.fillText(String(d), x, yy);
+    docPlane(Gk, docs, canvasTex(400, 520, g => { g.fillStyle = '#ece6d6'; g.fillRect(0, 0, 400, 520); g.fillStyle = '#5a6a7a'; g.fillRect(0, 0, 400, 150); g.fillStyle = '#e8e4d8'; g.font = 'bold 34px Georgia'; g.textAlign = 'center'; g.fillText('NOVEMBER 1975', 200, 60); g.font = '18px Georgia'; g.fillText('Greywater Pulp & Paper Co.', 200, 100);
+      g.fillStyle = '#2a2a2a'; g.font = '15px Georgia'; ['S', 'M', 'T', 'W', 'T', 'F', 'S'].forEach((d, i) => g.fillText(d, 30 + i * 52, 180)); for (let d = 1; d <= 30; d++) { const c = (d + 5) % 7, r = Math.floor((d + 5) / 7); const x = 30 + c * 52, yy = 210 + r * 52; g.fillStyle = '#2a2a2a'; g.font = '20px Georgia'; g.fillText(String(d), x, yy);
         if (d < 19) { g.strokeStyle = 'rgba(30,30,30,0.7)'; g.lineWidth = 2; g.beginPath(); g.moveTo(x - 14, yy - 18); g.lineTo(x + 14, yy + 6); g.stroke(); }
         if (d === 9 || d === 16 || d === 17) { g.strokeStyle = '#a02a1a'; g.lineWidth = 3; g.beginPath(); g.arc(x, yy - 6, 18, 0, 7); g.stroke(); g.fillStyle = '#a02a1a'; g.font = '11px Arial'; g.fillText(d === 9 ? 'E.P.' : d === 16 ? 'J.M.' : 'S.K.', x, yy + 14); }
         if (d === 20) { g.fillStyle = '#c09030'; g.font = 'bold 13px Arial'; g.fillText('EYES', x, yy + 14); } } }),
@@ -319,7 +345,7 @@ export async function buildHotel(G: THREE.Group): Promise<Interior> {
     docPlane(Gk, docs, canvasTex(512, 600, g => { g.clearRect(0, 0, 512, 600); sigilKnow(g, 256, 260, 150, 'rgba(225,180,60,0.9)', 6); g.fillStyle = 'rgba(225,180,60,0.85)'; g.font = 'italic 46px "Brush Script MT", cursive'; g.textAlign = 'center'; g.fillText('you did this, Willy', 256, 520); g.fillText('now finish me', 256, 572); }),
       0.66, 0.77, wx(6.6), y + 1.35, wz(z1 - 0.16), Math.PI, 'Espelho do quarto 304', false, 0.5);
     // bilhete da gerência passado por baixo da porta
-    docPlane(Gk, docs, paper('Mr. Ashdown — Room 304', ['Sir, other guests have complained of', 'the sewing machine after midnight and', 'of a woman singing in your room.', 'We understood you live alone.', 'Please see the desk.', '— L. Gauthier, Manager'], { w: 400, h: 300, size: 18 }), 0.22, 0.17, wx(8.4), y + 0.03, wz(18.9), 0.3, 'Bilhete da gerência (no chão do 304)', true);
+    docPlane(Gk, docs, paper('Mr. Ashdown — Room 304', ['Sir, with respect: guests complain', 'of the sewing machine after midnight', 'and of a woman singing in your rooms.', 'Since Mrs. Ashdown passed you live', 'alone. Sir, the hotel cannot afford', 'this. — L. Gauthier, Manager'], { w: 400, h: 300, size: 18 }), 0.22, 0.17, wx(8.4), y + 0.03, wz(18.9), 0.3, 'Bilhete da gerência (no chão do 304)', true);
     // brilho dourado fraco que pulsa (a presença dela)
     light(wx(6.6), y + 1.4, wz(z1 - 0.6), 2.5, 6, 0xd8a840, { flick: 1 });
   };
@@ -340,7 +366,7 @@ export async function buildHotel(G: THREE.Group): Promise<Interior> {
   };
   // 303 — Mrs. Doucette (vizinha): terço, rádio, diário
   roomDocs['303'] = (k, xa, z0) => { const y = LV[k].y; later(place('vintage_radio_transceiver', wx(6.0), y + 0.6, wz(z0 + 0.35), Math.PI, 0.6, grp[k]));
-    docPlane(grp[k], docs, paper('Diary — A. Doucette', ['Nov 14. The machine again at three. Then a woman humming "Que sera". He lives alone, the clerk says. His wife died last winter.', 'Nov 17. Knocked on 304. He opened smiling, smelled of rye and of the cold. Behind him the mannequin had a dress on.', 'Nov 18. I heard her say my name through the wall. I have not told Father Hale.'], { w: 460, h: 600, size: 17 }), 0.26, 0.34, wx(xa + 0.8), y + 0.78, wz(z0 + 3.4), 0.5, 'Diário da Sra. Doucette (303)', true);
+    docPlane(grp[k], docs, paper('Diary — A. Doucette', ['Nov 14. The machine again at three. Then a woman humming "Que sera". He lives alone, the clerk says. Mrs. Ashdown died last Christmas, downstairs, in the cellar.', 'Nov 17. Knocked on 304. He opened smiling, smelled of rye and of the cold. Behind him the mannequin had a dress on.', 'Nov 18. I heard her say my name through the wall. I have not told Father Hale.'], { w: 460, h: 600, size: 17 }), 0.26, 0.34, wx(xa + 0.8), y + 0.78, wz(z0 + 3.4), 0.5, 'Diário da Sra. Doucette (303)', true);
     kits[k].table(mtx(wx(xa + 0.8), y, wz(z0 + 3.4), 0), 0.6, 0.6); };
   // 204 — Dr. Finch, o legista (mora no hotel)
   roomDocs['204'] = (k, xa, z0) => { const y = LV[k].y; kits[k].table(mtx(wx(xa + 1.0), y, wz(z0 + 3.0), 0), 0.9, 0.6);
@@ -370,4 +396,6 @@ export async function buildHotel(G: THREE.Group): Promise<Interior> {
   const layers = [{ n: 'Telhado do hotel', o: roofs, v: true }, { n: 'Hotel: 3º andar', o: grp[2], v: true }, { n: 'Hotel: 2º andar', o: grp[1], v: true }];
   return { docs, solids, floors, roofs, vttWalls: vtt, portals, lamps, layers };
 }
+/** porão debaixo da cozinha (o terreno é recortado aqui) */
+export const CELLAR = { x0: X0 + 11.1, x1: X0 + 19.65, z0: Z0 + 12.1, z1: Z0 + 25.65 };
 export const HOTEL_GROUPS = (G: THREE.Group) => [G.getObjectByName('hotel-andar-2'), G.getObjectByName('hotel-andar-3'), G.getObjectByName('hotel-telhado')].filter(Boolean) as THREE.Object3D[];

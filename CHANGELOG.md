@@ -388,3 +388,17 @@
 - Caso completo para o mestre (`docs/casos/greywater-caso-ashdown.md`): 30 vistas nomeadas com notas, 26 documentos
   legíveis com tradução. A marca da entidade (escrita dourada do Conhecimento) brilha sozinha de dia e de noite.
 - Dia e noite: as luzes de rua apagam de dia; as de dentro do hotel, do necrotério e da casa ficam acesas (fracas).
+
+## Greywater Falls — 1975, o hotel é a casa do William, lugares para entrar, som e manchas
+
+- A história foi para **1975**. William é o **dono** do Hotel Laurentian (o hotel e bar aonde a cidade inteira vai) e
+  Margaret morreu na escada do **porão do hotel** (novo: porão sob a cozinha, com escada, caldeira, barris, conservas e a
+  parede escrita). A casa da Elm Street saiu. O terreno é recortado no shader em cima do porão.
+- Dá para entrar na **fábrica de papel** (máquina de papel, tanques, relógio de ponto com o cartão do Moreau, quadro de
+  avisos, escritório do capataz), na **lanchonete** e nas casas de **Eva Pelletier** e dos **Moreau**, cada um com
+  documentos novos que apontam para o hotel.
+- Vista **"Resumo do caso"** (nota com a história inteira) e resumo no começo do dossiê.
+- Som: os sons do mestre (batida, passos, sussurro…) ficaram ~3× mais altos, com limitador; no modo "Jogadores" sem a
+  janela dos jogadores aberta, o som toca na janela do mestre (antes ficava mudo).
+- Manchas brancas nos telhados à noite: o telhado de zinco cruzava o topo das lojas (duas faces brigando) e era metálico
+  (espelhava a lua). O telhado subiu e o zinco deixou de ser metal.
