@@ -195,6 +195,14 @@ Leia `docs/NOVO-MAPA.md` antes de começar.
   floors, roofs, vttWalls, portals, lamps) e somar em todas as listas do `index.ts` (docs, walk, solids, layers,
   vtt, exportHide) + `busy()` para não nascer casa por cima.
 
+### Fichas dos jogadores com imagens do grupo
+- `src/core/tokens.ts` lê `npcs-local/jogadorN.png` (glob) e cai nas fichas antigas. A ficha usa o alfa da PNG
+  direto, então recorte ANTES: fundo liso → `convert -fuzz 7% -fill none -draw "color x,y floodfill"` de vários
+  pontos da borda; fundo em degradê com roupa escura → crescimento de região comparando com o vizinho (tolerância
+  baixa, ~2.5) + 2ª passada que só avança para pixels parecidos com o fundo estimado por linha. Print de celular:
+  pinte de branco os botões da tela antes do recorte. `pip install` é bloqueado aqui; PIL e numpy existem.
+- Capturas (`--views`) escondem os personagens; para vê-los use `__cap.third({x,z,yaw,pitch})`.
+
 ### NPCs com imagens de terceiros (Harlow)
 - Repositório é **público**: arte de terceiros (Pinterest etc.) nunca vai para o git. Padrão: script em `tools/`
   baixa para uma pasta no `.gitignore` (`npcs-local/`), o mapa carrega com `import.meta.glob(..., { eager: true,

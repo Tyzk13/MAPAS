@@ -99,8 +99,8 @@ await jp.waitForFunction(() => window.__espelho().apag && window.__espelho().luz
 ok('a luz caiu na janela dos jogadores', await jp.evaluate(() => window.__espelho().apag && window.__espelho().luzes === 0));
 await tecla('KeyO');
 await fr.evaluate(() => { document.querySelector('#ros button.av').click(); document.getElementById('boc').click(); });
-await jp.waitForFunction(() => !window.__espelho().visiveis.includes('dante'), null, { timeout: 60000, polling: 500 }).catch(() => {});
-ok('personagem oculto some só para os jogadores', await jp.evaluate(() => !window.__espelho().visiveis.includes('dante')) && await fr.evaluate(() => window.__espelho().visiveis.includes('dante')));
+await jp.waitForFunction(() => !window.__espelho().visiveis.includes('j1'), null, { timeout: 60000, polling: 500 }).catch(() => {});
+ok('personagem oculto some só para os jogadores', await jp.evaluate(() => !window.__espelho().visiveis.includes('j1')) && await fr.evaluate(() => window.__espelho().visiveis.includes('j1')));
 await fr.evaluate(() => document.getElementById('boc').click());
 
 ok('sem erros de página', errs.length === 0, errs.slice(0, 3).join(' | '));

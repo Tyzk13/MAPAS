@@ -5,10 +5,13 @@ import { CFG } from './config';
 import { st, $ } from './state';
 import { mat } from './kit';
 import { NET } from './net';
+// Imagens dos jogadores: artes de terceiros, ficam fora do git em npcs-local/jogadorN.png (repositório público).
+// Sem elas, usa as fichas antigas do repositório.
 import dante from '@assets/tokens/dante.png';
 import luis from '@assets/tokens/luis.png';
 import leo from '@assets/tokens/leo.png';
-import sabriny from '@assets/tokens/sabriny.png';
+const LOCAL = import.meta.glob('../../npcs-local/jogador*.png', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
+const jog = (n: number, alt: string) => Object.entries(LOCAL).find(([k]) => k.endsWith('/jogador' + n + '.png'))?.[1] ?? alt;
 
 export interface TokenDef { id: string; name: string; h: number; c: number; img: string; custom?: boolean }
 export interface Token {
@@ -20,10 +23,9 @@ export interface Token {
 }
 
 export const DEF: TokenDef[] = [
-  { id: 'dante', name: 'Dante', h: 1.7, c: 0xc23b3b, img: dante },
-  { id: 'luis', name: 'Luis', h: 1.7, c: 0xd9a93a, img: luis },
-  { id: 'leo', name: 'Leo', h: 1.7, c: 0x3a6fd8, img: leo },
-  { id: 'sabriny', name: 'Sabriny', h: 1.2, c: 0x3aa86b, img: sabriny },
+  { id: 'j1', name: 'Jogadora 1', h: 1.68, c: 0x8a6ad8, img: jog(1, dante) },
+  { id: 'j2', name: 'Jogador 2', h: 1.78, c: 0xd9a93a, img: jog(2, luis) },
+  { id: 'j3', name: 'Jogador 3', h: 1.85, c: 0x3aa86b, img: jog(3, leo) },
 ];
 
 const V3 = THREE.Vector3;

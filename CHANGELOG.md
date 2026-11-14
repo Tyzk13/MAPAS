@@ -335,3 +335,10 @@
   (Padre Thomas Kell e a Irmã Ruth). Total: 28 NPCs.
 - Elenco trocado pelo da pasta; Mr. Vance saiu (vira o hóspede sem rosto do quarto 2). Os 6 quartos da pousada
   seguem com cama e documentos.
+
+## Jogadores novos
+
+- As fichas dos jogadores agora são os 3 personagens do grupo (j1, j2, j3), com imagens em `npcs-local/jogadorN.png`
+  (fora do git, como os NPCs). Sem elas, usa as fichas antigas. Sabriny saiu.
+- Versão offline: `npm run build:single` gera um HTML único que abre sem internet; a janela dos jogadores funciona
+  do mesmo jeito (a ligação entre janelas é local).
