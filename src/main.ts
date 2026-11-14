@@ -67,10 +67,11 @@ function spawnPoint() {
   const f = ray.intersectObjects(st.MP!.walk.filter(m => !m.userData.l || m.userData.l.visible), false)[0];
   return f ? { x: Math.round(f.point.x * 2) / 2, z: Math.round(f.point.z * 2) / 2, y: f.point.y } : { x: 0, z: 3, y: 0 };
 }
-async function addChar(d: { name: string; h: number; c: number; img: string }) {
+async function addChar(d: { name: string; h: number; c: number; img: string }, oculto = false) {
   const id = 'c' + Date.now().toString(36) + ((Math.random() * 1e4) | 0), p = spawnPoint();
-  st.pos[st.curMap + '__' + id] = { x: p.x, z: p.z, y: p.y, h: d.h };
-  await NET.addChar(id, d); NET.pos(id, { x: p.x, z: p.z, y: p.y, h: d.h, f: 0 });
+  const o = oculto ? 1 : 0;
+  st.pos[st.curMap + '__' + id] = { x: p.x, z: p.z, y: p.y, h: d.h, o };
+  await NET.addChar(id, d); NET.pos(id, { x: p.x, z: p.z, y: p.y, h: d.h, f: 0, o });
 }
 
 // ---------- interface (dock, menus e painéis) ----------
@@ -285,6 +286,8 @@ function initUi() {
   menu('mx', 'px');
   // personagens
   $('ba').onclick = () => { fecharMenu(); $('add').hidden = false; };
+  // tamanho Gigante = vilão: já marca "começar oculto" (revele quando quiser com Mostrar)
+  $('as').onchange = () => { if (+$('as').value >= 5) $('aoc').checked = true; };
   $('ax').onclick = () => { $('add').hidden = true; };
   $('ao').onclick = async () => {
     const f = $('af').files[0], n = $('an').value.trim(), m = $('am');
@@ -292,7 +295,7 @@ function initUi() {
     m.textContent = 'Processando...';
     try {
       const img = await prep(f, $('ab').checked);
-      await addChar({ name: n, h: +$('as').value, c: parseInt($('ac').value.slice(1), 16), img });
+      await addChar({ name: n, h: +$('as').value, c: parseInt($('ac').value.slice(1), 16), img }, $('aoc').checked);
       $('add').hidden = true; $('af').value = ''; $('an').value = ''; m.textContent = '';
     } catch (e) { m.textContent = 'Não consegui adicionar (sem permissão ou imagem inválida)'; }
   };

@@ -348,6 +348,8 @@
 - Os NPCs de Harlow agora são personagens do mapa: o mestre arrasta, oculta dos jogadores (meio transparentes só
   para o mestre), muda o tamanho e "Voltar ao início" devolve cada um ao lugar original. Não entram na barra de
   jogadores; somem ao trocar de mapa. Novo campo do mapa: `M.npcs` (lista de `TokenDef` com `npc` e `pos`).
+- Novo personagem: tamanho "Gigante (vilão)" (5 m) e "Começar oculto" — o vilão entra visível só para o mestre;
+  "Mostrar" revela para os jogadores.
 - Personagens podiam ser arrastados só até ±90 m; agora ±400 m (Harlow é maior).
 - Corrigido: manchas BRANCAS nas partes pretas das fichas no anoitecer/noite em algumas placas de vídeo. O AgX faz
   `log2(cor)` e preto puro virava −infinito; um efeito antes do tone mapping limpa NaN/inf e põe um piso de 1e-4.
