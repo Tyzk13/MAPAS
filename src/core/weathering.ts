@@ -34,7 +34,8 @@ float wNoise(vec2 p) { vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 *
   float streak = smoothstep(0.2, 0.55, st) * uWStreak * (0.4 + 0.6 * smoothstep(9.0, 3.0, gy));
   vec3 mossCol = diffuseColor.rgb * vec3(0.62, 0.74, 0.5);
   diffuseColor.rgb = mix(diffuseColor.rgb, mossCol, grime * uWMoss * (0.5 + nb));
-  diffuseColor.rgb *= 1.0 - grime * 0.55 - streak * 0.5;
+  // max(): sujeira + escorrido passavam de 1 e a cor ficava NEGATIVA — o tone mapping mostra negativo como BRANCO
+  diffuseColor.rgb *= max(0.0, 1.0 - grime * 0.55 - streak * 0.5);
 }`);
   };
   const key = mat.customProgramCacheKey?.bind(mat);

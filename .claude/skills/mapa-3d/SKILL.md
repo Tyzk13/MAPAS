@@ -221,6 +221,10 @@ Leia `docs/NOVO-MAPA.md` antes de começar.
 ### Manchas brancas no preto (AgX)
 - Relato "textura bugada no anoitecer" com print de roupa preta cheia de branco = `log2(0)` do tone mapping AgX
   em placas reais (o swiftshader das capturas NÃO mostra). Mantenha o efeito `limpaCor` antes do `tm` em `post.ts`.
+- Se o branco aparece no cenário todo (postes, carros, tijolo) e na qualidade Baixa (sem pós): cor NEGATIVA no
+  material. Causa achada: `weathering.ts` fazia `cor *= 1 − sujeira − escorrido` (passava de 1). Regra: todo
+  multiplicador de escurecimento em shader leva `max(0.0, …)`. Há trava global em `engine.ts` (ShaderChunk
+  `tonemapping_fragment`: max 0 e NaN→0) — não remova.
 
 ## Erros que já custaram tempo (não repita)
 

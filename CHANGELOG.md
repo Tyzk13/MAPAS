@@ -359,3 +359,9 @@
 - Vista "Chegada (ônibus)": um ônibus intermunicipal (letreiro HARLOW, faróis acesos) vem pela rodovia, para no
   novo ponto em frente à delegacia, abre a porta e as fichas dos jogadores descem uma a uma até a calçada. A janela
   dos jogadores vê o mesmo (segue a câmera). Sair da vista e voltar repete. Nota do mestre com o texto de abertura.
+
+## Correção: manchas brancas no cenário (qualidade Baixa)
+
+- O desgaste (sujeira + escorrido) podia deixar a cor negativa em postes, carros e tijolos; o tone mapping mostra
+  negativo como branco. Agora o fator é limitado a ≥ 0 e todo material passa por uma trava (cor ≥ 0, NaN → 0)
+  antes do tone mapping — vale também sem pós-processamento.
