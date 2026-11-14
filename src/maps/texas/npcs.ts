@@ -1,8 +1,9 @@
-// Moradores de Harlow em pé no mapa (figuras 2D que giram para a câmera), cada um num lugar que combina com ele.
+// Moradores de Harlow: viram personagens móveis do mapa (o mestre arrasta, oculta e muda o tamanho), cada um
+// nascendo num lugar que combina com ele.
 // As imagens são artes de terceiros da pasta do mestre no Pinterest: NÃO vão para o git (repositório público).
 // `node tools/baixar-npcs.mjs` baixa para npcs-local/NN.*; sem elas, cada NPC vira uma silhueta escura.
-import * as THREE from 'three';
 import { groundH } from './nature';
+import type { TokenDef } from '../../core/tokens';
 
 const IMG = import.meta.glob('../../../npcs-local/*.{png,jpg,jpeg,webp}', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
 const img = (n: number) => Object.entries(IMG).find(([k]) => k.split('/').pop()!.startsWith(String(n).padStart(2, '0') + '.'))?.[1];
@@ -90,26 +91,13 @@ function silhouette() {
   return c;
 }
 
-export function buildNpcs(G: THREE.Group) {
-  const O = new THREE.Group(); O.name = 'npcs'; G.add(O);
-  const bills: THREE.Object3D[] = [];
-  for (const n of NPCS) {
-    const h = n.h ?? 1.75, y = n.y ?? groundH(n.x, n.z);
-    const piv = new THREE.Group(); piv.position.set(n.x, y, n.z); piv.name = 'npc:' + n.nome; O.add(piv); bills.push(piv);
-    const put = (cv: HTMLCanvasElement) => {
-      const tx = new THREE.CanvasTexture(cv); tx.colorSpace = THREE.SRGBColorSpace;
-      const m = new THREE.Mesh(new THREE.PlaneGeometry(h * cv.width / cv.height, h), new THREE.MeshStandardMaterial({ map: tx, transparent: true, alphaTest: 0.35, side: THREE.DoubleSide, roughness: 1, metalness: 0 }));
-      m.position.y = h / 2; // sem sombra: com 28 figuras recortadas a sombra pesava demais (screenshot do teste estourava)
-      m.userData.noExport = 1; piv.clear(); piv.add(m);
-    };
-    put(silhouette());
-    const u = img(n.i);
-    if (u) { const im = new Image(); im.onload = () => put(cutout(im, n.crop)); im.src = u; }
-  }
-  const v = new THREE.Vector3();
-  return {
-    group: O,
-    /** gira as figuras para a câmera (só no eixo Y) */
-    face(cam: THREE.Camera) { cam.getWorldPosition(v); for (const b of bills) b.rotation.y = Math.atan2(v.x - b.position.x, v.z - b.position.z); },
-  };
+/** NPCs como personagens móveis (arrastar, ocultar dos jogadores, mudar tamanho), cada um nascendo no seu lugar */
+export async function npcTokens(): Promise<TokenDef[]> {
+  const load = (u: string) => new Promise<HTMLImageElement | null>(r => { const im = new Image(); im.onload = () => r(im); im.onerror = () => r(null); im.src = u; });
+  const sil = silhouette().toDataURL('image/png');
+  return Promise.all(NPCS.map(async n => {
+    const u = img(n.i), im = u ? await load(u) : null;
+    return { id: 'npc' + n.i, name: n.nome, h: n.h ?? 1.75, c: 0x5a5650, img: im ? cutout(im, n.crop).toDataURL('image/png') : sil, npc: true,
+      pos: { x: n.x, z: n.z, y: n.y ?? groundH(n.x, n.z) } };
+  }));
 }

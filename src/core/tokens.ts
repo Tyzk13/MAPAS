@@ -13,13 +13,16 @@ import leo from '@assets/tokens/leo.png';
 const LOCAL = import.meta.glob('../../npcs-local/jogador*.png', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
 const jog = (n: number, alt: string) => Object.entries(LOCAL).find(([k]) => k.endsWith('/jogador' + n + '.png'))?.[1] ?? alt;
 
-export interface TokenDef { id: string; name: string; h: number; c: number; img: string; custom?: boolean }
+export interface TokenDef { id: string; name: string; h: number; c: number; img: string; custom?: boolean;
+  /** NPC do mapa: nasce em `pos` (até o mestre mover) e some ao trocar de mapa */
+  npc?: boolean; pos?: { x: number; z: number; y?: number } }
 export interface Token {
   id: string; name: string; h: number; h0: number; fl: boolean; idx: number; custom: boolean;
   g: THREE.Group; sp: THREE.Group; base: THREE.Mesh; mesh: THREE.Mesh | null; hit: THREE.Mesh; ring: THREE.Mesh; btn: HTMLButtonElement;
   target: THREE.Vector2; ty: number; ls: number;
   /** oculto: só o mestre vê (meio transparente) até revelar */
   oc: boolean;
+  npc?: boolean; pos0?: { x: number; z: number; y?: number };
 }
 
 export const DEF: TokenDef[] = [
@@ -43,6 +46,7 @@ export function placeT(t: Token, i?: number) {
   const p = st.pos[st.curMap + '__' + t.id];
   if (typeof i === 'number') t.idx = i;
   if (p) { t.target.set(p.x, p.z); t.ty = p.y || 0; if (typeof p.h === 'number') t.h = p.h; t.fl = !!p.f; t.oc = !!p.o; }
+  else if (t.pos0) { t.target.set(t.pos0.x, t.pos0.z); t.ty = t.pos0.y ?? 0; t.h = t.h0; t.fl = false; t.oc = false; }
   else { const s = st.MP!.spawn(t.idx); t.target.set(s.x, s.z); t.ty = s.y || 0; t.h = t.h0; t.fl = false; t.oc = false; }
   t.g.position.set(t.target.x, t.ty, t.target.y); sizeT(t);
 }
@@ -55,10 +59,10 @@ export function makeToken(d: TokenDef): Token {
   const ring = new THREE.Mesh(new THREE.RingGeometry(0.62, 0.76, 32).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9 }));
   ring.position.y = 0.12; ring.visible = false; g.add(ring);
   const b = document.createElement('button'); b.className = 'av'; b.title = d.name;
-  const t: Token = { id: d.id, name: d.name, h: d.h, h0: d.h, fl: false, idx: Object.keys(st.T).length, custom: !!d.custom, g, sp: spr, base, mesh: null, hit, ring, btn: b, target: new THREE.Vector2(), ty: 0, ls: 0, oc: false };
+  const t: Token = { id: d.id, name: d.name, h: d.h, h0: d.h, fl: false, idx: Object.keys(st.T).length, custom: !!d.custom, g, sp: spr, base, mesh: null, hit, ring, btn: b, target: new THREE.Vector2(), ty: 0, ls: 0, oc: false, npc: d.npc, pos0: d.pos };
   st.T[d.id] = t;
   hit.userData.t = t; g.add(hit); pick.push(hit);
-  const im = new Image(); im.src = d.img; b.appendChild(im); b.onclick = () => { selT(t); focusT(t); }; $('ros').appendChild(b);
+  const im = new Image(); im.src = d.img; b.appendChild(im); b.onclick = () => { selT(t); focusT(t); }; if (!d.npc) $('ros').appendChild(b);
   tl.load(d.img, tx => {
     tx.colorSpace = THREE.SRGBColorSpace;
     const m = new THREE.Mesh(new THREE.PlaneGeometry(tx.image.width / tx.image.height, 1), new THREE.MeshBasicMaterial({ map: tx, transparent: true, alphaTest: 0.3, side: THREE.DoubleSide }));
@@ -80,7 +84,7 @@ export function selT(t: Token | null) {
 }
 export function setTarget(t: Token, x: number, z: number, y: number) {
   const q = st.snap ? 2 : 10;
-  t.target.set(Math.max(-90, Math.min(90, Math.round(x * q) / q)), Math.max(-90, Math.min(90, Math.round(z * q) / q))); t.ty = y;
+  t.target.set(Math.max(-400, Math.min(400, Math.round(x * q) / q)), Math.max(-400, Math.min(400, Math.round(z * q) / q))); t.ty = y;
 }
 export function focusT(t: Token) {
   if ((window as any).__walkOn) return;

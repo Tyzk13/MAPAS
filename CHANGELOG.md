@@ -342,3 +342,12 @@
   (fora do git, como os NPCs). Sem elas, usa as fichas antigas. Sabriny saiu.
 - Versão offline: `npm run build:single` gera um HTML único que abre sem internet; a janela dos jogadores funciona
   do mesmo jeito (a ligação entre janelas é local).
+
+## NPCs móveis e correção das manchas brancas
+
+- Os NPCs de Harlow agora são personagens do mapa: o mestre arrasta, oculta dos jogadores (meio transparentes só
+  para o mestre), muda o tamanho e "Voltar ao início" devolve cada um ao lugar original. Não entram na barra de
+  jogadores; somem ao trocar de mapa. Novo campo do mapa: `M.npcs` (lista de `TokenDef` com `npc` e `pos`).
+- Personagens podiam ser arrastados só até ±90 m; agora ±400 m (Harlow é maior).
+- Corrigido: manchas BRANCAS nas partes pretas das fichas no anoitecer/noite em algumas placas de vídeo. O AgX faz
+  `log2(cor)` e preto puro virava −infinito; um efeito antes do tone mapping limpa NaN/inf e põe um piso de 1e-4.

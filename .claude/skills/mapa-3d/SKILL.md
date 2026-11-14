@@ -213,6 +213,15 @@ Leia `docs/NOVO-MAPA.md` antes de começar.
   cortar a sobra transparente; `crop` por NPC tira marca d'água/quadros extras. Billboard: grupo no chão girado só
   em Y para a câmera no `M.tick`; `customDepthMaterial` com alphaTest para sombra com a forma da figura.
 
+### NPCs móveis (`M.npcs`)
+- Mapa que quer NPCs arrastáveis define `M.npcs = async () => TokenDef[]` com `npc: true` e `pos`. O núcleo cria os
+  personagens depois do carregamento, tira os do mapa anterior e não os põe na barra dos jogadores. Imagem precisa
+  ter alfa: recorte num canvas e passe `toDataURL('image/png')`.
+
+### Manchas brancas no preto (AgX)
+- Relato "textura bugada no anoitecer" com print de roupa preta cheia de branco = `log2(0)` do tone mapping AgX
+  em placas reais (o swiftshader das capturas NÃO mostra). Mantenha o efeito `limpaCor` antes do `tm` em `post.ts`.
+
 ## Erros que já custaram tempo (não repita)
 
 - **Modelos da Poly Haven são pesados** (árvores 1–4 M faces). Sempre rode `tools/arvores.sh`

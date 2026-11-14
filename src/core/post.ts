@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import {
   EffectComposer, RenderPass, EffectPass, BloomEffect, VignetteEffect, ToneMappingEffect, ToneMappingMode,
   SMAAEffect, SMAAPreset, BrightnessContrastEffect, HueSaturationEffect, DepthOfFieldEffect, NoiseEffect, BlendFunction,
-  ChromaticAberrationEffect, ColorAverageEffect,
+  ChromaticAberrationEffect, ColorAverageEffect, Effect,
 } from 'postprocessing';
 import { N8AOPostPass } from 'n8ao';
 import { R, S, cam, ctl, onResize, setPixelRatioCap, fit } from './engine';
@@ -60,12 +60,17 @@ export const post = {
     bc = new BrightnessContrastEffect({ brightness: -0.02, contrast: 0.12 });
     hs = new HueSaturationEffect({ saturation: -0.22, hue: 0 });
     tm = new ToneMappingEffect({ mode: ToneMappingMode.AGX });
+    // O AgX faz log2(cor): preto puro (0) vira -infinito e várias placas (celular, algumas Intel/AMD) mostram
+    // isso como BRANCO — manchas brancas nas roupas pretas das fichas no anoitecer/noite. Limpa antes do AgX.
+    const limpa = new Effect('limpaCor', `void mainImage(const in vec4 c, const in vec2 uv, out vec4 o) {
+      vec3 v = c.rgb; if (any(isnan(v)) || any(isinf(v))) v = vec3(0.0);
+      o = vec4(clamp(v, vec3(1e-4), vec3(6e4)), c.a); }`);
     noise = new NoiseEffect({ premultiply: true, blendFunction: BlendFunction.SCREEN });
     noise.blendMode.opacity.value = 0.12;
     tintFx = new ColorAverageEffect(BlendFunction.SKIP);
     const ca = new ChromaticAberrationEffect({ offset: new THREE.Vector2(0.0006, 0.0004), radialModulation: true, modulationOffset: 0.35 });
     // tone mapping antes da gradação de cor (contraste/saturação agem na imagem já em faixa de tela)
-    composer.addPass(new EffectPass(cam, bloom, ca, tm, bc, hs, vig, noise, tintFx));
+    composer.addPass(new EffectPass(cam, bloom, ca, limpa, tm, bc, hs, vig, noise, tintFx));
 
     smaa = new SMAAEffect({ preset: SMAAPreset.MEDIUM });
     smaaPass = new EffectPass(cam, smaa);

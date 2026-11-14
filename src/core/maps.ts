@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { R, S, cam, ctl } from './engine';
 import { st, $ } from './state';
 import { setTime, setShadowRadius } from './sky';
-import { placeT, selT } from './tokens';
+import { placeT, selT, makeToken, dropT } from './tokens';
 import { fillAreas } from './vtt';
 import { WM, startWalk, freeLookAt } from './walk';
 import { MAPS } from '../maps/manifest';
@@ -61,7 +61,9 @@ export async function loadMap(id: string) {
     cam.fov = v.fov || 50; cam.updateProjectionMatrix();
     cam.position.set(...v.p); ctl.target.set(...v.t); ctl.update();
     setTime(st.pi);
+    for (const k in st.T) if (st.T[k].npc) dropT(k); // NPCs do mapa anterior
     let i = 0; for (const k in st.T) placeT(st.T[k], i++);
+    M.npcs?.().then(list => { if (st.MP === M) list.forEach(d => makeToken(d)); });
     selT(null); fillAreas();
     if (WM.on && !WM.free) startWalk();
     else if (WM.free) freeLookAt(new THREE.Vector3(...v.p), new THREE.Vector3(...v.t));

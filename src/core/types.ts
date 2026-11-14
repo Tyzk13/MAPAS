@@ -31,6 +31,8 @@ export interface MapRuntime {
   lamps: THREE.MeshBasicMaterial[];
   puddle: THREE.Material | null;
   spawn: (i: number) => { x: number; z: number; y?: number };
+  /** NPCs móveis do mapa (viram personagens arrastáveis; o mestre pode ocultar/mover) */
+  npcs?: () => Promise<import('./tokens').TokenDef[]>;
   solid: () => THREE.Object3D[];
   walkStart: { x: number; z: number };
   vtt: VttData;
