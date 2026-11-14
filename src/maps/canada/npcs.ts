@@ -21,6 +21,9 @@ export interface Morador { i: number; nome: string; papel: string; onde: string;
 export const MORADORES: Morador[] = [
   { i: 15, nome: 'William Ashdown', papel: 'dono do Hotel Laurentian; ex-alfaiate; bebe no próprio bar e fala sozinho ("sim, Maggie")', onde: 'Hotel · Beverage room', x: 19.1, z: -11.2, y: 0.2, h: 1.8 },
   { i: 3, nome: 'Margaret Ashdown', papel: 'a esposa morta; entidade de Conhecimento. COMEÇA OCULTA (só o mestre vê) no quarto 307', onde: 'Hotel · Quarto 307', x: 24.6, z: -10.6, y: 8.0, h: 1.65, oculto: true },
+  // criaturas (imagens do PDF do mestre): começam OCULTAS — ao clicar Mostrar, a aparição sinistra toca na TV
+  { i: 28, nome: 'Margaret, a forma refeita', papel: 'o corpo costurado de Margaret, de pé — o que acontece se o ritual se completar (criatura de Conhecimento). OCULTA', onde: 'Hotel · Porão', x: 26.0, z: -13.0, y: -2.6, h: 2.4, oculto: true },
+  { i: 27, nome: 'O Esfolado', papel: 'o primeiro "rascunho" de William: um corpo costurado que não deu certo e fugiu; ronda a fábrica e o rio à noite. OCULTO', onde: 'Fábrica · salão', x: 40.0, z: -186.0, y: 0.12, h: 2.3, oculto: true },
   { i: 2, nome: 'Dr. Harold Finch', papel: 'legista do distrito; mora no 204; desconfia do próprio laudo de 1974', onde: 'Necrotério · Gabinete', x: -31.5, z: 41.6, y: 0.35, h: 1.78 },
   { i: 14, nome: 'Sra. Agathe Doucette', papel: 'viúva do 303; ouve tudo pela parede; olhos cinza-esverdeados (a próxima)', onde: 'Hotel · Quarto 303', x: 13.6, z: -16.4, y: 8.0, h: 1.6 },
   { i: 6, nome: 'Émile Brodeur', papel: 'recepcionista da noite (19); viu William subir com "um tapete enrolado"', onde: 'Hotel · Recepção', x: 20.2, z: -16.8, y: 0.2, h: 1.72 },

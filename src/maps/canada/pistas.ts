@@ -59,6 +59,8 @@ export const PISTAS: Record<string, { onde: string; pt: string }> = {
 
 export const NOTAS: Record<string, string> = {
   'Personagens': 'PERSONAGENS (fichas móveis no menu Personagens; arraste, oculte, mude o tamanho):\n' +
+    'JOGADORES — Jogador 1 (de preto) e Jogadora 2 (ruiva de sobretudo) chegam de moto; Nancy chega de carro (vista "Chegada (moto e carro)").\n' +
+    'CRIATURAS (ocultas; Mostrar = aparição na TV) — "Margaret, a forma refeita" no porão do hotel · "O Esfolado" na fábrica de papel.\n' +
     'IMPORTANTES — William Ashdown (dono do hotel; beverage room) · Margaret Ashdown (COMEÇA OCULTA no 307; clique Mostrar para revelar) · Dr. Harold Finch (legista; necrotério) · Sra. Agathe Doucette (303; a próxima vítima) · Émile Brodeur (recepcionista da noite) · Lucien Gauthier (gerente) · Policial André Roy (cemitério) · René Tremblay (capataz; fábrica) · Lise Moreau (esposa do Jean) · Dot (garçonete).\n' +
     'COLORIDO — Sophie Ste-Marie (camareira) · Marcel Lavoie, "Big Gus" Bouchard e Pete Ouellet (operários no bar) · Hélène Côté (piloto, hóspede) · Luc Moreau (filho) · Claire Pelletier (sobrinha de Eva) · Yves Dumont (entregador de gelo) · Jo Lacroix (frentista) · Theo (andarilho da estação) · Tommy Gagnon (jornaleiro) · Nadine Brault (repórter).',
   'Resumo do caso': 'RESUMO — O CASO ASHDOWN (Greywater Falls, Ontário, quarta 19/11/1975).\n' +

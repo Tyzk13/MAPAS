@@ -141,6 +141,17 @@ arquivo offline já sai com elas. Sem as imagens, cada um vira uma silhueta.
 | **Lise Moreau** (24) | mulher de jaqueta verde militar | Casa dos Moreau | Esposa do operário morto. |
 | **Dot** (18) | garçonete de suéter, bandana, botas | Lanchonete | Serviu William e Moreau no domingo 23h20. |
 
+### Jogadores e criaturas (PDF do mestre)
+
+- **Jogador 1** (rapaz de preto, cabelo rebelde) e **Jogadora 2** (ruiva de sobretudo e gravata) chegam de **moto**;
+  **Nancy** (cabelo branco, vestido branco) chega de **carro** — vista "Chegada (moto e carro)".
+- **Margaret, a forma refeita** (criatura magra de cabelo comprido e boca enorme): o corpo costurado de pé, o que
+  acontece se o ritual se completar. Começa **oculta** no porão do hotel.
+- **O Esfolado** (criatura vermelha, sem pele): o primeiro "rascunho" de William, um corpo costurado que não deu
+  certo e fugiu; ronda a fábrica e o rio à noite. Começa **oculto** no salão da fábrica.
+- Clique **Mostrar** numa criatura: a TV mostra a aparição sinistra (chiado, figura vermelha tremendo, avanço no rosto)
+  e ela surge na cena. Use "Levar para…" no menu Personagens para pô-la onde quiser antes.
+
 ### Os de cor local
 
 Sophie Ste-Marie, camareira (20) · Marcel Lavoie (07), "Big Gus" Bouchard (16) e Pete Ouellet (17), operários no bar ·

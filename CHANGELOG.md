@@ -436,3 +436,10 @@
   pretas). O navegador de teste não reproduz. Painel com chaves que desligam uma coisa por vez (sombra, luz da lua,
   luz do céu, reflexos do HDRI, luzes pontuais, névoa, pós); a escolha fica salva no navegador e se reaplica sozinha.
   Mostra também o nome da placa e a precisão do shader.
+
+## Jogadores novos e criaturas (PDF do mestre)
+
+- Fichas dos jogadores: Jogador 1 (de preto) e Jogadora 2 (ruiva) chegam de moto; Nancy chega de carro (imagens em
+  `npcs-local/jogadorN.png`, fora do git).
+- Duas criaturas em Greywater, ocultas até o mestre clicar Mostrar (aparição): "Margaret, a forma refeita" no porão do
+  hotel e "O Esfolado" na fábrica.

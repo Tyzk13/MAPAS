@@ -272,6 +272,9 @@ Leia `docs/NOVO-MAPA.md` antes de começar.
 - Fichas vivas: `PlaneGeometry(w, 1, 10, 20)` + `onBeforeCompile` (uniform `tempoFichas` atualizado no `tickTokens`).
 - Lista de personagens: lugar = vista cujo "ponto de chão" (1,8 m à frente da câmera da vista, pés em p.y−1,6) está
   mais perto; usar o ALVO da vista erra (o alvo de "Hotel Laurentian" fica dentro do 2º andar).
+- Imagens que o dono manda como ARQUIVO aparecem em `/root/.claude/uploads/<sessão>/` (PDF também: `pdfimages -png`).
+  Imagem colada no chat NÃO vira arquivo. Recorte de figura escura em fundo escuro com chão: recorte.py (vizinho) e
+  depois inundar a partir do transparente só os pixels escuros com limiar crescente para baixo (o chão).
 - Decisão do dono (nov/2026): os personagens antigos dos jogadores saíram; sem imagem nova, silhueta neutra.
 - Lugares para entrar fora do hotel ficam em `canada/casas.ts` (fábrica, lanchonete, casas das vítimas): `shell()` + `Kit`.
 - `scatter` com milhares de árvores: use grade de vizinhança (hash por célula), não `out.some(...)` (O(n²)).

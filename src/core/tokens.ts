@@ -33,9 +33,9 @@ export interface Token {
 }
 
 export const DEF: TokenDef[] = [
-  { id: 'j1', name: 'Jogadora 1', h: 1.68, c: 0x8a6ad8, img: jog(1, '#3a3446') },
-  { id: 'j2', name: 'Jogador 2', h: 1.78, c: 0xd9a93a, img: jog(2, '#463e2c') },
-  { id: 'j3', name: 'Jogador 3', h: 1.85, c: 0x3aa86b, img: jog(3, '#2c4034') },
+  { id: 'j1', name: 'Jogador 1', h: 1.8, c: 0x8a6ad8, img: jog(1, '#3a3446') },
+  { id: 'j2', name: 'Jogadora 2', h: 1.72, c: 0xd9a93a, img: jog(2, '#463e2c') },
+  { id: 'j3', name: 'Nancy', h: 1.66, c: 0x3aa86b, img: jog(3, '#2c4034') },
 ];
 
 const V3 = THREE.Vector3;
