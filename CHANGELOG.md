@@ -353,3 +353,9 @@
 - Personagens podiam ser arrastados só até ±90 m; agora ±400 m (Harlow é maior).
 - Corrigido: manchas BRANCAS nas partes pretas das fichas no anoitecer/noite em algumas placas de vídeo. O AgX faz
   `log2(cor)` e preto puro virava −infinito; um efeito antes do tone mapping limpa NaN/inf e põe um piso de 1e-4.
+
+## Harlow — cena da chegada de ônibus
+
+- Vista "Chegada (ônibus)": um ônibus intermunicipal (letreiro HARLOW, faróis acesos) vem pela rodovia, para no
+  novo ponto em frente à delegacia, abre a porta e as fichas dos jogadores descem uma a uma até a calçada. A janela
+  dos jogadores vê o mesmo (segue a câmera). Sair da vista e voltar repete. Nota do mestre com o texto de abertura.

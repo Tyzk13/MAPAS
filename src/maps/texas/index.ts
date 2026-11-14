@@ -12,6 +12,7 @@ import { buildPolice } from './police';
 import { buildForest } from './forest';
 import { buildHotel } from './hotel';
 import { npcTokens } from './npcs';
+import { buildOnibus, VISTA_ONIBUS } from './onibus';
 import { PISTAS, NOTAS } from './pistas';
 import { buildNature, setBuilt, groundH } from './nature';
 import {
@@ -22,6 +23,7 @@ const P = (x: number, y: number, z: number) => [x, y, z] as [number, number, num
 export const VIEWS: View[] = [
   // a 1ª vista é a inicial: o mapa abre na delegacia (onde a missão começa)
   { n: 'Delegacia', p: P(-9, 2.8, 67.5), t: P(12, 2.2, 82.5), fov: 52 },
+  { n: VISTA_ONIBUS.n, p: P(...VISTA_ONIBUS.p), t: P(...VISTA_ONIBUS.t), fov: VISTA_ONIBUS.fov },
   { n: 'Cinema', p: P(70, 30, 82), t: P(0, 2, -6), fov: 45 },
   { n: 'Praça', p: P(27, 1.7, 30), t: P(0, 5, 0), fov: 58 },
   { n: 'Main Street', p: P(-2.5, 1.75, -66), t: P(1, 3, 10), fov: 50 },
@@ -153,6 +155,7 @@ export async function build(M: MapRuntime) {
   const FO = await buildForest(G);
   const HO = await buildHotel(G);
   M.npcs = npcTokens;
+  const ON = buildOnibus(G);
   M.lamps.push(...HO.lamps);
   M.lamps.push(...FO.lamps);
   M.lamps.push(...PD.lamps);
@@ -241,6 +244,7 @@ export async function build(M: MapRuntime) {
   M.onTime = p => { lampsOn = p.lamps > 0; lampF = p.lamps; fogBase = (S.fog as THREE.FogExp2 | null)?.density ?? fogBase; escolherLuzes(); };
   const fp = L.anim.flag?.geometry.attributes.position as THREE.BufferAttribute | undefined, fx0 = fp ? Float32Array.from(fp.array as Float32Array) : null;
   M.tick = (dt, t) => {
+    ON.tick(dt, t, cam);
     // NÃO HÁ SAÍDA: quem passa da borda da cidade (caminhando ou na câmera livre) reaparece do lado oposto,
     // voltando para Harlow. Só vale nos modos caminhar/livre; a órbita do mestre e o cinema ficam livres.
     if (WM.on && !(window as unknown as { HARLOW_SAIDA?: boolean }).HARLOW_SAIDA) {
