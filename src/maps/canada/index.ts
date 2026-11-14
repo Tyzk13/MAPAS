@@ -10,8 +10,9 @@ import { buildNature, setBuilt, groundH } from './nature';
 import { buildHotel, CELLAR } from './hotel';
 import { buildMorgue } from './morgue';
 import { buildLandmarks } from './landmarks';
-import { buildCasas, CASA_EVA, CASA_MOREAU, DENTRO } from './casas';
+import { buildCasas, CASA_EVA, CASA_MOREAU, DENTRO, ALF } from './casas';
 import { moradores, buildRetratos } from './npcs';
+import { buildChegada, VISTA_CHEGADA } from './chegada';
 import { PISTAS, NOTAS } from './pistas';
 import { Q, rnd, reseed, sm, LREQ, ROW0, ROWD, KING, QUEEN, ELM, BIRCH, MAPLE, SPRUCE, CEDAR, EXT, RIVER, riverZ, RAIL, STATION, HOTEL, MORGUE, CHURCH, CEMETERY, MILL, GAS, DINER } from './common';
 import type { Xf } from '../../core/models';
@@ -20,6 +21,7 @@ const P = (x: number, y: number, z: number) => [x, y, z] as [number, number, num
 export const VIEWS: View[] = [
   // a 1ª vista é a inicial: o hotel, onde os agentes se hospedam
   { n: 'Hotel Laurentian', p: P(-6.5, 1.8, -51), t: P(16, 5.5, -24), fov: 55 },
+  { n: VISTA_CHEGADA.n, p: P(...VISTA_CHEGADA.p), t: P(...VISTA_CHEGADA.t), fov: VISTA_CHEGADA.fov },
   { n: 'Estação (chegada)', p: P(6, 1.75, 139.6), t: P(30, 2.2, 135.5), fov: 58 },
   { n: 'Main Street', p: P(2.5, 1.8, 62), t: P(0, 4, -40), fov: 52 },
   { n: 'Saguão', p: P(11.6, 1.9, -13.6), t: P(19.3, 1.5, -17.5), fov: 64 },
@@ -46,6 +48,7 @@ export const VIEWS: View[] = [
   { n: 'Autópsia', p: P(-35.2, 2.0, 47.0), t: P(-41, 1.0, 50.5), fov: 64 },
   { n: 'Câmara fria', p: P(-32.8, 2.0, 46.8), t: P(-26.4, 1.6, 50.8), fov: 64 },
   { n: 'Igreja', p: P(-85, 1.8, -38.5), t: P(-96, 8, -58), fov: 58 },
+  { n: 'Igreja · nave', p: P(-96, 1.8, -55.4), t: P(-96, 1.6, -72), fov: 62 },
   { n: 'Cemitério', p: P(-105.6, 1.7, -52.6), t: P(-111, 0.6, -60.5), fov: 62 },
   { n: 'Ponte', p: P(5, 1.8, -96), t: P(0, 3, -128), fov: 58 },
   { n: 'Fábrica de papel', p: P(-8, 3.5, -104), t: P(42, 14, -176), fov: 55 },
@@ -91,12 +94,13 @@ export async function build(M: MapRuntime) {
   // ---------- lojas de tijolo na Main St ----------
   const names = ['ASHDOWN & SON · TAILORS', 'BANK OF GREYWATER', 'CAPITOL', 'CENTRAL DRUGS', 'HARDWARE · QUINCAILLERIE', 'BARBER', 'BAKERY · BOULANGERIE', 'POST OFFICE · BUREAU DE POSTE', 'THE GREYWATER EXAMINER', 'GAUTHIER & FILS · FUNERAL HOME', 'FIVE & TEN', 'MEN\'S WEAR', 'GROCERY · ÉPICERIE', 'SHOE REPAIR', 'FOR RENT · À LOUER', 'LEGION HALL', 'JEWELLER · WATCHES', 'TAVERN'];
   const sc: Record<string, [string, string]> = { 'ASHDOWN & SON · TAILORS': ['#2a2a2a', '#c8b890'], 'GAUTHIER & FILS · FUNERAL HOME': ['#1a1a1e', '#d8d0b8'], 'BANK OF GREYWATER': ['#e8e0cc', '#2a3a2a'], 'CAPITOL': ['#1a1a1a', '#e8c060'] };
-  let ni = 0;
+  let ni = 0; let alf: { x: number; z: number; w: number } | null = null;
   const fill = (c: number, ry: number, from: number, to: number) => {
     let t = from;
     while (to - t > 4) {
       let w = 7 + rnd() * 4; if (to - t - w < 5) w = to - t;
       const name = names[ni++ % names.length], z = t + w / 2;
+      if (name.startsWith('ASHDOWN') && !alf) { alf = { x: c, z, w }; t += w; continue; } // a alfaiataria tem interior (casas.ts)
       b.store(c, z, ry, { w, d: ROWD, name, brick: true, two: name === 'CAPITOL' || rnd() < 0.7, h: undefined, porch: rnd() < 0.5 ? 'awning' : 'none', signCol: sc[name], dark: name.startsWith('ASHDOWN') || name.startsWith('FOR RENT'), lit: 0.45 });
       t += w;
     }
@@ -132,10 +136,11 @@ export async function build(M: MapRuntime) {
   const HO = await buildHotel(G);
   const MO = await buildMorgue(G);
   const L = await buildLandmarks(G);
-  const CA = await buildCasas(G);
+  const CA = await buildCasas(G, alf);
   await b.finish();
   M.lamps.push(...HO.lamps, ...MO.lamps, ...L.lamps, ...CA.lamps);
   M.npcs = moradores;
+  const CH = buildChegada(G);
   M.docs = [...HO.docs, ...MO.docs, ...L.docs, ...CA.docs, ...buildRetratos(G)].map(d => ({ ...d, ...(PISTAS[d.n] || {}) }));
   M.notas = NOTAS;
 
@@ -179,7 +184,13 @@ export async function build(M: MapRuntime) {
   const solids = [...b.colliders, ...HO.solids, ...MO.solids, ...L.solids, ...CA.solids];
   M.solid = () => solids;
   M.layers = [...HO.layers, { n: 'Telhados', o: b.roofs, v: true }, { n: 'Telhados (marcos)', o: L.roofs, v: true }, { n: 'Telhado do necrotério', o: MO.roofs, v: true }, ...CA.layers, { n: 'Carros', o: L.cars, v: true }];
-  M.views = VIEWS;
+  M.views = VIEWS.slice();
+  if (ALF.ok) { // a alfaiataria cai num lote da Main St: as vistas dela são montadas aqui
+    const i = M.views.findIndex(v => v.n === 'Personagens');
+    M.views.splice(i, 0, { n: 'Alfaiataria Ashdown', p: P(ALF.x - 0.7, 1.75, ALF.z + 0.2), t: P(ALF.x - 6.5, 1.3, ALF.z - 1.2), fov: 66 },
+      { n: 'Alfaiataria · oficina', p: P(ALF.x - 7.4, 1.8, ALF.z + 2.0), t: P(ALF.x - 13.6, 1.7, ALF.z), fov: 66 });
+    if (!DENTRO.some(r => r[1] === ALF.x)) DENTRO.push([ALF.x - 14, ALF.x, ALF.z - 6, ALF.z + 6]);
+  }
   M.shadowRadius = Q.lights > 8 ? 80 : 55;
   M.walkLimit = 260; M.camMax = 260; M.fogScale = 0.55;
   // os agentes chegam no trem da noite: plataforma da estação
@@ -223,6 +234,7 @@ export async function build(M: MapRuntime) {
   let fogBase = 0.012;
   M.onTime = p => { lampF = p.lamps; fogBase = (S.fog as THREE.FogExp2 | null)?.density ?? fogBase; escolherLuzes(); };
   M.tick = (dt, t) => {
+    CH.tick(dt, t, cam);
     if (Math.floor(t * 3) !== ultimaEscolha || cam.position.distanceToSquared(posEscolha) > 25) { ultimaEscolha = Math.floor(t * 3); posEscolha.copy(cam.position); escolherLuzes(); }
     pool.forEach((e, k) => {
       const r = alvo[k]; if (!r || !r.flick || !e.l.intensity) return;

@@ -13,13 +13,15 @@ import { paper, photo, age } from '../texas/police';
 /** casas abertas: centro e lado da frente (a rua fica desse lado) */
 export const CASA_EVA = { x: ELM - 12, z: -8, front: 'E' as const };
 export const CASA_MOREAU = { x: BIRCH + 12, z: 48, front: 'W' as const };
+/** alfaiataria (posição definida na hora: é um lote da Main St) */
+export const ALF = { x: 0, z: 0, ok: false };
 /** retângulos com interior (luz acesa fraca de dia) */
 export const DENTRO: [number, number, number, number][] = [
   [MILL.x0, MILL.x1, MILL.z0, MILL.z1], [DINER.x0, DINER.x1, DINER.z0, DINER.z1],
   [CASA_EVA.x - 5, CASA_EVA.x + 5, CASA_EVA.z - 4.5, CASA_EVA.z + 4.5], [CASA_MOREAU.x - 5, CASA_MOREAU.x + 5, CASA_MOREAU.z - 4.5, CASA_MOREAU.z + 4.5],
 ];
 
-export async function buildCasas(G: THREE.Group): Promise<Interior> {
+export async function buildCasas(G: THREE.Group, alf: { x: number; z: number; w: number } | null = null): Promise<Interior> {
   reseed(1975);
   const m = TM(), I = IM();
   const O = new THREE.Group(); O.name = 'lugares-abertos'; G.add(O);
@@ -115,6 +117,51 @@ export async function buildCasas(G: THREE.Group): Promise<Interior> {
     docPlane(O, docs, canvasTex(512, 384, g => { g.fillStyle = '#1e2420'; g.fillRect(0, 0, 512, 384); g.fillStyle = '#e8e4d8'; g.font = '30px "Comic Sans MS", cursive'; ['COFFEE ............ 25¢', 'PIE (apple) ....... 75¢', 'HOT HAMBURG ...... $1.40', 'POUTINE ............ 95¢', 'Open all night'].forEach((l, i) => g.fillText(l, 30, 60 + i * 62)); }), 1.4, 1.05, (x0 + x1) / 2, 2.4, z1 - T - 0.012, Math.PI, 'Cardápio da lanchonete');
     light((x0 + x1) / 2, 3.1, (z0 + z1) / 2, 7, 4, 0xfff0d8, { vtt: 8, flick: 1 });
     vttWalls.push([[x0, z0], [x1, z0], [x1, z1], [x0, z1], [x0, z0]]); portals.push({ p: [x0 + 3, z0], a: [x0 + 2.5, z0], b: [x0 + 3.5, z0] });
+  }
+
+
+  // ================= ALFAIATARIA ASHDOWN & SON (Main St, fechada desde 1969 — mas alguém trabalha lá à noite) =================
+  if (alf) {
+    const x1 = alf.x, x0 = alf.x - 14, z0 = alf.z - alf.w / 2, z1 = alf.z + alf.w / 2, zc = alf.z, H = 7.2, T = 0.3, FL = 0.16, CE = 3.6;
+    const ops: Opening[] = [{ side: 'E', at: zc, w: 1.1, h: 2.4, sill: FL }, { side: 'E', at: zc - 2.3, w: 2.0, h: 2.0, sill: 0.7 }, { side: 'E', at: zc + 2.3, w: 2.0, h: 2.0, sill: 0.7 },
+      ...[zc - 2.3, zc + 2.3].map(z => ({ side: 'E' as const, at: z, w: 1.0, h: 1.5, sill: 4.6 }))];
+    shell(B, m.brick, 0xb08878, x0, z0, x1, z1, H, T, ops);
+    ops.filter(o => o.sill! > 0.5).forEach(o => W.box(m.glass, 0.03, o.h, o.w, x1 - T / 2, o.sill! + o.h / 2, o.at, 0xffffff));
+    B.box(m.brick, 0.3, 1.2, alf.w, x1 - 0.15, H + 0.6, zc, 0xb08878); K.D.box(m.plain, 0.45, 0.3, alf.w + 0.2, x1 + 0.05, H + 1.2, zc, 0xe0d8c8);
+    R.box(m.tin, 13.6, 0.1, alf.w - 0.4, (x0 + x1) / 2, H + 0.05, zc, 0x8a8a84);
+    R.box(m.plain, 14 - 2 * T, 0.04, alf.w - 2 * T, (x0 + x1) / 2, CE, zc, 0xd8d0c0);
+    { const s2 = sign('ASHDOWN & SON · TAILORS', Math.min(alf.w - 0.6, 6.5), 0.9, { bg: '#2a2a2a', fg: '#c8b890', border: '#c8b890', font: 'Georgia, serif', sub: 'BESPOKE · ALTERATIONS · SINCE 1931' }); s2.position.set(x1 + 0.03, 3.6, zc); s2.rotation.y = Math.PI / 2; O.add(s2); }
+    docPlane(O, docs, canvasTex(512, 300, g => { g.fillStyle = '#e8e2d0'; g.fillRect(0, 0, 512, 300); g.fillStyle = '#1a1a1a'; g.textAlign = 'center'; g.font = 'bold 54px Georgia'; g.fillText('CLOSED', 256, 80); g.font = 'italic 28px Georgia'; g.fillText('Thank you for 38 years', 256, 140); g.fillText('— W. Ashdown, June 1969', 256, 182); g.fillStyle = 'rgba(200,160,60,0.5)'; g.font = 'italic 30px "Brush Script MT", cursive'; g.fillText('open again for her', 256, 260); }), 0.5, 0.29, x1 + 0.02, 1.9, zc - 1.6, Math.PI / 2, 'Placa da porta da alfaiataria');
+    K.F.box(m.floor, 14 - 2 * T, 0.04, alf.w - 2 * T, (x0 + x1) / 2, FL, zc, 0x7a6a58);
+    const xp = x1 - 6.5; // divisória: loja na frente, oficina no fundo
+    K.wall('z', xp, z0 + T, z1 - T, FL, CE - FL, [[zc + 1.2, 1.0, 2.2]], { col: 0xc8bca0 });
+    // loja: balcão, manequins nus, rolos de tecido, espelho de corpo inteiro, cadeiras
+    K.D.box(m.woodDark, 0.6, 1.0, 3.2, x1 - 4.2, FL + 0.5, zc - 0.6, 0x4a3020); K.D.box(m.woodDark, 0.7, 0.05, 3.3, x1 - 4.2, FL + 1.02, zc - 0.6, 0x2a1a10);
+    const manequim = (x: number, z: number, cor = 0xd8ccb0) => { const g2 = new THREE.LatheGeometry([[0, 0], [0.2, 0.02], [0.03, 0.05], [0.03, 0.9], [0.17, 0.95], [0.22, 1.15], [0.16, 1.32], [0.2, 1.45], [0.12, 1.55], [0.05, 1.62], [0, 1.64]].map(([a, b2]) => new THREE.Vector2(a, b2)), 14); g2.translate(x, FL, z); K.D.add(I.cloth, g2, cor); };
+    manequim(x1 - 1.2, zc - 2.3); manequim(x1 - 1.2, zc + 2.3); manequim(x1 - 3.0, zc + 1.6, 0xb8aa90);
+    for (let i = 0; i < 9; i++) { const g2 = new THREE.CylinderGeometry(0.11, 0.11, 1.2, 10); g2.rotateZ(Math.PI / 2); g2.translate(xp + 1.0, FL + 0.5 + (i % 3) * 0.3, z0 + 0.8 + Math.floor(i / 3) * 0.26); K.D.add(I.cloth, g2, [0x2a2a3a, 0x5a4a3a, 0x3a3a2a, 0x6a2a2a, 0x8a8a7a][i % 5]); }
+    K.D.box(m.woodDark, 1.4, 0.05, 1.0, xp + 1.0, FL + 0.4, z0 + 1.1, 0x3a2418);
+    K.D.box(I.mirror as unknown as THREE.Material, 0.03, 1.7, 0.7, xp + 0.1, FL + 1.0, zc - 2.4, 0xffffff);
+    K.chair(mtx(x1 - 2.2, FL, z1 - 1.0, Math.PI));
+    // oficina (fundos): mesa de corte com moldes, máquina de costura, moldes de papel do corpo dela na parede
+    K.table(mtx(x0 + 3.2, FL, zc, Math.PI / 2), 2.4, 1.2, 0.9, 0x5a4030);
+    K.D.box(m.plain, 2.2, 0.01, 1.0, x0 + 3.2, FL + 0.91, zc, 0xc8a878);
+    K.D.box(m.iron, 0.42, 0.28, 0.2, x0 + 1.0, FL + 0.9, zc + 1.8, 0x1a1a1a); K.table(mtx(x0 + 1.0, FL, zc + 1.8, Math.PI / 2), 1.0, 0.6);
+    docPlane(O, docs, canvasTex(1400, 700, g => { g.fillStyle = '#6a5a48'; g.fillRect(0, 0, 1400, 700);
+      const peca = (pts: [number, number][], rot: number, lbl: string, ox: number, oy: number) => { g.save(); g.translate(ox, oy); g.rotate(rot); g.fillStyle = '#d8c098'; g.strokeStyle = '#3a2a1a'; g.lineWidth = 2; g.beginPath(); pts.forEach(([a, b2], i) => i ? g.lineTo(a, b2) : g.moveTo(a, b2)); g.closePath(); g.fill(); g.stroke(); g.setLineDash([6, 5]); g.stroke(); g.setLineDash([]); g.fillStyle = '#2a1a10'; g.font = '18px "Courier New"'; g.fillText(lbl, 10, 30); g.restore(); };
+      peca([[0, 0], [160, 0], [190, 300], [-20, 300]], 0.02, 'M. — BODICE (front)', 60, 60);
+      peca([[0, 0], [150, 0], [180, 300], [-30, 300]], -0.03, 'M. — BACK  (S.K.)', 300, 70);
+      peca([[0, 0], [70, 0], [90, 420], [10, 420]], 0.05, 'M. — L. ARM', 560, 60); peca([[0, 0], [70, 0], [90, 420], [10, 420]], -0.04, 'M. — R. ARM', 680, 60);
+      peca([[0, 40], [40, 0], [100, 0], [120, 160], [20, 180]], 0.1, 'HANDS (E.P.) ✓', 820, 80); peca([[0, 0], [110, 0], [140, 520], [-10, 520]], 0.01, 'LEG — 5\'5" (J.M.)', 1000, 60);
+      peca([[0, 0], [110, 0], [140, 520], [-10, 520]], -0.02, 'LEG', 1180, 70);
+      g.fillStyle = '#a02a1a'; g.font = 'bold 30px Georgia'; g.fillText('EYES — ?', 840, 360); g.strokeStyle = '#a02a1a'; g.lineWidth = 3; g.beginPath(); g.ellipse(900, 450, 70, 40, 0, 0, 7); g.stroke();
+      g.fillStyle = 'rgba(225,185,70,0.8)'; g.font = 'italic 40px "Brush Script MT", cursive'; g.fillText('make me again, Willy', 520, 640); age(g, 1400, 700, 50); }), 5.6, 2.8, x0 + T + 0.02, FL + 1.75, zc, Math.PI / 2, 'Moldes de papel na parede (alfaiataria)', false, 0.15);
+    docPlane(O, docs, paper('ORDER BOOK — Ashdown & Son', ['1969 · shop closed (married, the hotel).', '', 'Oct 1975 · mill night shift — work', 'clothes, 14 men. Measured all.', 'Moreau — 5\'5". Exactly.', 'Nov 1975 · Pelletier, E. — gloves?', '"No. Her hands."', '', 'Nov 20 · EYES. Grey-green. She', 'says the old woman next door.'], { w: 460, h: 620, size: 17 }), 0.3, 0.4, x0 + 3.0, FL + 0.915, zc + 0.3, Math.PI / 2 + 0.2, 'Livro de encomendas (alfaiataria)', true);
+    later(place('desk_lamp_arm_01', x0 + 3.9, FL + 0.9, zc - 0.4, 0.5, 1, O));
+    light(x0 + 3.5, FL + 1.6, zc, 3, 4, 0xffd8a0, { vtt: 5, flick: 1 }); light(x1 - 3.0, CE - 0.4, zc, 3, 2, 0xffe0b0, { vtt: 5 });
+    vttWalls.push([[x0, z0], [x1, z0], [x1, z1], [x0, z1], [x0, z0]], [[xp, z0], [xp, zc + 0.7]], [[xp, zc + 1.7], [xp, z1]]);
+    portals.push({ p: [x1, zc], a: [x1, zc - 0.55], b: [x1, zc + 0.55] });
+    ALF.x = alf.x; ALF.z = alf.z; ALF.ok = true;
   }
 
   // ================= CASAS ABERTAS =================

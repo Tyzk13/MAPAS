@@ -263,6 +263,15 @@ Leia `docs/NOVO-MAPA.md` antes de começar.
   quando ela carrega (`needsUpdate`).
 - `__cap.third()` põe a câmera no andar mais ALTO (raycast de cima) e os personagens sobem/descem interpolando: chame
   `__cap.frames(40)` antes do print, senão aparecem no térreo.
+- Cena com veículos levando as fichas dos jogadores (`canada/chegada.ts`, como o ônibus de Harlow): enquanto andam,
+  mexa `t.target`/`t.ty`/`t.g.position` LOCALMENTE nas duas janelas (a animação roda nas duas porque a câmera da
+  dos jogadores segue a do mestre); só no fim a janela do mestre grava com `setTarget` + `save`.
+- Aparição (`core/aparicao.ts`): sobreposição DOM com `requestAnimationFrame` (não depende do laço 3D); vai para a
+  janela dos jogadores como `{k:'apar', id}` pelo espelho. No Playwright o laço 3D é lento demais para ver os
+  quadros: teste a sobreposição sozinha numa página em branco com `createServer` do vite.
+- Fichas vivas: `PlaneGeometry(w, 1, 10, 20)` + `onBeforeCompile` (uniform `tempoFichas` atualizado no `tickTokens`).
+- Lista de personagens: lugar = vista cujo "ponto de chão" (1,8 m à frente da câmera da vista, pés em p.y−1,6) está
+  mais perto; usar o ALVO da vista erra (o alvo de "Hotel Laurentian" fica dentro do 2º andar).
 - Decisão do dono (nov/2026): os personagens antigos dos jogadores saíram; sem imagem nova, silhueta neutra.
 - Lugares para entrar fora do hotel ficam em `canada/casas.ts` (fábrica, lanchonete, casas das vítimas): `shell()` + `Kit`.
 - `scatter` com milhares de árvores: use grade de vizinhança (hash por célula), não `out.some(...)` (O(n²)).

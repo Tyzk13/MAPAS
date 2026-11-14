@@ -414,3 +414,18 @@
 - Vistas "Personagens" (lista dos importantes) e "Retrato de Margaret (saguão)".
 - Os personagens antigos dos jogadores saíram (pedido do dono): sem `npcs-local/jogadorN.png` as fichas são silhuetas
   neutras até chegarem as imagens novas.
+
+## Introduções, aparição do vilão, fichas vivas, lista "onde está cada um", alfaiataria e igreja
+
+- **Chegada (moto e carro)** em Greywater: dois agentes numa moto e um num carro atravessam a ponte na neblina,
+  descem a Main Street e param em frente ao hotel; as fichas descem para a calçada (vista "Chegada (moto e carro)").
+- **Aparição** (`core/aparicao.ts`): ao clicar **Mostrar** num personagem oculto (ou ao adicionar um vilão já
+  visível), as duas janelas mostram uma introdução sinistra de ~4,6 s com a imagem dele — chiado de TV, lampejos,
+  figura avermelhada tremendo com glitch, avanço brusco no rosto com clarão, corte para o preto — e o som 'aparicao'.
+- **Fichas vivas**: todos os personagens têm uma mini animação (braços balançando de leve, respiração, balanço do
+  corpo), cada um numa fase — deslocamento no vértice de um plano subdividido.
+- **Onde está cada um** (menu Personagens): lista de todos os personagens com o lugar onde estão (vista mais
+  próxima), busca, **Ir** (câmera vai até ele), **Trazer** (para onde a câmera olha) e **Levar para…** (um lugar).
+- Greywater: dá para entrar na **alfaiataria Ashdown & Son** (loja e oficina com os moldes de papel do corpo de
+  Margaret e o livro de encomendas) e na **igreja de St. Columba** (bancos, altar com velas, livro de sepultamentos,
+  quadro de hinos).

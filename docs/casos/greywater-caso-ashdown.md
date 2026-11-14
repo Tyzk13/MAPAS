@@ -15,6 +15,11 @@ Mapa: **Greywater Falls (Canadá, 1975)** (`?map=canada`).
   Moreau. As outras casas são só de fora.
 - Mais de 40 vistas prontas, cada uma com nota do mestre, e mais de 35 documentos legíveis com tradução.
 - A vista **"Resumo do caso"** mostra este resumo na janela do mestre.
+- **Introdução** "Chegada (moto e carro)": dois agentes numa moto e um num carro atravessam a ponte e param no hotel.
+- **Lugares para entrar**: hotel (3 andares e porão), necrotério, fábrica, lanchonete, casas de Eva e dos Moreau,
+  **alfaiataria Ashdown** (os moldes de papel do corpo de Margaret) e **igreja de St. Columba**.
+- **Vilão**: adicione a imagem da criatura em Personagens → "+ Novo personagem…", tamanho "Gigante (vilão)" (já
+  começa oculto). Ao clicar **Mostrar**, a TV mostra a aparição sinistra e ela surge na cena.
 - Funciona de dia e de noite, em todos os climas.
 
 ### A história em si

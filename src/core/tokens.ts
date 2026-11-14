@@ -27,6 +27,8 @@ export interface Token {
   target: THREE.Vector2; ty: number; ls: number;
   /** oculto: só o mestre vê (meio transparente) até revelar */
   oc: boolean;
+  /** imagem da ficha (para a aparição) */
+  img?: string;
   npc?: boolean; pos0?: { x: number; z: number; y?: number; oc?: boolean };
 }
 
@@ -39,6 +41,31 @@ export const DEF: TokenDef[] = [
 const V3 = THREE.Vector3;
 export const pick: THREE.Mesh[] = [];
 const tl = new THREE.TextureLoader();
+/** relógio das fichas (animação leve) */
+export const tempoFichas = { value: 0 };
+/**
+ * Mini animação das fichas: os braços (laterais, meia altura) balançam de leve, o peito respira e o corpo oscila
+ * um pouco, cada ficha numa fase. A imagem é um plano; o deslocamento é feito no vértice (plano 10×20).
+ */
+function vivo(m: THREE.MeshBasicMaterial) {
+  const fase = Math.random() * 6.28;
+  m.onBeforeCompile = sh => {
+    sh.uniforms.uTF = tempoFichas; sh.uniforms.uFase = { value: fase };
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nuniform float uTF, uFase;')
+      .replace('#include <begin_vertex>', `#include <begin_vertex>
+{
+  float yv = uv.y, xv = uv.x - 0.5, t = uTF + uFase;
+  float bracos = smoothstep(0.14, 0.32, abs(xv)) * smoothstep(0.3, 0.5, yv) * (1.0 - smoothstep(0.62, 0.78, yv));
+  transformed.x += sign(xv) * bracos * 0.018 * sin(t * 1.15) + bracos * 0.01 * sin(t * 0.9 + 1.3);
+  transformed.y += bracos * 0.008 * sin(t * 1.15 + 0.6);
+  float peito = smoothstep(0.45, 0.6, yv) * (1.0 - smoothstep(0.72, 0.8, yv));
+  transformed.x += xv * peito * 0.018 * (0.5 + 0.5 * sin(t * 1.7));
+  transformed.x += yv * yv * 0.012 * sin(t * 0.55);
+}`);
+  };
+  m.customProgramCacheKey = () => 'ficha-viva';
+  return m;
+}
 export const K = (id: string) => CFG.room + '__' + st.curMap + '__' + id;
 
 export function sizeT(t: Token) {
@@ -64,13 +91,13 @@ export function makeToken(d: TokenDef): Token {
   const ring = new THREE.Mesh(new THREE.RingGeometry(0.62, 0.76, 32).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9 }));
   ring.position.y = 0.12; ring.visible = false; g.add(ring);
   const b = document.createElement('button'); b.className = 'av'; b.title = d.name;
-  const t: Token = { id: d.id, name: d.name, h: d.h, h0: d.h, fl: false, idx: Object.keys(st.T).length, custom: !!d.custom, g, sp: spr, base, mesh: null, hit, ring, btn: b, target: new THREE.Vector2(), ty: 0, ls: 0, oc: false, npc: d.npc, pos0: d.pos };
+  const t: Token = { id: d.id, name: d.name, h: d.h, h0: d.h, fl: false, idx: Object.keys(st.T).length, custom: !!d.custom, g, sp: spr, base, mesh: null, hit, ring, btn: b, target: new THREE.Vector2(), ty: 0, ls: 0, oc: false, npc: d.npc, pos0: d.pos, img: d.img };
   st.T[d.id] = t;
   hit.userData.t = t; g.add(hit); pick.push(hit);
   const im = new Image(); im.src = d.img; b.appendChild(im); b.onclick = () => { selT(t); focusT(t); }; if (!d.npc) $('ros').appendChild(b);
   tl.load(d.img, tx => {
     tx.colorSpace = THREE.SRGBColorSpace;
-    const m = new THREE.Mesh(new THREE.PlaneGeometry(tx.image.width / tx.image.height, 1), new THREE.MeshBasicMaterial({ map: tx, transparent: true, alphaTest: 0.3, side: THREE.DoubleSide }));
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(tx.image.width / tx.image.height, 1, 10, 20), vivo(new THREE.MeshBasicMaterial({ map: tx, transparent: true, alphaTest: 0.3, side: THREE.DoubleSide })));
     m.castShadow = true; m.customDepthMaterial = new THREE.MeshDepthMaterial({ map: tx, alphaTest: 0.3, depthPacking: THREE.RGBADepthPacking });
     spr.add(m); t.mesh = m; sizeT(t);
   });
@@ -131,7 +158,7 @@ function setM(e: PointerEvent) {
   m2.set(((e.clientX - r.left) / r.width) * 2 - 1, (-(e.clientY - r.top) / r.height) * 2 + 1);
   ray.setFromCamera(m2, cam);
 }
-function freeSpot(t: Token, x: number, z: number, y: number): [number, number] {
+export function freeSpot(t: Token, x: number, z: number, y: number): [number, number] {
   const q = st.snap ? 0.5 : 0.25;
   const busy = (a: number, b: number) => { for (const k in st.T) { const o = st.T[k]; if (o !== t && o.g.visible && Math.abs(o.ty - y) < 1.5 && Math.hypot(o.target.x - a, o.target.y - b) < 0.85) return true; } return false; };
   if (!busy(x, z)) return [x, z];
@@ -188,6 +215,7 @@ export function initTokenInput(walkActive: () => boolean, walkPointer: (e: Point
 
 /** Atualiza posição/rotação dos billboards a cada quadro. */
 export function tickTokens(walkOn: boolean, third: boolean, av: Token | null) {
+  tempoFichas.value = performance.now() / 1000;
   const cx = cam.position.x, cz = cam.position.z, M = st.MP!, hi = !M.loft || M.loft.visible;
   for (const k in st.T) {
     const t = st.T[k], p = t.g.position, s = t === st.drag ? 0.45 : 0.25;

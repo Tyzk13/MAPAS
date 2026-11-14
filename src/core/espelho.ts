@@ -11,6 +11,7 @@ import { WM } from './walk';
 import { imersao, fx, aplicarSom, aplicarPreto, setApagao, type Fx, type SomModo } from './imersao';
 import { mostrar, exibir, guardarImagem, type Imagem } from './mostrar';
 import { som } from './som';
+import { aparicao } from './aparicao';
 
 type V3t = [number, number, number];
 interface Quadro {
@@ -22,6 +23,7 @@ type Msg =
   | { k: 'oi' }
   | { k: 'vivo' }
   | { k: 'fx'; e: Fx }
+  | { k: 'apar'; id: string }
   | { k: 'img'; im: Imagem }
   | { k: 'map'; id: string }
   | { k: 'time'; i: number }
@@ -90,6 +92,7 @@ async function receber(m: Msg) {
       break;
     }
     case 'fx': fx(m.e, { enviar: false }); break;
+    case 'apar': aparicao(m.id); fx('aparicao', { enviar: false }); break;
     case 'img': guardarImagem(m.im); if (m.im.id === mostrar.atual) exibir(m.im.id); else if (m.im.id === ultimoImgPedido) exibir(m.im.id); break;
     case 'map': if (m.id !== st.curMap) await opcoes.loadMap(m.id); break;
     case 'time': if (m.i !== st.pi) opcoes.setTime(m.i); break;
@@ -214,6 +217,8 @@ export function initEspelho(o: { loadMap: (id: string) => Promise<void>; setTime
 }
 
 /** Avisa a outra janela que o mapa/clima mudou (chamado pelos ganchos do núcleo). */
+/** a janela do mestre manda a aparição para a dos jogadores */
+export function avisarAparicao(id: string) { if (!espelho.jogadores) enviar({ k: 'apar', id }); }
 export function avisarMapa() { if (!espelho.jogadores) enviar({ k: 'map', id: st.curMap }); }
 export function avisarClima() { if (!espelho.jogadores) enviar({ k: 'time', i: st.pi }); }
 

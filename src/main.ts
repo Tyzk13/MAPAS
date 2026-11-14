@@ -8,11 +8,12 @@ import { st, $ } from './core/state';
 import { PRE, setTime, timeHooks, preloadSkies, driftSky } from './core/sky';
 import { anim } from './core/anim';
 import { updateCull } from './core/cull';
-import { DEF, makeToken, dropT, onChar, onPos, selT, sizeT, save, placeT, initTokenInput, tickTokens, snapTokens, setTarget } from './core/tokens';
+import { DEF, makeToken, dropT, onChar, onPos, selT, sizeT, save, placeT, initTokenInput, tickTokens, snapTokens, setTarget, focusT, wk, freeSpot, type Token } from './core/tokens';
 import { NET, handlers, startNet } from './core/net';
 import { WM, setWalk, setMode, modeHooks, freeLookAt, walkStep, walkPointer, initWalk, placeWalkCam } from './core/walk';
 import { menu, lista, fecharMenu, initMenus } from './core/menu';
-import { espelho, initEspelho, serJogadores, abrirJanelaJogadores, dentroDeOutraPagina, tickEspelho, enviarQuadro, avisarMapa, avisarClima } from './core/espelho';
+import { espelho, initEspelho, serJogadores, abrirJanelaJogadores, dentroDeOutraPagina, tickEspelho, enviarQuadro, avisarMapa, avisarClima, avisarAparicao } from './core/espelho';
+import { aparicao } from './core/aparicao';
 import { imersao, fx, tickImersao, aplicarSom, aplicarPreto, prepararLanterna, setNomeClima, setApagao, type SomModo, type Fx } from './core/imersao';
 import { mostrar, exibir, carregarImagem } from './core/mostrar';
 import { initDocs, listarPistas } from './core/docs';
@@ -72,7 +73,52 @@ async function addChar(d: { name: string; h: number; c: number; img: string }, o
   const o = oculto ? 1 : 0;
   st.pos[st.curMap + '__' + id] = { x: p.x, z: p.z, y: p.y, h: d.h, o };
   await NET.addChar(id, d); NET.pos(id, { x: p.x, z: p.z, y: p.y, h: d.h, f: 0, o });
+  return id;
 }
+// ---------- lista "onde está cada um" (menu Personagens) ----------
+const SEM_LUGAR = /^(Geral|Tática|Cinema|Resumo|Personagens)/;
+/** ponto de chão de uma vista: 1,8 m à frente de onde a câmera da vista fica, na altura dos pés */
+const pontoVista = (v: { p: number[]; t: number[] }) => { const dx = v.t[0] - v.p[0], dz = v.t[2] - v.p[2], L = Math.hypot(dx, dz) || 1; return { x: v.p[0] + dx / L * 1.8, y: v.p[1] - 1.6, z: v.p[2] + dz / L * 1.8 }; };
+/** lugar de um personagem = vista do mapa cujo alvo está mais perto dele (andar pesa mais) */
+function ondeEsta(t: Token) {
+  const p = t.g.position; let best = '', bd = 1e9;
+  for (const v of st.V) { if (SEM_LUGAR.test(v.n) || v.p[1] > 20) continue; const q = pontoVista(v), d = Math.hypot(q.x - p.x, (q.y - p.y) * 3, q.z - p.z); if (d < bd) { bd = d; best = v.n; } }
+  return bd < 25 ? best : (best ? 'perto de ' + best : '—');
+}
+/** move o personagem para (x, z) pousando no chão visível mais próximo da altura `yRef` */
+function moverPara(t: Token, x: number, z: number, yRef: number) {
+  const rc = new THREE.Raycaster(new THREE.Vector3(x, yRef + 1.6, z), new THREE.Vector3(0, -1, 0));
+  const h = rc.intersectObjects(wk(), false)[0]; const y = h ? h.point.y : yRef;
+  const [fx2, fz] = freeSpot(t, x, z, y); setTarget(t, fx2, fz, y); save(t, true); selT(t);
+}
+function listaPersonagens() {
+  const box = $('pcl'), q = ($('pcf') as HTMLInputElement).value.trim().toLowerCase(); box.innerHTML = '';
+  const todos = Object.values(st.T).sort((a, b) => (+!!a.npc - +!!b.npc) || a.name.localeCompare(b.name));
+  const lugares = st.V.filter(v => !SEM_LUGAR.test(v.n) && v.p[1] < 20);
+  for (const t of todos) {
+    const onde = ondeEsta(t); if (q && !(t.name + ' ' + onde).toLowerCase().includes(q)) continue;
+    const r = document.createElement('div'); r.className = 'pcrow' + (t === st.sel ? ' cur' : '');
+    const nm = document.createElement('div'); nm.className = 'pcn'; nm.innerHTML = `<b></b><small></small>`; (nm.firstChild as HTMLElement).textContent = t.name + (t.oc ? ' · oculto' : ''); (nm.lastChild as HTMLElement).textContent = onde; r.appendChild(nm);
+    const bt = (txt: string, tip: string, f: () => void) => { const b = document.createElement('button'); b.textContent = txt; b.title = tip; b.onclick = e => { e.stopPropagation(); f(); }; r.appendChild(b); return b; };
+    bt('Ir', 'Levar a câmera até ' + t.name, () => { fecharMenu(); selT(t); focusT(t); });
+    bt('Trazer', 'Trazer para onde a câmera está olhando', () => {
+      const rc = new THREE.Raycaster(); rc.setFromCamera(new THREE.Vector2(0, 0), cam); const h = rc.intersectObjects(wk(), false)[0];
+      if (!h) { toast('Olhe para o chão onde quer pôr o personagem', 2200); return; }
+      moverPara(t, h.point.x, h.point.z, h.point.y); toast(t.name + ' → aqui', 1400); listaPersonagens();
+    });
+    const sel = document.createElement('select'); sel.title = 'Levar para um lugar';
+    sel.innerHTML = '<option value="">Levar para…</option>' + lugares.map((v, i) => `<option value="${i}"></option>`).join('');
+    lugares.forEach((v, i) => { (sel.options[i + 1] as HTMLOptionElement).textContent = v.n; });
+    sel.onclick = e => e.stopPropagation();
+    sel.onchange = () => { const v = lugares[+sel.value]; if (!v) return; const q = pontoVista(v); moverPara(t, q.x, q.z, q.y); toast(t.name + ' → ' + v.n, 1600); listaPersonagens(); };
+    r.appendChild(sel);
+    box.appendChild(r);
+  }
+  if (!box.children.length) box.innerHTML = '<small style="opacity:.6;padding:4px 8px;display:block">Ninguém encontrado.</small>';
+}
+
+/** introdução sinistra (aparição) nesta janela e na dos jogadores */
+function revelar(id: string) { aparicao(id); fx('aparicao', { enviar: false }); avisarAparicao(id); }
 
 // ---------- interface (dock, menus e painéis) ----------
 const QN = { baixa: 'Baixa', media: 'Média', alta: 'Alta' } as const;
@@ -181,7 +227,7 @@ function initMestreUi() {
   };
   $('desc').onclick = () => exibir('');
   $('handout').onclick = () => { if (!st.jogadores) exibir(''); };
-  $('boc').onclick = () => { const t = st.sel; if (!t || CFG.ro) return; t.oc = !t.oc; save(t, true); $('boc').textContent = t.oc ? 'Mostrar' : 'Ocultar'; toast(t.oc ? t.name + ' oculto: só você vê' : t.name + ' visível para todos', 1800); };
+  $('boc').onclick = () => { const t = st.sel; if (!t || CFG.ro) return; const eraOculto = t.oc; t.oc = !t.oc; save(t, true); if (eraOculto) revelar(t.id); $('boc').textContent = t.oc ? 'Mostrar' : 'Ocultar'; toast(t.oc ? t.name + ' oculto: só você vê' : t.name + ' visível para todos', 1800); };
 }
 
 // ---------- tela limpa (transmitir) e atalhos ----------
@@ -276,7 +322,9 @@ function initUi() {
   menu('mv', 'pl', p => lista(p, 'Vista', st.V.map((v, i) => ({ n: v.n, cur: i === st.vi, go: () => irParaVista(i) }))));
   menu('mn', 'pl', p => lista(p, 'Clima', PRE.map((c, i) => ({ n: c.n, cur: i === st.pi, go: () => escolherClima(i) }))));
   menu('mm', 'pl', p => lista(p, 'Mapa', Object.values(MAPS).map(m => ({ n: m.n, cur: m.id === st.curMap, go: () => { if (m.id !== st.curMap) loadMap(m.id); } }))));
-  menu('mc', 'pc');
+  menu('mc', 'pc', () => { ($('pcf') as HTMLInputElement).value = ''; listaPersonagens(); });
+  $('pcf').oninput = () => listaPersonagens();
+  $('pcf').onclick = e => e.stopPropagation();
   initCinemaUi();
   initAtalhos();
   initEspelho({ loadMap, setTime: i => escolherClima(i), toast, jogadores: v => {
@@ -297,7 +345,8 @@ function initUi() {
     m.textContent = 'Processando...';
     try {
       const img = await prep(f, $('ab').checked);
-      await addChar({ name: n, h: +$('as').value, c: parseInt($('ac').value.slice(1), 16), img }, $('aoc').checked);
+      const novo = await addChar({ name: n, h: +$('as').value, c: parseInt($('ac').value.slice(1), 16), img }, $('aoc').checked);
+      if (+$('as').value >= 5 && !$('aoc').checked) revelar(novo); // vilão entrando já visível
       $('add').hidden = true; $('af').value = ''; $('an').value = ''; m.textContent = '';
     } catch (e) { m.textContent = 'Não consegui adicionar (sem permissão ou imagem inválida)'; }
   };

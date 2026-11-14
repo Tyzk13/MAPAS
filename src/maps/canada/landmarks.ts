@@ -46,17 +46,35 @@ export async function buildLandmarks(G: THREE.Group): Promise<Landmarks> {
     ops.filter(o => o.side !== 'S').forEach(o => { const xx = o.side === 'W' ? x0 + 0.3 : x1 - 0.3; W.box(m.lit, 0.05, 3.0, 0.9, xx, 2.2 + 1.5, o.at, 0xffffff); });
     // torre na frente (sul) com agulha
     const tx = x, tz = z1 + 2.2;
-    B.box(m.stone, 4.2, 15, 4.2, tx, 7.5, tz, stoneC);
+    // torre oca: porta ao sul e passagem para a nave ao norte (dá para entrar)
+    shell(B, m.stone, stoneC, tx - 2.1, tz - 2.1, tx + 2.1, tz + 2.1, 15, 0.4, [{ side: 'S', at: tx, w: 1.8, h: 3.3, sill: 0 }, { side: 'N', at: tx, w: 1.8, h: 3.4, sill: 0 }]);
+    F.box(m.stone, 3.4, 0.1, 3.4, tx, 0.05, tz, 0x8a867e); B.box(m.stone, 3.4, 0.2, 3.4, tx, 6.0, tz, stoneC);
+    // ---- nave por dentro: piso, bancos, altar, velas, púlpito, livro de sepultamentos, quadro de hinos ----
+    F.box(m.stone, w - 1.2, 0.1, d - 1.2, x, 0.05, z, 0x9a948a);
+    F.box(IM().carpet, 1.2, 0.02, d - 4, x, 0.11, z + 1, 0x5a1a1a);
+    for (let zz = z0 + 6; zz < z1 - 1.5; zz += 1.15) [-1, 1].forEach(sd => { const px = x + sd * 2.6;
+      D.box(m.woodDark, 3.2, 0.07, 0.45, px, 0.46, zz, 0x3a2418); D.box(m.woodDark, 3.2, 0.75, 0.06, px, 0.85, zz + 0.24, 0x3a2418);
+      [-1.6, 1.6].forEach(e => D.box(m.woodDark, 0.06, 0.95, 0.55, px + e, 0.48, zz + 0.05, 0x2a1810)); });
+    F.box(m.stone, w - 1.4, 0.3, 3.2, x, 0.15, z0 + 2.2, 0xa8a298);
+    D.box(m.stone, 2.2, 1.0, 0.9, x, 0.8, z0 + 1.4, 0xd8d4c8); D.box(IM().cloth, 2.3, 0.02, 1.0, x, 1.31, z0 + 1.4, 0xe8e4dc); D.box(IM().cloth, 0.5, 0.9, 1.02, x, 0.9, z0 + 1.4, 0x6a1a1a);
+    D.box(m.woodDark, 0.12, 2.2, 0.12, x, 3.4, z0 + 0.7, 0x2a1a10); D.box(m.woodDark, 1.2, 0.12, 0.12, x, 3.9, z0 + 0.7, 0x2a1a10);
+    [-0.8, -0.4, 0.4, 0.8].forEach(dx => { const c = new THREE.CylinderGeometry(0.03, 0.03, 0.35, 8); c.translate(x + dx, 1.5, z0 + 1.3); D.add(IM().cloth, c, 0xf0ead8); const f = new THREE.SphereGeometry(0.025, 6, 4); f.translate(x + dx, 1.7, z0 + 1.3); D.add(m.lit, f, 0xffffff); });
+    light(x, 1.9, z0 + 1.6, 5, 4, 0xffb060, { flick: 2, vtt: 7 }); light(x, 5.5, z, 4, 2, 0xffd8a0);
+    D.box(m.woodDark, 1.0, 1.3, 1.0, x + 3.6, 0.95, z0 + 4.4, 0x3a2418); D.box(m.woodDark, 0.4, 1.2, 0.4, x - 2.6, 0.75, z0 + 4.6, 0x3a2418);
+    docPlane(G, docs, paper('BURIALS — ST. COLUMBA', ['Dec 27 1974 · Margaret ASHDOWN', '(née Lafleur), 31 — accidental fall.', 'Husband asked: closed casket.', 'Nov 8 1975 · Eva PELLETIER, 58 —', 'natural causes.', '', 'margin, Rev. Hale: "Mr. Ashdown', 'asks every Sunday whether the dead', 'can come back WHOLE. I pray for him."'], { w: 440, h: 560, size: 17 }), 0.34, 0.44, x - 2.6, 1.37, z0 + 4.6, 0.2, 'Livro de sepultamentos (igreja)', true);
+    docPlane(G, docs, canvasTex(420, 600, g => { g.fillStyle = '#2a1a10'; g.fillRect(0, 0, 420, 600); g.fillStyle = '#e8dcc0'; g.textAlign = 'center'; g.font = 'bold 30px Georgia'; g.fillText('HYMNS', 210, 50); g.font = 'bold 64px Georgia'; ['112', '47', '230'].forEach((n, i) => g.fillText(n, 210, 140 + i * 90)); g.font = 'italic 22px Georgia'; g.fillText('Sun. Nov 23 — Memorial', 210, 440); g.fillText('for Eva Pelletier', 210, 470); g.fillText('Vigil for Jean Moreau, Thu 8pm', 210, 510); g.fillStyle = 'rgba(230,230,220,0.7)'; g.font = '26px "Comic Sans MS", cursive'; g.fillText('eyes', 300, 570); }),
+      0.6, 0.86, x1 - 0.62, 2.2, z0 + 6.5, -Math.PI / 2, 'Quadro de hinos (igreja)');
     [-1, 1].forEach(s => W.box(m.glass, 0.05, 2.2, 0.9, tx + s * 2.11, 12.5, tz, 0xffffff)); W.box(m.glass, 0.9, 2.2, 0.05, tx, 12.5, tz + 2.11, 0xffffff);
     { const c = new THREE.ConeGeometry(3.0, 12, 4); c.rotateY(Math.PI / 4); c.translate(tx, 21, tz); boxUV(c); R.add(m.shingle, c, 0x3a3e44); }
     { const cr = new THREE.BoxGeometry(0.12, 1.4, 0.12); cr.translate(tx, 27.7, tz); D.add(m.iron, cr, 0x2a2a2a); const cb = new THREE.BoxGeometry(0.7, 0.12, 0.12); cb.translate(tx, 27.9, tz); D.add(m.iron, cb, 0x2a2a2a); }
     // porta e degraus
-    D.box(m.woodDark, 1.9, 3.3, 0.12, tx, 1.65, tz + 2.2, 0x3a2418);
+    D.box(m.woodDark, 0.08, 3.2, 1.0, tx + 0.95, 1.65, tz + 2.6, 0x3a2418); // folha da porta aberta para fora
     [0.15, 0.3].forEach((hh, i) => F.box(m.stone, 3.2, hh, 0.5, tx, hh / 2, tz + 2.6 + (1 - i) * 0.5, 0xa8a49a));
     const s = sign('ST. COLUMBA ANGLICAN CHURCH', 3.6, 0.5, { bg: '#2a2a2a', fg: '#e8e0c8', font: 'Georgia, serif', sub: 'Rev. M. Hale · Evensong 7 pm' }); s.position.set(tx + 3.2, 1.3, tz + 4.5); s.rotation.y = 0.3; G.add(s);
     D.box(m.woodDark, 0.12, 1.3, 0.12, tx + 3.2 - 1.5, 0.65, tz + 4.5, 0x3a2a1a); D.box(m.woodDark, 0.12, 1.3, 0.12, tx + 3.2 + 1.5, 0.65, tz + 4.5 - 0.9, 0x3a2a1a);
     light(tx, 3.9, tz + 2.6, 3, 4, 0xffc070, { vtt: 5 }); halo(tx, 3.9, tz + 2.5, 0.5);
     outline(x0, z0, x1, z1); outline(tx - 2.1, tz - 2.1, tx + 2.1, tz + 2.1);
+    portals.push({ p: [tx, tz + 2.1], a: [tx - 0.9, tz + 2.1], b: [tx + 0.9, tz + 2.1] });
   }
   // ---------- cemitério: lápides, cerca de ferro, túmulo de Margaret, cova reaberta ----------
   {

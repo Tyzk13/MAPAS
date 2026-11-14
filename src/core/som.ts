@@ -4,7 +4,7 @@
 // câmera passa), com volume e lado conforme a posição da câmera. Tudo sutil.
 // O navegador só libera o áudio depois de um clique/tecla na janela: chame `som.desbloquear()` num gesto.
 
-export type Efeito = 'susto' | 'corte' | 'suave' | 'raio' | 'batida' | 'passos' | 'sussurro' | 'rangido' | 'sino' | 'trovao';
+export type Efeito = 'susto' | 'corte' | 'suave' | 'raio' | 'batida' | 'passos' | 'sussurro' | 'rangido' | 'sino' | 'trovao' | 'aparicao';
 export type Fonte = { x: number; y: number; z: number; tipo: 'velas' | 'sino' | 'porta' };
 interface Nivel { vento: number; zumbido: number; trovao: boolean; grilos: number }
 const NIVEIS: Record<string, Nivel> = {
@@ -185,6 +185,14 @@ export const som = {
 };
 
 function tocarEfeito(e: Efeito, t0: number) {
+    if (e === 'aparicao') { // chiado, zumbido grave subindo, acorde dissonante, coração e o grito no avanço (3,15 s)
+      rajadaRuido(t0, 0.75, 'highpass', 1500, 0.35, 0.01);
+      tom(t0 + 0.6, 'sawtooth', 40, 62, 2.6, 0.35, 1.2, 300);
+      for (const f of [233, 247, 349]) tom(t0 + 0.7, 'sawtooth', f, f * 0.94, 2.4, 0.05, 1.4, 1400);
+      [1.0, 1.35, 2.0, 2.3].forEach(dt => tom(t0 + dt, 'sine', 70, 40, 0.22, 0.6, 0.004));
+      rajadaRuido(t0 + 3.15, 0.6, 'bandpass', 2400, 0.7, 0.01, 1.5); tom(t0 + 3.15, 'sawtooth', 880, 440, 0.6, 0.18, 0.01, 3000); tom(t0 + 3.15, 'sine', 60, 30, 1.2, 1.0, 0.005);
+      return;
+    }
     if (e === 'susto') {
       rajadaRuido(t0, 0.45, 'highpass', 2200, 0.35, 0.005);
       tom(t0, 'sine', 75, 32, 1.4, 0.9, 0.01);
