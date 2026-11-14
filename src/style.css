@@ -91,7 +91,9 @@ button.tg[aria-pressed=true]::after{background:var(--acc-bg) radial-gradient(cir
 .nu .dock,.nu .pop,.nu .tip,.nu #ros,.nu #sel,.nu #fly{display:none}
 
 /* telas médias: só ícones nos botões do dock (o nome aparece ao passar o mouse) */
-@media (max-width:1240px) and (min-width:761px){.dock .lbl{display:none}}
+/* a barra ganhou botões: abaixo de 1520 px os rótulos somem (ficam no title); nunca passa da largura da tela */
+@media (max-width:1520px) and (min-width:761px){.dock .lbl{display:none}}
+.dock{max-width:calc(100vw - 12px);overflow-x:auto;scrollbar-width:none}
 
 /* ---------- telas estreitas: dock em duas linhas (modos/ações em cima, vista/clima/mapa embaixo) ---------- */
 @media (max-width:760px){
@@ -229,6 +231,8 @@ canvas.lupa{cursor:zoom-in}
 .dock #bjogd.destaque{background:#c9a24a;color:#1a1408;font-weight:600;border-radius:10px;animation:pulsoTV 2.4s ease-in-out infinite}
 .dock #bjogd.destaque .ic{stroke:#1a1408}
 .dock #bjogd.destaque .lbl{display:inline!important}
+.dock #bjogd.destaque.ligada{background:#2f5a3a;color:#d8f0d8;animation:none}
+.dock #bjogd.destaque.ligada .ic{stroke:#d8f0d8}
 @keyframes pulsoTV{0%,100%{box-shadow:0 0 0 0 rgba(201,162,74,.55)}50%{box-shadow:0 0 0 6px rgba(201,162,74,0)}}
 
 /* lista "onde está cada um" (menu Personagens) */

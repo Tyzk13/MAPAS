@@ -336,7 +336,7 @@ Meça antes de mexer: `node tools/medir.mjs --q=media` (chamadas, triângulos, e
 - Dock e menus: `core/menu.ts` (`menu(botão, painel, preencher)`, `lista(...)`) + `main.ts`. Ids usados nos
   testes: `bmo`/`blv` (Órbita/Livre), `mcine` (Cinema), `mv`/`mn`/`mm` com os spans `bv`/`bn`/`bmap` (valor
   atual), `mc` (Personagens), `mx` (Mais), `blimpa` (tela limpa), `bshow` (voltar).
-- Botão novo no dock → confira larguras 390, 800 e 1024 px. Quebras: ≤760 px duas linhas (vista/clima/mapa
+- Botão novo no dock → confira larguras 390, 800 e 1024 px. A barra cresceu: rótulos somem abaixo de 1520 px e `.dock` tem `max-width:calc(100vw - 12px)` (o dono viu a barra cortada num monitor de 1366 px). O botão da TV nunca se esconde (verde = ligada). Quebras: ≤760 px duas linhas (vista/clima/mapa
   embaixo), 761–1000 px só ícones (nome no `title`).
 - Câmera livre (`core/walk.ts`, modo `livre`): WASD, Q/E, Shift, roda = velocidade, G = fantasma.
 - **Câmera de cinema** (`core/cinema.ts`): `rodar(tomada, 'suave'|'corte'|'susto', {enviar, cap, rev})`;

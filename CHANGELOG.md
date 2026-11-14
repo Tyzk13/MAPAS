@@ -443,3 +443,8 @@
   `npcs-local/jogadorN.png`, fora do git).
 - Duas criaturas em Greywater, ocultas até o mestre clicar Mostrar (aparição): "Margaret, a forma refeita" no porão do
   hotel e "O Esfolado" na fábrica.
+
+## Botão da TV sempre visível e barra que cabe na tela
+
+- O botão "TV dos jogadores" não some mais quando a TV liga: fica verde ("TV ligada") e clicar traz a janela da TV
+  de novo. A barra nunca passa da largura da tela e os rótulos somem abaixo de 1520 px (ficam no `title`).

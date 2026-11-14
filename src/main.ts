@@ -329,7 +329,9 @@ function initUi() {
   initCinemaUi();
   initAtalhos();
   initEspelho({ loadMap, setTime: i => escolherClima(i), toast, jogadores: v => {
-    $('jogchip').hidden = !v; $('bjogd').hidden = v || espelho.jogadores; atualizarSelo();
+    // o botão da TV fica sempre na barra: dourado = abrir; verde = TV ligada (clicar traz a janela da TV de novo)
+    $('jogchip').hidden = !v; $('bjogd').hidden = espelho.jogadores; $('bjogd').classList.toggle('ligada', v);
+    ($('bjogd').querySelector('.lbl') as HTMLElement).textContent = v ? 'TV ligada' : 'TV dos jogadores'; atualizarSelo();
     if (v) toast('Janela dos jogadores ligada · dica: deixe esta janela em Qualidade Baixa e a dos jogadores em Alta', 5000);
   } });
   initImersaoUi();
