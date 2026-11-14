@@ -429,3 +429,10 @@
 - Greywater: dá para entrar na **alfaiataria Ashdown & Son** (loja e oficina com os moldes de papel do corpo de
   Margaret e o livro de encomendas) e na **igreja de St. Columba** (bancos, altar com velas, livro de sepultamentos,
   quadro de hinos).
+
+## Diagnóstico das manchas (F9 ou Mais → Manchas na imagem?)
+
+- As manchas brancas/pretas continuam em algumas placas (faces viradas para a lua ficam brancas, as do lado oposto
+  pretas). O navegador de teste não reproduz. Painel com chaves que desligam uma coisa por vez (sombra, luz da lua,
+  luz do céu, reflexos do HDRI, luzes pontuais, névoa, pós); a escolha fica salva no navegador e se reaplica sozinha.
+  Mostra também o nome da placa e a precisão do shader.

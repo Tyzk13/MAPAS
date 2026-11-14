@@ -14,6 +14,7 @@ import { WM, setWalk, setMode, modeHooks, freeLookAt, walkStep, walkPointer, ini
 import { menu, lista, fecharMenu, initMenus } from './core/menu';
 import { espelho, initEspelho, serJogadores, abrirJanelaJogadores, dentroDeOutraPagina, tickEspelho, enviarQuadro, avisarMapa, avisarClima, avisarAparicao } from './core/espelho';
 import { aparicao } from './core/aparicao';
+import { initDiag, aplicarDiag } from './core/diag';
 import { imersao, fx, tickImersao, aplicarSom, aplicarPreto, prepararLanterna, setNomeClima, setApagao, type SomModo, type Fx } from './core/imersao';
 import { mostrar, exibir, carregarImagem } from './core/mostrar';
 import { initDocs, listarPistas } from './core/docs';
@@ -388,6 +389,9 @@ addEventListener('message', e => {
 mapHooks.push(() => abortar()); // trocar de mapa no meio de uma cena de cinema
 mapHooks.push(() => avisarMapa()); // janela dos jogadores troca junto
 mapHooks.push(M => { som.setFontes(M.sons || []); cenaAtual = -1; });
+mapHooks.push(() => setTimeout(aplicarDiag, 300));
+timeHooks.push(() => setTimeout(aplicarDiag, 300));
+initDiag();
 timeHooks.push(() => avisarClima());
 timeHooks.push(p => som.setClima(p.n));
 

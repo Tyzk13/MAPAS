@@ -276,6 +276,11 @@ Leia `docs/NOVO-MAPA.md` antes de começar.
 - Lugares para entrar fora do hotel ficam em `canada/casas.ts` (fábrica, lanchonete, casas das vítimas): `shell()` + `Kit`.
 - `scatter` com milhares de árvores: use grade de vizinhança (hash por célula), não `out.some(...)` (O(n²)).
 
+- Manchas brancas/pretas (3º relato, Greywater, Noite, câmera livre do alto): faces viradas para a LUA brancas, as do
+  lado oposto pretas puras, paredes normais — em postes e galhos também (não é material nem telhado). Ainda sem causa
+  confirmada: `core/diag.ts` (F9) deixa o dono desligar sombra/lua/céu/HDRI/pontuais/névoa/pós e informa a placa.
+  Quando ele disser qual chave resolve, corrija a causa e anote aqui.
+
 ## Erros que já custaram tempo (não repita)
 
 - **Modelos da Poly Haven são pesados** (árvores 1–4 M faces). Sempre rode `tools/arvores.sh`
