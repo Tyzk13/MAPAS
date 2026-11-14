@@ -365,3 +365,8 @@
 - O desgaste (sujeira + escorrido) podia deixar a cor negativa em postes, carros e tijolos; o tone mapping mostra
   negativo como branco. Agora o fator é limitado a ≥ 0 e todo material passa por uma trava (cor ≥ 0, NaN → 0)
   antes do tone mapping — vale também sem pós-processamento.
+
+## Botão "TV dos jogadores" na barra
+
+- Botão dourado na barra de baixo (e tecla J) abre a janela dos jogadores; some quando a TV conecta e volta se ela
+  fechar. O item antigo em Mais continua.

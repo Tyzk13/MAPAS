@@ -202,6 +202,7 @@ function initAtalhos() {
   $('blimpa').onclick = () => telaLimpa(true);
   $('bshow').onclick = () => telaLimpa(false);
   // segundo monitor
+  $('bjogd').onclick = () => $('bjog').click();
   $('bjog').onclick = () => {
     fecharMenu();
     if (!espelho.disponivel) { toast('Este navegador não liga janelas entre si'); return; }
@@ -214,6 +215,7 @@ function initAtalhos() {
   addEventListener('keydown', e => {
     if (/INPUT|SELECT|TEXTAREA/.test((e.target as HTMLElement).tagName) || e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
     if (espelho.jogadores) { if (e.code === 'KeyH') { serJogadores(false); limpa = false; toast('Janela normal (não é mais a dos jogadores)'); } return; }
+    if (e.code === 'KeyJ' && !$('bjogd').hidden) { $('bjog').click(); return; }
     if (e.code === 'KeyH') { telaLimpa(!limpa); return; }
     if (e.code === 'KeyK') { congelar(); return; }
     if (e.code === 'KeyB') { escurecer(); return; }
@@ -278,7 +280,7 @@ function initUi() {
   initCinemaUi();
   initAtalhos();
   initEspelho({ loadMap, setTime: i => escolherClima(i), toast, jogadores: v => {
-    $('jogchip').hidden = !v; atualizarSelo();
+    $('jogchip').hidden = !v; $('bjogd').hidden = v || espelho.jogadores; atualizarSelo();
     if (v) toast('Janela dos jogadores ligada · dica: deixe esta janela em Qualidade Baixa e a dos jogadores em Alta', 5000);
   } });
   initImersaoUi();
