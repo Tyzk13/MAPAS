@@ -406,7 +406,7 @@ function captureApi() {
       R.info.autoReset = a; return r;
     },
     shot(png = false) { this.frames(post.warmup()); return png ? R.domElement.toDataURL('image/png') : R.domElement.toDataURL('image/jpeg', 0.9); },
-    vtt(area: number, ppg: number) { const c = xcalc(area, ppg), png = xrender(c, {}); return { png, json: dd2vtt(c, png) }; },
+    vtt(area: number, ppg: number) { ($('xa') as HTMLSelectElement).value = String(area); const c = xcalc(area, ppg), png = xrender(c, {}); return { png, json: dd2vtt(c, png) }; },
   };
 }
 

@@ -32,7 +32,7 @@ function tex(w: number, h: number, draw: (g: CanvasRenderingContext2D) => void) 
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
 }
 /** pinheiro leve (~150 triângulos): tronco + 7 saias de galhos com borda irregular, verde-escuro */
-function pineGeo(seed: number) {
+export function pineGeo(seed: number) {
   reseed(seed * 17 + 3);
   const parts: THREE.BufferGeometry[] = [], h = 10 + rnd() * 5, tiers = 7;
   const tr = new THREE.CylinderGeometry(0.1, 0.3, h * 0.6, 6); tr.translate(0, h * 0.3, 0); parts.push(tr.toNonIndexed());

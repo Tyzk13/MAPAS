@@ -6,5 +6,6 @@ export const MAPS: Record<string, MapModule> = {
   igreja: { id: 'igreja', n: 'Igreja', build: async M => (await import('./igreja/index')).build(M) },
   mexico: { id: 'mexico', n: 'San Judas (México)', build: async M => (await import('./mexico/index')).build(M) },
   texas: { id: 'texas', n: 'Harlow (Texas)', build: async M => (await import('./texas/index')).build(M) },
+  canada: { id: 'canada', n: 'Greywater Falls (Canadá, 1965)', build: async M => (await import('./canada/index')).build(M) },
   campo: { id: 'campo', n: 'Campo aberto', build: async M => (await import('./campo')).build(M) },
 };

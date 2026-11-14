@@ -370,3 +370,21 @@
 
 - Botão dourado na barra de baixo (e tecla J) abre a janela dos jogadores; some quando a TV conecta e volta se ela
   fechar. O item antigo em Mais continua.
+
+## Mapa novo: Greywater Falls, Ontário (1965) — O Caso Ashdown
+
+- `?map=canada` (botão Mapa: "Greywater Falls (Canadá, 1965)"). Cidade de fábrica de papel em novembro: Main Street
+  de tijolo (alfaiataria Ashdown fechada, funerária, cinema, banco…), 6 ruas residenciais com casas de madeira e
+  árvores peladas, igreja anglicana de pedra com cemitério, rio escuro com represa e espuma, ponte de treliça de aço,
+  fábrica de papel com chaminé fumegante, estação de trem, posto, lanchonete com neon, carros de 1965 em código,
+  morros com pinheiros e neblina baixa sobre o rio.
+- **Hotel Laurentian** com 3 andares por dentro: saguão (recepção, quadro de chaves, lustre), sala de jantar,
+  beverage room (portas MEN / LADIES & ESCORTS), escritório, cozinha, escadaria até o 3º andar, corredores e 14
+  quartos mobiliados (cama, cômoda com espelho, aquecedor, cortinas, papel de parede) + banheiros coletivos. Cada
+  andar é uma camada; o arrastar de personagens pisa no andar visível; exportação VTT com uma área por andar.
+- **Necrotério do distrito**: recepção, gabinete do legista, sala de autópsia (azulejo, mesas de aço, corpo coberto)
+  e câmara fria com 12 gavetas (a nº 4 aberta e vazia).
+- **Casa da Elm Street** com o alçapão do porão aberto (escada descendo para o escuro).
+- Caso completo para o mestre (`docs/casos/greywater-caso-ashdown.md`): 30 vistas nomeadas com notas, 26 documentos
+  legíveis com tradução. A marca da entidade (escrita dourada do Conhecimento) brilha sozinha de dia e de noite.
+- Dia e noite: as luzes de rua apagam de dia; as de dentro do hotel, do necrotério e da casa ficam acesas (fracas).

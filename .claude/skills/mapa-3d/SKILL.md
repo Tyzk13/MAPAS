@@ -226,6 +226,31 @@ Leia `docs/NOVO-MAPA.md` antes de começar.
   multiplicador de escurecimento em shader leva `max(0.0, …)`. Há trava global em `engine.ts` (ShaderChunk
   `tonemapping_fragment`: max 0 e NaN→0) — não remova.
 
+## Prédio de vários andares e cidade dos anos 60 (aprendido em `src/maps/canada/`)
+
+- Greywater Falls reaproveita o Texas (`Builder` de lojas/casas/ruas/postes, `shell`, `light`/`LREQ`, `TM()`, papéis de
+  `texas/police.ts`) e só cria o que é dele: `interior.ts` (`Kit`: paredes com vãos `[centro, largura, altura]`,
+  papel de parede listrado com lambri, cama, cômoda com espelho, cadeira, poltrona, mesa com toalha, aquecedor,
+  tapete, garrafa, figura coberta por lençol, porta com número; `docPlane`; `sigilKnow`; `scrawl`).
+- **Andares como camadas**: cada andar num `THREE.Group` próprio (casca externa do andar, laje do piso, paredes,
+  móveis). A laje de um andar é o teto do de baixo, então esconder o andar de cima "abre" a vista. Pisos e rampas de
+  escada recebem `userData.l = grupo` — o arrastar de personagens (`wk()`) ignora pisos de camadas escondidas.
+- Laje com vão de escada: faixas em x entre as bordas dos vãos e, em cada faixa, pedaços em z fora dos vãos.
+  Escada = degraus maciços + rampa invisível (DoubleSide) para pisar; a inclinação da rampa vem de
+  `sign(xb−xa)·atan2(subida, |xb−xa|)` (com `atan2(subida, xb−xa)` a rampa que desce para −x fica de cabeça para baixo).
+- Exportação VTT por andar: `M.exportHide` lê o nome da área escolhida (`#xa`) e esconde os andares de cima.
+- Casca de tijolo vista por dentro parece porão: por dentro, uma segunda `shell()` fina (0,02 m) com papel de parede e
+  os **mesmos vãos** (o `at` é coordenada do mundo; ajuste o peitoril pela diferença de altura da base).
+- Persiana acesa à noite: plano de `TM().lit` virado **só para fora** + pano por dentro; uma caixa acesa brilha
+  também dentro do quarto.
+- Porta entreaberta com `Kit.door(dobradiça, ry)`: folha ao longo do x local; ry = −π/2 estende para +z, +π/2 para −z;
+  abrir para dentro do quarto = somar/subtrair ~1,1 rad conforme o lado.
+- Buraco no piso (alçapão): o piso tem de ser feito em pedaços em volta do vão (uma caixa inteira tapa a escada).
+- Escrita sobrenatural legível no escuro: `docPlane(..., glow)` usa a própria textura como `emissiveMap`.
+- Ruas novas cruzam marcos: confira igreja/cemitério × ruas transversais (a igreja nasceu em cima da King St; a rua
+  oeste foi cortada antes dela).
+- `scatter` com milhares de árvores: use grade de vizinhança (hash por célula), não `out.some(...)` (O(n²)).
+
 ## Erros que já custaram tempo (não repita)
 
 - **Modelos da Poly Haven são pesados** (árvores 1–4 M faces). Sempre rode `tools/arvores.sh`
@@ -345,7 +370,8 @@ Meça antes de mexer: `node tools/medir.mjs --q=media` (chamadas, triângulos, e
 - Links atuais (atualize-os em vez de criar outros; quem já recebeu continua usando):
   Igreja do Casamento `https://claude.ai/artifact/65XS5FnzDBvfneK5AnFXUh` ·
   San Judas de las Ánimas `https://claude.ai/artifact/55cVSvDE5dfVtg2Km2iR9K` ·
-  Harlow, Texas `https://claude.ai/artifact/HHBUeQ8noXrMfhqAK6Q1PB`. Os três têm todos os mapas.
+  Harlow, Texas `https://claude.ai/artifact/HHBUeQ8noXrMfhqAK6Q1PB`. Os três têm todos os mapas (Greywater Falls
+  entrou depois; para um link próprio dele, crie `canada.html` com `MAPA_PADRAO="canada"`).
 - Passos: `npm run build:leve` → copie `dist-lite/` para o scratchpad (`pub/`) → crie `igreja.html` (troca o
   `<title>`) e `mexico.html` (`<title>` + `<script>window.MAPA_PADRAO="mexico"</script>`) a partir do
   `index.html` (e `texas.html` com `MAPA_PADRAO="texas"`) → Artifact `publish` com `url` do link, `file_path` = a página, `root` = `pub/`,
