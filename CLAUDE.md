@@ -1,5 +1,13 @@
 # Instruções para o Claude
 
+## Economizar limite e se achar rápido (IMPORTANTE)
+1. **Comece por `docs/MAPA_DO_CODIGO.md`**: ele lista cada arquivo de código e cada função/classe com o número da linha, e aponta as pastas pesadas e as linhas gigantes.
+2. Leia só o trecho necessário: Read com `offset` = linha do mapa e `limit` ≈ 40–80. Evite ler arquivos inteiros.
+3. Buscas: Grep restrito às pastas de código (use `glob`/`path`), e no shell sempre com `| cut -c1-200`. Nunca busque nem abra as pastas pesadas listadas no mapa, nem `package-lock.json`.
+4. Quando o Graphify estiver indexado, use-o para estrutura (quem chama, impacto); para "onde fica", o mapa já basta.
+5. Depois de criar, mover ou mudar código, rode `python3 -I scripts/mapa_do_codigo.py` e inclua o mapa atualizado no commit.
+- Neste repositório: `src/assets/` (73 MB de modelos .glb, texturas e HDRI), `capturas/` e `referencias/` são imagens — não abra. `legacy/igreja-3d-site.html` tem uma linha de 823 KB com imagens embutidas: nunca leia esse arquivo inteiro, e todo grep nele deve ser cortado.
+
 ## Graphify (usar sempre)
 Use as ferramentas do **Graphify** (MCP `Graphify`) em 100% das tarefas de código deste repositório, antes de grep/busca de arquivos:
 1. No início, chame `list_repositories` e confira se este repositório está indexado (`queryable: true`). Use o owner/name do `git remote get-url origin` como `repository_id`.
