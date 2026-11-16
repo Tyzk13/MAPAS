@@ -448,3 +448,9 @@
 
 - O botão "TV dos jogadores" não some mais quando a TV liga: fica verde ("TV ligada") e clicar traz a janela da TV
   de novo. A barra nunca passa da largura da tela e os rótulos somem abaixo de 1520 px (ficam no `title`).
+
+## Ferramentas de recorte no repositório
+
+- `tools/recorte.py` (recorte por crescimento de região) e `tools/limpar-recorte.py` (maior pedaço, sombra no pé, vão
+  entre as pernas, chão escuro) saíram da pasta temporária da sessão. Na skill: decisões do dono em Greywater, datas
+  que foram escolhidas (não ditas pelo dono), como refazer as imagens locais e o arquivo offline.

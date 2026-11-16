@@ -284,6 +284,30 @@ Leia `docs/NOVO-MAPA.md` antes de começar.
   confirmada: `core/diag.ts` (F9) deixa o dono desligar sombra/lua/céu/HDRI/pontuais/névoa/pós e informa a placa.
   Quando ele disser qual chave resolve, corrija a causa e anote aqui.
 
+## Greywater Falls — decisões do dono e como retomar (sessão de nov/2026)
+
+- **Decisões do dono**: a história é em **1975** (ele começou com 1965 e corrigiu); o **hotel é a casa do William**
+  (ele é o dono; a cidade inteira vai ao hotel/bar) e Margaret morreu na escada do **porão do hotel**; os agentes vão
+  descobrindo o que acontece no hotel. Pediu lugares para ENTRAR (fábrica, lanchonete, casas…), personagens com as
+  aparências da pasta dele, cartazes com eles, "bem imersivo", e terror explícito nas criaturas (foi ele quem mandou).
+  Os personagens antigos dos jogadores saíram; os novos: Jogador 1 (de preto) e Jogadora 2 (ruiva) chegam de moto,
+  Nancy de carro (os dois primeiros ainda sem nome definido).
+- **Datas escolhidas por mim, não pelo dono** (ele perguntou "falei que dia era?" — não falou): quarta 19/11/1975 (chegada),
+  ritual dos olhos na madrugada de 20/11 às 3h, Margaret morta em 26/12/1974, Eva 9/11, Moreau domingo 16/11,
+  Kowalczyk 17/11. Se ele pedir outra data, mude TUDO junto (jornal, calendário do 304, cartão de ponto, livros do
+  necrotério e da igreja, cartazes, pistas.ts e o dossiê).
+- **Imagens locais (fora do git, repositório público)**: `node tools/baixar-npcs.mjs https://pin.it/6FDe5jQ5t
+  npcs-local/canada`, reduzir para ~700 px de altura, `python3 -I tools/recorte.py … 6 40` e
+  `python3 -I tools/limpar-recorte.py … --pe --entre-pernas` → `npcs-local/canada/cut/NN.png` (números em
+  `canada/npcs.ts`; 13 precisou de TOL 4,5/28). Jogadores e criaturas vieram num PDF que o dono enviou
+  (`pdfimages -png`): `npcs-local/jogador1..3.png` e `npcs-local/canada/cut/27.png` (Esfolado, fundo preto puro:
+  inundar só pixels com max(rgb) < 14) e `28.png` (forma refeita: recorte.py 4/22 + `--chao-escuro`). Numa sessão
+  nova essas imagens não existem: peça o PDF de novo ou que ele mande os arquivos (imagem colada no chat não vira arquivo).
+- **Arquivo offline do dono**: `npm run build:single` e inserir `<script>window.MAPA_PADRAO="canada"</script>` depois do
+  `</title>` → `Greywater-offline.html` (~52 MB com as imagens). É assim que ele joga (sem internet, dois monitores).
+- **Pendências**: manchas brancas/pretas em faces viradas para a lua (esperando o dono dizer qual chave do F9 resolve);
+  nomes dos jogadores 1 e 2; paredes VTT dos andares de cima do hotel usam as do térreo.
+
 ## Erros que já custaram tempo (não repita)
 
 - **Modelos da Poly Haven são pesados** (árvores 1–4 M faces). Sempre rode `tools/arvores.sh`
