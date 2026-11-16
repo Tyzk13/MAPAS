@@ -7,7 +7,8 @@ description: Criar ou melhorar um mapa 3D de RPG de mesa (estilo terror realista
 
 Projeto: Vite + TypeScript + three.js r187. Cada mapa é um módulo em `src/maps/` registrado em
 `src/maps/manifest.ts`. O núcleo (`src/core/`) já faz céu, luz, pós-processamento, personagens, caminhar,
-rede, exportação VTT — **não reescreva o núcleo**. Leia `docs/NOVO-MAPA.md` antes de começar.
+rede, exportação VTT — **não reescreva o núcleo**. Leia `docs/NOVO-MAPA.md` e `docs/HISTORICO.md`
+(preferências do dono e lições) antes de começar.
 
 ## Fluxo (siga nesta ordem, com commit e capturas a cada etapa)
 
@@ -83,3 +84,12 @@ Meça antes de mexer: `node tools/medir.mjs --q=media` (chamadas, triângulos, e
   `node tools/ver-modelo.mjs src/assets/models/<id>.glb`.
 - Nunca compre nada sem perguntar. Sketchfab/Fab só com licença conferida e crédito em `CREDITS.md`.
 - O que não existe em CC0 bom (igreja, bancos de igreja, órgão, carros antigos): modele em código.
+
+## Entrega no celular (o dono abre por lá)
+
+- Publique a versão leve (`npm run build:leve`, pasta `dist-lite/`) como página e mande o **link**;
+  o HTML único é grande demais para a prévia do app.
+- Antes de mandar: abra no emulador de página e numa emulação de celular (Playwright, `devices['Pixel 7']`)
+  e confira que não há erro no console nem tela travada no carregamento.
+- Erros aparecem na tela (`core/loading.ts`): se o dono disser que "não carrega", peça a captura da tela
+  e o modelo do aparelho.
