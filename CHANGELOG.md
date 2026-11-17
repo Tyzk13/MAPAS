@@ -219,3 +219,11 @@
 - **Personagem oculto**: selecionar → Ocultar. O mestre vê meio transparente; a tela dos jogadores e quem só vê
   não veem até revelar (o Revelar do cinema já mostra). Vai pela rede (`o` na posição) e pelo espelho.
 - Tudo aparece na janela dos jogadores; dock só com ícones até 1240 px.
+
+## Documentação e aprendizados
+
+- `docs/GUIA-DO-MESTRE.md`: tudo para usar na sessão (links, dois monitores, preparo, cinema, cenas, atalhos,
+  painel Mestre, som, personagens, problemas comuns).
+- Juntada a `main` (mapa do código `docs/MAPA_DO_CODIGO.md` + `scripts/mapa_do_codigo.py` e regras do Graphify
+  no `CLAUDE.md`); mapa regenerado com os arquivos novos.
+- Skill `mapa-3d`: preferências e decisões do dono, linha do tempo do projeto, ideias aprovadas e próximas.

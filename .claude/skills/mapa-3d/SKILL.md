@@ -7,8 +7,11 @@ description: Criar ou melhorar um mapa 3D de RPG de mesa (estilo terror realista
 
 Projeto: Vite + TypeScript + three.js r187. Cada mapa é um módulo em `src/maps/` registrado em
 `src/maps/manifest.ts`. O núcleo (`src/core/`) já faz céu, luz, pós-processamento, personagens, câmera livre,
-câmera de cinema, tela limpa, rede, exportação VTT e resolução adaptativa — **não reescreva o núcleo**.
-Leia `docs/NOVO-MAPA.md` antes de começar.
+câmera de cinema, cenas, tela limpa, janela dos jogadores (2º monitor), imersão (luz que cai, névoa, lanterna,
+relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação VTT e resolução adaptativa —
+**não reescreva o núcleo**. Leia `docs/NOVO-MAPA.md` antes de começar; como o dono usa tudo na mesa:
+`docs/GUIA-DO-MESTRE.md`. Para achar código gastando pouco: `docs/MAPA_DO_CODIGO.md` (regenere com
+`python3 -I scripts/mapa_do_codigo.py` depois de mexer em código) e o Graphify quando o repositório estiver indexado.
 
 **Tudo o que aprender (erro, truque, decisão do dono) vai para esta skill no mesmo commit.**
 
@@ -18,9 +21,38 @@ Leia `docs/NOVO-MAPA.md` antes de começar.
   `mapa-igreja` tinha a otimização de desempenho; `ccr-a7aaff16-e40c5h`, o mapa do México). Se o pedido
   envolve essas coisas, junte antes. Ao juntar, procure recursos **duplicados** (duas resoluções adaptativas
   se somavam e derrubavam a imagem para ~30%) e mantenha todas as seções do `CHANGELOG.md`.
-- Decisões do dono já tomadas: modo **Caminhar saiu da interface** (a câmera livre cobre; o código ficou só
-  para a captura "terceira" e `?walk=1`); a tela é **transmitida para os jogadores** — nada de informação de
-  mestre aparecendo na cena (use a tela limpa).
+
+## O dono e como ele trabalha (preferências e decisões já tomadas)
+
+- Mestre de **Ordem Paranormal** (terror). Escreve em português informal, curto, às vezes com erros de digitação
+  ("caminhão" = Caminhar). Interprete pelo contexto e diga a interpretação em uma linha; não trave perguntando.
+- **"Pode já colocar tudo, nem precisa perguntar"**: quando ele pede melhorias/ideias, implemente o pacote
+  inteiro, teste, publique e só então relate. Sugira as próximas ideias no fim da resposta.
+- No fim de cada rodada ele quer **os links** (claude.ai) já atualizados — atualize os links existentes, não
+  crie outros. Ele não lê código: explique o que mudou em termos de mesa (o que o jogador vê, que tecla usar).
+- Mesa: **dois monitores** — um com a janela do mestre (controla câmera, personagens), outro com a **tela dos
+  jogadores** (transmitida/mostrada a eles). Nada de informação do mestre pode aparecer na tela dos jogadores.
+- Decisões: modo **Caminhar saiu da interface** (a câmera livre cobre; o código ficou para a captura
+  "terceira" e `?walk=1`); a câmera "puxa" para um lugar como no cinema para revelar vilões (Cinema + Revelar +
+  personagem Oculto); terror **sutil**.
+- Ideias que ele aprovou e já existem: câmera livre, cinema, tela limpa, 2º monitor, congelar/escurecer,
+  lanterna, relâmpago, som ambiente, luz que cai, névoa densa, sons do mestre, som no lugar, imagens para os
+  jogadores, cenas como slides, personagem oculto. Próximas candidatas: música/trilha por cena, efeitos de
+  câmera (respiração, tontura), mapa tático com névoa de guerra, rádio/telefone com chiado, fichas de pista
+  em sequência, lista de iniciativa na tela dos jogadores.
+- Outras sessões trabalham no mesmo repositório (branches `ccr-*`, `mapa-igreja` e commits na `main`, como o
+  mapa do código e o Graphify). Sempre junte o que existir antes de publicar.
+
+## Linha do tempo (o que já foi feito, para não refazer)
+
+1. Projeto Vite + three r187, pós-processamento, PBR, igreja reconstruída com assets CC0, VTT, servidor (etapas A–F).
+2. Otimização da igreja (12,6 M → 4,7 M triângulos), erros na tela, 8 bits em celular antigo (`mapa-igreja`).
+3. Mapa San Judas de las Ánimas (México) em `src/maps/mexico/`.
+4. Organização: resolução adaptativa, servidor endurecido + Dockerfile + teste, CI, docs (VTT, hospedagem).
+5. Câmera livre, dock redesenhado, câmera de cinema (+ envio para a sala), tela limpa, atalhos.
+6. Janela dos jogadores (BroadcastChannel), imersão (K, B, L, R, som), painel Mestre (cenas, luz que cai,
+   névoa, sons do mestre, som no lugar, imagens, personagem oculto).
+7. Mapa do código + regras do Graphify na `main` (outra sessão), juntados aqui.
 
 ## Fluxo (siga nesta ordem, com commit e capturas a cada etapa)
 

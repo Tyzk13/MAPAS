@@ -39,11 +39,13 @@ O CI do GitHub (`.github/workflows/ci.yml`) roda tipos, builds e o teste do serv
 
 ## Documentação
 
+- [`docs/GUIA-DO-MESTRE.md`](docs/GUIA-DO-MESTRE.md) — **como usar na sessão**: links, dois monitores, cinema, cenas, atalhos, som, problemas comuns
 - [`docs/NOVO-MAPA.md`](docs/NOVO-MAPA.md) — como criar um mapa (módulo, manifesto, efeitos prontos, convenções)
 - [`docs/PROMPT-NOVO-MAPA.md`](docs/PROMPT-NOVO-MAPA.md) — modelo de pedido para o Claude criar um mapa
 - [`docs/HOSPEDAGEM.md`](docs/HOSPEDAGEM.md) — deploy, iframe, CSP, servidor (Render, Fly.io, VPS, Docker)
 - [`docs/VTT.md`](docs/VTT.md) — exportar e importar no Foundry, Roll20 e outras mesas
 - [`docs/BRIEFING.md`](docs/BRIEFING.md) — briefing original e direção de arte
+- [`docs/MAPA_DO_CODIGO.md`](docs/MAPA_DO_CODIGO.md) — índice de arquivos e funções com linha (gerado por `scripts/mapa_do_codigo.py`)
 - [`CHANGELOG.md`](CHANGELOG.md) · [`CREDITS.md`](CREDITS.md) (licenças dos assets)
 
 ## Controles
