@@ -7,7 +7,8 @@ description: Criar ou melhorar um mapa 3D de RPG de mesa (estilo terror realista
 
 Projeto: Vite + TypeScript + three.js r187. Cada mapa é um módulo em `src/maps/` registrado em
 `src/maps/manifest.ts`. O núcleo (`src/core/`) já faz céu, luz, pós-processamento, personagens, caminhar,
-rede, exportação VTT — **não reescreva o núcleo**. Leia `docs/NOVO-MAPA.md` antes de começar.
+rede, exportação VTT — **não reescreva o núcleo**. Leia `docs/NOVO-MAPA.md` e `docs/HISTORICO.md`
+(preferências do dono e lições) antes de começar.
 
 ## Fluxo (siga nesta ordem, com commit e capturas a cada etapa)
 
@@ -54,6 +55,25 @@ rede, exportação VTT — **não reescreva o núcleo**. Leia `docs/NOVO-MAPA.md
 - Hospedagem no claude.ai recusa `.glb`/`.hdr`: use `npm run build:leve` (empacota como `.js`).
 - Rede: Poly Haven/ambientCG/Blender precisam estar liberados no ambiente (ambiente "3d").
 
+## Desempenho (aprendido na otimização da igreja: 12,6 M → 4,7 M triângulos por quadro)
+
+Meça antes de mexer: `node tools/medir.mjs --q=media` (chamadas, triângulos, e o custo por grupo).
+- **Vidro com `transmission` (glTF da Poly Haven) faz o three renderizar a cena inteira 2×.** Já é
+  desligado em `core/models.ts`; nunca use `MeshPhysicalMaterial.transmission` na cena.
+- Peças estáticas feitas em código: `mergeStatic(raiz, { bucket })` no fim do `build` (`core/merge.ts`).
+  As originais continuam valendo para colisão. Separe por camada e por altura (VTT esconde o "alto").
+  Ela ignora modelos .glb (geometria quantizada) — juntá-los sem desquantizar desloca as peças.
+- Espalhados (`instance`/`instanceVariants`): use `tile` (blocos para o corte por tela) e `cullDist`
+  (some além da névoa). Gramado: `grassField` já faz blocos + versão simples ao longe.
+- Interior: esconda o exterior quando a câmera está dentro e a porta fora do campo de visão
+  (`updExterior` em `maps/igreja/index.ts`; o grupo leva `userData.autoHide`).
+- Sombra do sol é recalculada a cada 2–4 quadros (`post.ts`); após mudar algo estático chame
+  `R.shadowMap.needsUpdate = true`. Detalhes pequenos (flores) e floresta fora da cerca: sem sombra.
+- Auréolas de luz: `halo()` já agrupa tudo num único objeto de pontos — não crie `Sprite` por luz.
+- Floresta: LOD por distância (`_lod1`, `_lod2`); só a qualidade Alta usa o modelo completo perto.
+- Resolução adaptativa automática (cai até 60% se os quadros passarem de ~21 ms).
+- Névoa: no shader, use a transposta da `viewMatrix`, nunca `inverse()` por vértice.
+
 ## Achar assets novos (só se o catálogo não tiver)
 
 - API Poly Haven (CC0): `https://api.polyhaven.com/assets?t=textures|hdris|models` e
@@ -64,3 +84,12 @@ rede, exportação VTT — **não reescreva o núcleo**. Leia `docs/NOVO-MAPA.md
   `node tools/ver-modelo.mjs src/assets/models/<id>.glb`.
 - Nunca compre nada sem perguntar. Sketchfab/Fab só com licença conferida e crédito em `CREDITS.md`.
 - O que não existe em CC0 bom (igreja, bancos de igreja, órgão, carros antigos): modele em código.
+
+## Entrega no celular (o dono abre por lá)
+
+- Publique a versão leve (`npm run build:leve`, pasta `dist-lite/`) como página e mande o **link**;
+  o HTML único é grande demais para a prévia do app.
+- Antes de mandar: abra no emulador de página e numa emulação de celular (Playwright, `devices['Pixel 7']`)
+  e confira que não há erro no console nem tela travada no carregamento.
+- Erros aparecem na tela (`core/loading.ts`): se o dono disser que "não carrega", peça a captura da tela
+  e o modelo do aparelho.

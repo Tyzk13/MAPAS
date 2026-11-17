@@ -15,3 +15,23 @@ Use as ferramentas do **Graphify** (MCP `Graphify`) em 100% das tarefas de códi
 3. Se o `commitSha` do resultado for igual ao `git rev-parse HEAD`, use a resposta direto. Se for diferente, leia os arquivos que mudaram desde então.
 4. Se o repositório não estiver indexado ou o Graphify não estiver disponível, avise o usuário em uma linha e siga com o `docs/MAPA_DO_CODIGO.md` + leitura por trecho.
 Para indexar um repositório: ligar em Repositories em https://app.graphify.com (plano gratuito: até 3 repositórios ao mesmo tempo).
+
+## Contexto do projeto e regras do dono
+Mapas 3D para RPG de mesa (Ordem Paranormal, terror realista **sutil**). Vite + TypeScript + three.js r187.
+
+Antes de trabalhar em mapas, leia:
+1. `docs/HISTORICO.md`: decisões, preferências do dono, estado atual e lições da criação da igreja.
+2. Skill `mapa-3d` (`.claude/skills/mapa-3d/SKILL.md`): fluxo, receita visual, erros a evitar, desempenho, entrega no celular.
+3. `.claude/skills/mapa-3d/CATALOGO.md`: assets CC0 já testados.
+4. `docs/NOVO-MAPA.md` (criar um mapa) e `docs/HOSPEDAGEM.md` (publicar, celular, servidor).
+
+Regras fixas:
+- Interface e textos em **português (BR)**.
+- **Nunca comprar nada sem perguntar.** Assets gratuitos CC0 podem ser baixados à vontade; registre todos em `CREDITS.md`.
+- Sem sangue, monstros visíveis ou sobrenatural explícito; o terror vem da luz, névoa e abandono.
+- **Maior qualidade possível**, mas rodando liso (60 fps no PC, 30+ no celular). Meça com `node tools/medir.mjs` antes e depois.
+- Commits pequenos; `CHANGELOG.md` atualizado; capturas (`npm run capturas`) a cada etapa visual.
+- Ao terminar, entregue o link/arquivo para o dono ver (ele costuma abrir pelo celular).
+- O que for aprendido vai para o repositório (skill, `docs/HISTORICO.md`), não fica só na conversa.
+
+Verificação antes de entregar: `npm run build`, `node tools/testar-funcoes.mjs`, `node tools/testar-vtt.mjs`.

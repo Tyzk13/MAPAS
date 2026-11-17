@@ -10,7 +10,7 @@ import {
 import { N8AOPostPass } from 'n8ao';
 import { R, S, cam, ctl, onResize, setPixelRatioCap, fit } from './engine';
 import { sun } from './sky';
-import type { Quality } from './config';
+import { CFG, type Quality } from './config';
 
 export interface Grade { exposure: number; contrast: number; brightness: number; saturation: number; hue: number; bloom: number; vignette: number; tint: [number, number, number] }
 
@@ -18,10 +18,10 @@ export interface Grade { exposure: number; contrast: number; brightness: number;
 export const DEFAULT_GRADE: Grade = { exposure: 1, contrast: 0.12, brightness: -0.02, saturation: -0.22, hue: 0, bloom: 0.55, vignette: 0.55, tint: [1, 1, 1] };
 
 const QP = {
-  baixa: { pr: 1, shadow: 1024, ao: false, aoHalf: false, aoQ: 'Performance', smaa: SMAAPreset.LOW, dof: false, grain: false },
+  baixa: { pr: 1, shadowEvery: 4, shadow: 1024, ao: false, aoHalf: false, aoQ: 'Performance', smaa: SMAAPreset.LOW, dof: false, grain: false },
   // (meia resolução do N8AO não funciona com o three r187 — usa render target múltiplo removido)
-  media: { pr: 1.5, shadow: 2048, ao: true, aoHalf: false, aoQ: 'Low', smaa: SMAAPreset.MEDIUM, dof: false, grain: true },
-  alta: { pr: 2, shadow: 4096, ao: true, aoHalf: false, aoQ: 'High', smaa: SMAAPreset.HIGH, dof: true, grain: true },
+  media: { pr: 1.5, shadowEvery: 3, shadow: 2048, ao: true, aoHalf: false, aoQ: 'Low', smaa: SMAAPreset.MEDIUM, dof: false, grain: true },
+  alta: { pr: 2, shadowEvery: 2, shadow: 4096, ao: true, aoHalf: false, aoQ: 'High', smaa: SMAAPreset.HIGH, dof: true, grain: true },
 } as const;
 
 let composer: EffectComposer, aoPass: any, dof: DepthOfFieldEffect, dofPass: EffectPass, bloom: BloomEffect, vig: VignetteEffect;
@@ -29,6 +29,10 @@ let bc: BrightnessContrastEffect, hs: HueSaturationEffect, tm: ToneMappingEffect
 let tintFx: ColorAverageEffect;
 const focusTarget = new THREE.Vector3();
 let enabled = true;
+// sombra do sol recalculada a cada N quadros (a cena é quase toda estática)
+let frameN = 0, shadowEvery = 3;
+// resolução adaptativa: abaixa a resolução interna quando os quadros ficam lentos e volta quando sobra folga
+let resScale = 1, emaDt = 1 / 60, lastAdjust = 0, basePr = 1.5;
 
 export const post = {
   quality: 'media' as Quality,
@@ -37,8 +41,11 @@ export const post = {
   focus: null as THREE.Vector3 | null,
 
   init(q: Quality) {
+    R.shadowMap.autoUpdate = false; R.shadowMap.needsUpdate = true;
     R.toneMapping = THREE.NoToneMapping;
-    composer = new EffectComposer(R, { frameBufferType: THREE.HalfFloatType, multisampling: 0, stencilBuffer: false });
+    // celulares antigos podem não renderizar em meia-precisão: cai para 8 bits
+    const gl = R.getContext(), half = !!(gl.getExtension('EXT_color_buffer_half_float') || gl.getExtension('EXT_color_buffer_float'));
+    composer = new EffectComposer(R, { frameBufferType: half ? THREE.HalfFloatType : THREE.UnsignedByteType, multisampling: 0, stencilBuffer: false });
     composer.addPass(new RenderPass(S, cam));
 
     aoPass = new N8AOPostPass(S, cam, innerWidth, innerHeight);
@@ -72,6 +79,7 @@ export const post = {
   setQuality(q: Quality) {
     this.quality = q;
     const p = QP[q];
+    basePr = p.pr; resScale = 1; shadowEvery = p.shadowEvery; R.shadowMap.needsUpdate = true;
     setPixelRatioCap(p.pr);
     if (sun.shadow.mapSize.x !== p.shadow) {
       sun.shadow.mapSize.set(p.shadow, p.shadow);
@@ -102,7 +110,21 @@ export const post = {
   /** Quantos quadros renderizar antes de uma captura. */
   warmup() { return 3; },
 
+  /** Pede a sombra recalculada no próximo quadro (ao trocar clima, mapa, mover luz). */
+  shadowNow() { R.shadowMap.needsUpdate = true; },
+
   render(dt: number) {
+    if (CFG.capture || ++frameN % shadowEvery === 0) R.shadowMap.needsUpdate = true;
+    if (!CFG.capture && dt > 0) {
+      emaDt += (Math.min(dt, 0.1) - emaDt) * 0.05;
+      const now = performance.now();
+      if (now - lastAdjust > 1500) {
+        const prev = resScale;
+        if (emaDt > 1 / 48) resScale = Math.max(0.6, resScale * 0.88);
+        else if (emaDt < 1 / 57) resScale = Math.min(1, resScale * 1.08);
+        if (Math.abs(prev - resScale) > 0.01) { setPixelRatioCap(basePr * resScale); lastAdjust = now; } else lastAdjust = now;
+      }
+    }
     if (!enabled) { R.render(S, cam); return; }
     if (dofPass.enabled) {
       focusTarget.copy(this.focus || ctl.target);

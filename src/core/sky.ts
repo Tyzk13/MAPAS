@@ -122,6 +122,7 @@ export async function setTime(i: number) {
     if (M.onTime) M.onTime(p);
   }
   litGlass.forEach(m => (m.emissiveIntensity = (m.userData.litBase ?? 1.4) * (p.lamps ? 1 : 0.02)));
+  R.shadowMap.needsUpdate = true;
   timeHooks.forEach(f => f(p));
 }
 
