@@ -17,6 +17,15 @@ Use as ferramentas do **Graphify** (MCP `Graphify`) em 100% das tarefas de códi
 Para indexar um repositório: ligar em Repositories em https://app.graphify.com (plano gratuito: até 3 repositórios ao mesmo tempo).
 
 ## Projeto (mapas 3D de RPG de terror)
+Antes de trabalhar, leia: `docs/HISTORICO.md` (decisões, preferências do dono, estado atual, links),
+a skill `mapa-3d` (receitas, erros a evitar, interface pronta) e `docs/GUIA-DO-MESTRE.md` (como ele usa na mesa).
+
+Regras fixas:
+- **Nunca comprar nada sem perguntar.** Assets gratuitos CC0 podem ser baixados à vontade; registre em `CREDITS.md`.
+- **Maior qualidade possível**, mas rodando liso (60 fps no PC, 30+ no celular). Meça com `node tools/medir.mjs`.
+- O dono pede pacotes inteiros ("pode colocar tudo, nem precisa perguntar"): faça, teste, publique e relate.
+- Imagens de moradores/jogadores/criaturas de Greywater ficam em `npcs-local/` (fora do git). Sem essa pasta,
+  **não republique** os links (o build perderia as imagens).
 - Idioma: português do Brasil (interface, comentários, commits e docs).
 - Para criar/mudar mapas **ou a interface**, use a skill `mapa-3d` (`.claude/skills/mapa-3d/`) e leia `docs/NOVO-MAPA.md`.
   Não reescreva o núcleo (`src/core/`) para atender um mapa. Como o dono usa tudo na mesa: `docs/GUIA-DO-MESTRE.md`.
@@ -26,5 +35,6 @@ Para indexar um repositório: ligar em Repositories em https://app.graphify.com 
 - Mudança visual: rode capturas (`npm run capturas -- <rótulo> --q=baixa --w=960 --h=540` para iterar) e olhe as imagens.
 - **Tudo o que aprender** (erros, truques, decisões e preferências do dono) vai para a skill `mapa-3d` (`.claude/skills/mapa-3d/SKILL.md`) no mesmo commit.
 - Registre mudanças em `CHANGELOG.md`. Assets novos só CC0 (ou licença conferida) com crédito em `CREDITS.md`.
-- Terminou uma rodada de interface/mapa → publique nos links do claude.ai (passos na skill) e mande os links.
-- Terror sutil: sem gore, monstros ou sobrenatural explícito.
+- Terminou uma rodada de interface/mapa → publique nos três links do claude.ai (passos e cuidados na skill) e mande os links (ele abre pelo celular).
+- Terror sutil por padrão (luz, névoa, abandono): sem gore nem sobrenatural explícito, a não ser que o dono peça (em Greywater ele pediu criaturas, ocultas até a aparição).
+- O que for aprendido vai para o repositório (skill e `docs/HISTORICO.md`), não fica só na conversa.

@@ -17,6 +17,7 @@
     "test": "npm run typecheck && npm run test:servidor && npm run test:funcoes",
     "test:funcoes": "node tools/testar-funcoes.mjs",
     "test:vtt": "node tools/testar-vtt.mjs",
+    "test:lupa": "node tools/testar-lupa.mjs",
     "test:servidor": "cd server && npm install --silent && npm test"
   },
   "dependencies": {

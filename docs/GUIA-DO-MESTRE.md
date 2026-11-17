@@ -9,19 +9,25 @@ para hospedar e servidor, `docs/HOSPEDAGEM.md`; para Foundry/Roll20, `docs/VTT.m
 |---|---|---|
 | [Igreja do Casamento](https://claude.ai/artifact/65XS5FnzDBvfneK5AnFXUh) | igreja | todos os mapas (troque pelo menu **Mapa**) |
 | [San Judas de las Ánimas](https://claude.ai/artifact/55cVSvDE5dfVtg2Km2iR9K) | cidadezinha mexicana | todos os mapas |
+| [Harlow, Texas](https://claude.ai/artifact/HHBUeQ8noXrMfhqAK6Q1PB) | delegacia de Harlow (O Caso Whitlock) | todos os mapas |
 
-São privados: para outras pessoas abrirem, use o menu **Compartilhar** da página. É a versão leve (texturas
-menores), que roda também no celular.
+Mapas: **Igreja** (casamento), **San Judas** (México), **Harlow** (Texas, 1987 parado no tempo), **Greywater
+Falls** (Ontário, 1975 — O Caso Ashdown, hotel de 3 andares) e **Campo** (exemplo). São privados: para outras
+pessoas abrirem, use o menu **Compartilhar** da página. É a versão leve (texturas menores), que roda no celular.
+
+**Sem internet**: o arquivo offline (HTML único, ~52 MB) abre direto no navegador do PC e funciona com os dois
+monitores igual (como gerar: `docs/HISTORICO.md`).
 
 ## Montagem
 
 ### Dois monitores (recomendado)
 
 1. Monitor 1: abra o link. Esta é a **janela do mestre** (botões, câmera, personagens).
-2. Abra **o mesmo link noutra janela**, leve-a ao monitor 2 e nela escolha **Mais → Esta janela é a tela dos
-   jogadores**. (No seu próprio site, **Mais → Abrir janela dos jogadores** abre sozinha.)
+2. Clique no botão dourado **TV dos jogadores** na barra (ou tecla **J**) — no seu site/arquivo offline ela abre
+   sozinha. No claude.ai, se não abrir: abra **o mesmo link noutra janela** e nela escolha **Mais → Esta janela é a
+   tela dos jogadores**. Leve-a ao monitor 2.
 3. Dê **duplo clique** na janela dos jogadores: tela cheia e libera o som.
-4. O dock da janela do mestre mostra um **monitor verde** quando as duas estão ligadas.
+4. O botão fica verde (**TV ligada**) e o dock mostra um monitor verde quando as duas estão ligadas.
 
 A janela dos jogadores não tem botões nem cursor e segue a sua: câmera (órbita, livre, cinema com barras e
 legenda), mapa, clima, personagens, luz, névoa, lanterna, imagens e som. **H** nela volta a ser janela normal.
@@ -48,7 +54,9 @@ Cada um abre o link com a mesma `?room=` e o servidor de sincronização (`?ws=w
 2. **Vilões/NPCs**: **Personagens → + Novo personagem** (imagem PNG; "remover fundo liso" ajuda). Selecione e
    aperte **Ocultar**: só você o vê (meio transparente) até revelar.
 3. **Imagens**: Mestre → *Escolher imagem* (pista, foto, carta, mapa desenhado). Ficam como miniaturas.
-4. **Cenas**: monte o momento (clima, câmera, legenda e estilo do cinema, luz, névoa, lanterna, vilões
+4. **Notas e pistas**: cada vista pode ter **notas do mestre** (cartão no canto só na sua janela: o que há no local,
+   segredos, NPCs, ganchos) e o mapa pode ter **documentos** (Mestre → Pistas do mapa, com tradução/nota).
+5. **Cenas**: monte o momento (clima, câmera, legenda e estilo do cinema, luz, névoa, lanterna, vilões
    posicionados/ocultos) e Mestre → *Gravar a cena atual*. Na sessão, **.** e **,** passam as cenas como slides.
 
 Tomadas e cenas ficam **neste navegador**, por mapa (outro navegador/computador não as vê).
@@ -63,6 +71,20 @@ Tomadas e cenas ficam **neste navegador**, por mapa (outro navegador/computador 
 | Livre | WASD anda para onde olha, arrastar olha, Q/E (ou Espaço) desce/sobe, Shift rápido, roda muda a velocidade, **G** atravessa paredes; joystick e ▲▼ no celular |
 | Vista | menu **Vista**: pontos prontos do mapa |
 | Cinema | painel **Cinema** ou **P**: clique onde a câmera vai; ou toque uma tomada (**1–9**) |
+
+### Documentos e pistas (lupa)
+
+- Passe o mouse num papel, quadro ou cartaz da cena (aparece a **lupa**) e clique: abre ampliado e legível.
+- **Mestre → Pistas do mapa**: abre qualquer documento só na sua tela, **sem mexer na câmera**, com a tradução ao lado.
+- Na lupa: **Mostrar aos jogadores** (vai para a tela deles) ou **Levar a câmera até lá** (movimento de cinema).
+
+### Personagens e aparições
+
+- **Onde está cada um** (menu Personagens): lista com o lugar de cada um, busca, **Ir**, **Trazer**, **Levar para…**.
+- **Aparição**: ao clicar **Mostrar** num personagem oculto (ou adicionar um vilão já visível), as duas janelas
+  mostram uma introdução sinistra de ~4,6 s com a imagem dele (chiado, lampejos, avanço no rosto, corte para o preto).
+- **Fichas vivas**: os personagens respiram e balançam de leve. Tamanho **Gigante** para vilões; dá para criar já
+  oculto.
 
 ### Cinema (o momento "vilão aparece do nada")
 
@@ -86,6 +108,8 @@ Tomadas e cenas ficam **neste navegador**, por mapa (outro navegador/computador 
 | **L** | lanterna na câmera |
 | **R** | relâmpago (clarão + trovão) |
 | **I** | mostrar / esconder a imagem |
+| **J** | abrir/trazer a janela dos jogadores (TV) |
+| **F9** | painel de diagnóstico das manchas na imagem (também em Mais) |
 | **Esc** | sair do cinema / da câmera livre |
 
 Na janela dos jogadores: **duplo clique** ou **F** = tela cheia; **H** = volta ao normal.
@@ -126,3 +150,5 @@ Ver `docs/VTT.md`.
 | Lento | Qualidade Baixa na janela do mestre; a resolução já cai sozinha quando o FPS cai (`?fps=1` mostra) |
 | Jogador não consegue abrir o link | compartilhe pelo menu da página (links são privados) |
 | Algo travou no carregamento | o erro aparece na tela; recarregue; em celular antigo use Qualidade Baixa |
+| Manchas brancas/pretas em placas | **F9**: desligue uma coisa por vez (sombra, lua, céu, reflexos, luzes, névoa, pós) e diga ao Claude qual resolveu; fica salvo no navegador |
+| Moradores de Greywater sem imagem | as imagens ficam fora do git (`npcs-local/`); use o link/arquivo offline gerado pela sessão que tem as imagens |

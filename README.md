@@ -1,7 +1,8 @@
-# Mapas 3D de tabletop — Igreja e San Judas (Ordem Paranormal)
+# Mapas 3D de tabletop — Igreja, San Judas e Harlow (Ordem Paranormal)
 
 Mapas 3D interativos no navegador para RPG de mesa: igreja preparada para um casamento e San Judas de las
-Ánimas (cidadezinha mexicana), com terreno amplo,
+Ánimas (cidadezinha mexicana) e Harlow (cidadezinha do Texas, com o mistério *O Caso Whitlock* —
+`docs/casos/harlow-caso-whitlock.md`), com terreno amplo,
 vários jogadores vendo a mesma cena e exportação para mesa virtual (Universal VTT).
 Feito com Vite + TypeScript + three.js r187, assets CC0 (Poly Haven) e pós-processamento estilo jogo.
 
@@ -39,6 +40,7 @@ O CI do GitHub (`.github/workflows/ci.yml`) roda tipos, builds e o teste do serv
 
 ## Documentação
 
+- [`docs/HISTORICO.md`](docs/HISTORICO.md) — histórico do projeto, preferências do dono, estado atual e links
 - [`docs/GUIA-DO-MESTRE.md`](docs/GUIA-DO-MESTRE.md) — **como usar na sessão**: links, dois monitores, cinema, cenas, atalhos, som, problemas comuns
 - [`docs/NOVO-MAPA.md`](docs/NOVO-MAPA.md) — como criar um mapa (módulo, manifesto, efeitos prontos, convenções)
 - [`docs/PROMPT-NOVO-MAPA.md`](docs/PROMPT-NOVO-MAPA.md) — modelo de pedido para o Claude criar um mapa
@@ -75,7 +77,7 @@ Tomadas gravadas ficam neste navegador, por mapa.
 | Parâmetro | Efeito |
 |---|---|
 | `?room=nome` | sala (jogadores na mesma sala veem o mesmo) |
-| `?map=igreja\|mexico\|campo` | mapa inicial (igreja, San Judas no México, campo de exemplo) |
+| `?map=igreja\|mexico\|texas\|campo` | mapa inicial (igreja, San Judas no México, Harlow no Texas, campo de exemplo) |
 | `?time=0..4` | clima: Terror, Anoitecer, Crepúsculo, Nublado, Noite |
 | `?q=baixa\|media\|alta` | qualidade gráfica (padrão: Média no desktop, Baixa no celular) |
 | `?ui=0` · `?ro=1` · `?chars=0` | sem interface · só ver · sem personagens |

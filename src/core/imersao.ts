@@ -34,7 +34,8 @@ export const imersao = {
 
 // ---------- som ----------
 /** O som toca nesta janela? (o mestre escolhe: desligado, nesta janela ou na dos jogadores) */
-const somAqui = () => (imersao.ehJogadores ? imersao.somModo === 'jogadores' : imersao.somModo === 'aqui');
+// "Jogadores" sem janela dos jogadores ligada: toca aqui mesmo (antes ficava mudo e parecia defeito)
+const somAqui = () => (imersao.ehJogadores ? imersao.somModo === 'jogadores' : imersao.somModo === 'aqui' || (imersao.somModo === 'jogadores' && !imersao.temJogadores));
 export function aplicarSom() { som.setVolume(imersao.volume); som.setAtivo(somAqui()); }
 
 // ---------- lanterna ----------

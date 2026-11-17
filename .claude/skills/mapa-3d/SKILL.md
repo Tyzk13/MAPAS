@@ -18,7 +18,9 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
 ## Antes de começar
 
 - `git fetch` e `git branch -a`: outras sessões deixam trabalho em branches não juntadas (já aconteceu:
-  `mapa-igreja` tinha a otimização de desempenho; `ccr-a7aaff16-e40c5h`, o mapa do México). Se o pedido
+  `mapa-igreja` tinha a otimização de desempenho; `ccr-a7aaff16-e40c5h`, o mapa do México e o Texas;
+  `ccr-e87ec97a-p4jbyp`, Painel Mestre, cinema e imersão — "pega as funções que o repositório contém" =
+  juntar essas branches). Se o pedido
   envolve essas coisas, junte antes. Ao juntar, procure recursos **duplicados** (duas resoluções adaptativas
   se somavam e derrubavam a imagem para ~30%) e mantenha todas as seções do `CHANGELOG.md`.
 
@@ -34,7 +36,9 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
   jogadores** (transmitida/mostrada a eles). Nada de informação do mestre pode aparecer na tela dos jogadores.
 - Decisões: modo **Caminhar saiu da interface** (a câmera livre cobre; o código ficou para a captura
   "terceira" e `?walk=1`); a câmera "puxa" para um lugar como no cinema para revelar vilões (Cinema + Revelar +
-  personagem Oculto); terror **sutil**.
+  personagem Oculto + aparição); terror **sutil** por padrão — em Greywater ele pediu criaturas explícitas.
+- Ele joga muitas vezes **offline** (HTML único) e abre os links pelo **celular**. Histórico completo e estado
+  atual: `docs/HISTORICO.md`.
 - Ideias que ele aprovou e já existem: câmera livre, cinema, tela limpa, 2º monitor, congelar/escurecer,
   lanterna, relâmpago, som ambiente, luz que cai, névoa densa, sons do mestre, som no lugar, imagens para os
   jogadores, cenas como slides, personagem oculto. Próximas candidatas: música/trilha por cena, efeitos de
@@ -52,7 +56,9 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
 5. Câmera livre, dock redesenhado, câmera de cinema (+ envio para a sala), tela limpa, atalhos.
 6. Janela dos jogadores (BroadcastChannel), imersão (K, B, L, R, som), painel Mestre (cenas, luz que cai,
    névoa, sons do mestre, som no lugar, imagens, personagem oculto).
-7. Mapa do código + regras do Graphify na `main` (outra sessão), juntados aqui.
+7. Harlow, Texas (`src/maps/texas/`): delegacia com pistas, lupa de documentos, notas do mestre, floresta.
+8. Greywater Falls, Ontário (`src/maps/canada/`): hotel de 3 andares, moradores do dono, aparição, fichas vivas, TV.
+9. Mapa do código + regras do Graphify na `main`; tudo juntado numa branch com `docs/HISTORICO.md` e o guia do mestre.
 
 ## Fluxo (siga nesta ordem, com commit e capturas a cada etapa)
 
@@ -101,9 +107,106 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
   com recortes), vasos de barro (lathe), caixotes (caixa), círculo de giz (canvas no chão).
 - Mapa inicial da página publicada: `<script>window.MAPA_PADRAO="id"</script>` no `index.html` da cópia.
 
+## Mistério (Ordem Paranormal) — receita que funcionou em `src/maps/texas/mystery.ts`
+
+- Escreva primeiro o caso (premissa, verdade do mestre, 8–12 pistas) em `docs/casos/<mapa>-<caso>.md`,
+  com uma **vista nomeada para cada pista**, e só então coloque as pistas no mapa.
+- Pistas baratas e legíveis: texturas de canvas (lápide com nome, cartaz de desaparecida, mural de recortes
+  com barbante, polaroid, quadro de hinos com a data, espelho escrito), **um sigilo inventado repetido** em
+  vários lugares (vagão, caixa-d'água, milharal, mapa), uma luz vermelha fraca pulsando (porão), velas
+  acesas "por alguém hoje", relógio parado, letreiro de neon com frase ambígua.
+- Algo visível na vista **Tática** (círculo queimado no milharal) ajuda o mestre na mesa virtual.
+- Não copie sigilos oficiais do sistema; invente. Terror sutil: sem monstro explícito.
+- Textos no idioma do lugar (inglês no Texas, espanhol no México); a tradução vai no dossiê.
+
+## Texas (aprendido em `src/maps/texas/`)
+
+- `shell()` (texas/common.ts): 4 paredes com vãos reais por lado (`side`, `at` em coordenada do mundo) e
+  oitão opcional; `gableRoof()` telhado de duas águas; `Builder.store()` fachada falsa de faroeste,
+  `Builder.house()` casa de tábuas com varanda; `neonTexture()` letreiro de neon (MeshBasic em `M.lamps`).
+- Tábuas texturizadas escuras não ficam brancas tingindo: use `pbr(id, { map: false })` + cor de vértice
+  (fica o relevo das tábuas e a cor vem da pintura).
+- Faixa colorida em volta de prédio com interior = 4 caixas finas, **nunca** uma caixa do tamanho do prédio
+  (enche o interior).
+- Torre treliçada: pernas inclinam para dentro (`rx = -b·k`, `rz = a·k` com a,b = ±1).
+- Animações baratas no `tick`: bombas de petróleo (grupo do balancim + manivela), roda do moinho,
+  bandeira (vértices de um plano 12×6), rodadoras (LineSegments), neon piscando.
+
+## Interior cheio de informação (aprendido na delegacia, `src/maps/texas/police.ts`)
+
+- Documentos = planos com textura de canvas (`paperDraw`, `photo`, `cork`, `marker`); em 1600×900 ficam
+  legíveis com a câmera a ~2,5 m de um quadro de 8,8 m (2048 px de largura). Fonte monoespaçada ≥ 13 px no
+  canvas para folhas de 0,25 m sobre mesas. Plano em parede: afaste 0,012 m e use `polygonOffset`.
+- Quebra de linha: a altura do título vem do retorno do `wrap()`, não de conta aproximada (sobrepunha).
+- Cada documento importante ganha uma linha traduzida no dossiê e cada sala uma vista nomeada (inclua
+  vistas de perto dos quadros, ex.: "Quadro do caso").
+- Paredes internas: material **sem textura** (`plain`) com cor; concreto texturizado tingido fica escuro.
+  Faixa de rodapé verde + parede clara = repartição dos anos 80. Forro rebaixado na camada de telhado (some
+  na vista de cima/VTT) e painéis fluorescentes emissivos sem luz própria; poucas PointLights por sala.
+- Cornija/platibanda = 4 caixas nas bordas, nunca uma laje inteira fora da camada de telhado: ela esconde o
+  interior na exportação VTT. Confira a prévia `capturas/vtt/<mapa>-*_previa.jpg` (`node tools/testar-vtt.mjs --map=<id>`).
+- `WoodenChair_01` é uma cadeira **gótica tipo trono** — não serve para escritório; faça cadeira em código.
+  `steel_frame_shelves_01` vem em escala errada (11 m) e `drawer_cabinet` é móvel moderno: descartados.
+
+## Câmera livre (decisão do dono: "estava muito devagar")
+
+- `src/core/walk.ts` `freeStep`: base `WM.speed` 5 m/s × aceleração por segurar (até 2,2×) × correr (Shift ou
+  joystick no limite, 2,5×) × altura (até 4×), teto 70 m/s. Não volte a limitar o passo da câmera livre a
+  0,05 s: em celular lento isso a deixava em câmera lenta. Mapas grandes pedem câmera rápida no alto.
+
+## Dois monitores (decisão do dono)
+
+- O dono transmite **um monitor só com a câmera** (janela dos jogadores, `?tela=jogadores`) e usa **o outro só
+  para ele**, com as informações. Regra: toda informação de mestre (notas, traduções, listas, lupa) aparece
+  só na janela do mestre — nunca na dos jogadores nem na tela limpa (`.jogadores`, `.limpa` no CSS).
+- Por mapa, preencha `M.notas` (texto por nome de vista: o que há, segredos, NPCs, gancho) e dê `pt`/`onde` a
+  cada documento de `M.docs` (tradução/nota e local). Modelo: `src/maps/texas/pistas.ts`.
+- Mestre → Pistas do mapa abre um documento sem mover a câmera; "Levar a câmera até lá" (cinema) é a forma de
+  mostrar na cena. `npm run test:lupa` confere tudo isso e que nada vaza para a janela dos jogadores.
+
+## Lupa de documentos (`src/core/docs.ts`)
+
+- Todo documento importante vai em `M.docs = [{ o: mesh, n: 'Nome' }]` (plano com textura de canvas): passar o
+  mouse mostra a lupa, clicar abre ampliado com "Mostrar aos jogadores". Em police.ts/mystery.ts o padrão é
+  `nm('Nome'); doc(...)` / `nm('Nome'); plane(...)`. Canvas de 512–2048 px fica legível ampliado.
+- Teste: `npm run test:lupa` (espera a câmera chegar na vista — o navegador de teste é lento: use
+  `waitForFunction` na posição da câmera, não um tempo fixo).
+- A 1ª vista de `M.views` é onde o mapa abre: ponha lá o lugar da missão (Harlow abre na delegacia).
+
+## Floresta e luzes (aprendido em `src/maps/texas/forest.ts` e `texas/index.ts`)
+
+- `fir_tree_01` (até no LOD2) custa ~17k triângulos por cópia e quase não aparece de longe: para mata densa, use
+  **pinheiro em código** (`pineGeo`: tronco + 7 saias de cone com borda irregular, cor por vértice, ~150 tri),
+  instanciado em blocos de 30 m com `cullDist`. Cor verde-oliva escura e pouco saturada (HSL ~0.27/0.22/0.075).
+- Chão de mata = malha por cima do terreno com textura `forest_ground_04` e **cor de vértice com alfa
+  (itemSize 4) + `transparent`**: a borda some aos poucos. Corte seco (afundar vértices) deixa degraus.
+- Mantenha livres de árvores as câmeras das vistas (`FOREST.cams`) e os pontos de cena (árvore dos sapatos).
+- Luzes: em vez de acender só as N de maior prioridade no mapa todo, mantenha N PointLights e mova-as para as
+  luzes pedidas mais perto da câmera (`escolherLuzes`, 3×/s ou quando a câmera pula > 5 m). Mudar posição/cor
+  não recompila shader. Nas capturas o tempo é fixo: re-escolha também pela distância percorrida.
+
+- `node tools/testar-vtt.mjs` grava `.dd2vtt`/`.png` de dezenas de MB em `capturas/vtt/`: estão no `.gitignore`
+  (só as `_previa.jpg` vão para o git). Nunca faça `git add` deles.
+
+## Resolução automática (`src/core/desempenho.ts`)
+
+- Travadas pontuais (carregar HDRI ao trocar clima, sonda de ambiente, compilar shader) não podem baixar a
+  resolução: quadros > 250 ms descartam a janela e `escolherClima` chama `desempenho.reiniciar()`. Limites:
+  baixa < 30 fps, sobe > 48 fps (2 janelas). Para testar a imagem sem esse efeito: `?auto=0`.
+- Bug relatado pelo dono: "a qualidade está bugando ao trocar o tempo" = isso.
+
 ## Medir o peso (faça antes de publicar)
 
-- Script de medição: abrir `?map=<id>&q=baixa&fps=1` no Playwright e ler `#fps` (draws e triângulos;
+- `npx vite build --outDir .cache/capturas-build && node tools/medir-peso.mjs <mapa>` (Baixa e Alta).
+  O que vale é a versão publicada: `npm run build:leve && node tools/medir-peso.mjs <mapa> --dist=dist-lite --lista`
+  (`--lista` = 20 malhas mais pesadas via `window.__peso()`, disponível com `?fps=1`).
+- `Batch` agrupa por região de 70 m (não só por material): sem isso uma malha cobria a cidade inteira e
+  nunca saía da tela nem da sombra. Instâncias espalhadas: sempre `tile` + `cullDist`.
+- Reduções feitas: `WoodenChair_01` 0.15, `covered_car` 0.4, `Rockingchair_01` 0.15, `cardboard_box_01` 0.05
+  (em `tools/orcamento.sh`). `boulder_01` não reduz (nem simplify nem Decimate do Blender passam de 28k): use
+  pouco ou pedra em código. Fontes ausentes em `assets-src/`: `npm run assets -- --force --only=<id>`.
+
+- Por dentro: abrir `?map=<id>&q=baixa&fps=1` no Playwright e ler `#fps` (draws e triângulos;
   fps no swiftshader não vale nada). Para achar culpados, percorra `M.G` somando triângulos × `count`
   das InstancedMesh e liste os 25 maiores.
 - Meta para celular (Baixa): ≲ 1,5 M triângulos na cena (o contador do `#fps` soma sombra/AO, ~3×).
@@ -111,6 +214,135 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
   nos galhos; `ceramic_vase_03` 11k; `wooden_crate_02` 5k; `street_lamp_02` só depois de simplificar.
 - Na versão leve (`build:leve`) os arquivos `_lod1` somem (viram o id normal): use `lod(id)` de
   `mexico/common.ts` (`hasModel(id+'_lod1') ? ... : id`), senão as árvores não aparecem no site.
+
+## Mecânicas de história no mapa (sem mexer no núcleo)
+
+- Regra de mundo que mexe na câmera (ex.: "não há saída" de Harlow) vai no `M.tick` do mapa, lendo/escrevendo
+  `WM` de `core/walk.ts`: caminhar usa `WM.x/z/y`, câmera livre usa `WM.fp`. Só aja com `WM.on`; deixe órbita e
+  cinema livres para o mestre. Dê sempre um jeito de desligar (flag em `window`) e explique no dossiê.
+- Áudio do dono: transcreva com faster-whisper (decodifique com ffmpeg para f32 16 kHz). Trechos confusos: rode de
+  novo só o trecho com `large-v3`; o que ainda ficar ambíguo, interprete e diga ao dono o que foi suposto.
+- Imagens de personagens que o dono manda costumam ter direitos de terceiros: não vão para o repositório; viram
+  fichas (aparência → papel no caso) no dossiê.
+
+- Interior com paredes externas de `shell()`: **não cubra a face interna com um painel liso** (papel de parede)
+  — ele tapa os vãos das janelas. Ou deixe o material da casca aparente, ou faça o painel com os mesmos furos.
+- Prédio novo em Harlow: constante em `common.ts`, módulo próprio devolvendo a interface `Police` (docs, solids,
+  floors, roofs, vttWalls, portals, lamps) e somar em todas as listas do `index.ts` (docs, walk, solids, layers,
+  vtt, exportHide) + `busy()` para não nascer casa por cima.
+
+### Fichas dos jogadores com imagens do grupo
+- `src/core/tokens.ts` lê `npcs-local/jogadorN.png` (glob) e cai nas fichas antigas. A ficha usa o alfa da PNG
+  direto, então recorte ANTES: fundo liso → `convert -fuzz 7% -fill none -draw "color x,y floodfill"` de vários
+  pontos da borda; fundo em degradê com roupa escura → crescimento de região comparando com o vizinho (tolerância
+  baixa, ~2.5) + 2ª passada que só avança para pixels parecidos com o fundo estimado por linha. Print de celular:
+  pinte de branco os botões da tela antes do recorte. `pip install` é bloqueado aqui; PIL e numpy existem.
+- Capturas (`--views`) escondem os personagens; para vê-los use `__cap.third({x,z,yaw,pitch})`.
+
+### NPCs com imagens de terceiros (Harlow)
+- Repositório é **público**: arte de terceiros (Pinterest etc.) nunca vai para o git. Padrão: script em `tools/`
+  baixa para uma pasta no `.gitignore` (`npcs-local/`), o mapa carrega com `import.meta.glob(..., { eager: true,
+  query: '?url', import: 'default' })` (não quebra se a pasta não existir) e cai numa silhueta.
+- `fetch` do Node não usa o proxy da sessão: baixe com `curl` (execFileSync). Pinterest precisa de pin.it,
+  www.pinterest.com e i.pinimg.com liberados; as imagens estão em `i.pinimg.com/originals/...` no HTML da pasta.
+- Recorte do fundo: flood-fill a partir das bordas (cor do canto ± tolerância ou quase branco) num canvas, depois
+  cortar a sobra transparente; `crop` por NPC tira marca d'água/quadros extras. Billboard: grupo no chão girado só
+  em Y para a câmera no `M.tick`; `customDepthMaterial` com alphaTest para sombra com a forma da figura.
+
+### NPCs móveis (`M.npcs`)
+- Mapa que quer NPCs arrastáveis define `M.npcs = async () => TokenDef[]` com `npc: true` e `pos`. O núcleo cria os
+  personagens depois do carregamento, tira os do mapa anterior e não os põe na barra dos jogadores. Imagem precisa
+  ter alfa: recorte num canvas e passe `toDataURL('image/png')`.
+
+### Manchas brancas no preto (AgX)
+- Relato "textura bugada no anoitecer" com print de roupa preta cheia de branco = `log2(0)` do tone mapping AgX
+  em placas reais (o swiftshader das capturas NÃO mostra). Mantenha o efeito `limpaCor` antes do `tm` em `post.ts`.
+- Se o branco aparece no cenário todo (postes, carros, tijolo) e na qualidade Baixa (sem pós): cor NEGATIVA no
+  material. Causa achada: `weathering.ts` fazia `cor *= 1 − sujeira − escorrido` (passava de 1). Regra: todo
+  multiplicador de escurecimento em shader leva `max(0.0, …)`. Há trava global em `engine.ts` (ShaderChunk
+  `tonemapping_fragment`: max 0 e NaN→0) — não remova.
+
+## Prédio de vários andares e cidade dos anos 60 (aprendido em `src/maps/canada/`)
+
+- Greywater Falls reaproveita o Texas (`Builder` de lojas/casas/ruas/postes, `shell`, `light`/`LREQ`, `TM()`, papéis de
+  `texas/police.ts`) e só cria o que é dele: `interior.ts` (`Kit`: paredes com vãos `[centro, largura, altura]`,
+  papel de parede listrado com lambri, cama, cômoda com espelho, cadeira, poltrona, mesa com toalha, aquecedor,
+  tapete, garrafa, figura coberta por lençol, porta com número; `docPlane`; `sigilKnow`; `scrawl`).
+- **Andares como camadas**: cada andar num `THREE.Group` próprio (casca externa do andar, laje do piso, paredes,
+  móveis). A laje de um andar é o teto do de baixo, então esconder o andar de cima "abre" a vista. Pisos e rampas de
+  escada recebem `userData.l = grupo` — o arrastar de personagens (`wk()`) ignora pisos de camadas escondidas.
+- Laje com vão de escada: faixas em x entre as bordas dos vãos e, em cada faixa, pedaços em z fora dos vãos.
+  Escada = degraus maciços + rampa invisível (DoubleSide) para pisar; a inclinação da rampa vem de
+  `sign(xb−xa)·atan2(subida, |xb−xa|)` (com `atan2(subida, xb−xa)` a rampa que desce para −x fica de cabeça para baixo).
+- Exportação VTT por andar: `M.exportHide` lê o nome da área escolhida (`#xa`) e esconde os andares de cima.
+- Casca de tijolo vista por dentro parece porão: por dentro, uma segunda `shell()` fina (0,02 m) com papel de parede e
+  os **mesmos vãos** (o `at` é coordenada do mundo; ajuste o peitoril pela diferença de altura da base).
+- Persiana acesa à noite: plano de `TM().lit` virado **só para fora** + pano por dentro; uma caixa acesa brilha
+  também dentro do quarto.
+- Porta entreaberta com `Kit.door(dobradiça, ry)`: folha ao longo do x local; ry = −π/2 estende para +z, +π/2 para −z;
+  abrir para dentro do quarto = somar/subtrair ~1,1 rad conforme o lado.
+- Buraco no piso (alçapão): o piso tem de ser feito em pedaços em volta do vão (uma caixa inteira tapa a escada).
+- Escrita sobrenatural legível no escuro: `docPlane(..., glow)` usa a própria textura como `emissiveMap`.
+- Ruas novas cruzam marcos: confira igreja/cemitério × ruas transversais (a igreja nasceu em cima da King St; a rua
+  oeste foi cortada antes dela).
+- Porão debaixo de prédio: o terreno tapa a escada. Recorte o terreno no shader do mapa: encadeie o `onBeforeCompile` do
+  material do terreno e dê `discard` no retângulo (o `vTUv` do terreno é (x, −z) do mundo); troque o
+  `customProgramCacheKey`. O colisor do terreno continua inteiro (arrastar ficha para o porão pode parar em y≈0).
+- Manchas brancas "com borda de ruído" nos telhados à noite: telhado inclinado cruzando o topo da caixa do prédio
+  (z-fighting de dois materiais) + zinco com `metalMap` refletindo a lua. Telhado inclinado: suba o centro em
+  `meia-profundidade·sen(inclinação)`. Os HDRIs não passam de 156 (conferido): não é estouro do céu.
+- Som do mestre baixo/mudo: modo "Jogadores" sem janela dos jogadores ligada agora toca aqui (`somAqui` em imersao.ts);
+  efeitos passam por `efeitosG` (×3,2) e um compressor no fim (`som.ts`).
+- NPCs de Greywater: `canada/npcs.ts` (lista `MORADORES`, imagens em `npcs-local/canada/cut/NN.png` já recortadas com
+  `recorte.py` + limpeza: só o maior pedaço, sombra branca neutra no pé, buraco claro entre as pernas). `pos.oc: true`
+  faz o NPC nascer oculto (a entidade). Cartazes/retratos com a mesma imagem: `texCom()` desenha sem imagem e redesenha
+  quando ela carrega (`needsUpdate`).
+- `__cap.third()` põe a câmera no andar mais ALTO (raycast de cima) e os personagens sobem/descem interpolando: chame
+  `__cap.frames(40)` antes do print, senão aparecem no térreo.
+- Cena com veículos levando as fichas dos jogadores (`canada/chegada.ts`, como o ônibus de Harlow): enquanto andam,
+  mexa `t.target`/`t.ty`/`t.g.position` LOCALMENTE nas duas janelas (a animação roda nas duas porque a câmera da
+  dos jogadores segue a do mestre); só no fim a janela do mestre grava com `setTarget` + `save`.
+- Aparição (`core/aparicao.ts`): sobreposição DOM com `requestAnimationFrame` (não depende do laço 3D); vai para a
+  janela dos jogadores como `{k:'apar', id}` pelo espelho. No Playwright o laço 3D é lento demais para ver os
+  quadros: teste a sobreposição sozinha numa página em branco com `createServer` do vite.
+- Fichas vivas: `PlaneGeometry(w, 1, 10, 20)` + `onBeforeCompile` (uniform `tempoFichas` atualizado no `tickTokens`).
+- Lista de personagens: lugar = vista cujo "ponto de chão" (1,8 m à frente da câmera da vista, pés em p.y−1,6) está
+  mais perto; usar o ALVO da vista erra (o alvo de "Hotel Laurentian" fica dentro do 2º andar).
+- Imagens que o dono manda como ARQUIVO aparecem em `/root/.claude/uploads/<sessão>/` (PDF também: `pdfimages -png`).
+  Imagem colada no chat NÃO vira arquivo. Recorte de figura escura em fundo escuro com chão: recorte.py (vizinho) e
+  depois inundar a partir do transparente só os pixels escuros com limiar crescente para baixo (o chão).
+- Decisão do dono (nov/2026): os personagens antigos dos jogadores saíram; sem imagem nova, silhueta neutra.
+- Lugares para entrar fora do hotel ficam em `canada/casas.ts` (fábrica, lanchonete, casas das vítimas): `shell()` + `Kit`.
+- `scatter` com milhares de árvores: use grade de vizinhança (hash por célula), não `out.some(...)` (O(n²)).
+
+- Manchas brancas/pretas (3º relato, Greywater, Noite, câmera livre do alto): faces viradas para a LUA brancas, as do
+  lado oposto pretas puras, paredes normais — em postes e galhos também (não é material nem telhado). Ainda sem causa
+  confirmada: `core/diag.ts` (F9) deixa o dono desligar sombra/lua/céu/HDRI/pontuais/névoa/pós e informa a placa.
+  Quando ele disser qual chave resolve, corrija a causa e anote aqui.
+
+## Greywater Falls — decisões do dono e como retomar (sessão de nov/2026)
+
+- **Decisões do dono**: a história é em **1975** (ele começou com 1965 e corrigiu); o **hotel é a casa do William**
+  (ele é o dono; a cidade inteira vai ao hotel/bar) e Margaret morreu na escada do **porão do hotel**; os agentes vão
+  descobrindo o que acontece no hotel. Pediu lugares para ENTRAR (fábrica, lanchonete, casas…), personagens com as
+  aparências da pasta dele, cartazes com eles, "bem imersivo", e terror explícito nas criaturas (foi ele quem mandou).
+  Os personagens antigos dos jogadores saíram; os novos: Jogador 1 (de preto) e Jogadora 2 (ruiva) chegam de moto,
+  Nancy de carro (os dois primeiros ainda sem nome definido).
+- **Datas escolhidas por mim, não pelo dono** (ele perguntou "falei que dia era?" — não falou): quarta 19/11/1975 (chegada),
+  ritual dos olhos na madrugada de 20/11 às 3h, Margaret morta em 26/12/1974, Eva 9/11, Moreau domingo 16/11,
+  Kowalczyk 17/11. Se ele pedir outra data, mude TUDO junto (jornal, calendário do 304, cartão de ponto, livros do
+  necrotério e da igreja, cartazes, pistas.ts e o dossiê).
+- **Imagens locais (fora do git, repositório público)**: `node tools/baixar-npcs.mjs https://pin.it/6FDe5jQ5t
+  npcs-local/canada`, reduzir para ~700 px de altura, `python3 -I tools/recorte.py … 6 40` e
+  `python3 -I tools/limpar-recorte.py … --pe --entre-pernas` → `npcs-local/canada/cut/NN.png` (números em
+  `canada/npcs.ts`; 13 precisou de TOL 4,5/28). Jogadores e criaturas vieram num PDF que o dono enviou
+  (`pdfimages -png`): `npcs-local/jogador1..3.png` e `npcs-local/canada/cut/27.png` (Esfolado, fundo preto puro:
+  inundar só pixels com max(rgb) < 14) e `28.png` (forma refeita: recorte.py 4/22 + `--chao-escuro`). Numa sessão
+  nova essas imagens não existem: peça o PDF de novo ou que ele mande os arquivos (imagem colada no chat não vira arquivo).
+- **Arquivo offline do dono**: `npm run build:single` e inserir `<script>window.MAPA_PADRAO="canada"</script>` depois do
+  `</title>` → `Greywater-offline.html` (~52 MB com as imagens). É assim que ele joga (sem internet, dois monitores).
+- **Pendências**: manchas brancas/pretas em faces viradas para a lua (esperando o dono dizer qual chave do F9 resolve);
+  nomes dos jogadores 1 e 2; paredes VTT dos andares de cima do hotel usam as do térreo.
 
 ## Erros que já custaram tempo (não repita)
 
@@ -164,7 +396,7 @@ Meça antes de mexer: `node tools/medir.mjs --q=media` (chamadas, triângulos, e
 - Dock e menus: `core/menu.ts` (`menu(botão, painel, preencher)`, `lista(...)`) + `main.ts`. Ids usados nos
   testes: `bmo`/`blv` (Órbita/Livre), `mcine` (Cinema), `mv`/`mn`/`mm` com os spans `bv`/`bn`/`bmap` (valor
   atual), `mc` (Personagens), `mx` (Mais), `blimpa` (tela limpa), `bshow` (voltar).
-- Botão novo no dock → confira larguras 390, 800 e 1024 px. Quebras: ≤760 px duas linhas (vista/clima/mapa
+- Botão novo no dock → confira larguras 390, 800 e 1024 px. A barra cresceu: rótulos somem abaixo de 1520 px e `.dock` tem `max-width:calc(100vw - 12px)` (o dono viu a barra cortada num monitor de 1366 px). O botão da TV nunca se esconde (verde = ligada). Quebras: ≤760 px duas linhas (vista/clima/mapa
   embaixo), 761–1000 px só ícones (nome no `title`).
 - Câmera livre (`core/walk.ts`, modo `livre`): WASD, Q/E, Shift, roda = velocidade, G = fantasma.
 - **Câmera de cinema** (`core/cinema.ts`): `rodar(tomada, 'suave'|'corte'|'susto', {enviar, cap, rev})`;
@@ -230,13 +462,21 @@ Meça antes de mexer: `node tools/medir.mjs --q=media` (chamadas, triângulos, e
 
 - Links atuais (atualize-os em vez de criar outros; quem já recebeu continua usando):
   Igreja do Casamento `https://claude.ai/artifact/65XS5FnzDBvfneK5AnFXUh` ·
-  San Judas de las Ánimas `https://claude.ai/artifact/55cVSvDE5dfVtg2Km2iR9K`. Os dois têm todos os mapas.
+  San Judas de las Ánimas `https://claude.ai/artifact/55cVSvDE5dfVtg2Km2iR9K` ·
+  Harlow, Texas `https://claude.ai/artifact/HHBUeQ8noXrMfhqAK6Q1PB`. Os três têm todos os mapas (Greywater Falls
+  entrou depois; para um link próprio dele, crie `canada.html` com `MAPA_PADRAO="canada"`).
 - Passos: `npm run build:leve` → copie `dist-lite/` para o scratchpad (`pub/`) → crie `igreja.html` (troca o
   `<title>`) e `mexico.html` (`<title>` + `<script>window.MAPA_PADRAO="mexico"</script>`) a partir do
-  `index.html` → Artifact `publish` com `url` do link, `file_path` = a página, `root` = `pub/`,
-  `files` = lista de `{path:"assets/<arquivo>"}` (140 arquivos, ~32 MB; cabe no limite de 255 por envio).
+  `index.html` (e `texas.html` com `MAPA_PADRAO="texas"`) → Artifact `publish` com `url` do link, `file_path` = a página, `root` = `pub/`,
+  `files` = lista de `{path:"assets/<arquivo>"}` (~170 arquivos, ~34 MB; cabe no limite de 255 por envio).
 - Antes de publicar: confira os dois mapas na versão leve sem erros de página e rode o teste de funções.
 - Os links são privados: para os jogadores abrirem, o dono compartilha pelo menu da página.
+- **Imagens locais**: se a versão no ar tem moradores de Greywater e a sua sessão não tem `npcs-local/`, NÃO publique
+  (o build sairia sem as imagens). Se a versão no ar já tem todas as funções (confira os ids no HTML devolvido pela
+  recusa: `bjog`, `mcine`, `mdir`, `dpistas`…), não há o que republicar — só registre no repositório.
+- Outra sessão pode ter publicado nos mesmos links: o publish é recusado e devolve a versão no ar. Se o seu
+  build vem da branch que já juntou tudo (confira os ids do HTML: `bjog`, `blimpa`, `mcine`…), publique de novo
+  igual; senão junte a branch primeiro. Publique os três links com o mesmo build (todos têm todos os mapas).
 
 ## Achar assets novos (só se o catálogo não tiver)
 

@@ -121,8 +121,16 @@ export class Batch {
   }
   build(parent: THREE.Object3D, o: { shadow?: boolean; receive?: boolean } = {}) {
     const out: THREE.Mesh[] = [];
-    this.parts.forEach((gs, mat) => {
-      if (!gs.length) return;
+    this.parts.forEach((all, mat) => {
+      if (!all.length) return;
+      // agrupa por região (blocos de TILE m): cada malha fica compacta e o three deixa de desenhar o que está
+      // fora da tela e fora da área da sombra; regiões com pouca coisa vão para um grupo comum
+      const TILE = 70, by = new Map<string, THREE.BufferGeometry[]>();
+      all.forEach(g => { const p = g.attributes.position, k = Math.floor(p.getX(0) / TILE) + ',' + Math.floor(p.getZ(0) / TILE); if (!by.has(k)) by.set(k, []); by.get(k)!.push(g); });
+      const resto: THREE.BufferGeometry[] = [], grupos: THREE.BufferGeometry[][] = [];
+      by.forEach(L => { const n = L.reduce((a, g) => a + g.attributes.position.count, 0); (n < 1500 ? resto.push(...L) : grupos.push(L)); });
+      if (resto.length) grupos.push(resto);
+      for (const gs of grupos)
       // até ~60k vértices por malha (celular)
       for (let i = 0; i < gs.length;) {
         const chunk: THREE.BufferGeometry[] = []; let n = 0;

@@ -7,8 +7,8 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 
 | Pasta | Arquivos | Tamanho |
 |---|---|---|
-| `src/assets/` | 142 | 82.7 MB |
-| `capturas/` | 101 | 15.7 MB |
+| `capturas/` | 323 | 95.0 MB |
+| `src/assets/` | 179 | 88.8 MB |
 | `referencias/` | 5 | 2.4 MB |
 
 ## Linhas GIGANTES (dados embutidos) — grep sempre com `| cut -c1-200`
@@ -21,78 +21,109 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 
 | Arquivo | Linhas | Tamanho |
 |---|---|---|
-| `index.html` | 140 | 12 KB |
+| `index.html` | 150 | 14 KB |
 | `legacy/igreja-3d-site.html` | 620 | 899 KB |
 | `legacy/servidor-sync.js` | 26 | 1 KB |
 | `scripts/mapa_do_codigo.py` | 78 | 5 KB |
 | `server/servidor-sync.mjs` | 141 | 8 KB |
 | `server/testar.mjs` | 83 | 5 KB |
 | `src/core/anim.ts` | 124 | 7 KB |
+| `src/core/aparicao.ts` | 68 | 4 KB |
 | `src/core/binario.ts` | 21 | 1 KB |
 | `src/core/cenas.ts` | 26 | 1 KB |
 | `src/core/cinema.ts` | 246 | 12 KB |
 | `src/core/config.ts` | 32 | 1 KB |
 | `src/core/cull.ts` | 25 | 1 KB |
-| `src/core/desempenho.ts` | 33 | 1 KB |
-| `src/core/engine.ts` | 58 | 2 KB |
-| `src/core/espelho.ts` | 230 | 13 KB |
+| `src/core/desempenho.ts` | 38 | 2 KB |
+| `src/core/diag.ts` | 54 | 4 KB |
+| `src/core/docs.ts` | 140 | 9 KB |
+| `src/core/engine.ts` | 61 | 2 KB |
+| `src/core/espelho.ts` | 235 | 13 KB |
 | `src/core/glbmap.ts` | 49 | 6 KB |
 | `src/core/grass.ts` | 79 | 4 KB |
 | `src/core/heightfog.ts` | 44 | 2 KB |
-| `src/core/imersao.ts` | 138 | 6 KB |
+| `src/core/imersao.ts` | 139 | 7 KB |
 | `src/core/importer.ts` | 44 | 2 KB |
 | `src/core/kit.ts` | 160 | 11 KB |
 | `src/core/loading.ts` | 39 | 2 KB |
-| `src/core/maps.ts` | 74 | 3 KB |
+| `src/core/maps.ts` | 76 | 3 KB |
 | `src/core/menu.ts` | 58 | 2 KB |
 | `src/core/merge.ts` | 52 | 3 KB |
 | `src/core/models.ts` | 177 | 9 KB |
 | `src/core/mostrar.ts` | 51 | 2 KB |
 | `src/core/net.ts` | 95 | 5 KB |
 | `src/core/pbr.ts` | 81 | 3 KB |
-| `src/core/post.ts` | 127 | 6 KB |
+| `src/core/post.ts` | 132 | 7 KB |
 | `src/core/probe.ts` | 53 | 2 KB |
 | `src/core/procedural.ts` | 138 | 8 KB |
 | `src/core/sky.ts` | 146 | 8 KB |
-| `src/core/som.ts` | 200 | 12 KB |
+| `src/core/som.ts` | 220 | 14 KB |
 | `src/core/state.ts` | 26 | 1 KB |
 | `src/core/terrain.ts` | 99 | 5 KB |
-| `src/core/tokens.ts` | 196 | 12 KB |
-| `src/core/types.ts` | 55 | 2 KB |
+| `src/core/tokens.ts` | 235 | 14 KB |
+| `src/core/types.ts` | 61 | 3 KB |
 | `src/core/vtt.ts` | 105 | 7 KB |
-| `src/core/walk.ts` | 219 | 11 KB |
-| `src/core/weathering.ts` | 45 | 2 KB |
-| `src/main.ts` | 435 | 26 KB |
+| `src/core/walk.ts` | 229 | 12 KB |
+| `src/core/weathering.ts` | 46 | 2 KB |
+| `src/main.ts` | 505 | 32 KB |
 | `src/maps/campo.ts` | 53 | 4 KB |
+| `src/maps/canada/casas.ts` | 217 | 27 KB |
+| `src/maps/canada/chegada.ts` | 86 | 6 KB |
+| `src/maps/canada/common.ts` | 36 | 2 KB |
+| `src/maps/canada/hotel.ts` | 402 | 47 KB |
+| `src/maps/canada/index.ts` | 253 | 21 KB |
+| `src/maps/canada/interior.ts` | 182 | 16 KB |
+| `src/maps/canada/landmarks.ts` | 197 | 21 KB |
+| `src/maps/canada/morgue.ts` | 151 | 16 KB |
+| `src/maps/canada/nature.ts` | 127 | 10 KB |
+| `src/maps/canada/npcs.ts` | 116 | 12 KB |
+| `src/maps/canada/pistas.ts` | 116 | 31 KB |
 | `src/maps/igreja/building.ts` | 232 | 16 KB |
 | `src/maps/igreja/common.ts` | 105 | 7 KB |
 | `src/maps/igreja/grounds.ts` | 369 | 30 KB |
 | `src/maps/igreja/index.ts` | 162 | 9 KB |
 | `src/maps/igreja/interior.ts` | 246 | 18 KB |
-| `src/maps/manifest.ts` | 10 | 1 KB |
-| `src/maps/mexico/common.ts` | 169 | 10 KB |
+| `src/maps/manifest.ts` | 12 | 1 KB |
+| `src/maps/mexico/common.ts` | 177 | 11 KB |
 | `src/maps/mexico/index.ts` | 176 | 10 KB |
 | `src/maps/mexico/landmarks.ts` | 503 | 46 KB |
-| `src/maps/mexico/nature.ts` | 234 | 15 KB |
+| `src/maps/mexico/nature.ts` | 238 | 16 KB |
 | `src/maps/mexico/town.ts` | 223 | 13 KB |
-| `src/style.css` | 193 | 15 KB |
+| `src/maps/texas/buildings.ts` | 191 | 14 KB |
+| `src/maps/texas/common.ts` | 146 | 10 KB |
+| `src/maps/texas/forest.ts` | 232 | 24 KB |
+| `src/maps/texas/hotel.ts` | 169 | 21 KB |
+| `src/maps/texas/index.ts` | 281 | 21 KB |
+| `src/maps/texas/landmarks.ts` | 480 | 50 KB |
+| `src/maps/texas/mystery.ts` | 124 | 13 KB |
+| `src/maps/texas/nature.ts` | 111 | 8 KB |
+| `src/maps/texas/npcs.ts` | 104 | 9 KB |
+| `src/maps/texas/onibus.ts` | 88 | 6 KB |
+| `src/maps/texas/pistas.ts` | 111 | 28 KB |
+| `src/maps/texas/police.ts` | 442 | 58 KB |
+| `src/style.css` | 249 | 19 KB |
 | `src/vite-env.d.ts` | 2 | 0 KB |
 | `tools/_grid.mjs` | 7 | 1 KB |
 | `tools/arvores.sh` | 32 | 2 KB |
 | `tools/assets-leves.mjs` | 21 | 1 KB |
 | `tools/baixar-assets.mjs` | 93 | 5 KB |
+| `tools/baixar-npcs.mjs` | 22 | 1 KB |
 | `tools/blender/desbastar_arvore.py` | 151 | 7 KB |
 | `tools/capturas.mjs` | 113 | 6 KB |
 | `tools/contar-tris.mjs` | 15 | 1 KB |
+| `tools/limpar-recorte.py` | 52 | 2 KB |
+| `tools/medir-peso.mjs` | 15 | 1 KB |
 | `tools/medir.mjs` | 48 | 5 KB |
-| `tools/orcamento.sh` | 49 | 2 KB |
+| `tools/orcamento.sh` | 63 | 2 KB |
+| `tools/recorte.py` | 35 | 2 KB |
 | `tools/testar-funcoes.mjs` | 110 | 10 KB |
+| `tools/testar-lupa.mjs` | 52 | 5 KB |
 | `tools/testar-vtt.mjs` | 41 | 4 KB |
 | `tools/ver-modelo.mjs` | 25 | 2 KB |
 | `tools/visualizador.html` | 32 | 2 KB |
 | `vite.config.ts` | 39 | 2 KB |
 
-Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKILL.md`, `.github/workflows/ci.yml`, `CHANGELOG.md`, `CLAUDE.md`, `CREDITS.md`, `README.md`, `capturas/README.md`, `docs/BRIEFING.md`, `docs/HOSPEDAGEM.md`, `docs/NOVO-MAPA.md`, `docs/PROMPT-NOVO-MAPA.md`, `docs/VTT.md`, `package.json`, `server/package-lock.json`, `server/package.json`, `tools/assets.json`, `tsconfig.json`
+Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKILL.md`, `.github/workflows/ci.yml`, `CHANGELOG.md`, `CHANGELOG.md`, `CHANGELOG.md`, `CLAUDE.md`, `CREDITS.md`, `README.md`, `capturas/README.md`, `docs/BRIEFING.md`, `docs/GUIA-DO-MESTRE.md`, `docs/HOSPEDAGEM.md`, `docs/NOVO-MAPA.md`, `docs/PROMPT-NOVO-MAPA.md`, `docs/VTT.md`, `docs/casos/greywater-caso-ashdown.md`, `docs/casos/harlow-caso-whitlock.md`, `package.json`, `server/package-lock.json`, `server/package.json`, `tools/assets.json`, `tsconfig.json`
 
 ## Funções, classes e exports (linha)
 
@@ -107,6 +138,9 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 
 ### `src/core/anim.ts`
 `anim` 5 · `WindOpts` 7 · `inject` 26 · `addWind` 38 · `windDepth` 50 · `dustMotes` 59 · `shaftGeo` 92 · `lightShaft` 97
+
+### `src/core/aparicao.ts`
+`css` 8 · `aparicao` 22 · `ruido` 35 · `passo` 37 · `jit` 40
 
 ### `src/core/binario.ts`
 `fetchBinary` 6
@@ -124,13 +158,19 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `collectCull` 9 · `updateCull` 14
 
 ### `src/core/desempenho.ts`
-`desempenho` 9 · `iniciar()` 11 · `quadro()` 20
+`desempenho` 12 · `iniciar()` 14 · `quadro()` 23
+
+### `src/core/diag.ts`
+`guardar` 12 · `recompilar` 14 · `aplicarDiag` 27 · `initDiag` 29 · `abrir` 34
+
+### `src/core/docs.ts`
+`alvo` 17 · `imagemDe` 30 · `montar` 40 · `abrir` 57 · `fechar` 66 · `abrirDoc` 69 · `irAte` 72 · `listarPistas` 87 · `initNotas` 101 · `initDocs` 123
 
 ### `src/core/engine.ts`
-`cv` 6 · `R` 8 · `S` 21 · `cam` 24 · `ctl` 27 · `onResize` 36 · `pixelRatioCap` 38 · `setPixelRatioCap` 39 · `renderScale` 42 · `setRenderScale` 43 · `fit` 49
+`cv` 6 · `R` 8 · `S` 24 · `cam` 27 · `ctl` 30 · `onResize` 39 · `pixelRatioCap` 41 · `setPixelRatioCap` 42 · `renderScale` 45 · `setRenderScale` 46 · `fit` 52
 
 ### `src/core/espelho.ts`
-`enviar` 34 · `espelho` 39 · `aplicarSobreposicao` 50 · `tickEspelho` 58 · `receber` 69 · `enviarQuadro` 114 · `r` 123 · `mandarEstado` 138 · `serJogadores` 152 · `dentroDeOutraPagina` 174 · `abrirJanelaJogadores` 181 · `initEspelho` 189 · `cheia` 209 · `avisarMapa` 217 · `avisarClima` 218
+`enviar` 36 · `espelho` 41 · `aplicarSobreposicao` 52 · `tickEspelho` 60 · `receber` 71 · `enviarQuadro` 117 · `r` 126 · `mandarEstado` 141 · `serJogadores` 155 · `dentroDeOutraPagina` 177 · `abrirJanelaJogadores` 184 · `initEspelho` 192 · `cheia` 212 · `avisarAparicao` 221 · `avisarMapa` 222 · `avisarClima` 223
 
 ### `src/core/glbmap.ts`
 `dressSite` 7 · `fl2` 8 · `mt` 24 · `buildGlb` 27
@@ -142,7 +182,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `heightFog` 5
 
 ### `src/core/imersao.ts`
-`SomModo` 11 · `Fx` 12 · `imersao` 14 · `somAqui` 37 · `aplicarSom` 38 · `garantirLuz` 42 · `prepararLanterna` 50 · `iniciarRaio` 57 · `fx` 63 · `tickImersao` 70 · `setApagao` 123 · `reaplicarApagao` 128 · `nomeClima` 129 · `setNomeClima` 130 · `aplicarPreto` 134
+`SomModo` 11 · `Fx` 12 · `imersao` 14 · `somAqui` 38 · `aplicarSom` 39 · `garantirLuz` 43 · `prepararLanterna` 51 · `iniciarRaio` 58 · `fx` 64 · `tickImersao` 71 · `setApagao` 124 · `reaplicarApagao` 129 · `nomeClima` 130 · `setNomeClima` 131 · `aplicarPreto` 135
 
 ### `src/core/importer.ts`
 `importGlb` 12 · `importHdr` 25 · `initImporter` 38
@@ -175,7 +215,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `fileFor` 7 · `tex` 11 · `PbrOpts` 23 · `pbr` 41 · `rep` 45
 
 ### `src/core/post.ts`
-`Grade` 15 · `DEFAULT_GRADE` 18 · `post` 36 · `init()` 42 · `setQuality()` 78 · `setGrade()` 97 · `render()` 115
+`Grade` 15 · `DEFAULT_GRADE` 18 · `post` 36 · `init()` 42 · `setQuality()` 83 · `setGrade()` 102 · `render()` 120
 
 ### `src/core/probe.ts`
 `EnvProbe` 7 · `swap` 28 · `update()` 40
@@ -187,7 +227,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `Preset` 11 · `PRE` 31 · `hdrUrl` 40 · `loadHdr` 44 · `horizonColor` 58 · `hemi` 69 · `sun` 70 · `dome` 77 · `env` 78 · `setShadowRadius` 80 · `applyHdr` 87 · `driftSky` 96 · `timeHooks` 97 · `setTime` 99 · `aplicarLuzes` 131 · `forcarLuzes` 142 · `preloadSkies` 145
 
 ### `src/core/som.ts`
-`Efeito` 7 · `Fonte` 8 · `montar` 21 · `lfo` 45 · `env` 48 · `rajadaRuido` 51 · `tom` 58 · `batida` 66 · `passos` 72 · `sussurro` 80 · `rangido` 91 · `sino` 101 · `criarFontes` 110 · `crepitar` 119 · `trovao` 124 · `grilo` 130 · `som` 135 · `desbloquear()` 138 · `efeito()` 147 · `tick()` 168 · `ouvinte()` 183 · `aplicar` 194
+`Efeito` 7 · `Fonte` 8 · `montar` 21 · `lfo` 49 · `env` 52 · `rajadaRuido` 55 · `tom` 62 · `batida` 70 · `passos` 76 · `sussurro` 84 · `rangido` 95 · `sino` 105 · `criarFontes` 114 · `crepitar` 123 · `trovao` 128 · `grilo` 134 · `som` 139 · `desbloquear()` 142 · `efeito()` 151 · `tick()` 161 · `ouvinte()` 176 · `tocarEfeito` 187 · `aplicar` 214
 
 ### `src/core/state.ts`
 `st` 6
@@ -196,25 +236,58 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `hash` 7 · `noise2` 8 · `fbm` 14 · `TerrainLayer` 16 · `TerrainOpts` 17 · `terrainMaterial` 26 · `makeTerrain` 75
 
 ### `src/core/tokens.ts`
-`TokenDef` 13 · `Token` 14 · `DEF` 22 · `pick` 30 · `K` 32 · `sizeT` 34 · `placeT` 40 · `makeToken` 47 · `dropT` 68 · `selT` 74 · `setTarget` 79 · `focusT` 83 · `save` 89 · `onPos` 95 · `onChar` 105 · `wk` 111 · `helpers` 116 · `setM` 118 · `freeSpot` 123 · `busy` 125 · `initTokenInput` 134 · `end` 159 · `tickTokens` 179 · `snapTokens` 195
+`silhueta` 12 · `jog` 19 · `TokenDef` 21 · `Token` 24 · `DEF` 35 · `pick` 42 · `tempoFichas` 45 · `vivo` 50 · `K` 69 · `sizeT` 71 · `placeT` 77 · `makeToken` 85 · `dropT` 106 · `selT` 112 · `setTarget` 117 · `focusT` 121 · `save` 127 · `onPos` 133 · `onChar` 143 · `wk` 149 · `helpers` 154 · `setM` 156 · `freeSpot` 161 · `busy` 163 · `initTokenInput` 172 · `end` 197 · `tickTokens` 217 · `snapTokens` 234
 
 ### `src/core/types.ts`
-`View` 4 · `Layer` 5 · `VttData` 8 · `MapLight` 17 · `MapRuntime` 20 · `MapModule` 50
+`View` 4 · `Layer` 5 · `VttData` 8 · `MapLight` 17 · `MapRuntime` 20 · `MapModule` 56
 
 ### `src/core/vtt.ts`
 `fillAreas` 8 · `xcalc` 12 · `xinfo` 19 · `xrender` 21 · `clipPolyline` 50 · `push` 52 · `dd2vtt` 71 · `inb` 73 · `P` 74 · `dl` 88 · `initVtt` 94 · `opt` 98
 
 ### `src/core/walk.ts`
-`WM` 9 · `Modo` 18 · `modo` 19 · `modeHooks` 21 · `placeWalkCam` 31 · `togV` 44 · `startWalk` 46 · `coarse` 58 · `setMode` 61 · `setWalk` 82 · `startFree` 85 · `freeLookAt` 95 · `freeStep` 103 · `aviso` 143 · `walkStep` 148 · `bl` 158 · `walkPointer` 172 · `initWalk` 182 · `hold` 200 · `up` 203 · `jmove` 208 · `jend` 216
+`WM` 9 · `Modo` 19 · `modo` 20 · `modeHooks` 22 · `placeWalkCam` 32 · `togV` 45 · `startWalk` 47 · `coarse` 59 · `setMode` 62 · `setWalk` 83 · `startFree` 86 · `freeLookAt` 96 · `freeStep` 104 · `aviso` 152 · `walkStep` 157 · `bl` 168 · `walkPointer` 182 · `initWalk` 192 · `hold` 210 · `up` 213 · `jmove` 218 · `jend` 226
 
 ### `src/core/weathering.ts`
 `WeatherOpts` 5 · `weather` 7
 
 ### `src/main.ts`
-`cutBg` 38 · `push` 42 · `prep` 52 · `spawnPoint` 64 · `addChar` 69 · `marcarQ` 77 · `escolherClima` 78 · `irParaVista` 79 · `tg` 86 · `rodarCine` 90 · `itemCine` 91 · `encherCine` 97 · `initCinemaUi` 108 · `mostrarPersonagens` 119 · `tocarCena` 123 · `gravarCenaAtual` 137 · `encherMestre` 143 · `alternarImagem` 157 · `initMestreUi` 162 · `toast` 185 · `telaLimpa` 190 · `initAtalhos` 197 · `atualizarSelo` 236 · `congelar` 244 · `escurecer` 248 · `lanterna` 249 · `marcarSom` 250 · `initImersaoUi` 251 · `initUi` 263 · `resz` 296 · `frame` 344 · `captureApi` 366 · `view()` 369 · `third()` 375 · `stats()` 387 · `start` 399
+`cutBg` 41 · `push` 45 · `prep` 55 · `spawnPoint` 67 · `addChar` 72 · `pontoVista` 82 · `ondeEsta` 84 · `moverPara` 90 · `listaPersonagens` 95 · `bt` 103 · `revelar` 122 · `marcarQ` 126 · `escolherClima` 128 · `irParaVista` 129 · `tg` 136 · `rodarCine` 140 · `itemCine` 141 · `encherCine` 147 · `initCinemaUi` 158 · `mostrarPersonagens` 169 · `tocarCena` 173 · `gravarCenaAtual` 187 · `encherMestre` 193 · `alternarImagem` 208 · `initMestreUi` 213 · `toast` 236 · `telaLimpa` 241 · `initAtalhos` 248 · `atualizarSelo` 289 · `congelar` 297 · `escurecer` 301 · `lanterna` 302 · `marcarSom` 303 · `initImersaoUi` 304 · `initUi` 316 · `resz` 356 · `frame` 414 · `captureApi` 436 · `view()` 439 · `third()` 445 · `stats()` 457 · `start` 469
 
 ### `src/maps/campo.ts`
 `build` 12 · `height` 18
+
+### `src/maps/canada/casas.ts`
+`CASA_EVA` 14 · `CASA_MOREAU` 15 · `ALF` 17 · `DENTRO` 19 · `buildCasas` 24 · `roll` 50 · `note` 71 · `manequim` 140 · `peca` 151 · `casa` 168
+
+### `src/maps/canada/chegada.ts`
+`VISTA_CHEGADA` 18 · `moto` 20 · `roda` 24 · `bx` 26 · `carro` 40 · `pista` 48 · `buildChegada` 50 · `zAt` 55 · `tick()` 57
+
+### `src/maps/canada/common.ts`
+`ROW0` 8 · `KING` 10 · `ELM` 12 · `MAPLE` 14 · `EXT` 16 · `RIVER` 18 · `riverZ` 19 · `RAIL` 21 · `STATION` 22 · `HOTEL` 24 · `MORGUE` 26 · `CHURCH` 28 · `CEMETERY` 29 · `MILL` 31 · `GAS` 33 · `DINER` 34
+
+### `src/maps/canada/hotel.ts`
+`LV` 18 · `wx` 20 · `buildHotel` 25 · `opsFor` 42 · `add` 44 · `pos` 67 · `bxw` 68 · `gold` 119 · `slab` 128 · `cover` 142 · `stair` 151 · `rail` 163 · `decorRoom` 263 · `CELLAR` 400 · `HOTEL_GROUPS` 401
+
+### `src/maps/canada/index.ts`
+`P` 20 · `VIEWS` 21 · `build` 70 · `inR` 73 · `fill` 98 · `busy` 112 · `lot` 118 · `line` 127 · `free` 148 · `escolherLuzes` 160 · `dentro` 171
+
+### `src/maps/canada/interior.ts`
+`Interior` 7 · `canvasTex` 10 · `makeMats` 18 · `IM` 46 · `Kit` 52 · `seg()` 56 · `wall()` 62 · `door()` 77 · `bed()` 84 · `nightstand()` 95 · `lamp()` 101 · `dresser()` 105 · `chair()` 111 · `armchair()` 117 · `table()` 122 · `radiator()` 128 · `bottle()` 133 · `covered()` 138 · `build()` 146 · `docPlane` 156 · `sigilKnow` 165 · `scrawl` 177
+
+### `src/maps/canada/landmarks.ts`
+`Landmarks` 13 · `car` 16 · `buildLandmarks` 28 · `outline` 36 · `ar` 41 · `stone` 86 · `QUEEN_Z` 196
+
+### `src/maps/canada/morgue.ts`
+`wx` 14 · `buildMorgue` 16 · `fluo` 79
+
+### `src/maps/canada/nature.ts`
+`setBuilt` 13 · `riverBed` 16 · `groundH` 18 · `bareTree` 27 · `branch` 30 · `placeGeo` 53 · `buildNature` 62 · `ok` 97 · `scatter` 98 · `near` 100
+
+### `src/maps/canada/npcs.ts`
+`url` 15 · `imagem` 17 · `Morador` 19 · `MORADORES` 21 · `moradores` 50 · `texCom` 62 · `retrato` 70 · `cartazMoreau` 81 · `buildRetratos` 91 · `moreau` 93
+
+### `src/maps/canada/pistas.ts`
+`PISTAS` 4 · `NOTAS` 60
 
 ### `src/maps/igreja/building.ts`
 `Building` 11 · `buildChurch` 20 · `glassMat` 33 · `wall` 42 · `windowAt` 50
@@ -235,7 +308,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `MAPS` 5
 
 ### `src/maps/mexico/common.ts`
-`lod` 12 · `GRID` 16 · `STREET` 17 · `WALKW` 18 · `CURB` 19 · `BLOCK` 20 · `PLAZA` 21 · `TOWN` 22 · `BLK` 24 · `CHURCH` 26 · `ATRIO` 27 · `CANTINA` 28 · `MARKET` 29 · `PORTAL` 30 · `KIOSCO` 31 · `PANTEON` 32 · `HACIENDA` 33 · `TOWER_W` 34 · `ARROYO` 35 · `ROAD_S` 36 · `Q` 39 · `reseed` 47 · `rnd` 48 · `pick` 49 · `sm` 50 · `FACADE` 53 · `BASE` 54 · `vc` 57 · `makeMats` 59 · `MAT` 86 · `MatKey` 87 · `prep` 92 · `Batch` 107 · `add()` 111 · `box()` 116 · `build()` 122 · `mtx` 144 · `signTexture` 148 · `sign` 164
+`lod` 12 · `GRID` 16 · `STREET` 17 · `WALKW` 18 · `CURB` 19 · `BLOCK` 20 · `PLAZA` 21 · `TOWN` 22 · `BLK` 24 · `CHURCH` 26 · `ATRIO` 27 · `CANTINA` 28 · `MARKET` 29 · `PORTAL` 30 · `KIOSCO` 31 · `PANTEON` 32 · `HACIENDA` 33 · `TOWER_W` 34 · `ARROYO` 35 · `ROAD_S` 36 · `Q` 39 · `reseed` 47 · `rnd` 48 · `pick` 49 · `sm` 50 · `FACADE` 53 · `BASE` 54 · `vc` 57 · `makeMats` 59 · `MAT` 86 · `MatKey` 87 · `prep` 92 · `Batch` 107 · `add()` 111 · `box()` 116 · `build()` 122 · `mtx` 152 · `signTexture` 156 · `sign` 172
 
 ### `src/maps/mexico/index.ts`
 `P` 12 · `VIEWS` 13 · `build` 29 · `inBox` 64 · `free` 65 · `tumble` 108
@@ -244,10 +317,46 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `LightReq` 17 · `LREQ` 18 · `light` 19 · `Landmarks` 21 · `wall` 24 · `rect` 28 · `buildLandmarks` 30 · `later` 41 · `strand` 106 · `sideHoles` 145 · `ret` 183 · `aw` 202 · `pw` 324 · `add` 340 · `outer` 382 · `inner` 388 · `papelTex` 463 · `cut` 468 · `clockTex` 473 · `sigilTex` 484 · `ring` 487 · `ruinTop` 496
 
 ### `src/maps/mexico/nature.ts`
-`boxDist` 13 · `flatMask` 17 · `roadMask` 27 · `arroyoDepth` 35 · `groundH` 39 · `green` 51 · `colorize` 52 · `ribbed` 58 · `saguaro` 67 · `nopal` 84 · `pad` 87 · `agave` 97 · `rockGeo` 112 · `placeRock` 121 · `Nature` 129 · `buildNature` 132 · `okWild` 166 · `scatter` 167 · `placeGeo` 177 · `tl` 216 · `exported` 233
+`boxDist` 13 · `flatMask` 17 · `roadMask` 27 · `arroyoDepth` 35 · `groundH` 39 · `green` 51 · `colorize` 52 · `ribbed` 58 · `saguaro` 67 · `nopal` 84 · `pad` 87 · `agave` 97 · `rockGeo` 112 · `placeRock` 121 · `Nature` 131 · `buildNature` 134 · `okWild` 168 · `scatter` 169 · `tl` 220 · `exported` 237
 
 ### `src/maps/mexico/town.ts`
 `Facing` 14 · `HouseOpts` 16 · `Town` 22 · `bx()` 38 · `house()` 45 · `block()` 124 · `plane` 139 · `poles()` 163 · `finish()` 194 · `poleLines` 214 · `along` 216
+
+### `src/maps/texas/buildings.ts`
+`StoreOpts` 10 · `HouseOpts` 11 · `Builder` 13 · `outline()` 22 · `window()` 26 · `store()` 37 · `house()` 83 · `road()` 127 · `poles()` 139 · `streetLights()` 161 · `finish()` 173
+
+### `src/maps/texas/common.ts`
+`SQ` 13 · `RING` 14 · `ROW0` 15 · `ROWD` 16 · `HWY` 17 · `RAIL` 18 · `RES_Z` 19 · `RES_X` 20 · `EXT` 21 · `CHURCH` 22 · `CEMETERY` 23 · `DINER` 24 · `GAS` 25 · `MOTEL` 26 · `DEPOT` 27 · `ELEVATOR` 28 · `TOWERW` 29 · `FARM` 30 · `PUMPS` 31 · `CROP` 33 · `POLICE` 35 · `FOREST` 37 · `CAMP` 41 · `TAVERN` 42 · `HOTEL` 44 · `vc` 47 · `make` 49 · `TM` 76 · `SIDING` 79 · `STORE` 80 · `LightReq` 83 · `LREQ` 84 · `light` 85 · `Opening` 88 · `shell` 90 · `side` 92 · `gableRoof` 110 · `bxM` 124 · `neonTexture` 131
+
+### `src/maps/texas/forest.ts`
+`Forest` 15 · `forestMask` 18 · `trailMask` 23 · `tex` 30 · `pineGeo` 35 · `buildForest` 59 · `gy` 66 · `plane` 67 · `free` 94 · `scatter` 110 · `wl` 160
+
+### `src/maps/texas/hotel.ts`
+`wx` 13 · `buildHotel` 16 · `bx` 23 · `doc` 25 · `seg` 63 · `iw` 64 · `door` 80 · `bed` 85 · `night` 90 · `wardrobe` 92 · `chair` 93 · `table` 95 · `rug` 96
+
+### `src/maps/texas/index.ts`
+`P` 22 · `VIEWS` 23 · `build` 65 · `inR` 70 · `sw` 94 · `fill` 101 · `busy` 119 · `lot` 122 · `line` 131 · `pos` 144 · `free` 169 · `escolherLuzes` 181
+
+### `src/maps/texas/landmarks.ts`
+`Anim` 17 · `Landmarks` 18 · `buildLandmarks` 20 · `box` 28 · `neon` 29 · `sg` 35 · `roomX` 175 · `fence` 279 · `add` 368 · `billboard` 383 · `woodChairs` 405 · `ad` 409 · `cornGeo` 415 · `mergeGeos` 426 · `texasFlag` 431 · `clockTex` 439 · `checkerTex` 448 · `mirrorTex` 454 · `chalkTex` 460 · `ring` 463 · `missingTex` 469
+
+### `src/maps/texas/mystery.ts`
+`tex` 7 · `sigil` 12 · `j` 15 · `ring` 16 · `plane` 23 · `DOCS` 30 · `buildMystery` 33
+
+### `src/maps/texas/nature.ts`
+`setBuilt` 14 · `groundH` 16 · `dirtRoad` 25 · `yucca` 35 · `buildNature` 43 · `ok` 71 · `scatter` 72
+
+### `src/maps/texas/npcs.ts`
+`img` 9 · `Npc` 11 · `NPCS` 20 · `cutout` 54 · `silhouette` 87 · `npcTokens` 95 · `load` 96
+
+### `src/maps/texas/onibus.ts`
+`PONTO` 12 · `VISTA_ONIBUS` 16 · `bus` 18 · `M` 20 · `box` 21 · `buildOnibus` 45 · `pos` 59 · `tick()` 65
+
+### `src/maps/texas/pistas.ts`
+`PISTAS` 5 · `NOTAS` 74
+
+### `src/maps/texas/police.ts`
+`wx` 14 · `mk` 18 · `age` 22 · `paperDraw` 24 · `wrap` 37 · `paper` 43 · `photo` 44 · `sigil` 64 · `pin` 70 · `cork` 71 · `marker` 72 · `COUNTY_MAP` 75 · `P2` 80 · `Police` 95 · `buildPolice` 97 · `bx` 104 · `doc` 106 · `chairs` 113 · `iw` 143 · `lo` 148 · `seg` 154 · `door` 169 · `car` 182 · `add` 184 · `win` 201 · `px` 203 · `shelf` 307 · `draw` 407
 
 ### `tools/assets-leves.mjs`
 `size` 19
@@ -255,11 +364,17 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 ### `tools/baixar-assets.mjs`
 `api` 17 · `fetchJson` 19 · `download` 20 · `sleep` 29 · `want` 30 · `info` 33 · `pick` 45
 
+### `tools/baixar-npcs.mjs`
+`get` 8
+
 ### `tools/blender/desbastar_arvore.py`
 `is_leaf` 22 · `is_foliage` 32 · `thin` 39 · `decimate_all` 109
 
 ### `tools/capturas.mjs`
 `loadPlaywright` 13 · `img` 87
+
+### `tools/limpar-recorte.py`
+`componentes` 17
 
 ### `tools/medir.mjs`
 `tri` 30

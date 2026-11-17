@@ -31,7 +31,8 @@
 <div class="row"><button id="xx">Fechar</button><button id="xpng">Baixar PNG</button><button id="xvtt" class="pri">Universal VTT</button></div></div>
 <div id="sel" hidden><span id="sn"></span><button id="szm">−</button><button id="szp">+</button><button id="fl" title="Espelhar">⇋</button><button id="boc" title="Só você vê (meio transparente) até revelar">Ocultar</button><button id="rm">Remover</button></div>
 <div id="add" class="dlg" hidden><b>Novo personagem</b><input id="af" type="file" accept="image/*"><input id="an" placeholder="Nome" maxlength="24">
-<label>Tamanho <select id="as"><option value="1.2">Pequeno</option><option value="1.7" selected>Médio</option><option value="2.4">Grande</option><option value="3.4">Enorme</option></select></label>
+<label>Tamanho <select id="as"><option value="1.2">Pequeno</option><option value="1.7" selected>Médio</option><option value="2.4">Grande</option><option value="3.4">Enorme</option><option value="5">Gigante (vilão)</option></select></label>
+<label>Começar oculto (só o mestre vê) <input id="aoc" type="checkbox"></label>
 <label>Cor da base <input id="ac" type="color" value="#8a8f98"></label>
 <label>Remover fundo liso <input id="ab" type="checkbox" checked></label><div id="am"></div>
 <div class="row"><button id="ax">Cancelar</button><button id="ao" class="pri">Adicionar</button></div></div>
@@ -49,6 +50,7 @@
 <span class="sep"></span>
 <button id="mc" aria-haspopup="menu" title="Personagens"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3.5 20c0-3.1 2.4-5.6 5.5-5.6s5.5 2.5 5.5 5.6"/><circle cx="17" cy="9" r="2.3"/><path d="M16 14.3c2.6.3 4.5 2.6 4.5 5.4"/></svg><span class="lbl">Personagens</span></button>
 <button id="mdir" aria-haspopup="menu" title="Mesa do mestre: cenas, luz, névoa, sons, imagens"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><span class="lbl">Mestre</span></button>
+<button id="bjogd" class="destaque" title="Abrir a janela dos jogadores para levar à TV/segundo monitor (J)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/></svg><span class="lbl">TV dos jogadores</span></button>
 <button id="mx" aria-haspopup="menu" title="Mais opções"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg><span class="lbl">Mais</span></button>
 <button id="blimpa" title="Tela limpa para transmitir aos jogadores (H)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 6.1A9.8 9.8 0 0 1 12 6c5 0 9 6 9 6a17 17 0 0 1-3 3.5M6.4 7.6A17 17 0 0 0 3 12s4 6 9 6a9.6 9.6 0 0 0 4.2-1"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg><span class="lbl">Ocultar</span></button>
 <span id="jogchip" hidden title="Janela dos jogadores ligada"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/></svg></span>
@@ -91,6 +93,8 @@
 <button id="dpapel" class="tg" aria-pressed="true">Efeito de papel</button>
 <div id="dimgs" class="minis"></div>
 <button id="desc">Esconder imagem · I</button>
+<div class="h">Pistas do mapa <small>· abre sem mexer na câmera</small></div>
+<div id="dpistas" class="pistas"></div>
 </div></div>
 </div>
 <div class="pop" id="pc" hidden role="menu">
@@ -99,6 +103,9 @@
 <button id="bch" class="tg" aria-pressed="true">Mostrar personagens</button>
 <button id="bg" class="tg" aria-pressed="true">Encaixar na grade</button>
 <button id="br">Voltar às posições iniciais</button>
+<div class="h">Onde está cada um</div>
+<input id="pcf" placeholder="Procurar personagem ou lugar…" autocomplete="off">
+<div id="pcl"></div>
 </div>
 <div class="pop" id="px" hidden role="menu">
 <div class="h">Qualidade</div>
@@ -106,6 +113,7 @@
 <div class="h" id="bk">Camadas</div><div id="lay"></div>
 <div class="h">Segundo monitor (jogadores)</div>
 <button id="bjog">Abrir janela dos jogadores</button>
+<button id="bdiag">Manchas na imagem? Diagnóstico (F9)</button>
 <button id="bsouj">Esta janela é a tela dos jogadores</button>
 <div class="h">Ferramentas</div>
 <button id="bx">Exportar para mesa virtual…</button>
@@ -124,13 +132,15 @@
 <div id="help" class="dlg" hidden><b>Atalhos e controles</b>
 <dl>
 <dt>Órbita</dt><dd>arrastar: girar · roda/pinça: zoom · botão direito ou dois dedos: mover · arraste os personagens para posicioná-los (setas movem o selecionado)</dd>
-<dt>Câmera livre</dt><dd>WASD: mover · arrastar: olhar · Q/E (ou Espaço): descer/subir · Shift: rápido · roda: velocidade · G: atravessar paredes · ▲▼ no celular</dd>
+<dt>Câmera livre</dt><dd>WASD: mover (segurar acelera sozinho) · arrastar: olhar · Q/E (ou Espaço): descer/subir · Shift: rápido · quanto mais alto, mais rápido · joystick no limite: correr · roda: velocidade · G: atravessar paredes · ▲▼ no celular</dd>
 <dt>Cinema</dt><dd>escolha um ponto na cena (ou uma tomada gravada) e a câmera vai até lá como num filme: Suave, Corte ou Susto · legenda opcional · Revelar faz um personagem aparecer no ponto quando a câmera chega · Esc ou ✕ volta</dd>
 <dt>Transmitir</dt><dd>Ocultar (ou H): tela limpa, sem botões nem dicas; o cursor some parado · H ou o canto inferior direito trazem a interface de volta</dd>
 <dt>Dois monitores</dt><dd>Mais → Abrir janela dos jogadores (ou abra o mesmo link noutra janela e escolha "Esta janela é a tela dos jogadores"); leve-a para o outro monitor e dê duplo clique para tela cheia. Ela segue sua câmera, o cinema, o mapa, o clima e os personagens · H nela volta ao normal</dd>
 <dt>Atalhos</dt><dd>P: escolher ponto da câmera de cinema · 1 a 9: tocar as tomadas gravadas · Esc: sair do cinema · K: congelar a tela dos jogadores · B: escurecer · O: a luz caiu · N: névoa densa · L: lanterna · R: relâmpago · I: mostrar/esconder imagem · . e ,: próxima/anterior cena</dd>
 <dt>Mestre</dt><dd>Cenas (gravam clima, câmera, legenda, luz, névoa e vilões), tela dos jogadores, luz e clima, sons do mestre, som ambiente e imagens para mostrar. Personagem selecionado → Ocultar: só você vê até revelar no Cinema</dd>
 <dt>Som</dt><dd>Mestre → Som ambiente: vento, zumbido, trovões e grilos conforme o clima, e efeitos no cinema. "Jogadores" toca só na janela dos jogadores (dê um clique ou duplo clique nela uma vez para o navegador liberar o som)</dd>
+<dt>Documentos</dt><dd>Mestre → Pistas do mapa: abre qualquer documento só na sua tela (com a tradução/nota ao lado) sem mover a câmera; de lá, "Mostrar aos jogadores" ou "Levar a câmera até lá" · passe o mouse num papel, quadro ou cartaz da cena (aparece a lupa) e clique: ele abre ampliado e legível · "Mostrar aos jogadores" manda para a tela deles · Esc fecha</dd>
+<dt>Notas do mestre</dt><dd>ao escolher uma vista, um cartão no canto mostra o que há no local, os segredos e ganchos — só na sua janela (nunca na tela dos jogadores nem na tela limpa) · × esconde até mudar de vista</dd>
 <dt>Geral</dt><dd>Esc: volta para a órbita · Vista: leva a câmera para pontos prontos</dd>
 </dl>
 <div class="row"><button id="hx">Fechar</button></div></div>

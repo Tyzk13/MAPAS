@@ -91,7 +91,9 @@ button.tg[aria-pressed=true]::after{background:var(--acc-bg) radial-gradient(cir
 .nu .dock,.nu .pop,.nu .tip,.nu #ros,.nu #sel,.nu #fly{display:none}
 
 /* telas médias: só ícones nos botões do dock (o nome aparece ao passar o mouse) */
-@media (max-width:1240px) and (min-width:761px){.dock .lbl{display:none}}
+/* a barra ganhou botões: abaixo de 1520 px os rótulos somem (ficam no title); nunca passa da largura da tela */
+@media (max-width:1520px) and (min-width:761px){.dock .lbl{display:none}}
+.dock{max-width:calc(100vw - 12px);overflow-x:auto;scrollbar-width:none}
 
 /* ---------- telas estreitas: dock em duas linhas (modos/ações em cima, vista/clima/mapa embaixo) ---------- */
 @media (max-width:760px){
@@ -190,3 +192,57 @@ button.av.oc{opacity:.45;border-style:dashed}
   box-shadow:0 20px 60px #000d,inset 0 0 40px #8a744a55;transform:scale(.94) rotate(-2.5deg)}
 #handout.papel.on figure{transform:scale(1) rotate(-1.2deg)}
 #handout.papel img{max-width:calc(84vw - 32px);max-height:calc(84vh - 50px);border-radius:0;box-shadow:0 0 0 1px #0002;filter:sepia(.3) contrast(1.05) saturate(.85)}
+
+/* lupa: documento da cena ampliado (core/docs.ts) */
+canvas.lupa{cursor:zoom-in}
+#lupa{position:fixed;inset:0;z-index:40;background:#000c;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;box-sizing:border-box}
+#lupa[hidden]{display:none}
+#lupa figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:8px;max-width:100%;max-height:calc(100% - 70px)}
+#lupa img{max-width:min(92vw,1400px);max-height:calc(100vh - 170px);object-fit:contain;box-shadow:0 18px 60px #000;border-radius:3px;background:#222}
+#lupa figcaption{color:#ddd;font:14px system-ui,sans-serif;opacity:.85}
+#lupa .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+#lupa button{font:15px system-ui,sans-serif;padding:10px 16px;border-radius:10px;border:1px solid #fff3;background:#2a2a2e;color:#eee;cursor:pointer}
+#lupa button.pri{background:#c9a24a;color:#1a1408;border-color:#c9a24a}
+.jogadores #lupa{display:none}
+
+/* lupa com nota do mestre ao lado */
+#lupa .lupa-corpo{display:flex;gap:16px;align-items:center;justify-content:center;max-width:100%;max-height:calc(100% - 80px);min-height:0}
+#lupa aside{width:min(340px,30vw);max-height:calc(100vh - 160px);overflow:auto;background:#1c1a17;color:#e8e2d4;border:1px solid #c9a24a66;border-radius:10px;padding:14px 16px;font:14px/1.5 system-ui,sans-serif;box-sizing:border-box}
+#lupa aside[hidden]{display:none}
+#lupa aside b{color:#e0b85a;display:block;margin-bottom:6px}
+#lupa aside p{margin:0 0 10px;white-space:pre-wrap}
+#lupa aside small{opacity:.6}
+#lupa .lupa-corpo img{max-width:min(62vw,1400px)}
+@media (max-width:760px){#lupa .lupa-corpo{flex-direction:column}#lupa aside{width:100%;max-height:30vh}#lupa .lupa-corpo img{max-width:92vw;max-height:50vh}}
+/* notas do mestre (cartão no canto, só na janela do mestre) */
+#nota{position:fixed;left:12px;top:calc(70px + env(safe-area-inset-top,0px));z-index:6;width:min(340px,calc(100vw - 24px));max-height:46vh;overflow:auto;background:#151412e8;color:#e8e2d4;
+  border:1px solid #c9a24a55;border-radius:12px;padding:10px 14px 12px;font:13px/1.5 system-ui,sans-serif;box-shadow:0 8px 30px #0008;box-sizing:border-box}
+#nota[hidden],.limpa #nota,.jogadores #nota,.nu #nota{display:none!important}
+#nota header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
+#nota header b{color:#e0b85a;font-size:13px}
+#nota header button{background:transparent;border:0;color:#bbb;font-size:18px;line-height:1;padding:2px 6px;cursor:pointer}
+#nota .txt{white-space:pre-wrap}
+.pistas{display:flex;flex-direction:column;gap:2px;max-height:34vh;overflow:auto}
+.pistas .sub{font-size:11px;opacity:.6;margin:6px 0 2px;text-transform:uppercase;letter-spacing:.04em}
+.pistas button{text-align:left;font-size:12.5px}
+.jogadores #lupa,.jogadores #nota{display:none!important}
+
+/* botão de abrir a janela dos jogadores: destacado até a TV conectar */
+.dock #bjogd.destaque{background:#c9a24a;color:#1a1408;font-weight:600;border-radius:10px;animation:pulsoTV 2.4s ease-in-out infinite}
+.dock #bjogd.destaque .ic{stroke:#1a1408}
+.dock #bjogd.destaque .lbl{display:inline!important}
+.dock #bjogd.destaque.ligada{background:#2f5a3a;color:#d8f0d8;animation:none}
+.dock #bjogd.destaque.ligada .ic{stroke:#d8f0d8}
+@keyframes pulsoTV{0%,100%{box-shadow:0 0 0 0 rgba(201,162,74,.55)}50%{box-shadow:0 0 0 6px rgba(201,162,74,0)}}
+
+/* lista "onde está cada um" (menu Personagens) */
+#pcf{box-sizing:border-box;margin:4px 8px;padding:6px 8px;border-radius:8px;border:1px solid #fff2;background:#0006;color:inherit;font:inherit;width:calc(100% - 16px)}
+#pc{min-width:380px;max-width:min(440px,96vw)}
+#pcl{max-height:40vh;overflow:auto}
+.pcrow{display:flex;align-items:center;gap:4px;padding:4px 6px;border-radius:8px}
+.pcrow.cur{background:#e8c27a22}
+.pcrow .pcn{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.15}
+.pcrow .pcn b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pcrow .pcn small{opacity:.65;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pop .pcrow>button{width:auto;padding:4px 8px;font-size:12px;background:#ffffff14;border-radius:6px}
+.pcrow select{width:92px;flex:none;font-size:12px;background:#0008;color:inherit;border:1px solid #fff2;border-radius:6px;padding:3px}

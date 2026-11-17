@@ -8,13 +8,16 @@ import { st, $ } from './core/state';
 import { PRE, setTime, timeHooks, preloadSkies, driftSky } from './core/sky';
 import { anim } from './core/anim';
 import { updateCull } from './core/cull';
-import { DEF, makeToken, dropT, onChar, onPos, selT, sizeT, save, placeT, initTokenInput, tickTokens, snapTokens, setTarget } from './core/tokens';
+import { DEF, makeToken, dropT, onChar, onPos, selT, sizeT, save, placeT, initTokenInput, tickTokens, snapTokens, setTarget, focusT, wk, freeSpot, type Token } from './core/tokens';
 import { NET, handlers, startNet } from './core/net';
 import { WM, setWalk, setMode, modeHooks, freeLookAt, walkStep, walkPointer, initWalk, placeWalkCam } from './core/walk';
 import { menu, lista, fecharMenu, initMenus } from './core/menu';
-import { espelho, initEspelho, serJogadores, abrirJanelaJogadores, dentroDeOutraPagina, tickEspelho, enviarQuadro, avisarMapa, avisarClima } from './core/espelho';
+import { espelho, initEspelho, serJogadores, abrirJanelaJogadores, dentroDeOutraPagina, tickEspelho, enviarQuadro, avisarMapa, avisarClima, avisarAparicao } from './core/espelho';
+import { aparicao } from './core/aparicao';
+import { initDiag, aplicarDiag } from './core/diag';
 import { imersao, fx, tickImersao, aplicarSom, aplicarPreto, prepararLanterna, setNomeClima, setApagao, type SomModo, type Fx } from './core/imersao';
 import { mostrar, exibir, carregarImagem } from './core/mostrar';
+import { initDocs, listarPistas } from './core/docs';
 import { listaCenas, gravarCena, apagarCena } from './core/cenas';
 import { som } from './core/som';
 import { initCinema, rodar, cineHooks, tomadaAtual, sair, tickCinema, apontar, tomadaPara, gravarAtual, apagarTomada, listaTomadas, abortar, type Estilo, type Tomada } from './core/cinema';
@@ -66,16 +69,63 @@ function spawnPoint() {
   const f = ray.intersectObjects(st.MP!.walk.filter(m => !m.userData.l || m.userData.l.visible), false)[0];
   return f ? { x: Math.round(f.point.x * 2) / 2, z: Math.round(f.point.z * 2) / 2, y: f.point.y } : { x: 0, z: 3, y: 0 };
 }
-async function addChar(d: { name: string; h: number; c: number; img: string }) {
+async function addChar(d: { name: string; h: number; c: number; img: string }, oculto = false) {
   const id = 'c' + Date.now().toString(36) + ((Math.random() * 1e4) | 0), p = spawnPoint();
-  st.pos[st.curMap + '__' + id] = { x: p.x, z: p.z, y: p.y, h: d.h };
-  await NET.addChar(id, d); NET.pos(id, { x: p.x, z: p.z, y: p.y, h: d.h, f: 0 });
+  const o = oculto ? 1 : 0;
+  st.pos[st.curMap + '__' + id] = { x: p.x, z: p.z, y: p.y, h: d.h, o };
+  await NET.addChar(id, d); NET.pos(id, { x: p.x, z: p.z, y: p.y, h: d.h, f: 0, o });
+  return id;
 }
+// ---------- lista "onde está cada um" (menu Personagens) ----------
+const SEM_LUGAR = /^(Geral|Tática|Cinema|Resumo|Personagens)/;
+/** ponto de chão de uma vista: 1,8 m à frente de onde a câmera da vista fica, na altura dos pés */
+const pontoVista = (v: { p: number[]; t: number[] }) => { const dx = v.t[0] - v.p[0], dz = v.t[2] - v.p[2], L = Math.hypot(dx, dz) || 1; return { x: v.p[0] + dx / L * 1.8, y: v.p[1] - 1.6, z: v.p[2] + dz / L * 1.8 }; };
+/** lugar de um personagem = vista do mapa cujo alvo está mais perto dele (andar pesa mais) */
+function ondeEsta(t: Token) {
+  const p = t.g.position; let best = '', bd = 1e9;
+  for (const v of st.V) { if (SEM_LUGAR.test(v.n) || v.p[1] > 20) continue; const q = pontoVista(v), d = Math.hypot(q.x - p.x, (q.y - p.y) * 3, q.z - p.z); if (d < bd) { bd = d; best = v.n; } }
+  return bd < 25 ? best : (best ? 'perto de ' + best : '—');
+}
+/** move o personagem para (x, z) pousando no chão visível mais próximo da altura `yRef` */
+function moverPara(t: Token, x: number, z: number, yRef: number) {
+  const rc = new THREE.Raycaster(new THREE.Vector3(x, yRef + 1.6, z), new THREE.Vector3(0, -1, 0));
+  const h = rc.intersectObjects(wk(), false)[0]; const y = h ? h.point.y : yRef;
+  const [fx2, fz] = freeSpot(t, x, z, y); setTarget(t, fx2, fz, y); save(t, true); selT(t);
+}
+function listaPersonagens() {
+  const box = $('pcl'), q = ($('pcf') as HTMLInputElement).value.trim().toLowerCase(); box.innerHTML = '';
+  const todos = Object.values(st.T).sort((a, b) => (+!!a.npc - +!!b.npc) || a.name.localeCompare(b.name));
+  const lugares = st.V.filter(v => !SEM_LUGAR.test(v.n) && v.p[1] < 20);
+  for (const t of todos) {
+    const onde = ondeEsta(t); if (q && !(t.name + ' ' + onde).toLowerCase().includes(q)) continue;
+    const r = document.createElement('div'); r.className = 'pcrow' + (t === st.sel ? ' cur' : '');
+    const nm = document.createElement('div'); nm.className = 'pcn'; nm.innerHTML = `<b></b><small></small>`; (nm.firstChild as HTMLElement).textContent = t.name + (t.oc ? ' · oculto' : ''); (nm.lastChild as HTMLElement).textContent = onde; r.appendChild(nm);
+    const bt = (txt: string, tip: string, f: () => void) => { const b = document.createElement('button'); b.textContent = txt; b.title = tip; b.onclick = e => { e.stopPropagation(); f(); }; r.appendChild(b); return b; };
+    bt('Ir', 'Levar a câmera até ' + t.name, () => { fecharMenu(); selT(t); focusT(t); });
+    bt('Trazer', 'Trazer para onde a câmera está olhando', () => {
+      const rc = new THREE.Raycaster(); rc.setFromCamera(new THREE.Vector2(0, 0), cam); const h = rc.intersectObjects(wk(), false)[0];
+      if (!h) { toast('Olhe para o chão onde quer pôr o personagem', 2200); return; }
+      moverPara(t, h.point.x, h.point.z, h.point.y); toast(t.name + ' → aqui', 1400); listaPersonagens();
+    });
+    const sel = document.createElement('select'); sel.title = 'Levar para um lugar';
+    sel.innerHTML = '<option value="">Levar para…</option>' + lugares.map((v, i) => `<option value="${i}"></option>`).join('');
+    lugares.forEach((v, i) => { (sel.options[i + 1] as HTMLOptionElement).textContent = v.n; });
+    sel.onclick = e => e.stopPropagation();
+    sel.onchange = () => { const v = lugares[+sel.value]; if (!v) return; const q = pontoVista(v); moverPara(t, q.x, q.z, q.y); toast(t.name + ' → ' + v.n, 1600); listaPersonagens(); };
+    r.appendChild(sel);
+    box.appendChild(r);
+  }
+  if (!box.children.length) box.innerHTML = '<small style="opacity:.6;padding:4px 8px;display:block">Ninguém encontrado.</small>';
+}
+
+/** introdução sinistra (aparição) nesta janela e na dos jogadores */
+function revelar(id: string) { aparicao(id); fx('aparicao', { enviar: false }); avisarAparicao(id); }
 
 // ---------- interface (dock, menus e painéis) ----------
 const QN = { baixa: 'Baixa', media: 'Média', alta: 'Alta' } as const;
 const marcarQ = () => { for (const b of $('bq').children as HTMLCollectionOf<HTMLElement>) b.classList.toggle('act', b.dataset.q === CFG.quality); };
-function escolherClima(i: number) { st.pi = i; setTime(i); $('bn').textContent = PRE[i].n; }
+// trocar de clima carrega outro céu (trava um instante): a resolução automática recomeça a medir
+function escolherClima(i: number) { st.pi = i; desempenho.reiniciar(); setTime(i).then(() => desempenho.reiniciar()); $('bn').textContent = PRE[i].n; }
 function irParaVista(i: number) {
   const v = st.V[i]; if (!v) return;
   st.vi = i; $('bv').textContent = v.n;
@@ -153,6 +203,7 @@ function encherMestre() {
     mi.appendChild(b);
   });
   tg('dpapel', papel);
+  listarPistas($('dpistas') as HTMLElement);
 }
 function alternarImagem() {
   if (mostrar.atual) { exibir(''); return; }
@@ -177,7 +228,7 @@ function initMestreUi() {
   };
   $('desc').onclick = () => exibir('');
   $('handout').onclick = () => { if (!st.jogadores) exibir(''); };
-  $('boc').onclick = () => { const t = st.sel; if (!t || CFG.ro) return; t.oc = !t.oc; save(t, true); $('boc').textContent = t.oc ? 'Mostrar' : 'Ocultar'; toast(t.oc ? t.name + ' oculto: só você vê' : t.name + ' visível para todos', 1800); };
+  $('boc').onclick = () => { const t = st.sel; if (!t || CFG.ro) return; const eraOculto = t.oc; t.oc = !t.oc; save(t, true); if (eraOculto) revelar(t.id); $('boc').textContent = t.oc ? 'Mostrar' : 'Ocultar'; toast(t.oc ? t.name + ' oculto: só você vê' : t.name + ' visível para todos', 1800); };
 }
 
 // ---------- tela limpa (transmitir) e atalhos ----------
@@ -198,6 +249,7 @@ function initAtalhos() {
   $('blimpa').onclick = () => telaLimpa(true);
   $('bshow').onclick = () => telaLimpa(false);
   // segundo monitor
+  $('bjogd').onclick = () => $('bjog').click();
   $('bjog').onclick = () => {
     fecharMenu();
     if (!espelho.disponivel) { toast('Este navegador não liga janelas entre si'); return; }
@@ -210,6 +262,7 @@ function initAtalhos() {
   addEventListener('keydown', e => {
     if (/INPUT|SELECT|TEXTAREA/.test((e.target as HTMLElement).tagName) || e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
     if (espelho.jogadores) { if (e.code === 'KeyH') { serJogadores(false); limpa = false; toast('Janela normal (não é mais a dos jogadores)'); } return; }
+    if (e.code === 'KeyJ' && !$('bjogd').hidden) { $('bjog').click(); return; }
     if (e.code === 'KeyH') { telaLimpa(!limpa); return; }
     if (e.code === 'KeyK') { congelar(); return; }
     if (e.code === 'KeyB') { escurecer(); return; }
@@ -270,11 +323,15 @@ function initUi() {
   menu('mv', 'pl', p => lista(p, 'Vista', st.V.map((v, i) => ({ n: v.n, cur: i === st.vi, go: () => irParaVista(i) }))));
   menu('mn', 'pl', p => lista(p, 'Clima', PRE.map((c, i) => ({ n: c.n, cur: i === st.pi, go: () => escolherClima(i) }))));
   menu('mm', 'pl', p => lista(p, 'Mapa', Object.values(MAPS).map(m => ({ n: m.n, cur: m.id === st.curMap, go: () => { if (m.id !== st.curMap) loadMap(m.id); } }))));
-  menu('mc', 'pc');
+  menu('mc', 'pc', () => { ($('pcf') as HTMLInputElement).value = ''; listaPersonagens(); });
+  $('pcf').oninput = () => listaPersonagens();
+  $('pcf').onclick = e => e.stopPropagation();
   initCinemaUi();
   initAtalhos();
   initEspelho({ loadMap, setTime: i => escolherClima(i), toast, jogadores: v => {
-    $('jogchip').hidden = !v; atualizarSelo();
+    // o botão da TV fica sempre na barra: dourado = abrir; verde = TV ligada (clicar traz a janela da TV de novo)
+    $('jogchip').hidden = !v; $('bjogd').hidden = espelho.jogadores; $('bjogd').classList.toggle('ligada', v);
+    ($('bjogd').querySelector('.lbl') as HTMLElement).textContent = v ? 'TV ligada' : 'TV dos jogadores'; atualizarSelo();
     if (v) toast('Janela dos jogadores ligada · dica: deixe esta janela em Qualidade Baixa e a dos jogadores em Alta', 5000);
   } });
   initImersaoUi();
@@ -282,6 +339,8 @@ function initUi() {
   menu('mx', 'px');
   // personagens
   $('ba').onclick = () => { fecharMenu(); $('add').hidden = false; };
+  // tamanho Gigante = vilão: já marca "começar oculto" (revele quando quiser com Mostrar)
+  $('as').onchange = () => { if (+$('as').value >= 5) $('aoc').checked = true; };
   $('ax').onclick = () => { $('add').hidden = true; };
   $('ao').onclick = async () => {
     const f = $('af').files[0], n = $('an').value.trim(), m = $('am');
@@ -289,7 +348,8 @@ function initUi() {
     m.textContent = 'Processando...';
     try {
       const img = await prep(f, $('ab').checked);
-      await addChar({ name: n, h: +$('as').value, c: parseInt($('ac').value.slice(1), 16), img });
+      const novo = await addChar({ name: n, h: +$('as').value, c: parseInt($('ac').value.slice(1), 16), img }, $('aoc').checked);
+      if (+$('as').value >= 5 && !$('aoc').checked) revelar(novo); // vilão entrando já visível
       $('add').hidden = true; $('af').value = ''; $('an').value = ''; m.textContent = '';
     } catch (e) { m.textContent = 'Não consegui adicionar (sem permissão ou imagem inválida)'; }
   };
@@ -331,6 +391,9 @@ addEventListener('message', e => {
 mapHooks.push(() => abortar()); // trocar de mapa no meio de uma cena de cinema
 mapHooks.push(() => avisarMapa()); // janela dos jogadores troca junto
 mapHooks.push(M => { som.setFontes(M.sons || []); cenaAtual = -1; });
+mapHooks.push(() => setTimeout(aplicarDiag, 300));
+timeHooks.push(() => setTimeout(aplicarDiag, 300));
+initDiag();
 timeHooks.push(() => avisarClima());
 timeHooks.push(p => som.setClima(p.n));
 
@@ -339,6 +402,13 @@ const timer = new THREE.Timer();
 // medidor de quadros por segundo (?fps=1)
 const fpsEl = CFG.fps ? Object.assign(document.body.appendChild(document.createElement('div')), { id: 'fps' }) : null;
 if (fpsEl) R.info.autoReset = false;
+// com ?fps=1: window.__peso() lista as malhas mais pesadas da cena (triângulos × instâncias), para otimizar
+if (fpsEl) (window as any).__peso = (n = 25) => {
+  const out: [string, number, boolean][] = [];
+  S.traverse((o: any) => { if (!o.isMesh || !o.geometry) return; const g = o.geometry, t = (g.index ? g.index.count : g.attributes.position.count) / 3, k = o.isInstancedMesh ? o.count : 1;
+    let vis = o.visible; for (let p = o.parent; p && vis; p = p.parent) vis = p.visible; out.push([(o.name || o.material?.name || o.type) + ' <' + (o.parent?.name || '') + '> ×' + k, Math.round(t * k), vis]); });
+  out.sort((a, b) => b[1] - a[1]); return out.slice(0, n).map(([a, b, v]) => `${(b / 1000).toFixed(0)}k ${v ? '' : '(oculto) '}${a}`).join('\n');
+};
 if (fpsEl) Object.assign(fpsEl.style, { position: 'fixed', right: '8px', top: '8px', font: '12px monospace', background: '#000a', color: '#9f9', padding: '3px 6px', borderRadius: '6px', zIndex: '9' });
 let fpsN = 0, fpsT = performance.now();
 function frame(ts?: number) {
@@ -391,13 +461,13 @@ function captureApi() {
       R.info.autoReset = a; return r;
     },
     shot(png = false) { this.frames(post.warmup()); return png ? R.domElement.toDataURL('image/png') : R.domElement.toDataURL('image/jpeg', 0.9); },
-    vtt(area: number, ppg: number) { const c = xcalc(area, ppg), png = xrender(c, {}); return { png, json: dd2vtt(c, png) }; },
+    vtt(area: number, ppg: number) { ($('xa') as HTMLSelectElement).value = String(area); const c = xcalc(area, ppg), png = xrender(c, {}); return { png, json: dd2vtt(c, png) }; },
   };
 }
 
 // ---------- iniciar ----------
 async function start() {
-  initUi(); initWalk(); initVtt(); initImporter();
+  initUi(); initWalk(); initVtt(); initImporter(); initDocs();
   initTokenInput(() => WM.on, walkPointer);
   fit();
   post.init(CFG.quality);
