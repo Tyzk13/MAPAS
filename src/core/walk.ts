@@ -1,6 +1,7 @@
-// Caminhar com visão livre: WASD/setas, mouse/toque, joystick no celular; 1ª e 3ª pessoa com colisão.
+// Modos de câmera: órbita (OrbitControls), caminhar (personagem em 1ª/3ª pessoa, com colisão) e câmera livre
+// (voa pela cena com WASD + Q/E, aceleração suave, colisão opcional). Mouse/toque e joystick no celular.
 import * as THREE from 'three';
-import { cam, ctl } from './engine';
+import { cam, ctl, cv } from './engine';
 import { st, $ } from './state';
 import { DEF, save, wk, type Token } from './tokens';
 
@@ -10,6 +11,19 @@ export const WM = {
   x: 0, y: 0, z: 0, yaw: 0, pitch: 0,
   keys: {} as Record<string, number>, jx: 0, jy: 0,
   lk: null as null | { id: number; x: number; y: number },
+  /** câmera livre */
+  /** speed: velocidade base (m/s, roda do mouse muda); hold: segundos se movendo (acelera sozinho) */
+  free: false, ghost: false, speed: 5, fy: 0, hold: 0,
+  fp: new THREE.Vector3(), vel: new THREE.Vector3(),
+};
+export type Modo = 'orbita' | 'caminhar' | 'livre';
+export const modo = (): Modo => (!WM.on ? 'orbita' : WM.free ? 'livre' : 'caminhar');
+/** Avisados quando o modo muda (a interface marca o botão ativo). */
+export const modeHooks: ((m: Modo) => void)[] = [];
+const TIPS: Record<Modo, string> = {
+  orbita: '',
+  caminhar: 'WASD ou setas: andar · arrastar: olhar · Shift: correr · V: 1ª/3ª pessoa · Esc: sair',
+  livre: 'WASD: mover (segure para acelerar) · arrastar: olhar · Q/E: descer/subir · Shift: rápido · mais alto = mais rápido · roda: velocidade · G: atravessar paredes · Esc: sair',
 };
 const wr = new THREE.Raycaster(), DN = new V3(0, -1, 0), ray = new THREE.Raycaster();
 let lastT = performance.now();
@@ -28,7 +42,7 @@ export function placeWalkCam() {
   } else cam.position.set(WM.x, WM.y + 1.55, WM.z);
   cam.rotation.set(WM.pitch, WM.yaw, 0);
 }
-export function togV() { WM.third = !WM.third; $('bpv').textContent = WM.third ? '3ª pessoa' : '1ª pessoa'; }
+export function togV() { WM.third = !WM.third; const b = $('bpv'); if (b) b.textContent = WM.third ? '3ª pessoa' : '1ª pessoa'; }
 
 export function startWalk() {
   const d = new V3(); cam.getWorldDirection(d);
@@ -42,17 +56,108 @@ export function startWalk() {
   // usado pelo teste automático (tools/testar-funcoes.mjs)
   (window as any).__walkState = () => ({ moved: Math.hypot(WM.x - sx, WM.z - sz), y: WM.y, x: WM.x, z: WM.z });
 }
-export function setWalk(on: boolean) {
-  if (on === WM.on) return;
-  WM.on = on; (window as any).__walkOn = on; st.anim = null; WM.keys = {}; WM.lk = null; WM.jx = WM.jy = 0;
-  $('bwk').classList.toggle('act', on);
-  $('tip').textContent = on ? 'WASD ou setas: andar · ←/→ ou arrastar: olhar · Shift: correr · V: 1ª/3ª pessoa · Esc: sair' : TIP0;
-  $('joy').hidden = !(on && matchMedia('(pointer:coarse)').matches);
-  if (on) { WM.av = st.sel || st.T[DEF[0].id] || null; ctl.enabled = false; cam.rotation.order = 'YXZ'; startWalk(); }
-  else { const d = new V3(); cam.getWorldDirection(d); ctl.target.copy(cam.position).addScaledVector(d, 8); cam.rotation.order = 'XYZ'; ctl.enabled = true; ctl.update(); }
+const coarse = () => matchMedia('(pointer:coarse)').matches;
+
+/** Troca o modo de câmera. */
+export function setMode(m: Modo) {
+  const cur = modo();
+  if (m === cur) return;
+  WM.on = m !== 'orbita'; WM.free = m === 'livre';
+  (window as any).__walkOn = WM.on; st.anim = null; WM.keys = {}; WM.lk = null; WM.jx = WM.jy = WM.fy = 0;
+  // tira o foco do botão clicado (Espaço/Enter não podem "clicar" de novo enquanto se move)
+  (document.activeElement as HTMLElement | null)?.blur?.();
+  $('tip').textContent = TIPS[m] || TIP0;
+  $('joy').hidden = !(WM.on && coarse());
+  $('fly').hidden = !(WM.free && coarse());
+  if (WM.on) {
+    ctl.enabled = false; cam.rotation.order = 'YXZ';
+    if (m === 'caminhar') { WM.av = st.sel || st.T[DEF[0].id] || null; startWalk(); }
+    else startFree();
+  } else {
+    const d = new V3(); cam.getWorldDirection(d); ctl.target.copy(cam.position).addScaledVector(d, 8);
+    cam.rotation.order = 'XYZ'; ctl.enabled = true; ctl.update();
+  }
+  modeHooks.forEach(f => f(m));
 }
+/** Compatibilidade: liga/desliga o modo caminhar. */
+export function setWalk(on: boolean) { setMode(on ? 'caminhar' : 'orbita'); }
+
+/** Começa a câmera livre de onde a câmera está, olhando para onde ela olha. */
+export function startFree() {
+  const d = new V3(); cam.getWorldDirection(d);
+  WM.fp.copy(cam.position); WM.vel.set(0, 0, 0);
+  WM.yaw = Math.atan2(-d.x, -d.z); WM.pitch = Math.asin(Math.max(-1, Math.min(1, d.y)));
+  cam.rotation.set(WM.pitch, WM.yaw, 0);
+  const s0 = WM.fp.clone();
+  // usado pelo teste automático (tools/testar-funcoes.mjs)
+  (window as any).__freeState = () => ({ moved: WM.fp.distanceTo(s0), y: WM.fp.y });
+}
+/** Leva a câmera livre para um ponto, olhando para outro (usado pelo menu Vista). */
+export function freeLookAt(p: THREE.Vector3, t: THREE.Vector3) {
+  const d = t.clone().sub(p).normalize();
+  WM.fp.copy(p); WM.vel.set(0, 0, 0);
+  WM.yaw = Math.atan2(-d.x, -d.z); WM.pitch = Math.asin(Math.max(-1, Math.min(1, d.y)));
+  cam.position.copy(p); cam.rotation.set(WM.pitch, WM.yaw, 0);
+}
+
+const fwd = new V3(), right = new V3(), want = new V3(), step = new V3(), orig = new V3();
+function freeStep(dt: number) {
+  const k = WM.keys, sol = st.MP!.solid();
+  if (k.ArrowLeft) WM.yaw += 1.8 * dt; if (k.ArrowRight) WM.yaw -= 1.8 * dt;
+  const fw = (k.KeyW || k.ArrowUp ? 1 : 0) - (k.KeyS || k.ArrowDown ? 1 : 0) - WM.jy;
+  const sd = (k.KeyD ? 1 : 0) - (k.KeyA ? 1 : 0) + WM.jx;
+  const up = (k.KeyE || k.Space ? 1 : 0) - (k.KeyQ || k.KeyC || k.ControlLeft ? 1 : 0) + WM.fy;
+  const cp = Math.cos(WM.pitch);
+  fwd.set(-Math.sin(WM.yaw) * cp, Math.sin(WM.pitch), -Math.cos(WM.yaw) * cp);
+  right.set(Math.cos(WM.yaw), 0, -Math.sin(WM.yaw));
+  want.set(0, 0, 0).addScaledVector(fwd, fw).addScaledVector(right, sd); want.y += up;
+  if (want.lengthSq() > 1) want.normalize();
+  // segurar o movimento acelera aos poucos (até 3×, como em jogo) — no celular é o jeito de ir rápido;
+  // joystick no limite também conta como "correr"
+  const moving = want.lengthSq() > 0.01;
+  WM.hold = moving ? WM.hold + dt : 0;
+  const boost = 1 + Math.min(1.2, Math.max(0, WM.hold - 0.5) * 0.9);
+  const run = k.ShiftLeft || k.ShiftRight || Math.hypot(WM.jx, WM.jy) > 0.97 ? 2.5 : 1;
+  // perto do chão e dentro de prédios fica mais calmo; no alto, mais rápido (mapas grandes)
+  const alt = 1 + Math.min(3, Math.max(0, WM.fp.y - 4) / 10);
+  want.multiplyScalar(Math.min(70, WM.speed * boost * run * alt));
+  // aceleração/frenagem suaves (sensação de câmera de jogo)
+  WM.vel.lerp(want, 1 - Math.exp(-dt * 7));
+  if (WM.vel.lengthSq() < 1e-6) WM.vel.set(0, 0, 0);
+  step.copy(WM.vel).multiplyScalar(dt);
+  if (step.lengthSq()) {
+    if (!WM.ghost && sol.length) {
+      // colisão por eixo (desliza ao longo das paredes)
+      for (const ax of ['x', 'y', 'z'] as const) {
+        const v = step[ax]; if (!v) continue;
+        const dir = new V3(); dir[ax] = Math.sign(v);
+        wr.set(orig.copy(WM.fp), dir); wr.far = Math.abs(v) + 0.35;
+        if (wr.intersectObjects(sol, false).length) { step[ax] = 0; WM.vel[ax] = 0; }
+      }
+    }
+    WM.fp.add(step);
+  }
+  // não entra no chão
+  if (!WM.ghost) {
+    wr.set(orig.set(WM.fp.x, WM.fp.y + 0.5, WM.fp.z), DN); wr.far = 1.0;
+    const g = wr.intersectObjects(wk(), false)[0];
+    if (g && WM.fp.y < g.point.y + 0.3) { WM.fp.y = g.point.y + 0.3; if (WM.vel.y < 0) WM.vel.y = 0; }
+  }
+  const lim = Math.max(150, (st.MP!.walkLimit ?? 90) + 40);
+  WM.fp.set(Math.max(-lim, Math.min(lim, WM.fp.x)), Math.max(-5, Math.min(lim, WM.fp.y)), Math.max(-lim, Math.min(lim, WM.fp.z)));
+  cam.position.copy(WM.fp); cam.rotation.set(WM.pitch, WM.yaw, 0);
+}
+
+let tipT = 0;
+function aviso(txt: string) {
+  const el = $('tip'); el.textContent = txt; clearTimeout(tipT);
+  tipT = window.setTimeout(() => { el.textContent = TIPS[modo()] || TIP0; }, 1800);
+}
+
 export function walkStep() {
-  const n = performance.now(), dt = Math.min(0.05, (n - lastT) / 1000), k = WM.keys, M = st.MP!; lastT = n;
+  const n = performance.now(), raw = (n - lastT) / 1000, dt = Math.min(0.05, raw), k = WM.keys, M = st.MP!; lastT = n;
+  // câmera livre: aceita quadros longos (celular a 10–15 fps não fica em câmera lenta)
+  if (WM.free) { freeStep(Math.min(0.12, raw)); return; }
   if (k.ArrowLeft) WM.yaw += 1.8 * dt; if (k.ArrowRight) WM.yaw -= 1.8 * dt;
   let fw = (k.KeyW || k.ArrowUp ? 1 : 0) - (k.KeyS || k.ArrowDown ? 1 : 0) - WM.jy, sd2 = (k.KeyD ? 1 : 0) - (k.KeyA ? 1 : 0) + WM.jx;
   const L = Math.hypot(fw, sd2); if (L > 1) { fw /= L; sd2 /= L; }
@@ -62,7 +167,8 @@ export function walkStep() {
     const sol = M.solid();
     const bl = (ax: number, az: number) => { const l = Math.hypot(ax, az); if (!l) return false; wr.set(new V3(WM.x, WM.y + 0.9, WM.z), new V3(ax / l, 0, az / l)); wr.far = l + 0.4; return wr.intersectObjects(sol, false).length > 0; };
     if (!bl(dx, 0)) WM.x += dx; if (!bl(0, dz)) WM.z += dz;
-    WM.x = Math.max(-90, Math.min(90, WM.x)); WM.z = Math.max(-90, Math.min(90, WM.z));
+    const lim = M.walkLimit ?? 90;
+    WM.x = Math.max(-lim, Math.min(lim, WM.x)); WM.z = Math.max(-lim, Math.min(lim, WM.z));
   }
   wr.set(new V3(WM.x, WM.y + 0.8, WM.z), DN); wr.far = 40;
   const g = wr.intersectObjects(wk(), false)[0];
@@ -87,11 +193,26 @@ export function initWalk() {
   TIP0 = $('tip').textContent;
   addEventListener('keydown', e => {
     if (!WM.on || /INPUT|SELECT|TEXTAREA/.test((e.target as HTMLElement).tagName)) return;
-    if (e.code === 'Escape') { setWalk(false); return; }
-    if (e.code === 'KeyV') { togV(); return; }
-    if (/^(Key[WASD]|Arrow|Shift)/.test(e.code)) { WM.keys[e.code] = 1; if (e.code.indexOf('Arrow') === 0) e.preventDefault(); }
+    if (e.code === 'Escape') { if (!document.body.classList.contains('picking')) setMode('orbita'); return; }
+    if (e.code === 'KeyV' && !WM.free) { togV(); return; }
+    if (e.code === 'KeyG' && WM.free) { WM.ghost = !WM.ghost; aviso(WM.ghost ? 'Atravessar paredes: ligado' : 'Atravessar paredes: desligado'); return; }
+    if (/^(Key[WASDQEC]|Arrow|Shift|Space|ControlLeft)/.test(e.code)) { WM.keys[e.code] = 1; if (/^(Arrow|Space)/.test(e.code)) e.preventDefault(); }
   });
-  addEventListener('keyup', e => { delete WM.keys[e.code]; });
+  addEventListener('keyup', e => { delete WM.keys[e.code]; if (WM.on && e.code === 'Space') e.preventDefault(); });
+  // roda do mouse na câmera livre: velocidade
+  cv.addEventListener('wheel', e => {
+    if (!WM.free) return;
+    e.preventDefault();
+    WM.speed = Math.max(0.5, Math.min(60, WM.speed * (e.deltaY > 0 ? 1 / 1.2 : 1.2)));
+    aviso('Velocidade: ' + WM.speed.toFixed(1) + ' m/s');
+  }, { passive: false });
+  // botões ▲▼ da câmera livre no celular
+  const hold = (id: string, v: number) => {
+    const b = $(id) as HTMLElement;
+    b.addEventListener('pointerdown', e => { b.setPointerCapture(e.pointerId); WM.fy = v; });
+    const up = () => { WM.fy = 0; }; b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up);
+  };
+  hold('flu', 1); hold('fld', -1);
   addEventListener('blur', () => { WM.keys = {}; });
   const joy = $('joy') as HTMLElement, knob = joy.firstElementChild as HTMLElement;
   const jmove = (e: PointerEvent) => {
@@ -104,6 +225,4 @@ export function initWalk() {
   joy.addEventListener('pointermove', e => { if (e.buttons) jmove(e); });
   const jend = () => { WM.jx = WM.jy = 0; knob.style.transform = ''; };
   joy.addEventListener('pointerup', jend); joy.addEventListener('pointercancel', jend);
-  $('bwk').onclick = () => setWalk(!WM.on);
-  $('bpv').onclick = togV;
 }

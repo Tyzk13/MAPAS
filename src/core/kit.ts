@@ -111,9 +111,35 @@ export function haloTex() {
   r.addColorStop(0, 'rgba(255,200,130,1)'); r.addColorStop(0.35, 'rgba(255,170,90,.35)'); r.addColorStop(1, 'rgba(255,150,70,0)'); g.fillStyle = r; g.fillRect(0, 0, 64, 64);
   return (_halo = new THREE.CanvasTexture(c));
 }
+/**
+ * Brilho em volta de uma luz. Todas as auréolas de um mapa ficam num único objeto de pontos
+ * (uma chamada de desenho só); a opacidade segue `material.opacity` (o clima ajusta).
+ */
 export function halo(x: number, y: number, z: number, sc: number) {
-  const m = new THREE.Sprite(new THREE.SpriteMaterial({ map: haloTex(), blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, opacity: 0.4 }));
-  m.scale.set(sc, sc, 1); m.position.set(x, y, z); K.G.add(m); K.M.halos.push(m); return m;
+  const M = K.M as any;
+  let hb = M._haloBatch as THREE.Points | undefined;
+  if (!hb) {
+    const mat = new THREE.ShaderMaterial({
+      uniforms: { map: { value: haloTex() }, uOp: { value: 0.4 }, uScale: { value: 500 } },
+      vertexShader: `attribute float size; uniform float uScale;
+        void main() { vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_PointSize = size * uScale / -mv.z; gl_Position = projectionMatrix * mv; }`,
+      fragmentShader: `uniform sampler2D map; uniform float uOp;
+        void main() { vec4 c = texture2D(map, gl_PointCoord); gl_FragColor = vec4(c.rgb * c.a * uOp, 1.0); }`,
+      blending: THREE.AdditiveBlending, transparent: true, depthWrite: false,
+    });
+    hb = new THREE.Points(new THREE.BufferGeometry(), mat);
+    hb.frustumCulled = false; hb.userData.ns = 1; hb.userData.pts = [] as number[]; hb.userData.sz = [] as number[];
+    hb.onBeforeRender = (r, _s, cam: any) => {
+      mat.uniforms.uOp.value = mat.opacity;
+      const h = r.getDrawingBufferSize(new THREE.Vector2()).y;
+      mat.uniforms.uScale.value = cam.isPerspectiveCamera ? h / (2 * Math.tan(THREE.MathUtils.degToRad(cam.fov) / 2)) : h / 20;
+    };
+    K.G.add(hb); M._haloBatch = hb; K.M.halos.push(hb as any);
+  }
+  hb.userData.pts.push(x, y, z); hb.userData.sz.push(sc);
+  hb.geometry.setAttribute('position', new THREE.Float32BufferAttribute(hb.userData.pts, 3));
+  hb.geometry.setAttribute('size', new THREE.Float32BufferAttribute(hb.userData.sz, 1));
+  return hb;
 }
 
 let _mist: THREE.Texture | null = null;

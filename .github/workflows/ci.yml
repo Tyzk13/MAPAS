@@ -1,0 +1,38 @@
+# Verificação automática a cada push/PR: tipos, build (site, leve e HTML único) e servidor de sincronização.
+# O teste de funções (navegador) é longo em CPU sem GPU; rode-o à mão: Actions → CI → Run workflow (navegador = true).
+name: CI
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      navegador:
+        description: 'Rodar também o teste de funções no navegador (lento)'
+        type: boolean
+        default: false
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Tipos
+        run: npm run typecheck
+      - name: Build (site)
+        run: npx vite build
+      - name: Build leve (celular / página hospedada)
+        run: npm run build:leve
+      - name: Servidor de sincronização
+        run: npm run test:servidor
+      - name: Teste de funções (navegador)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.navegador }}
+        run: |
+          npm install -g playwright
+          playwright install --with-deps chromium
+          npm run test:funcoes

@@ -14,6 +14,9 @@ export const R = new THREE.WebGLRenderer({
 });
 R.outputColorSpace = THREE.SRGBColorSpace;
 R.toneMapping = THREE.ACESFilmicToneMapping;
+// Trava de segurança para TODO material: cor negativa ou NaN antes do tone mapping vira branco em muitas placas
+// (manchas brancas em postes/carros/tijolo na qualidade Baixa, que não usa o pós-processamento).
+THREE.ShaderChunk.tonemapping_fragment = 'gl_FragColor.rgb = max(gl_FragColor.rgb, vec3(0.0));\nif (any(isnan(gl_FragColor.rgb))) gl_FragColor.rgb = vec3(0.0);\n' + THREE.ShaderChunk.tonemapping_fragment;
 R.toneMappingExposure = 1;
 R.shadowMap.enabled = true;
 R.shadowMap.type = THREE.PCFShadowMap; // no three atual o PCF já é suave
@@ -38,9 +41,17 @@ export function onResize(f: ResizeFn) { resizers.push(f); }
 export let pixelRatioCap = 2;
 export function setPixelRatioCap(v: number) { pixelRatioCap = v; fit(); }
 
+/** Escala dinâmica da resolução (0.5–1), ajustada por core/desempenho.ts quando o FPS cai. */
+export let renderScale = 1;
+export function setRenderScale(v: number) {
+  v = Math.max(0.5, Math.min(1, v));
+  if (Math.abs(v - renderScale) < 0.01) return;
+  renderScale = v; fit();
+}
+
 export function fit() {
   const w = innerWidth, h = innerHeight;
-  R.setPixelRatio(Math.min(devicePixelRatio, pixelRatioCap));
+  R.setPixelRatio(Math.max(0.5, Math.min(devicePixelRatio, pixelRatioCap) * renderScale));
   R.setSize(w, h, false);
   cam.aspect = w / h;
   cam.updateProjectionMatrix();

@@ -29,6 +29,8 @@ function fixMaterials(root: THREE.Object3D, id: string) {
       if (/glass|vidro/.test(n)) {
         o.castShadow = false;
         if (seen.has(m)) return; seen.add(m);
+        // transmissão (refração física) faz o three renderizar a cena inteira uma 2ª vez: troca por transparência simples
+        if ((m as any).transmission > 0) { (m as any).transmission = 0; m.opacity = Math.min(m.opacity, 0.35); }
         m.transparent = true; m.depthWrite = false; m.roughness = Math.min(m.roughness, 0.15); m.envMapIntensity = 1.2;
         if (LIT.test(id)) { m.emissive.set(0xffb468); m.emissiveIntensity = 1.4; m.opacity = Math.max(m.opacity, 0.55); m.userData.litBase = 1.4; litGlass.push(m); }
         return;
@@ -40,6 +42,7 @@ function fixMaterials(root: THREE.Object3D, id: string) {
         m.alphaToCoverage = true;
         o.userData.foliage = true;
       }
+      if ((m as any).transmission > 0) (m as any).transmission = 0;
       m.envMapIntensity = 0.8;
     });
   });
@@ -73,38 +76,56 @@ export interface Xf { x: number; y: number; z: number; ry?: number; s?: number; 
  * Espalha um modelo com InstancedMesh (um por material). `variant` escolhe só um nó-raiz do glb
  * (ex.: fir_tree_01 tem 3 árvores); undefined = modelo inteiro.
  */
-export async function instance(id: string, list: Xf[], parent: THREE.Object3D, opt: { variant?: number; shadow?: boolean; wind?: Omit<WindOpts, 'height'> } = {}) {
+/** Geometria pronta (desquantizada, juntada por material, base em y=0) de um modelo/variante — feita uma vez. */
+const prepCache = new Map<string, Promise<{ parts: { geo: THREE.BufferGeometry; mat: THREE.Material }[]; topY: number }>>();
+function prepared(id: string, variant?: number) {
+  const key = id + '#' + (variant ?? '');
+  if (!prepCache.has(key)) prepCache.set(key, (async () => {
+    const root = await model(id);
+    const src = variant == null ? root : root.children[variant % root.children.length];
+    const byMat = new Map<THREE.Material, THREE.BufferGeometry[]>();
+    src.updateMatrixWorld(true);
+    const inv = new THREE.Matrix4().copy(src.matrixWorld).invert();
+    src.traverse((o: any) => {
+      if (!o.isMesh) return;
+      const g = dequantize(o.geometry);
+      g.applyMatrix4(new THREE.Matrix4().multiplyMatrices(variant == null ? new THREE.Matrix4() : inv, o.matrixWorld));
+      if (!byMat.has(o.material)) byMat.set(o.material, []);
+      byMat.get(o.material)!.push(g);
+    });
+    const off = new THREE.Vector3();
+    if (variant != null) { // a variante pode estar deslocada: recentra pela base
+      const bb = new THREE.Box3(); byMat.forEach(gs => gs.forEach(g => { g.computeBoundingBox(); bb.union(g.boundingBox!); }));
+      off.set(-(bb.min.x + bb.max.x) / 2, -bb.min.y, -(bb.min.z + bb.max.z) / 2);
+    }
+    const parts: { geo: THREE.BufferGeometry; mat: THREE.Material }[] = [];
+    let topY = 0.1;
+    byMat.forEach((gs, mat) => {
+      gs.forEach(g => { if (!g.index) g.setIndex([...Array(g.attributes.position.count).keys()]); });
+      const geo = gs.length > 1 ? mergeGeometries(gs, false) : gs[0];
+      if (!geo) return;
+      if (off.lengthSq()) geo.translate(off.x, off.y, off.z);
+      geo.computeBoundingBox(); topY = Math.max(topY, geo.boundingBox!.max.y);
+      parts.push({ geo, mat });
+    });
+    return { parts, topY };
+  })());
+  return prepCache.get(key)!;
+}
+
+export interface InstOpts { variant?: number; shadow?: boolean; wind?: Omit<WindOpts, 'height'>; /** divide em blocos de N m (corte por tela) */ tile?: number; /** some além de N m */ cullDist?: number }
+export async function instance(id: string, list: Xf[], parent: THREE.Object3D, opt: InstOpts = {}): Promise<THREE.InstancedMesh[]> {
   if (!list.length) return [];
-  const root = await model(id);
-  const src = opt.variant == null ? root : root.children[opt.variant % root.children.length];
-  // junta todas as malhas do (sub)modelo por material, em coordenadas do modelo
-  const byMat = new Map<THREE.Material, THREE.BufferGeometry[]>();
-  const inv = new THREE.Matrix4().copy(src.matrixWorld).invert();
-  src.updateMatrixWorld(true);
-  src.traverse((o: any) => {
-    if (!o.isMesh) return;
-    const g = dequantize(o.geometry);
-    const m = new THREE.Matrix4().multiplyMatrices(opt.variant == null ? new THREE.Matrix4() : inv, o.matrixWorld);
-    g.applyMatrix4(m);
-    // mantém só atributos comuns para poder juntar
-    for (const k of Object.keys(g.attributes)) if (!['position', 'normal', 'uv', 'tangent'].includes(k)) g.deleteAttribute(k);
-    if (!byMat.has(o.material)) byMat.set(o.material, []);
-    byMat.get(o.material)!.push(g);
-  });
-  // a variante pode estar deslocada: recentra pela base
-  let off = new THREE.Vector3();
-  if (opt.variant != null) {
-    const bb = new THREE.Box3(); byMat.forEach(gs => gs.forEach(g => { g.computeBoundingBox(); bb.union(g.boundingBox!); }));
-    off.set(-(bb.min.x + bb.max.x) / 2, -bb.min.y, -(bb.min.z + bb.max.z) / 2);
+  if (opt.tile) { // um conjunto de InstancedMesh por bloco, para o three cortar o que está fora da tela
+    const by = new Map<string, Xf[]>();
+    list.forEach(t => { const k = Math.floor(t.x / opt.tile!) + ',' + Math.floor(t.z / opt.tile!); if (!by.has(k)) by.set(k, []); by.get(k)!.push(t); });
+    const out: THREE.InstancedMesh[] = [];
+    for (const L of by.values()) out.push(...(await instance(id, L, parent, { ...opt, tile: undefined })));
+    return out;
   }
-  // altura do (sub)modelo, para o vento dobrar mais no topo
-  let topY = 0.1; byMat.forEach(gs => gs.forEach(g => { g.computeBoundingBox(); topY = Math.max(topY, g.boundingBox!.max.y + off.y); }));
+  const { parts, topY } = await prepared(id, opt.variant);
   const o3 = new THREE.Object3D(), out: THREE.InstancedMesh[] = [];
-  byMat.forEach((gs, mat) => {
-    gs.forEach(g => { if (!g.index) g.setIndex([...Array(g.attributes.position.count).keys()]); });
-    const geo = gs.length > 1 ? mergeGeometries(gs, false) : gs[0];
-    if (!geo) return;
-    if (off.lengthSq()) geo.translate(off.x, off.y, off.z);
+  parts.forEach(({ geo, mat }) => {
     const im = new THREE.InstancedMesh(geo, mat, list.length);
     list.forEach((t, i) => {
       o3.position.set(t.x, t.y, t.z); o3.rotation.set(t.tilt || 0, t.ry || 0, 0, 'YXZ');
@@ -114,9 +135,10 @@ export async function instance(id: string, list: Xf[], parent: THREE.Object3D, o
     if (opt.wind && (mat as THREE.MeshStandardMaterial).isMeshStandardMaterial) {
       const w = { ...opt.wind, height: topY }, fol = mat.alphaTest > 0;
       addWind(mat, w, fol);
-      if (im.castShadow) im.customDepthMaterial = windDepth(mat as THREE.MeshStandardMaterial, w, fol);
+      if (im.castShadow) im.customDepthMaterial = (mat.userData.windDepth ||= windDepth(mat as THREE.MeshStandardMaterial, w, fol));
     }
     im.computeBoundingSphere();
+    if (opt.cullDist) im.userData.cullDist = opt.cullDist;
     parent.add(im); out.push(im);
   });
   return out;
@@ -136,7 +158,7 @@ function dequantize(src: THREE.BufferGeometry) {
 }
 
 /** Como instance(), mas sorteia entre as variantes (nós-raiz) do modelo — arbustos, pedras, mato. */
-export async function instanceVariants(id: string, list: (Xf & { v?: number })[], parent: THREE.Object3D, opt: { shadow?: boolean; wind?: Omit<WindOpts, 'height'> } = {}) {
+export async function instanceVariants(id: string, list: (Xf & { v?: number })[], parent: THREE.Object3D, opt: InstOpts = {}) {
   const root = await model(id), n = Math.max(1, root.children.length);
   if (n === 1) return instance(id, list, parent, opt);
   const by: Xf[][] = Array.from({ length: n }, () => []);

@@ -25,6 +25,7 @@ export function xrender(c: ReturnType<typeof xcalc>, opt: { canopy?: boolean; sh
   const hid: THREE.Object3D[] = [], hide = (o: THREE.Object3D) => { if (o.visible) { o.visible = false; hid.push(o); } };
   const sv = { fog: S.fog, bg: S.background, ex: R.toneMappingExposure, hi: hemi.intensity, si: sun.intensity, sc: sun.castShadow, sp: sun.position.clone(), pr: R.getPixelRatio(), tm: R.toneMapping, ei: S.environmentIntensity, ly: M.layers.map(l => l.o.visible), lf: M.loft ? M.loft.visible : null };
   try {
+    const shown: THREE.Object3D[] = []; M.G.traverse(o => { if (o.userData.autoHide && !o.visible) { o.visible = true; shown.push(o); } });
     for (const k in st.T) hide(st.T[k].g);
     [...helpers, dome].forEach(hide); M.mist.forEach(hide); M.halos.forEach(hide); M.lights.forEach(q => hide(q.l));
     M.G.traverse(o => { if ((o as any).isPointLight || (o as any).isSpotLight || (o as any).isRectAreaLight || o.userData.noExport || (o as any).isSprite || (o as any).isPoints) hide(o); });
@@ -84,7 +85,11 @@ export function dd2vtt(c: ReturnType<typeof xcalc>, png: string) {
   };
 }
 
-function dl(name: string, href: string) { const a = document.createElement('a'); a.href = href; a.download = name; document.body.appendChild(a); a.click(); a.remove(); }
+function dl(name: string, href: string) {
+  const a = document.createElement('a'); a.href = href; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  // libera o arquivo (a imagem embutida no .dd2vtt pode ter dezenas de MB)
+  if (href.startsWith('blob:')) setTimeout(() => URL.revokeObjectURL(href), 60000);
+}
 
 export function initVtt() {
   $('bx').onclick = () => { fillAreas(); $('exp').hidden = false; };

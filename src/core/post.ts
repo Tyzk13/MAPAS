@@ -5,12 +5,12 @@ import * as THREE from 'three';
 import {
   EffectComposer, RenderPass, EffectPass, BloomEffect, VignetteEffect, ToneMappingEffect, ToneMappingMode,
   SMAAEffect, SMAAPreset, BrightnessContrastEffect, HueSaturationEffect, DepthOfFieldEffect, NoiseEffect, BlendFunction,
-  ChromaticAberrationEffect, ColorAverageEffect,
+  ChromaticAberrationEffect, ColorAverageEffect, Effect,
 } from 'postprocessing';
 import { N8AOPostPass } from 'n8ao';
 import { R, S, cam, ctl, onResize, setPixelRatioCap, fit } from './engine';
 import { sun } from './sky';
-import type { Quality } from './config';
+import { CFG, type Quality } from './config';
 
 export interface Grade { exposure: number; contrast: number; brightness: number; saturation: number; hue: number; bloom: number; vignette: number; tint: [number, number, number] }
 
@@ -18,10 +18,10 @@ export interface Grade { exposure: number; contrast: number; brightness: number;
 export const DEFAULT_GRADE: Grade = { exposure: 1, contrast: 0.12, brightness: -0.02, saturation: -0.22, hue: 0, bloom: 0.55, vignette: 0.55, tint: [1, 1, 1] };
 
 const QP = {
-  baixa: { pr: 1, shadow: 1024, ao: false, aoHalf: false, aoQ: 'Performance', smaa: SMAAPreset.LOW, dof: false, grain: false },
+  baixa: { pr: 1, shadowEvery: 4, shadow: 1024, ao: false, aoHalf: false, aoQ: 'Performance', smaa: SMAAPreset.LOW, dof: false, grain: false },
   // (meia resolução do N8AO não funciona com o three r187 — usa render target múltiplo removido)
-  media: { pr: 1.5, shadow: 2048, ao: true, aoHalf: false, aoQ: 'Low', smaa: SMAAPreset.MEDIUM, dof: false, grain: true },
-  alta: { pr: 2, shadow: 4096, ao: true, aoHalf: false, aoQ: 'High', smaa: SMAAPreset.HIGH, dof: true, grain: true },
+  media: { pr: 1.5, shadowEvery: 3, shadow: 2048, ao: true, aoHalf: false, aoQ: 'Low', smaa: SMAAPreset.MEDIUM, dof: false, grain: true },
+  alta: { pr: 2, shadowEvery: 2, shadow: 4096, ao: true, aoHalf: false, aoQ: 'High', smaa: SMAAPreset.HIGH, dof: true, grain: true },
 } as const;
 
 let composer: EffectComposer, aoPass: any, dof: DepthOfFieldEffect, dofPass: EffectPass, bloom: BloomEffect, vig: VignetteEffect;
@@ -29,6 +29,9 @@ let bc: BrightnessContrastEffect, hs: HueSaturationEffect, tm: ToneMappingEffect
 let tintFx: ColorAverageEffect;
 const focusTarget = new THREE.Vector3();
 let enabled = true;
+// sombra do sol recalculada a cada N quadros (a cena é quase toda estática)
+let frameN = 0, shadowEvery = 3;
+// (a resolução adaptativa fica em core/desempenho.ts)
 
 export const post = {
   quality: 'media' as Quality,
@@ -37,8 +40,11 @@ export const post = {
   focus: null as THREE.Vector3 | null,
 
   init(q: Quality) {
+    R.shadowMap.autoUpdate = false; R.shadowMap.needsUpdate = true;
     R.toneMapping = THREE.NoToneMapping;
-    composer = new EffectComposer(R, { frameBufferType: THREE.HalfFloatType, multisampling: 0, stencilBuffer: false });
+    // celulares antigos podem não renderizar em meia-precisão: cai para 8 bits
+    const gl = R.getContext(), half = !!(gl.getExtension('EXT_color_buffer_half_float') || gl.getExtension('EXT_color_buffer_float'));
+    composer = new EffectComposer(R, { frameBufferType: half ? THREE.HalfFloatType : THREE.UnsignedByteType, multisampling: 0, stencilBuffer: false });
     composer.addPass(new RenderPass(S, cam));
 
     aoPass = new N8AOPostPass(S, cam, innerWidth, innerHeight);
@@ -54,12 +60,17 @@ export const post = {
     bc = new BrightnessContrastEffect({ brightness: -0.02, contrast: 0.12 });
     hs = new HueSaturationEffect({ saturation: -0.22, hue: 0 });
     tm = new ToneMappingEffect({ mode: ToneMappingMode.AGX });
+    // O AgX faz log2(cor): preto puro (0) vira -infinito e várias placas (celular, algumas Intel/AMD) mostram
+    // isso como BRANCO — manchas brancas nas roupas pretas das fichas no anoitecer/noite. Limpa antes do AgX.
+    const limpa = new Effect('limpaCor', `void mainImage(const in vec4 c, const in vec2 uv, out vec4 o) {
+      vec3 v = c.rgb; if (any(isnan(v)) || any(isinf(v))) v = vec3(0.0);
+      o = vec4(clamp(v, vec3(1e-4), vec3(6e4)), c.a); }`);
     noise = new NoiseEffect({ premultiply: true, blendFunction: BlendFunction.SCREEN });
     noise.blendMode.opacity.value = 0.12;
     tintFx = new ColorAverageEffect(BlendFunction.SKIP);
     const ca = new ChromaticAberrationEffect({ offset: new THREE.Vector2(0.0006, 0.0004), radialModulation: true, modulationOffset: 0.35 });
     // tone mapping antes da gradação de cor (contraste/saturação agem na imagem já em faixa de tela)
-    composer.addPass(new EffectPass(cam, bloom, ca, tm, bc, hs, vig, noise, tintFx));
+    composer.addPass(new EffectPass(cam, bloom, ca, limpa, tm, bc, hs, vig, noise, tintFx));
 
     smaa = new SMAAEffect({ preset: SMAAPreset.MEDIUM });
     smaaPass = new EffectPass(cam, smaa);
@@ -72,6 +83,7 @@ export const post = {
   setQuality(q: Quality) {
     this.quality = q;
     const p = QP[q];
+    shadowEvery = p.shadowEvery; R.shadowMap.needsUpdate = true;
     setPixelRatioCap(p.pr);
     if (sun.shadow.mapSize.x !== p.shadow) {
       sun.shadow.mapSize.set(p.shadow, p.shadow);
@@ -102,7 +114,11 @@ export const post = {
   /** Quantos quadros renderizar antes de uma captura. */
   warmup() { return 3; },
 
+  /** Pede a sombra recalculada no próximo quadro (ao trocar clima, mapa, mover luz). */
+  shadowNow() { R.shadowMap.needsUpdate = true; },
+
   render(dt: number) {
+    if (CFG.capture || ++frameN % shadowEvery === 0) R.shadowMap.needsUpdate = true;
     if (!enabled) { R.render(S, cam); return; }
     if (dofPass.enabled) {
       focusTarget.copy(this.focus || ctl.target);

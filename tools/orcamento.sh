@@ -21,6 +21,8 @@ shrub_03 3000 800 512
 shrub_04 3500 800 512
 nettle_plant 2000 400 512
 fern_02 1500 300 512
+searsia_lucida 9000 4000 512
+wild_rooibos_bush 3500 600 512
 LIST
 # id  razão  textura
 while read -r id r t; do
@@ -30,12 +32,31 @@ while read -r id r t; do
   echo "✓ sólido $id (razão $r)"
 done <<'LIST'
 root_cluster_01 0.015 512
-rock_moss_set_01 0.07 1024
-boulder_01 0.06 512
+rock_moss_set_01 0.03 1024
+boulder_01 0.012 512  # (pedregulho: soldar vértices antes; ver skill)
 dead_tree_trunk 0.06 512
 tree_stump_01 0.08 512
 dry_branches_medium_01 0.2 512
 Lantern_01 0.15 512
 street_lamp_01 0.2 512
 brass_candleholders 0.3 512
+namaqualand_boulder_02 0.06 512
+caged_hanging_light 0.3 512
+street_lamp_02 0.12 512
+metal_trash_can 0.4 512
+fire_hydrant 0.04 512
+metal_jerrycan 0.15 512
+Rockingchair_01 0.15 512
+wooden_picnic_table 0.3 512
+CashRegister_01 0.3 512
+hanging_industrial_lamp 0.3 512
+wooden_ladder 0.3 512
+wooden_lantern_01 0.25 512
+vintage_radio_transceiver 0.12 512
+desk_lamp_arm_01 0.15 512
+cardboard_box_01 0.05 512
+clipboard 0.3 512
+metal_office_desk 0.5 512
+WoodenChair_01 0.15 512
+covered_car 0.4 1024
 LIST
