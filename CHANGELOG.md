@@ -16,6 +16,8 @@
 - Novo: `?nan=1` pinta pixels inválidos (magenta NaN, ciano infinito, amarelo estouro, vermelho negativo).
 - Climas recalibrados em todos os mapas: Crepúsculo e Nublado sem a névoa leitosa que estourava o horizonte
   (névoa mais rala, cor próxima à do céu, mais contraste); Noite um pouco mais clara (lua e céu).
+- Corrigido (print do dono): à noite, tudo o que estava virado para cima ficava branco em algumas placas. A luz
+  ambiente agora sai de uma cópia do céu sem a lua/sol/brilho de cidade; o céu visível não muda.
 - Novo: sem servidor nem claude.ai (arquivo offline), as posições dos personagens (inclusive ocultos) e os
   personagens criados ficam guardados neste navegador e voltam ao reabrir (`netLocal` em `core/net.ts`).
 - Juntada a branch com todos os mapas (Greywater Falls, Harlow, San Judas) e funções (janela dos jogadores,

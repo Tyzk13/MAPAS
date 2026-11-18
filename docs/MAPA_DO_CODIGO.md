@@ -56,7 +56,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/core/post.ts` | 139 | 7 KB |
 | `src/core/probe.ts` | 53 | 2 KB |
 | `src/core/procedural.ts` | 138 | 8 KB |
-| `src/core/sky.ts` | 159 | 9 KB |
+| `src/core/sky.ts` | 182 | 11 KB |
 | `src/core/som.ts` | 220 | 14 KB |
 | `src/core/state.ts` | 26 | 1 KB |
 | `src/core/terrain.ts` | 99 | 5 KB |
@@ -225,7 +225,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `rnd` 6 · `stainedGlass` 9 · `pane` 16 · `roseGeometry` 73 · `petal` 75 · `leafGeometry` 98 · `looseePetalGeometry` 106 · `oldPainting` 113
 
 ### `src/core/sky.ts`
-`Preset` 11 · `PRE` 33 · `hdrUrl` 42 · `loadHdr` 47 · `tintHalf` 62 · `horizonColor` 71 · `hemi` 82 · `sun` 83 · `dome` 90 · `env` 91 · `setShadowRadius` 93 · `applyHdr` 100 · `driftSky` 109 · `timeHooks` 110 · `setTime` 112 · `aplicarLuzes` 144 · `forcarLuzes` 155 · `preloadSkies` 158
+`Preset` 11 · `PRE` 33 · `hdrUrl` 42 · `loadHdr` 47 · `tintHalf` 70 · `limitarBrilho` 79 · `horizonColor` 94 · `hemi` 105 · `sun` 106 · `dome` 113 · `env` 114 · `setShadowRadius` 116 · `applyHdr` 123 · `driftSky` 132 · `timeHooks` 133 · `setTime` 135 · `aplicarLuzes` 167 · `forcarLuzes` 178 · `preloadSkies` 181
 
 ### `src/core/som.ts`
 `Efeito` 7 · `Fonte` 8 · `montar` 21 · `lfo` 49 · `env` 52 · `rajadaRuido` 55 · `tom` 62 · `batida` 70 · `passos` 76 · `sussurro` 84 · `rangido` 95 · `sino` 105 · `criarFontes` 114 · `crepitar` 123 · `trovao` 128 · `grilo` 134 · `som` 139 · `desbloquear()` 142 · `efeito()` 151 · `tick()` 161 · `ouvinte()` 176 · `tocarEfeito` 187 · `aplicar` 214

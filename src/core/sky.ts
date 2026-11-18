@@ -54,7 +54,15 @@ function loadHdr(id: string, tint?: number) {
     tex.colorSpace = THREE.LinearSRGBColorSpace; tex.minFilter = tex.magFilter = THREE.LinearFilter;
     tex.generateMipmaps = false; tex.flipY = true; tex.needsUpdate = true;
     tex.mapping = THREE.EquirectangularReflectionMapping;
-    const env = pmrem.fromEquirectangular(tex).texture;
+    // A luz ambiente (PMREM) sai de uma cópia SEM os pontos superbrilhantes (lua, sol, brilho de cidade). Em algumas
+    // placas a leitura da luz difusa pega um nível pouco borrado do PMREM: com a lua a 84° (90× o céu) tudo o que
+    // está virado para cima ficava BRANCO (chão, telhados, copas — relato do dono em Greywater, Noite).
+    const envTex = new THREE.DataTexture(limitarBrilho(d.data), d.width, d.height, THREE.RGBAFormat, d.type);
+    envTex.colorSpace = THREE.LinearSRGBColorSpace; envTex.minFilter = envTex.magFilter = THREE.LinearFilter;
+    envTex.generateMipmaps = false; envTex.flipY = true; envTex.needsUpdate = true;
+    envTex.mapping = THREE.EquirectangularReflectionMapping;
+    const env = pmrem.fromEquirectangular(envTex).texture;
+    envTex.dispose();
     return { tex, env, horizon: horizonColor(tex) };
   })());
 }
@@ -63,6 +71,21 @@ function tintHalf(data: Uint16Array, c: THREE.Color) {
   const o = new Uint16Array(data.length), k = [c.r, c.g, c.b], H = THREE.DataUtils;
   for (let i = 0; i < data.length; i += 4) {
     for (let j = 0; j < 3; j++) o[i + j] = H.toHalfFloat(H.fromHalfFloat(data[i + j]) * k[j]);
+    o[i + 3] = data[i + 3];
+  }
+  return o;
+}
+/** Cópia com cada pixel limitado a ~3× o brilho médio do céu (mantém a cor; corta lua/sol/brilho de cidade). */
+export function limitarBrilho(data: Uint16Array) {
+  const H = THREE.DataUtils, o = new Uint16Array(data.length);
+  let soma = 0, n = 0;
+  for (let i = 0; i < data.length; i += 16) { soma += H.fromHalfFloat(data[i]) + H.fromHalfFloat(data[i + 1]) + H.fromHalfFloat(data[i + 2]); n++; }
+  const teto = Math.max(0.3, (soma / n / 3) * 3);
+  for (let i = 0; i < data.length; i += 4) {
+    const r = H.fromHalfFloat(data[i]), g = H.fromHalfFloat(data[i + 1]), b = H.fromHalfFloat(data[i + 2]);
+    const m = Math.max(r, g, b), k = m > teto ? teto / m : 1;
+    if (k < 1 || !(m >= 0)) { o[i] = H.toHalfFloat((r >= 0 ? r : 0) * k); o[i + 1] = H.toHalfFloat((g >= 0 ? g : 0) * k); o[i + 2] = H.toHalfFloat((b >= 0 ? b : 0) * k); }
+    else { o[i] = data[i]; o[i + 1] = data[i + 1]; o[i + 2] = data[i + 2]; }
     o[i + 3] = data[i + 3];
   }
   return o;

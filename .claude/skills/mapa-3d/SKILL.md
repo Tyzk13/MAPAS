@@ -322,6 +322,10 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
   (`floatBitsToUint(x) & 0x7f800000u`), limita a 6e4 (half-float estoura em 65504 → infinito) e há um passe
   `limpaEntrada` ANTES do bloom (o bloom espalhava um pixel ruim em mancha). Nunca volte a usar `isnan`/`isinf`.
   Varredura: `?nan=1` pinta pixels inválidos; nos 5 mapas × 5 climas, swiftshader e llvmpipe deram zero.
+- 4º relato (print do dono, Greywater, Noite, do alto): TUDO virado para cima branco puro (chão, telhados, copas),
+  paredes e céu normais. Causa provável: a placa lê um nível pouco borrado do PMREM na luz difusa e a lua do HDRI
+  (84°, ~90× o céu) estoura. Correção: o PMREM sai de uma cópia com `limitarBrilho` (cada pixel ≤ 3× a média do céu);
+  o fundo visível continua o HDRI original. Se voltar, confirme com o F9 → "Reflexos do céu (HDRI)".
 - Testar com driver "de verdade" sem GPU: `xvfb-run` + Playwright `headless: false` +
   `--use-gl=angle --use-angle=gl` + `LIBGL_ALWAYS_SOFTWARE=1` = Mesa llvmpipe (headless cai sempre no swiftshader).
 - Noite: o HDRI `qwantani_night` vem claro quase como dia e com brilho de cidade no horizonte (≈7). Use `bg`/`env`
