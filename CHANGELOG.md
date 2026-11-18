@@ -1,5 +1,22 @@
 # Changelog
 
+## Barud (Tormenta 20) e mapas por sistema
+
+- Novo mapa **Barud, capital de Lomatubar** (`src/maps/barud/`): cidade murada de 12 torres com dois portões, canal
+  com pontes e barcos, Via Real, praça do mercado (barracas, monumento, poço, pelourinho, quadro de procurados),
+  bairros rico/médio/pobre com casas geradas (enxaimel com balanço, pedra, tábuas), ruínas e o **Bairro Coral**
+  isolado (barricadas, coral vermelho, valas da Praga), Fortaleza com Salão do Pretor, lanternas, fumaça das
+  chaminés, carroças, cavalos, cães, galinhas e varais. 13 prédios com **interior** (3 tavernas diferentes, forja,
+  boticário, empório, templo, quartel com celas, salão do trono, 3 casas e o lazareto), com andar de cima e escada.
+- Foco do dono: **minotauros** (Barud sob o Império de Tauron) e alguns humanos maltrapilhos; 38 NPCs com ficha,
+  33 com imagem local (`npcs-local/barud/`, fora do git) recortada das folhas do dono por `tools/fatiar-folha.py`.
+- Novo no núcleo: **painel Locais** (`core/locais.ts`, botão no dock): lista com busca e categorias, ficha do local
+  (texto para ler em voz alta separado dos segredos, que ficam atrás de "Segredos ocultos"), fichas de NPC com
+  retrato, marcadores com o nome dos lugares sobre a cena e duplo clique num prédio para abrir a ficha. Só na janela
+  do mestre. Qualquer mapa pode usar (`M.locais`, `M.fichas`).
+- Menu **Mapa** agrupado por sistema (Ordem Paranormal / Tormenta 20); campo `sis` no manifesto.
+- Cartazes de procurado trocáveis: PNGs em `npcs-local/barud/cartazes/` entram nos cartazes da praça e do quartel.
+
 ## Correção dos climas noturnos
 
 - Corrigido: o clima **Noite** parecia um dia nublado (mais claro que *Terror*, céu cinza-marrom, névoa leitosa).

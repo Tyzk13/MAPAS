@@ -363,6 +363,30 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
 - **Pendências**: manchas brancas/pretas em faces viradas para a lua (esperando o dono dizer qual chave do F9 resolve);
   nomes dos jogadores 1 e 2; paredes VTT dos andares de cima do hotel usam as do térreo.
 
+## Barud — Tormenta 20 (aprendido em `src/maps/barud/`, nov/2026)
+
+- **Mapas por sistema**: campo `sis` no manifesto ('Ordem Paranormal' / 'Tormenta 20'); o menu Mapa agrupa. O dono
+  vai criar mais mapas de Tormenta: os personagens das folhas de outras raças (`npcs-local/outros/`) são para eles.
+- **Decisão do dono**: Barud focada em **minotauros** (Barud sob o Império de Tauron), com alguns humanos
+  "capengas" (pobres, maltrapilhos). Criaturas pedidas: corais/acorrentadas, ocultas até a aparição.
+- Estrutura: `common.ts` (planta, muralha poligonal `MURO`, `dentroMuro`, ruas, `Batch`, materiais, `telhado`,
+  `coral`), `cidade.ts` (terreno com `ShapeGeometry` + buraco do canal, muralha/torres/portões, ruas recortadas pelo
+  muro, casas geradas por estilo, lanternas, objetos), `edificios.ts` (casca genérica `construirPredio` com vãos
+  reais, 2º andar com laje furada + escada + rampa invisível, paredes internas, telhado na camada; `mobiliar`),
+  `mobilia.ts` (móveis em código no lote), `dados.ts` (fichas), `index.ts` (vistas automáticas por prédio, luzes).
+- Casas ao longo da rua: a frente fica a 0,25 m da borda da rua e o teste de rua usa margem negativa — com a
+  frente encostada, o teste de sobreposição rejeitava quase todas (a cidade nasceu vazia).
+- Cor de vértice multiplica a textura: tintas em hex escuras (0x7a7268) somem à noite. Use tintas claras
+  (0xb0a898…) e deixe o escuro para a luz. Luzes de interior realistas (velas 3 cd) não leem na mesa: Barud usa
+  ×18 nas internas, 40 cd nas lanternas e uma `HemisphereLight` de luar própria (7 na Noite) no `onTime`.
+- Luzes: pool de N PointLights movido para as luzes pedidas mais perto da câmera; a intensidade usa
+  `fatorLuzes()` (core/sky) para respeitar "a luz caiu".
+- Vistas internas: o padrão (canto da frente olhando o fundo) bate em parede interna; prédios com divisórias têm
+  `vd` (vista local) no `PREDIOS`.
+- Folhas de personagens do dono: `python3 -I tools/fatiar-folha.py folha.png saida pre COLS LINHAS` corta pela
+  grade (a busca por blocos junta figuras vizinhas), tira o fundo branco e fica só com o maior pedaço; depois
+  apague brancos puros fechados (> 246) com mais de 25 px (vão entre as pernas) sem tocar em roupas creme.
+
 ## Erros que já custaram tempo (não repita)
 
 - **Modelos da Poly Haven são pesados** (árvores 1–4 M faces). Sempre rode `tools/arvores.sh`
@@ -483,7 +507,8 @@ Meça antes de mexer: `node tools/medir.mjs --q=media` (chamadas, triângulos, e
   Igreja do Casamento `https://claude.ai/artifact/65XS5FnzDBvfneK5AnFXUh` ·
   San Judas de las Ánimas `https://claude.ai/artifact/55cVSvDE5dfVtg2Km2iR9K` ·
   Harlow, Texas `https://claude.ai/artifact/HHBUeQ8noXrMfhqAK6Q1PB` ·
-  Greywater Falls `https://claude.ai/artifact/19Taut7URvhL67RnSA4MHg` (`canada.html`, `MAPA_PADRAO="canada"`). Os três têm todos os mapas (Greywater Falls
+  Greywater Falls `https://claude.ai/artifact/19Taut7URvhL67RnSA4MHg` (`canada.html`, `MAPA_PADRAO="canada"`) ·
+  Barud (Tormenta 20): ver `docs/HISTORICO.md` (`barud.html`, `MAPA_PADRAO="barud"`). Os três têm todos os mapas (Greywater Falls
   entrou depois; para um link próprio dele, crie `canada.html` com `MAPA_PADRAO="canada"`).
 - Passos: `npm run build:leve` → copie `dist-lite/` para o scratchpad (`pub/`) → crie `igreja.html` (troca o
   `<title>`) e `mexico.html` (`<title>` + `<script>window.MAPA_PADRAO="mexico"</script>`) a partir do

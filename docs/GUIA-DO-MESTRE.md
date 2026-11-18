@@ -10,6 +10,8 @@ para hospedar e servidor, `docs/HOSPEDAGEM.md`; para Foundry/Roll20, `docs/VTT.m
 | [Igreja do Casamento](https://claude.ai/artifact/65XS5FnzDBvfneK5AnFXUh) | igreja | todos os mapas (troque pelo menu **Mapa**) |
 | [San Judas de las Ánimas](https://claude.ai/artifact/55cVSvDE5dfVtg2Km2iR9K) | cidadezinha mexicana | todos os mapas |
 | [Harlow, Texas](https://claude.ai/artifact/HHBUeQ8noXrMfhqAK6Q1PB) | delegacia de Harlow (O Caso Whitlock) | todos os mapas |
+| [Greywater Falls](https://claude.ai/artifact/19Taut7URvhL67RnSA4MHg) | Greywater Falls (O Caso Ashdown) | todos os mapas |
+| Barud (Tormenta 20) | Barud, capital de Lomatubar | todos os mapas |
 
 Mapas: **Igreja** (casamento), **San Judas** (México), **Harlow** (Texas, 1987 parado no tempo), **Greywater
 Falls** (Ontário, 1975 — O Caso Ashdown, hotel de 3 andares) e **Campo** (exemplo). São privados: para outras
@@ -113,6 +115,14 @@ Tomadas e cenas ficam **neste navegador**, por mapa (outro navegador/computador 
 | **Esc** | sair do cinema / da câmera livre |
 
 Na janela dos jogadores: **duplo clique** ou **F** = tela cheia; **H** = volta ao normal.
+
+### Locais e fichas (Barud)
+Botão **Locais** no dock (livro): lista dos lugares com busca e categorias; tocar num lugar abre a ficha (texto
+para ler em voz alta, dono, NPCs, rumores, pistas). Os **segredos** só aparecem ao tocar em *Segredos ocultos*.
+**Ir até lá** / **Ver por dentro** levam a câmera; aba **NPCs** traz as fichas com retrato. **Marcadores** mostra o
+nome dos lugares sobre a cidade. Duplo clique num prédio abre a ficha dele. Nada disso aparece na tela dos
+jogadores. Imagens novas: PNG com fundo transparente em `npcs-local/barud/<id>.png` (ids em `src/maps/barud/dados.ts`)
+e cartazes em `npcs-local/barud/cartazes/01.png…`.
 
 ### Painel Mestre
 

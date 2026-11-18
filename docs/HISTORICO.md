@@ -86,6 +86,9 @@ com salas), F (arquitetura para novos mapas + `docs/NOVO-MAPA.md`). Todas foram 
 13. Greywater Falls, Ontário: hotel de 3 andares, moradores com as aparências do dono, aparição do vilão, fichas
     vivas, botão TV, diagnóstico F9, arquivo offline.
 14. Mapa do código + Graphify (`main`); tudo juntado numa branch, com este histórico e o guia do mestre.
+15. Climas corrigidos (Noite azul-lunar, `skyTint`, trava de cor por bits, luz ambiente sem a lua do HDRI), arquivo
+    offline lembra posições, menu de mapas por sistema.
+16. **Barud** (Tormenta 20): cidade murada com interiores, painel Locais com fichas e segredos, NPCs minotauros.
 
 ## Arquivo offline (como o dono joga sem internet)
 

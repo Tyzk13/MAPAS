@@ -62,8 +62,12 @@ export async function build(M: MapRuntime) {
 Em `src/maps/manifest.ts`, uma linha:
 
 ```ts
-meuMapa: { id: 'meuMapa', n: 'Meu mapa', build: async M => (await import('./meu-mapa')).build(M) },
+meuMapa: { id: 'meuMapa', sis: 'Tormenta 20', n: 'Meu mapa', build: async M => (await import('./meu-mapa')).build(M) },
 ```
+
+`sis` agrupa o menu de mapas por sistema de RPG. Para o painel **Locais** (fichas do mestre), preencha
+`M.locais` (tipo `LocalInfo`: texto público, dono, NPCs, rumores, pistas, segredos, `vista`/`dentro`, `area` para o
+duplo clique e `marca` para o marcador) e `M.fichas` (`NpcInfo`). Modelo: `src/maps/barud/dados.ts` + `index.ts`.
 
 Pronto: o botão **Mapa** passa a alternar para ele, e `?map=meuMapa` abre direto nele. O
 `postMessage({cmd:'map', id:'meuMapa'})` também funciona.
