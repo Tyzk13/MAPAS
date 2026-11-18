@@ -24,6 +24,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `index.html` | 42 | 3 KB |
 | `legacy/igreja-3d-site.html` | 620 | 899 KB |
 | `legacy/servidor-sync.js` | 26 | 1 KB |
+| `scripts/mapa_do_codigo.py` | 78 | 5 KB |
 | `server/servidor-sync.mjs` | 114 | 6 KB |
 | `src/core/anim.ts` | 124 | 7 KB |
 | `src/core/binario.ts` | 21 | 1 KB |
@@ -42,7 +43,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/core/post.ts` | 116 | 6 KB |
 | `src/core/probe.ts` | 53 | 2 KB |
 | `src/core/procedural.ts` | 138 | 8 KB |
-| `src/core/sky.ts` | 130 | 8 KB |
+| `src/core/sky.ts` | 143 | 8 KB |
 | `src/core/state.ts` | 24 | 1 KB |
 | `src/core/terrain.ts` | 99 | 5 KB |
 | `src/core/tokens.ts` | 185 | 11 KB |
@@ -135,7 +136,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `rnd` 6 · `stainedGlass` 9 · `pane` 16 · `roseGeometry` 73 · `petal` 75 · `leafGeometry` 98 · `looseePetalGeometry` 106 · `oldPainting` 113
 
 ### `src/core/sky.ts`
-`Preset` 11 · `PRE` 31 · `hdrUrl` 40 · `loadHdr` 44 · `horizonColor` 58 · `hemi` 69 · `sun` 70 · `dome` 77 · `env` 78 · `setShadowRadius` 80 · `applyHdr` 87 · `driftSky` 96 · `timeHooks` 97 · `setTime` 99 · `preloadSkies` 129
+`Preset` 11 · `PRE` 33 · `hdrUrl` 42 · `loadHdr` 47 · `tintHalf` 62 · `horizonColor` 71 · `hemi` 82 · `sun` 83 · `dome` 90 · `env` 91 · `setShadowRadius` 93 · `applyHdr` 100 · `driftSky` 109 · `timeHooks` 110 · `setTime` 112 · `preloadSkies` 142
 
 ### `src/core/state.ts`
 `st` 6

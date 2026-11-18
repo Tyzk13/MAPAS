@@ -1,5 +1,15 @@
 # Changelog
 
+## Correção dos climas noturnos
+
+- Corrigido: o clima **Noite** parecia um dia nublado (mais claro que *Terror*, céu cinza-marrom, névoa leitosa).
+  O HDRI `qwantani_night` vem exposto quase como céu de dia e tem um brilho forte no horizonte; como a névoa e a
+  luz ambiente saem dele, tudo clareava. Noite recalibrada (céu, ambiente, névoa, lua e gradação).
+- Novo: `skyTint` no preset de clima tinge o próprio HDRI (céu, reflexos e cor da névoa juntos), para o céu e a
+  névoa terem a mesma cor; a Noite usa um azul-lunar.
+- Novo: `tools/diag-climas.mjs` mede o brilho de cada vista por clima, carregando direto e depois de trocar de clima
+  (confere se o resultado não depende da ordem das trocas).
+
 ## Etapa A — projeto e ciclo de verificação visual
 
 - Projeto Vite + TypeScript com three r187 (antes: HTML único com three r128 do jsDelivr).

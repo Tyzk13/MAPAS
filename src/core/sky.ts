@@ -21,6 +21,8 @@ export interface Preset {
   hs: number; hg: number; hi: number;
   /** névoa: densidade e multiplicador/tingimento da cor tirada do horizonte */
   fogD: number; fogK: number; fogTint?: number;
+  /** tinge o próprio HDRI (céu visível, reflexos e cor da névoa juntos). Ex.: noite azulada. */
+  skyTint?: number;
   /** luzes artificiais (lampiões, velas, porta): 0 = apagadas, 1 = normal */
   lamps: number;
   /** vitrais vistos de fora: brilho */
@@ -33,7 +35,7 @@ export const PRE: Preset[] = [
   { n: 'Anoitecer', hdr: 'kloppenheim_07_puresky', bg: 0.22, env: 0.45, blur: 0.0, rot: 2.2, sc: 0xffd6b8, si: 0.7, az: 300, el: 10, hs: 0x7787a3, hg: 0x1b1814, hi: 0.18, fogD: 0.013, fogK: 0.95, lamps: 1, win: 0.95, grade: { exposure: 1.05, saturation: -0.2, contrast: 0.14, bloom: 0.6, vignette: 0.5 } },
   { n: 'Crepúsculo', hdr: 'qwantani_dusk_2_puresky', bg: 0.35, env: 0.5, blur: 0, rot: 0.6, sc: 0xffa070, si: 1.1, az: 290, el: 5, hs: 0x8a7fa0, hg: 0x1c1512, hi: 0.2, fogD: 0.011, fogK: 1, lamps: 1, win: 1.1, grade: { exposure: 1.0, saturation: -0.12, contrast: 0.12, bloom: 0.55, vignette: 0.5 } },
   { n: 'Nublado', hdr: 'kloofendal_overcast_puresky', bg: 0.8, env: 0.9, blur: 0, rot: 0, sc: 0xe8eef5, si: 1.4, az: 200, el: 50, hs: 0xc8d0da, hg: 0x2a2620, hi: 0.25, fogD: 0.009, fogK: 1, lamps: 0, win: 0.35, grade: { exposure: 1.0, saturation: -0.18, contrast: 0.1, bloom: 0.35, vignette: 0.4 } },
-  { n: 'Noite', hdr: 'qwantani_night_puresky', bg: 0.35, env: 0.18, blur: 0, rot: 0, sc: 0xa9c1ff, si: 0.4, az: 160, el: 42, hs: 0x3c4a6a, hg: 0x0c0d10, hi: 0.1, fogD: 0.016, fogK: 0.8, lamps: 1, win: 1.1, grade: { exposure: 1.15, saturation: -0.25, contrast: 0.16, bloom: 0.8, vignette: 0.6 } },
+  { n: 'Noite', hdr: 'qwantani_night_puresky', bg: 0.11, env: 0.1, blur: 0, rot: 0, sc: 0x9fb6ff, si: 0.32, az: 160, el: 42, hs: 0x34456e, hg: 0x08090c, hi: 0.14, fogD: 0.017, fogK: 0.5, skyTint: 0x8aa2ff, lamps: 1, win: 1.15, grade: { exposure: 1.1, saturation: -0.18, contrast: 0.18, brightness: -0.03, bloom: 0.85, vignette: 0.65 } },
 ];
 
 const HDR_URLS = import.meta.glob('@assets/hdri/*.hdr', { query: '?url', import: 'default', eager: true }) as Record<string, string>;
@@ -41,11 +43,13 @@ const hdrUrl = (id: string) => Object.entries(HDR_URLS).find(([k]) => k.includes
 
 const pmrem = new THREE.PMREMGenerator(R);
 const cache: Record<string, Promise<{ tex: THREE.DataTexture; env: THREE.Texture; horizon: THREE.Color }>> = {};
-function loadHdr(id: string) {
-  return (cache[id] ||= (async () => {
+const raw: Record<string, Promise<any>> = {};
+function loadHdr(id: string, tint?: number) {
+  return (cache[id + '|' + (tint ?? '')] ||= (async () => {
     const url = hdrUrl(id);
     if (!url) throw new Error('HDRI não encontrado: ' + id);
-    const d: any = new HDRLoader().setDataType(THREE.HalfFloatType).parse(await fetchBinary(url));
+    const src: any = await (raw[id] ||= fetchBinary(url).then(b => new HDRLoader().setDataType(THREE.HalfFloatType).parse(b)));
+    const d = tint == null ? src : { ...src, data: tintHalf(src.data, new THREE.Color(tint)) };
     const tex = new THREE.DataTexture(d.data, d.width, d.height, THREE.RGBAFormat, d.type);
     tex.colorSpace = THREE.LinearSRGBColorSpace; tex.minFilter = tex.magFilter = THREE.LinearFilter;
     tex.generateMipmaps = false; tex.flipY = true; tex.needsUpdate = true;
@@ -53,6 +57,15 @@ function loadHdr(id: string) {
     const env = pmrem.fromEquirectangular(tex).texture;
     return { tex, env, horizon: horizonColor(tex) };
   })());
+}
+/** Cópia dos dados (meia precisão RGBA) multiplicada por uma cor linear. */
+function tintHalf(data: Uint16Array, c: THREE.Color) {
+  const o = new Uint16Array(data.length), k = [c.r, c.g, c.b], H = THREE.DataUtils;
+  for (let i = 0; i < data.length; i += 4) {
+    for (let j = 0; j < 3; j++) o[i + j] = H.toHalfFloat(H.fromHalfFloat(data[i + j]) * k[j]);
+    o[i + 3] = data[i + 3];
+  }
+  return o;
 }
 /** Média de uma faixa logo acima do horizonte (linear). */
 function horizonColor(tex: THREE.DataTexture) {
@@ -98,7 +111,7 @@ export const timeHooks: ((p: Preset) => void)[] = [];
 
 export async function setTime(i: number) {
   const p = PRE[i], my = ++reqId;
-  const h = await loadHdr(p.hdr);
+  const h = await loadHdr(p.hdr, p.skyTint);
   if (my !== reqId) return; // outro clima foi pedido enquanto carregava
   const tex = userHdr?.tex || h.tex, envT = userHdr?.env || h.env;
   S.background = tex; S.environment = envT;
@@ -126,4 +139,4 @@ export async function setTime(i: number) {
 }
 
 /** Pré-carrega os HDRIs dos climas (em segundo plano). */
-export function preloadSkies() { PRE.forEach(p => loadHdr(p.hdr).catch(() => {})); }
+export function preloadSkies() { PRE.forEach(p => loadHdr(p.hdr, p.skyTint).catch(() => {})); }
