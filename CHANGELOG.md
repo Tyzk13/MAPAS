@@ -14,6 +14,8 @@
   número, a cor é limitada a 60000 (acima disso o buffer de meia precisão vira infinito) e há uma limpeza
   **antes** do bloom (um pixel inválido espalhado pelo bloom virava mancha grande com borda de ruído).
 - Novo: `?nan=1` pinta pixels inválidos (magenta NaN, ciano infinito, amarelo estouro, vermelho negativo).
+- Novo: sem servidor nem claude.ai (arquivo offline), as posições dos personagens (inclusive ocultos) e os
+  personagens criados ficam guardados neste navegador e voltam ao reabrir (`netLocal` em `core/net.ts`).
 - Juntada a branch com todos os mapas (Greywater Falls, Harlow, San Judas) e funções (janela dos jogadores,
   cinema, painel do mestre) com esta correção.
 

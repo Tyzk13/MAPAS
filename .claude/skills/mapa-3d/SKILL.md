@@ -330,6 +330,9 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
   npcs-local/canada` + recorte (06/Émile tem fundo de foto: máscara por faixa de colunas + tira claros não-quentes +
   preenche buracos); Harlow = ler `assets/01..29-*` do link publicado de Harlow (Artifact read `paths`) e copiar
   como `npcs-local/NN.ext` (o Pinterest hoje só devolve 21). Jogadores 1–3 e criaturas 27/28 só com o PDF do dono.
+- Offline (sem ws nem claude.ai) o `netLocal` grava posições/personagens no `localStorage` (`mapa3d:pos:<sala>`,
+  `mapa3d:chars:<sala>`); o dono pediu (nov/2026) para o mapa lembrar onde deixou cada um. Cartazes de Greywater
+  (`buildRetratos`) usam as fotos 21 (Jean), 3 (Margaret), 15 (William); as polaroids do 304 são desenhos (`photo`).
 - Ao mandar o HTML offline, gere da branch que tem tudo (a `main` só tem Igreja e Campo).
 
 ## Greywater Falls — decisões do dono e como retomar (sessão de nov/2026)

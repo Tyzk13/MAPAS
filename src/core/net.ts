@@ -86,9 +86,31 @@ function netWs(url: string) {
   });
 }
 
+/** Sem servidor nem claude.ai (arquivo offline): guarda posições e personagens criados neste navegador. */
+function netLocal() {
+  const KP = 'mapa3d:pos:' + CFG.room, KC = 'mapa3d:chars:' + CFG.room;
+  const ler = (k: string) => { try { return JSON.parse(localStorage.getItem(k) || '{}') || {}; } catch { return {}; } };
+  const pos: Record<string, any> = ler(KP), chars: Record<string, any> = ler(KC);
+  let tm = 0;
+  const gravar = () => { clearTimeout(tm); tm = window.setTimeout(() => {
+    try { localStorage.setItem(KP, JSON.stringify(pos)); } catch { /* sem armazenamento */ }
+    try { localStorage.setItem(KC, JSON.stringify(chars)); } catch { /* imagem grande demais: fica só a posição */ }
+  }, 400); };
+  addEventListener('pagehide', () => { clearTimeout(tm); try { localStorage.setItem(KP, JSON.stringify(pos)); localStorage.setItem(KC, JSON.stringify(chars)); } catch { /* */ } });
+  if (!CFG.ro) {
+    impl.pos = (id, v) => { pos[st.curMap + '__' + id] = v; gravar(); };
+    impl.addChar = (id, v) => { chars[id] = v; gravar(); handlers.onChar(id, v); return Promise.resolve(); };
+    impl.delChar = id => { delete chars[id]; for (const k in pos) if (k.endsWith('__' + id)) delete pos[k]; gravar(); handlers.dropT(id); };
+  }
+  for (const id in chars) handlers.onChar(id, chars[id]);
+  for (const k in pos) { const i = k.indexOf('__'); if (i > 0) handlers.onPos(k.slice(0, i), k.slice(i + 2), pos[k]); }
+  const stEl = $('st'); if (stEl) stEl.textContent = 'local (salvo neste navegador)';
+}
+
 export async function startNet() {
   let ok = false;
   if (CFG.ws) ok = await netWs(CFG.ws);
   if (!ok) try { ok = await netDb(); } catch (_) { /* fica local */ }
+  if (!ok) netLocal();
   return ok;
 }

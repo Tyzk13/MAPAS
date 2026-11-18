@@ -51,7 +51,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/core/merge.ts` | 52 | 3 KB |
 | `src/core/models.ts` | 177 | 9 KB |
 | `src/core/mostrar.ts` | 51 | 2 KB |
-| `src/core/net.ts` | 95 | 5 KB |
+| `src/core/net.ts` | 117 | 6 KB |
 | `src/core/pbr.ts` | 81 | 3 KB |
 | `src/core/post.ts` | 139 | 7 KB |
 | `src/core/probe.ts` | 53 | 2 KB |
@@ -210,7 +210,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `Imagem` 5 · `mostrar` 10 · `guardarImagem` 19 · `carregarImagem` 25 · `exibir` 39
 
 ### `src/core/net.ts`
-`tap` 15 · `NET` 16 · `handlers` 24 · `key` 31 · `netDb` 33 · `netWs` 61 · `snd` 65 · `open` 66 · `startNet` 89
+`tap` 15 · `NET` 16 · `handlers` 24 · `key` 31 · `netDb` 33 · `netWs` 61 · `snd` 65 · `open` 66 · `netLocal` 90 · `ler` 92 · `gravar` 95 · `startNet` 110
 
 ### `src/core/pbr.ts`
 `fileFor` 7 · `tex` 11 · `PbrOpts` 23 · `pbr` 41 · `rep` 45
