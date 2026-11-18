@@ -326,6 +326,10 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
   `--use-gl=angle --use-angle=gl` + `LIBGL_ALWAYS_SOFTWARE=1` = Mesa llvmpipe (headless cai sempre no swiftshader).
 - Noite: o HDRI `qwantani_night` vem claro quase como dia e com brilho de cidade no horizonte (≈7). Use `bg`/`env`
   baixos e `skyTint` (tinge céu, reflexos e névoa juntos) — sem isso a névoa azul não bate com o céu marrom.
+- Recuperar imagens numa sessão nova (nov/2026): Greywater = `node tools/baixar-npcs.mjs https://pin.it/6FDe5jQ5t
+  npcs-local/canada` + recorte (06/Émile tem fundo de foto: máscara por faixa de colunas + tira claros não-quentes +
+  preenche buracos); Harlow = ler `assets/01..29-*` do link publicado de Harlow (Artifact read `paths`) e copiar
+  como `npcs-local/NN.ext` (o Pinterest hoje só devolve 21). Jogadores 1–3 e criaturas 27/28 só com o PDF do dono.
 - Ao mandar o HTML offline, gere da branch que tem tudo (a `main` só tem Igreja e Campo).
 
 ## Greywater Falls — decisões do dono e como retomar (sessão de nov/2026)
