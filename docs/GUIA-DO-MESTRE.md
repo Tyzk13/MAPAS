@@ -11,7 +11,7 @@ para hospedar e servidor, `docs/HOSPEDAGEM.md`; para Foundry/Roll20, `docs/VTT.m
 | [San Judas de las Ánimas](https://claude.ai/artifact/55cVSvDE5dfVtg2Km2iR9K) | cidadezinha mexicana | todos os mapas |
 | [Harlow, Texas](https://claude.ai/artifact/HHBUeQ8noXrMfhqAK6Q1PB) | delegacia de Harlow (O Caso Whitlock) | todos os mapas |
 | [Greywater Falls](https://claude.ai/artifact/19Taut7URvhL67RnSA4MHg) | Greywater Falls (O Caso Ashdown) | todos os mapas |
-| Barud (Tormenta 20) | Barud, capital de Lomatubar | todos os mapas |
+| [Barud (Tormenta 20)](https://claude.ai/artifact/UpjK4X8KJrYW5LefuSuPUF) | Barud, capital de Lomatubar | todos os mapas |
 
 Mapas: **Igreja** (casamento), **San Judas** (México), **Harlow** (Texas, 1987 parado no tempo), **Greywater
 Falls** (Ontário, 1975 — O Caso Ashdown, hotel de 3 andares) e **Campo** (exemplo). São privados: para outras

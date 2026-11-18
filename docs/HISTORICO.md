@@ -38,7 +38,8 @@ com salas), F (arquitetura para novos mapas + `docs/NOVO-MAPA.md`). Todas foram 
   sinistra, fichas vivas, "onde está cada um", lupa de documentos, pistas com tradução, notas do mestre por vista.
 - Links publicados (os três têm todos os mapas): Igreja https://claude.ai/artifact/65XS5FnzDBvfneK5AnFXUh ·
   San Judas https://claude.ai/artifact/55cVSvDE5dfVtg2Km2iR9K · Harlow https://claude.ai/artifact/HHBUeQ8noXrMfhqAK6Q1PB ·
-  Greywater Falls https://claude.ai/artifact/19Taut7URvhL67RnSA4MHg (criado em 18/11/2026; abre em `canada`)
+  Greywater Falls https://claude.ai/artifact/19Taut7URvhL67RnSA4MHg (criado em 18/11/2026; abre em `canada`) ·
+  Barud https://claude.ai/artifact/UpjK4X8KJrYW5LefuSuPUF (Tormenta 20; abre em `barud`)
 - **Imagens locais**: moradores/jogadores/criaturas de Greywater ficam em `npcs-local/` (fora do git, repositório
   público). Uma sessão sem essa pasta **não deve republicar** os links (o build perderia essas imagens); a skill
   diz como refazê-las. Os links atuais foram publicados por uma sessão que tinha as imagens.
