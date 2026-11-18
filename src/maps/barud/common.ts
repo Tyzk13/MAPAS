@@ -88,7 +88,8 @@ function makeMats() {
     agua: pl(0x0c1416, 0.06, { metalness: 0.35, envMapIntensity: 1.2 }),
     coral: pl(0x6a0e16, 0.3, { emissive: 0x2a0306, emissiveIntensity: 0.8 }),
     escuro: pl(0x0a0908, 1),
-    aceso: new THREE.MeshBasicMaterial({ color: 0xffb35a }),    // janelas acesas e chamas (vai em M.lamps)
+    aceso: new THREE.MeshBasicMaterial({ color: 0xffb35a }),
+    vitral: new THREE.MeshBasicMaterial({ color: 0xa8602a }),     // vitrais do templo (âmbar fechado)    // janelas acesas e chamas (vai em M.lamps)
   };
 }
 let _m: ReturnType<typeof makeMats> | null = null;

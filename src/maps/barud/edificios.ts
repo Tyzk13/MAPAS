@@ -62,7 +62,7 @@ export const PREDIOS: Predio[] = [
 ];
 
 // ---------- construção da casca ----------
-const corDe = (p: Predio) => p.corExt ?? (p.ext === 'pedra' ? 0x7e786e : p.ext === 'muro' ? 0x8a8278 : p.ext === 'enxaimel' ? 0xb0a490 : 0x6a5440);
+const corDe = (p: Predio) => p.corExt ?? (p.ext === 'pedra' ? 0xa8a094 : p.ext === 'muro' ? 0xb4aa9c : p.ext === 'enxaimel' ? 0xd0c4ac : 0x9a8468);
 /** parede local de (ax,az) a (bx,bz) com vãos (c = distância do início até o centro do vão) */
 function parede(B: Batch, mat: THREE.Material, cor: number, m: THREE.Matrix4, ax: number, az: number, bx: number, bz: number, y0: number, h: number, t: number,
   vaos: { c: number; w: number; y: number; h: number }[], dentro?: { mat: THREE.Material; cor: number; lado: 1 | -1 }) {
@@ -124,7 +124,7 @@ export function construirPredio(B: Batch, BR: Batch, G: THREE.Group, p: Predio):
         const ux = (bx - ax) / L, uz = (bz - az) / L, a = Math.atan2(ux, uz) - Math.PI / 2, mm = m.clone().multiply(mtx(ax + ux * v.c, 0, az + uz * v.c, a));
         cx(B, M.madeira, v.w + 0.12, 0.1, 0.18, 0, ya + v.y - 0.05, t / 2, 0x2a1e16, mm);
         if (p.id !== 'templo') { cx(B, M.madeira, 0.05, v.h, 0.05, 0, ya + v.y + v.h / 2, 0, 0x2a1e16, mm); cx(B, M.madeira, v.w, 0.05, 0.05, 0, ya + v.y + v.h / 2, 0, 0x2a1e16, mm); }
-        else { cx(B, M.aceso, v.w - 0.05, v.h - 0.05, 0.03, 0, ya + v.y + v.h / 2, 0, 0xffffff, mm); }  // vitral aceso (âmbar, por dentro de velas)
+        else { cx(B, M.vitral, v.w - 0.05, v.h - 0.05, 0.03, 0, ya + v.y + v.h / 2, 0, 0xffffff, mm); for (let k2 = 1; k2 < 4; k2++) cx(B, M.ferro, v.w, 0.04, 0.05, 0, ya + v.y + k2 * v.h / 4, 0, 0xffffff, mm); cx(B, M.ferro, 0.04, v.h, 0.05, 0, ya + v.y + v.h / 2, 0, 0xffffff, mm); }  // vitral aceso (âmbar, por dentro de velas)
         if (!p.ruina && rnd() < 0.6 && p.id !== 'templo') cx(B, M.tabuas, v.w / 2, v.h, 0.05, v.w * 0.75, ya + v.y + v.h / 2, t / 2 + 0.1, 0x3a2a1e, mm, 0.6);
       }
       vtt.push([W(ax, az), W(bx, bz)]);
@@ -192,7 +192,7 @@ export function construirPredio(B: Batch, BR: Batch, G: THREE.Group, p: Predio):
 
 // ---------- interiores ----------
 /** acende uma luz de interior (pede uma PointLight ao gerenciador) e põe auréola */
-const luzI = (v: THREE.Vector3, n = 4, cor = 0xff9a48, dist = 9, prio = 4) => { luz(v.x, v.y, v.z, n * 2.6, prio, cor, dist * 1.3, 6); halo(v.x, v.y, v.z, 0.45); };
+const luzI = (v: THREE.Vector3, n = 4, cor = 0xff9a48, dist = 9, prio = 4) => { luz(v.x, v.y, v.z, n * 18, prio, cor, dist * 1.5, 6); halo(v.x, v.y, v.z, 0.45); };
 
 export function mobiliar(B: Batch, G: THREE.Group, id: string, docs: { o: THREE.Object3D; n: string; pt?: string; onde?: string }[]) {
   const m = MATRIZ[id], p = SPEC[id], M = MAT(), H = p.h;
@@ -294,7 +294,7 @@ export function mobiliar(B: Batch, G: THREE.Group, id: string, docs: { o: THREE.
       for (let i = 0; i < 18; i++) { const v = vela(B, m, -7 + (i % 6) * 0.3, 0.9 + Math.floor(i / 6) * 0.25, -6 + (i % 3) * 0.2); if (i === 4) luzI(v, 2, 0xffb060, 6, 5); }
       { const P = peca(B, m, -7, 0, -6); P.cx(M.madeira, 1.9, 0.9, 0.8, 0, 0.45, 0, 0x3a2818); P.cx(M.madeira, 1.9, 0.5, 0.4, 0, 1.05, -0.2, 0x3a2818); }
       for (let i = 0; i < 6; i++) { const P = peca(B, m, (i % 2 ? 1.6 : -1.6), 0.06, 4 - i * 2.4); P.cx(M.pedra, 0.8, 0.02, 1.6, 0, 0, 0, 0x6a645c); }
-      luzI(lustre(B, m, 0, 8.5, -2, 1.0), 5, 0xffb060, 14, 5);
+      luzI(lustre(B, m, 0, 8.5, -2, 1.0), 5, 0xffb060, 14, 5); luzI(lustre(B, m, 0, 8.5, 4.5, 0.9), 4, 0xffb060, 12, 5); luzI(W(0, 1.4, -9.6), 4, 0xffb060, 10, 6);
       // torre do sino nos fundos (por fora)
       cx(B, M.pedra, 4.2, 20, 4.2, 6.2, 10, -9, 0x7e786e, m); cone(B, M.ardosia, 3.3, 7, 6.2, 20, -9, 0x56565e, 4, m);
       cx(B, M.escuro, 1.2, 2.2, 4.25, 6.2, 16.5, -9, 0xffffff, m);

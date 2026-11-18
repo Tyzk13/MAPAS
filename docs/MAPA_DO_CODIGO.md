@@ -46,6 +46,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/core/importer.ts` | 44 | 2 KB |
 | `src/core/kit.ts` | 160 | 11 KB |
 | `src/core/loading.ts` | 39 | 2 KB |
+| `src/core/locais.ts` | 142 | 12 KB |
 | `src/core/maps.ts` | 76 | 3 KB |
 | `src/core/menu.ts` | 60 | 3 KB |
 | `src/core/merge.ts` | 52 | 3 KB |
@@ -66,6 +67,12 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/core/walk.ts` | 229 | 12 KB |
 | `src/core/weathering.ts` | 46 | 2 KB |
 | `src/main.ts` | 512 | 32 KB |
+| `src/maps/barud/cidade.ts` | 413 | 30 KB |
+| `src/maps/barud/common.ts` | 149 | 9 KB |
+| `src/maps/barud/dados.ts` | 304 | 41 KB |
+| `src/maps/barud/edificios.ts` | 415 | 37 KB |
+| `src/maps/barud/index.ts` | 270 | 21 KB |
+| `src/maps/barud/mobilia.ts` | 216 | 14 KB |
 | `src/maps/campo.ts` | 53 | 4 KB |
 | `src/maps/canada/casas.ts` | 217 | 27 KB |
 | `src/maps/canada/chegada.ts` | 86 | 6 KB |
@@ -112,6 +119,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `tools/capturas.mjs` | 113 | 6 KB |
 | `tools/contar-tris.mjs` | 15 | 1 KB |
 | `tools/diag-climas.mjs` | 45 | 3 KB |
+| `tools/fatiar-folha.py` | 84 | 4 KB |
 | `tools/limpar-recorte.py` | 52 | 2 KB |
 | `tools/medir-peso.mjs` | 15 | 1 KB |
 | `tools/medir.mjs` | 48 | 5 KB |
@@ -194,6 +202,9 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 ### `src/core/loading.ts`
 `bar` 5 · `txt` 6 · `draw` 8 · `loading` 16 · `waitTextures()` 19 · `error()` 29
 
+### `src/core/locais.ts`
+`esc` 15 · `L` 16 · `norm` 17 · `silhueta` 20 · `initLocais` 24 · `atualizarBotao` 50 · `alternar` 51 · `abrir` 52 · `fechar` 53 · `desenhar` 55 · `lista` 92 · `par` 93 · `segredo` 94 · `ficha` 98 · `loopMarcas` 126
+
 ### `src/core/maps.ts`
 `newRuntime` 15 · `disposeTree` 25 · `mapHooks` 34 · `loadMap` 36 · `u` 54
 
@@ -253,6 +264,24 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 
 ### `src/main.ts`
 `cutBg` 42 · `push` 46 · `prep` 56 · `spawnPoint` 68 · `addChar` 73 · `pontoVista` 83 · `ondeEsta` 85 · `moverPara` 91 · `listaPersonagens` 96 · `bt` 104 · `revelar` 123 · `marcarQ` 127 · `escolherClima` 129 · `irParaVista` 130 · `tg` 137 · `rodarCine` 141 · `itemCine` 142 · `encherCine` 148 · `initCinemaUi` 159 · `mostrarPersonagens` 170 · `tocarCena` 174 · `gravarCenaAtual` 188 · `encherMestre` 194 · `alternarImagem` 209 · `initMestreUi` 214 · `toast` 237 · `telaLimpa` 242 · `initAtalhos` 249 · `atualizarSelo` 290 · `congelar` 298 · `escurecer` 302 · `lanterna` 303 · `marcarSom` 304 · `initImersaoUi` 305 · `initUi` 317 · `resz` 362 · `frame` 420 · `captureApi` 442 · `view()` 445 · `third()` 451 · `stats()` 463 · `start` 475
+
+### `src/maps/barud/cidade.ts`
+`LReq` 12 · `LUZES` 13 · `luz` 14 · `Cidade` 16 · `estiloEm` 22 · `construirCidade` 29 · `colisor` 33 · `sh` 36 · `muroSeg` 89 · `ponte` 162 · `ocupado` 180 · `casa` 209 · `hh` 223 · `fzz` 253 · `barr` 288 · `poste` 318 · `livre` 337 · `carroca` 357 · `animal` 367 · `retCantos` 402 · `mergeSimples` 406
+
+### `src/maps/barud/common.ts`
+`Q` 10 · `reseed` 18 · `rnd` 19 · `entre` 20 · `pick` 21 · `MURO_R` 24 · `MURO` 25 · `dentroMuro` 27 · `PORTAO_SUL` 38 · `PORTAO_LESTE` 39 · `CANAL` 42 · `Rua` 45 · `RUAS` 46 · `Ret` 63 · `PRACA` 64 · `FORTALEZA` 65 · `CORAL` 66 · `vc` 69 · `makeMats` 70 · `pl` 71 · `MAT` 96 · `MatKey` 97 · `por` 101 · `cx` 107 · `telhado` 112 · `cone` 129 · `cil` 132 · `coral` 136 · `dentroRet` 146 · `cruzaRet` 147 · `retRua` 148
+
+### `src/maps/barud/dados.ts`
+`LocalFicha` 6 · `NpcFicha` 14 · `LOCAIS` 22 · `NPCS` 177
+
+### `src/maps/barud/edificios.ts`
+`Vao` 16 · `Predio` 17 · `Construido` 28 · `MATRIZ` 29 · `SPEC` 30 · `mundo` 32 · `retDe` 34 · `PREDIOS` 41 · `corDe` 65 · `parede` 67 · `seg` 70 · `construirPredio` 85 · `W` 91 · `luzI` 195 · `mobiliar` 197 · `W` 199 · `construirFortaleza` 391 · `mur` 400
+
+### `src/maps/barud/index.ts`
+`retrato` 20 · `P3` 22 · `build` 24 · `barraca` 46 · `escolher` 105 · `tokId` 164 · `mundoXYZ` 230 · `silhuetaPng` 233 · `cartaz` 242 · `desenhar` 245 · `aviso` 261
+
+### `src/maps/barud/mobilia.ts`
+`peca` 9 · `cx()` 13 · `cil()` 16 · `esf()` 19 · `mesa` 26 · `banco` 32 · `banqueta` 37 · `cadeira` 42 · `cama` 49 · `bau` 62 · `estante` 69 · `prateleira` 84 · `lareira` 96 · `balcao` 107 · `barril` 113 · `caixote` 120 · `sacos` 125 · `vela` 129 · `lustre` 136 · `tapecaria` 144 · `quadro` 149 · `tapete` 154 · `armario` 158 · `caldeirao` 165 · `forja` 173 · `altar` 184 · `bancoTemplo` 193 · `armadura` 199 · `cavalete` 205 · `servico` 211
 
 ### `src/maps/campo.ts`
 `build` 12 · `height` 18

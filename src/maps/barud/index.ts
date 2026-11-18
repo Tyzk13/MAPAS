@@ -23,7 +23,7 @@ const P3 = (v: THREE.Vector3) => [+v.x.toFixed(2), +v.y.toFixed(2), +v.z.toFixed
 
 export async function build(M: MapRuntime) {
   begin(M, 31); reseed(31); LUZES.length = 0;
-  const G = M.G, Mt = MAT(); M.lamps.push(Mt.aceso);
+  const G = M.G, Mt = MAT(); M.lamps.push(Mt.aceso, Mt.vitral);
   const B = new Batch('predios'), BR = new Batch('telhados-predios'), roofs = new THREE.Group(); roofs.name = 'Telhados dos prédios';
   const docs: NonNullable<MapRuntime['docs']> = [];
 
@@ -208,8 +208,10 @@ export async function build(M: MapRuntime) {
   M.walkStart = { x: 0, z: 88 };
 
   // ---------- animação ----------
+  // luar/luz do céu extra só em Barud: pedra escura e ruas estreitas sumiam nos climas escuros
+  const luar = new THREE.HemisphereLight(0x8a9ac8, 0x2a2420, 0); luar.userData.noExport = 1; G.add(luar);
   let fogBase = 0.01, lampsOn = true;
-  M.onTime = p => { lampsOn = p.lamps > 0; fogBase = (S.fog as THREE.FogExp2 | null)?.density ?? fogBase; escolher(); };
+  M.onTime = p => { lampsOn = p.lamps > 0; fogBase = (S.fog as THREE.FogExp2 | null)?.density ?? fogBase; luar.intensity = p.n === 'Noite' ? 7 : p.bg < 0.15 ? 2.6 : p.bg < 0.4 ? 1.1 : 0.2; luar.color.setHex(p.n === 'Noite' ? 0x8a9ad8 : 0x9a9a9a); escolher(); };
   M.tick = (dt, t) => {
     if (Math.floor(t * 3) !== ult || cam.position.distanceToSquared(posEsc) > 25) { ult = Math.floor(t * 3); posEsc.copy(cam.position); escolher(); }
     const f = fatorLuzes();

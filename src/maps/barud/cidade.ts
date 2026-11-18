@@ -89,7 +89,7 @@ export function construirCidade(G: THREE.Group, reservados: Ret[]): Cidade {
   const muroSeg = (ax: number, az: number, bx: number, bz: number) => {
     const L = Math.hypot(bx - ax, bz - az); if (L < 0.5) return;
     const a = Math.atan2(bx - ax, bz - az) - Math.PI / 2, m = mtx((ax + bx) / 2, 0, (az + bz) / 2, a);
-    cx(B, M.pedra, L, MH, MT, 0, MH / 2, 0, 0x7a746c, m);
+    cx(B, M.pedra, L, MH, MT, 0, MH / 2, 0, 0xa49c90, m);
     // ameias: lado de fora (+z local depois da rotação aponta para fora? confere pelo centro da cidade)
     // eixo z local = (sen a, cos a): o lado de fora é o que se afasta do centro da cidade
     const sgn = ((ax + bx) / 2 * Math.sin(a) + (az + bz) / 2 * Math.cos(a)) > 0 ? 1 : -1;
@@ -128,7 +128,7 @@ export function construirCidade(G: THREE.Group, reservados: Ret[]): Cidade {
   MURO.forEach(([x, z], k) => {
     const arruinada = k === 7;  // a torre noroeste (perto do Bairro Coral) ruiu em parte
     const h = arruinada ? 9.5 : 14.5;
-    cil(B, M.pedra, 4.4, h, x, 0, z, 0x7a746c, 16);
+    cil(B, M.pedra, 4.4, h, x, 0, z, 0xa49c90, 16);
     if (!arruinada) {
       for (let i = 0; i < 12; i++) { const a = i * Math.PI / 6; cx(B, M.pedra, 1.0, 1.1, 0.6, x + Math.cos(a) * 4.0, h + 0.55, z + Math.sin(a) * 4.0, 0x726c64, undefined, -a + Math.PI / 2); }
       cone(B, M.ardosia, 4.8, 6.5, x, h + 1.1, z, 0x5a5a62, 16);
@@ -212,12 +212,12 @@ export function construirCidade(G: THREE.Group, reservados: Ret[]): Cidade {
     const ruina = estilo === 'ruina' || estilo === 'coral';
     const andares = estilo === 'rica' ? 3 : estilo === 'pobre' ? (rnd() < 0.6 ? 1 : 2) : ruina ? (rnd() < 0.5 ? 1 : 2) : 2 + (rnd() < 0.35 ? 1 : 0);
     const h0 = estilo === 'pobre' ? 2.7 : 3.1, ha = 2.7;
-    const corPedra = pick([0x8a8278, 0x7a7268, 0x908880, 0x6e665e]);
-    const corReboco = pick([0xb8ad98, 0xa89a88, 0x9a9488, 0xa49480, 0x8e8478]);
+    const corPedra = pick([0xb8b0a4, 0xa8a094, 0xc0b6a8, 0x9c948a]);
+    const corReboco = pick([0xd8ccb4, 0xc8b8a0, 0xbcb4a6, 0xc4b4a0, 0xb0a494]);
     const corMad = pick([0x2e2018, 0x3a2a1e, 0x241a14]);
     let topo = h0, frente = d / 2, prof = d;
     // térreo
-    if (estilo === 'pobre') cx(B, M.tabuas, w, h0, d, 0, h0 / 2, 0, pick([0x6a5440, 0x5a4a38, 0x7a6248]), mm);
+    if (estilo === 'pobre') cx(B, M.tabuas, w, h0, d, 0, h0 / 2, 0, pick([0x9a8468, 0x8a7458, 0xa48c6c]), mm);
     else if (ruina) {
       // paredes quebradas (alturas irregulares) sem telhado
       const hh = () => h0 * (0.45 + rnd() * 0.9);
@@ -319,7 +319,7 @@ export function construirCidade(G: THREE.Group, reservados: Ret[]): Cidade {
     const a = vert ? (lado > 0 ? Math.PI / 2 : -Math.PI / 2) : (lado > 0 ? 0 : Math.PI), m = mtx(x, 0, z, a);
     cx(B, M.madeira, 0.16, 3.4, 0.16, 0, 1.7, 0, 0x2a1e14, m); cx(B, M.ferro, 0.05, 0.05, 0.7, 0, 3.25, 0.35, 0xffffff, m);
     cx(B, M.ferro, 0.26, 0.36, 0.26, 0, 2.95, 0.66, 0xffffff, m); cx(B, M.aceso, 0.18, 0.26, 0.18, 0, 2.95, 0.66, 0xffffff, m);
-    const p = new THREE.Vector3(0, 2.95, 0.66).applyMatrix4(m); lanternas.push(p); halo(p.x, p.y, p.z, 0.6); luz(p.x, p.y, p.z, 5, 2, 0xffa050, 13, 7);
+    const p = new THREE.Vector3(0, 2.95, 0.66).applyMatrix4(m); lanternas.push(p); halo(p.x, p.y, p.z, 0.6); luz(p.x, p.y, p.z, 40, 2, 0xffa050, 18, 7);
   };
   for (const r of RUAS) {
     if (r.beco) continue;
