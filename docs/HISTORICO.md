@@ -90,6 +90,7 @@ com salas), F (arquitetura para novos mapas + `docs/NOVO-MAPA.md`). Todas foram 
 15. Climas corrigidos (Noite azul-lunar, `skyTint`, trava de cor por bits, luz ambiente sem a lua do HDRI), arquivo
     offline lembra posições, menu de mapas por sistema.
 16. **Barud** (Tormenta 20): cidade murada com interiores, painel Locais com fichas e segredos, NPCs minotauros.
+17. Barud ganha a **Mata dos Chifres**: floresta sombria fora das muralhas com trilha, forca, cabana e círculo de pedras.
 
 ## Arquivo offline (como o dono joga sem internet)
 

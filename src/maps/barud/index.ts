@@ -12,6 +12,7 @@ import { construirCidade, LUZES, luz } from './cidade';
 import { PREDIOS, construirPredio, mobiliar, construirFortaleza, retDe, mundo, SPEC } from './edificios';
 import { mesa, caixote, barril, sacos, peca } from './mobilia';
 import { LOCAIS, NPCS } from './dados';
+import { construirFloresta, vistasMata, AREAS, MARCAS } from './floresta';
 import { docPlane } from '../canada/interior';
 
 // imagens opcionais (fora do git): retratos dos NPCs e cartazes que o mestre enviar
@@ -40,6 +41,12 @@ export async function build(M: MapRuntime) {
   // ---------- cidade ----------
   const C = construirCidade(G, reservados);
   floors.push(...C.floors); vttWalls.push(...C.vttWalls);
+
+  // ---------- Mata dos Chifres: floresta fora das muralhas e a trilha da estrada sul ----------
+  const Fl = await construirFloresta(G);
+  floors.push(...Fl.floors);
+  docPlane(G, docs, aviso('Edito do Pretor', ['É proibido entrar na Mata', 'dos Chifres depois do', 'sino da noite.', 'Quem for achado no Círculo', 'responderá à Legião.', '— Cássio Taurano, Pretor']), 0.36, 0.46, Fl.cartaz.x, Fl.cartaz.y, Fl.cartaz.z, Fl.cartaz.ry, 'Edito na placa da encruzilhada');
+  docs[docs.length - 1].onde = 'Forca da Encruzilhada'; docs[docs.length - 1].pt = 'A Legião sabe que algo acontece no Círculo — e prefere proibir a investigar.';
 
   // ---------- praça do mercado: barracas, monumento, poço, pelourinho, quadro de avisos ----------
   {
@@ -93,7 +100,7 @@ export async function build(M: MapRuntime) {
 
   // ---------- montagem das malhas ----------
   B.build(G); BR.build(roofs); G.add(roofs);
-  const solidos = [...solids, C.colliders];
+  const solidos = [...solids, C.colliders, Fl.colliders];
   M.solid = () => solidos;
   M.walk.push(...floors);
   M.layers = [{ n: 'Telhados', o: C.roofs, v: true }, { n: 'Telhados dos prédios', o: roofs, v: true }];
@@ -132,6 +139,12 @@ export async function build(M: MapRuntime) {
     const sc = 10 + rnd() * 10; sp.scale.set(sc, sc * 0.25, 1); sp.position.set(x, sc * 0.08 + 0.2, z); sp.userData.v = 0.1 + rnd() * 0.2; sp.userData.ns = 1; sp.userData.noExport = 1; sp.userData.x0 = x;
     G.add(sp); mist.push(sp); M.mist.push(sp);
   }
+  // névoa rasteira na trilha da mata
+  for (const p of Fl.nevoa) {
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: mistTex(), color: 0xa8b0b8, transparent: true, depthWrite: false, opacity: 0.1 }));
+    const sc = 14 + rnd() * 8; sp.scale.set(sc, sc * 0.22, 1); sp.position.set(p.x, sc * 0.07 + 0.2, p.z); sp.userData.v = 0.1 + rnd() * 0.2; sp.userData.ns = 1; sp.userData.noExport = 1; sp.userData.x0 = p.x;
+    G.add(sp); mist.push(sp); M.mist.push(sp);
+  }
 
   // ---------- vistas ----------
   const vistas: View[] = [
@@ -158,6 +171,7 @@ export async function build(M: MapRuntime) {
   vistas.push({ n: 'Fortaleza', p: [0, 6, -30], t: [0, 12, -80], fov: 55 });
   // as do Javali e do Cálice já entram pelo laço; a Fortaleza tem vista própria (o salão é "Salão do Conselho")
   const unicas = new Map<string, View>(); vistas.forEach(v => { if (!unicas.has(v.n)) unicas.set(v.n, v); });
+  vistasMata().forEach(v => { if (!unicas.has(v.n)) unicas.set(v.n, v); });
   M.views = [...unicas.values(), { n: 'Tática', p: [0, 210, 0.1], t: [0, 0, 0] }];
 
   // ---------- fichas do mestre e notas por vista ----------
@@ -165,8 +179,8 @@ export async function build(M: MapRuntime) {
   M.fichas = NPCS.map(n => ({ ...n, img: retrato(n.id), tok: tokId(n.id) }) as NpcInfo);
   M.locais = LOCAIS.map(l => {
     const p = PREDIOS.find(q => q.id === l.id);
-    const area = p ? retDe(p) : l.id === 'praca' ? PRACA : l.id === 'coral' ? CORAL : l.id === 'portao' ? [PORTAO_SUL.x - 10, PORTAO_SUL.x + 10, PORTAO_SUL.z - 6, PORTAO_SUL.z + 6] as [number, number, number, number] : undefined;
-    const marca = p ? P3(mundo(p.id, 0, 0, p.andares * p.h + Math.min(p.w, p.d) * 0.42 + 1.5)) : l.id === 'praca' ? [0, 6, -15] : l.id === 'coral' ? [-75, 8, -40] : l.id === 'portao' ? [PORTAO_SUL.x, 18, PORTAO_SUL.z] : undefined;
+    const area = AREAS[l.id] ?? (p ? retDe(p) : l.id === 'praca' ? PRACA : l.id === 'coral' ? CORAL : l.id === 'portao' ? [PORTAO_SUL.x - 10, PORTAO_SUL.x + 10, PORTAO_SUL.z - 6, PORTAO_SUL.z + 6] as [number, number, number, number] : undefined);
+    const marca = MARCAS[l.id] ?? (p ? P3(mundo(p.id, 0, 0, p.andares * p.h + Math.min(p.w, p.d) * 0.42 + 1.5)) : l.id === 'praca' ? [0, 6, -15] : l.id === 'coral' ? [-75, 8, -40] : l.id === 'portao' ? [PORTAO_SUL.x, 18, PORTAO_SUL.z] : undefined);
     return { ...l, area, marca } as LocalInfo;
   });
   M.notas = {};
@@ -195,6 +209,9 @@ export async function build(M: MapRuntime) {
       { n: 'Portão do Rei e Javali Rubro', b: [-20, 30, 60, 106], lv: 1 },
       { n: 'Canal e cais', b: [-60, 60, 4, 44], lv: 1 },
       { n: 'Alto da Coroa e Fortaleza', b: [-40, 40, -96, -36], lv: 1 },
+      { n: 'Mata dos Chifres (trilha)', b: [AREAS.mata[0], AREAS.mata[1], AREAS.mata[2], AREAS.mata[3]], lv: 1 },
+      { n: 'Círculo dos Chifres', b: AREAS.circulo, lv: 1 },
+      { n: 'Cabana do Lenhador', b: AREAS.cabana, lv: 1 },
       { n: 'Bairro Coral', b: [CORAL[0] - 4, CORAL[1] + 6, CORAL[2] - 4, CORAL[3] + 6], lv: 1 },
       ...PREDIOS.map(p => { const r = retDe(p); return { n: LOCAIS.find(l => l.id === p.id)?.n ?? p.id, b: [r[0] - 2, r[1] + 2, r[2] - 2, r[3] + 2] as [number, number, number, number], lv: 1 }; }),
     ],
@@ -203,7 +220,7 @@ export async function build(M: MapRuntime) {
   };
   M.exportHide = () => [C.roofs, roofs];
   M.shadowRadius = Q.luzes > 8 ? 90 : 60;
-  M.walkLimit = 200; M.camMax = 260; M.fogScale = 0.5;
+  M.walkLimit = 300; M.camMax = 300; M.fogScale = 0.5;
   M.spawn = i => ({ x: -2 + (i % 3) * 1.2, z: 86 + Math.floor(i / 3) * 1.2, y: 0.03 });
   M.walkStart = { x: 0, z: 88 };
 

@@ -123,6 +123,9 @@ para ler em voz alta, dono, NPCs, rumores, pistas). Os **segredos** só aparecem
 nome dos lugares sobre a cidade. Duplo clique num prédio abre a ficha dele. Nada disso aparece na tela dos
 jogadores. Imagens novas: PNG com fundo transparente em `npcs-local/barud/<id>.png` (ids em `src/maps/barud/dados.ts`)
 e cartazes em `npcs-local/barud/cartazes/01.png…`.
+Fora das muralhas fica a **Mata dos Chifres**: no menu de vistas, *Trilha da Mata* (começo, na estrada do sul),
+*Forca da Encruzilhada*, *Cabana do Lenhador* (e por dentro), *Círculo dos Chifres* (fim da trilha) e *Mata dos
+Chifres (do alto)*. As fichas ficam na categoria **Ermo** do painel Locais; o Pastor de Chifres começa oculto.
 
 ### Painel Mestre
 

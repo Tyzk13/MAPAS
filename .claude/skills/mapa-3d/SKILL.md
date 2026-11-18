@@ -387,6 +387,17 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
   grade (a busca por blocos junta figuras vizinhas), tira o fundo branco e fica só com o maior pedaço; depois
   apague brancos puros fechados (> 246) com mais de 25 px (vão entre as pernas) sem tocar em roupas creme.
 
+- **Mata dos Chifres** (`floresta.ts`): floresta em anel fora do muro (`mataMask`: borda com ruído a ~134 m,
+  estradas livres), trilha por `CatmullRomCurve3` com `distTrilha` (amostras grossas a cada 3 m + grade fina de
+  6 m). Metade do esforço de detalhe vai para onde a câmera anda: 1/3 das árvores e todo o sub-bosque/capim
+  ficam a até 40 m da trilha; a faixa de 128–225 m é a mais vista da cidade (70% das outras árvores).
+- Fita feita à mão (trilha): índices **anti-horários vistos de cima** `(a0, a0+1, b0)` — no outro sentido a face
+  aponta para baixo e some (corte de face de trás) sem erro nenhum. Comentário `//` no meio de uma linha com `}`
+  depois engole a chave (o tsc só acusa "'}' expected" no fim do arquivo).
+- Árvores na noite de Barud: o luar (Hemisphere 7) clareia muito a cor de vértice — pinheiro com HSL L≈0.04 e
+  árvore morta L≈0.07. Luzes da mata seguem a escala da cidade (vela 25, fogueira 30, tocha 28).
+- Vistas da mata saem de `vistasMata()`; as câmeras baixas ficam com 7 m livres de árvores.
+
 ## Erros que já custaram tempo (não repita)
 
 - **Modelos da Poly Haven são pesados** (árvores 1–4 M faces). Sempre rode `tools/arvores.sh`

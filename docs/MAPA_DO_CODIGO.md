@@ -69,9 +69,9 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/main.ts` | 512 | 32 KB |
 | `src/maps/barud/cidade.ts` | 413 | 30 KB |
 | `src/maps/barud/common.ts` | 149 | 9 KB |
-| `src/maps/barud/dados.ts` | 304 | 41 KB |
+| `src/maps/barud/dados.ts` | 362 | 50 KB |
 | `src/maps/barud/edificios.ts` | 415 | 37 KB |
-| `src/maps/barud/index.ts` | 270 | 21 KB |
+| `src/maps/barud/index.ts` | 287 | 22 KB |
 | `src/maps/barud/mobilia.ts` | 216 | 14 KB |
 | `src/maps/campo.ts` | 53 | 4 KB |
 | `src/maps/canada/casas.ts` | 217 | 27 KB |
@@ -272,13 +272,13 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `Q` 10 · `reseed` 18 · `rnd` 19 · `entre` 20 · `pick` 21 · `MURO_R` 24 · `MURO` 25 · `dentroMuro` 27 · `PORTAO_SUL` 38 · `PORTAO_LESTE` 39 · `CANAL` 42 · `Rua` 45 · `RUAS` 46 · `Ret` 63 · `PRACA` 64 · `FORTALEZA` 65 · `CORAL` 66 · `vc` 69 · `makeMats` 70 · `pl` 71 · `MAT` 96 · `MatKey` 97 · `por` 101 · `cx` 107 · `telhado` 112 · `cone` 129 · `cil` 132 · `coral` 136 · `dentroRet` 146 · `cruzaRet` 147 · `retRua` 148
 
 ### `src/maps/barud/dados.ts`
-`LocalFicha` 6 · `NpcFicha` 14 · `LOCAIS` 22 · `NPCS` 177
+`LocalFicha` 6 · `NpcFicha` 14 · `LOCAIS` 22 · `NPCS` 222
 
 ### `src/maps/barud/edificios.ts`
 `Vao` 16 · `Predio` 17 · `Construido` 28 · `MATRIZ` 29 · `SPEC` 30 · `mundo` 32 · `retDe` 34 · `PREDIOS` 41 · `corDe` 65 · `parede` 67 · `seg` 70 · `construirPredio` 85 · `W` 91 · `luzI` 195 · `mobiliar` 197 · `W` 199 · `construirFortaleza` 391 · `mur` 400
 
 ### `src/maps/barud/index.ts`
-`retrato` 20 · `P3` 22 · `build` 24 · `barraca` 46 · `escolher` 105 · `tokId` 164 · `mundoXYZ` 230 · `silhuetaPng` 233 · `cartaz` 242 · `desenhar` 245 · `aviso` 261
+`retrato` 21 · `P3` 23 · `build` 25 · `barraca` 53 · `escolher` 112 · `tokId` 178 · `mundoXYZ` 247 · `silhuetaPng` 250 · `cartaz` 259 · `desenhar` 262 · `aviso` 278
 
 ### `src/maps/barud/mobilia.ts`
 `peca` 9 · `cx()` 13 · `cil()` 16 · `esf()` 19 · `mesa` 26 · `banco` 32 · `banqueta` 37 · `cadeira` 42 · `cama` 49 · `bau` 62 · `estante` 69 · `prateleira` 84 · `lareira` 96 · `balcao` 107 · `barril` 113 · `caixote` 120 · `sacos` 125 · `vela` 129 · `lustre` 136 · `tapecaria` 144 · `quadro` 149 · `tapete` 154 · `armario` 158 · `caldeirao` 165 · `forja` 173 · `altar` 184 · `bancoTemplo` 193 · `armadura` 199 · `cavalete` 205 · `servico` 211

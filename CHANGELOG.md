@@ -1,5 +1,19 @@
 # Changelog
 
+## Barud: Mata dos Chifres (floresta fora das muralhas)
+
+- Nova `src/maps/barud/floresta.ts`: mata sombria em volta da cidade (pinheiros escuros e árvores mortas retorcidas
+  em código, instanciados em blocos de 30 m; 2.200/3.400/4.800 árvores por qualidade), chão de folhas com borda
+  suave e estradas livres, e uma **trilha de terra** que sai da estrada do sul e serpenteia até uma clareira.
+- Pontos de mesa na trilha: **Forca da Encruzilhada** (forca, gaiola de ferro, placa com tocha e o edito do Pretor
+  como documento), **Cabana do Lenhador** (com interior e vela acesa), crânios de touro em estacas, tronco caído e o
+  **Círculo dos Chifres** (nove pedras, altar com coral e velas, fogueira, árvore morta com trapos).
+- Sub-bosque (samambaias, arbustos, tocos, raízes, pedras com musgo, galhos) e capim só perto da trilha; névoa
+  rasteira na trilha; colisão nos troncos perto do caminho; limite de caminhada ampliado para 300 m.
+- Fichas novas: 4 locais (categoria **Ermo**) e 3 NPCs (Garrak, caçador minotauro; Bertoldo Pé-Torto, lenhador
+  humano; O Pastor de Chifres, criatura oculta). Vistas: Trilha da Mata, Forca, Cabana (fora/dentro), Círculo e
+  Mata do alto; áreas novas no VTT.
+
 ## Barud (Tormenta 20) e mapas por sistema
 
 - Novo mapa **Barud, capital de Lomatubar** (`src/maps/barud/`): cidade murada de 12 torres com dois portões, canal
