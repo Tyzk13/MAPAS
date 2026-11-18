@@ -24,6 +24,7 @@ import { initCinema, rodar, cineHooks, tomadaAtual, sair, tickCinema, apontar, t
 import { initVtt, xcalc, xrender, dd2vtt } from './core/vtt';
 import { initImporter } from './core/importer';
 import { loadMap, mapHooks } from './core/maps';
+import { initLocais } from './core/locais';
 import { MAPS } from './maps/manifest';
 import { post } from './core/post';
 import { loading } from './core/loading';
@@ -322,7 +323,12 @@ function initUi() {
   // listas: vista, clima, mapa
   menu('mv', 'pl', p => lista(p, 'Vista', st.V.map((v, i) => ({ n: v.n, cur: i === st.vi, go: () => irParaVista(i) }))));
   menu('mn', 'pl', p => lista(p, 'Clima', PRE.map((c, i) => ({ n: c.n, cur: i === st.pi, go: () => escolherClima(i) }))));
-  menu('mm', 'pl', p => lista(p, 'Mapa', Object.values(MAPS).map(m => ({ n: m.n, cur: m.id === st.curMap, go: () => { if (m.id !== st.curMap) loadMap(m.id); } }))));
+  menu('mm', 'pl', p => {
+    // agrupado por sistema de RPG (o do mapa atual primeiro)
+    const ms = Object.values(MAPS), atual = MAPS[st.curMap]?.sis, ordem = [...new Set([atual, ...ms.map(m => m.sis)])];
+    ms.sort((a, b) => ordem.indexOf(a.sis) - ordem.indexOf(b.sis));
+    lista(p, 'Mapa', ms.map(m => ({ n: m.n, grupo: m.sis, cur: m.id === st.curMap, go: () => { if (m.id !== st.curMap) loadMap(m.id); } })));
+  });
   menu('mc', 'pc', () => { ($('pcf') as HTMLInputElement).value = ''; listaPersonagens(); });
   $('pcf').oninput = () => listaPersonagens();
   $('pcf').onclick = e => e.stopPropagation();
@@ -468,6 +474,7 @@ function captureApi() {
 // ---------- iniciar ----------
 async function start() {
   initUi(); initWalk(); initVtt(); initImporter(); initDocs();
+  initLocais(nome => { const i = st.V.findIndex(v => v.n === nome); if (i >= 0) irParaVista(i); });
   initTokenInput(() => WM.on, walkPointer);
   fit();
   post.init(CFG.quality);

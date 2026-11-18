@@ -35,10 +35,12 @@ export function menu(btnId: string, popId: string, preencher?: (pop: HTMLElement
 }
 
 /** Preenche um painel com uma lista de opções (a atual fica marcada). */
-export function lista(pop: HTMLElement, titulo: string, itens: { n: string; cur: boolean; go: () => void }[]) {
+export function lista(pop: HTMLElement, titulo: string, itens: { n: string; cur: boolean; go: () => void; grupo?: string }[]) {
   pop.innerHTML = '';
   const h = document.createElement('div'); h.className = 'h'; h.textContent = titulo; pop.appendChild(h);
+  let grupo: string | undefined;
   for (const it of itens) {
+    if (it.grupo && it.grupo !== grupo) { grupo = it.grupo; const g = document.createElement('div'); g.className = 'h sub'; g.textContent = grupo; pop.appendChild(g); }
     const b = document.createElement('button'); b.textContent = it.n; b.setAttribute('role', 'menuitemradio');
     b.setAttribute('aria-checked', String(it.cur)); if (it.cur) b.className = 'cur';
     b.onclick = () => { fecharMenu(); it.go(); };

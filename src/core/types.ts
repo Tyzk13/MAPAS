@@ -51,10 +51,28 @@ export interface MapRuntime {
   notas?: Record<string, string>;
   camMax?: number;
   fogScale?: number;
+  /** painel de locais e fichas do mestre */
+  locais?: LocalInfo[];
+  fichas?: NpcInfo[];
+}
+
+/** ficha de um local (painel do mestre, core/locais.ts) */
+export interface LocalInfo {
+  id: string; n: string; cat: string; tipo: string; vista: string; dentro?: string; publico: string;
+  dono: string; funcao: string; npcs: string[]; narrativa: string; rumores: string[]; pistas: string[]; objetos: string[]; segredos: string[]; obs: string;
+  /** retângulo no mundo [x0,x1,z0,z1] (duplo clique abre a ficha) e ponto do marcador [x,y,z] */
+  area?: [number, number, number, number]; marca?: [number, number, number];
+}
+/** ficha de NPC; tok = id do personagem no mapa (para selecionar) */
+export interface NpcInfo {
+  id: string; n: string; raca: string; ocupacao: string; local: string; aparencia: string; personalidade: string; historia: string;
+  sabe: string[]; rumores: string[]; relacoes: string[]; mestre: string; img?: string; tok?: string;
 }
 
 export interface MapModule {
   id: string;
   n: string;
+  /** sistema de RPG (agrupa o menu de mapas): 'Ordem Paranormal', 'Tormenta 20'… */
+  sis?: string;
   build: (M: MapRuntime) => void | Promise<void>;
 }

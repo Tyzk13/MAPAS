@@ -47,7 +47,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/core/kit.ts` | 160 | 11 KB |
 | `src/core/loading.ts` | 39 | 2 KB |
 | `src/core/maps.ts` | 76 | 3 KB |
-| `src/core/menu.ts` | 58 | 2 KB |
+| `src/core/menu.ts` | 60 | 3 KB |
 | `src/core/merge.ts` | 52 | 3 KB |
 | `src/core/models.ts` | 177 | 9 KB |
 | `src/core/mostrar.ts` | 51 | 2 KB |
@@ -56,16 +56,16 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/core/post.ts` | 139 | 7 KB |
 | `src/core/probe.ts` | 53 | 2 KB |
 | `src/core/procedural.ts` | 138 | 8 KB |
-| `src/core/sky.ts` | 182 | 11 KB |
+| `src/core/sky.ts` | 184 | 11 KB |
 | `src/core/som.ts` | 220 | 14 KB |
 | `src/core/state.ts` | 26 | 1 KB |
 | `src/core/terrain.ts` | 99 | 5 KB |
 | `src/core/tokens.ts` | 235 | 14 KB |
-| `src/core/types.ts` | 61 | 3 KB |
+| `src/core/types.ts` | 79 | 4 KB |
 | `src/core/vtt.ts` | 105 | 7 KB |
 | `src/core/walk.ts` | 229 | 12 KB |
 | `src/core/weathering.ts` | 46 | 2 KB |
-| `src/main.ts` | 505 | 32 KB |
+| `src/main.ts` | 512 | 32 KB |
 | `src/maps/campo.ts` | 53 | 4 KB |
 | `src/maps/canada/casas.ts` | 217 | 27 KB |
 | `src/maps/canada/chegada.ts` | 86 | 6 KB |
@@ -83,7 +83,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/maps/igreja/grounds.ts` | 369 | 30 KB |
 | `src/maps/igreja/index.ts` | 162 | 9 KB |
 | `src/maps/igreja/interior.ts` | 246 | 18 KB |
-| `src/maps/manifest.ts` | 12 | 1 KB |
+| `src/maps/manifest.ts` | 14 | 1 KB |
 | `src/maps/mexico/common.ts` | 177 | 11 KB |
 | `src/maps/mexico/index.ts` | 176 | 10 KB |
 | `src/maps/mexico/landmarks.ts` | 503 | 46 KB |
@@ -101,7 +101,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/maps/texas/onibus.ts` | 88 | 6 KB |
 | `src/maps/texas/pistas.ts` | 111 | 28 KB |
 | `src/maps/texas/police.ts` | 442 | 58 KB |
-| `src/style.css` | 249 | 19 KB |
+| `src/style.css` | 296 | 24 KB |
 | `src/vite-env.d.ts` | 2 | 0 KB |
 | `tools/_grid.mjs` | 7 | 1 KB |
 | `tools/arvores.sh` | 32 | 2 KB |
@@ -198,7 +198,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `newRuntime` 15 · `disposeTree` 25 · `mapHooks` 34 · `loadMap` 36 · `u` 54
 
 ### `src/core/menu.ts`
-`fecharMenu` 6 · `posicionar` 12 · `menu` 21 · `lista` 38 · `initMenus` 49
+`fecharMenu` 6 · `posicionar` 12 · `menu` 21 · `lista` 38 · `initMenus` 51
 
 ### `src/core/merge.ts`
 `MergeOpts` 8 · `mergeStatic` 16 · `visit` 21
@@ -225,7 +225,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `rnd` 6 · `stainedGlass` 9 · `pane` 16 · `roseGeometry` 73 · `petal` 75 · `leafGeometry` 98 · `looseePetalGeometry` 106 · `oldPainting` 113
 
 ### `src/core/sky.ts`
-`Preset` 11 · `PRE` 33 · `hdrUrl` 42 · `loadHdr` 47 · `tintHalf` 70 · `limitarBrilho` 79 · `horizonColor` 94 · `hemi` 105 · `sun` 106 · `dome` 113 · `env` 114 · `setShadowRadius` 116 · `applyHdr` 123 · `driftSky` 132 · `timeHooks` 133 · `setTime` 135 · `aplicarLuzes` 167 · `forcarLuzes` 178 · `preloadSkies` 181
+`Preset` 11 · `PRE` 33 · `hdrUrl` 42 · `loadHdr` 47 · `tintHalf` 70 · `limitarBrilho` 79 · `horizonColor` 94 · `hemi` 105 · `sun` 106 · `dome` 113 · `env` 114 · `setShadowRadius` 116 · `applyHdr` 123 · `driftSky` 132 · `timeHooks` 133 · `setTime` 135 · `aplicarLuzes` 167 · `forcarLuzes` 178 · `fatorLuzes` 180 · `preloadSkies` 183
 
 ### `src/core/som.ts`
 `Efeito` 7 · `Fonte` 8 · `montar` 21 · `lfo` 49 · `env` 52 · `rajadaRuido` 55 · `tom` 62 · `batida` 70 · `passos` 76 · `sussurro` 84 · `rangido` 95 · `sino` 105 · `criarFontes` 114 · `crepitar` 123 · `trovao` 128 · `grilo` 134 · `som` 139 · `desbloquear()` 142 · `efeito()` 151 · `tick()` 161 · `ouvinte()` 176 · `tocarEfeito` 187 · `aplicar` 214
@@ -240,7 +240,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `silhueta` 12 · `jog` 19 · `TokenDef` 21 · `Token` 24 · `DEF` 35 · `pick` 42 · `tempoFichas` 45 · `vivo` 50 · `K` 69 · `sizeT` 71 · `placeT` 77 · `makeToken` 85 · `dropT` 106 · `selT` 112 · `setTarget` 117 · `focusT` 121 · `save` 127 · `onPos` 133 · `onChar` 143 · `wk` 149 · `helpers` 154 · `setM` 156 · `freeSpot` 161 · `busy` 163 · `initTokenInput` 172 · `end` 197 · `tickTokens` 217 · `snapTokens` 234
 
 ### `src/core/types.ts`
-`View` 4 · `Layer` 5 · `VttData` 8 · `MapLight` 17 · `MapRuntime` 20 · `MapModule` 56
+`View` 4 · `Layer` 5 · `VttData` 8 · `MapLight` 17 · `MapRuntime` 20 · `LocalInfo` 60 · `NpcInfo` 67 · `MapModule` 72
 
 ### `src/core/vtt.ts`
 `fillAreas` 8 · `xcalc` 12 · `xinfo` 19 · `xrender` 21 · `clipPolyline` 50 · `push` 52 · `dd2vtt` 71 · `inb` 73 · `P` 74 · `dl` 88 · `initVtt` 94 · `opt` 98
@@ -252,7 +252,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `WeatherOpts` 5 · `weather` 7
 
 ### `src/main.ts`
-`cutBg` 41 · `push` 45 · `prep` 55 · `spawnPoint` 67 · `addChar` 72 · `pontoVista` 82 · `ondeEsta` 84 · `moverPara` 90 · `listaPersonagens` 95 · `bt` 103 · `revelar` 122 · `marcarQ` 126 · `escolherClima` 128 · `irParaVista` 129 · `tg` 136 · `rodarCine` 140 · `itemCine` 141 · `encherCine` 147 · `initCinemaUi` 158 · `mostrarPersonagens` 169 · `tocarCena` 173 · `gravarCenaAtual` 187 · `encherMestre` 193 · `alternarImagem` 208 · `initMestreUi` 213 · `toast` 236 · `telaLimpa` 241 · `initAtalhos` 248 · `atualizarSelo` 289 · `congelar` 297 · `escurecer` 301 · `lanterna` 302 · `marcarSom` 303 · `initImersaoUi` 304 · `initUi` 316 · `resz` 356 · `frame` 414 · `captureApi` 436 · `view()` 439 · `third()` 445 · `stats()` 457 · `start` 469
+`cutBg` 42 · `push` 46 · `prep` 56 · `spawnPoint` 68 · `addChar` 73 · `pontoVista` 83 · `ondeEsta` 85 · `moverPara` 91 · `listaPersonagens` 96 · `bt` 104 · `revelar` 123 · `marcarQ` 127 · `escolherClima` 129 · `irParaVista` 130 · `tg` 137 · `rodarCine` 141 · `itemCine` 142 · `encherCine` 148 · `initCinemaUi` 159 · `mostrarPersonagens` 170 · `tocarCena` 174 · `gravarCenaAtual` 188 · `encherMestre` 194 · `alternarImagem` 209 · `initMestreUi` 214 · `toast` 237 · `telaLimpa` 242 · `initAtalhos` 249 · `atualizarSelo` 290 · `congelar` 298 · `escurecer` 302 · `lanterna` 303 · `marcarSom` 304 · `initImersaoUi` 305 · `initUi` 317 · `resz` 362 · `frame` 420 · `captureApi` 442 · `view()` 445 · `third()` 451 · `stats()` 463 · `start` 475
 
 ### `src/maps/campo.ts`
 `build` 12 · `height` 18
@@ -306,7 +306,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `PEW` 11 · `CHANCEL` 12 · `Interior` 14 · `Flowers` 17 · `push()` 21 · `bunch()` 25 · `scatterPetals()` 37 · `build()` 40 · `mk` 41 · `pewGeometry` 53 · `add` 55 · `buildInterior` 76
 
 ### `src/maps/manifest.ts`
-`MAPS` 5
+`MAPS` 6
 
 ### `src/maps/mexico/common.ts`
 `lod` 12 · `GRID` 16 · `STREET` 17 · `WALKW` 18 · `CURB` 19 · `BLOCK` 20 · `PLAZA` 21 · `TOWN` 22 · `BLK` 24 · `CHURCH` 26 · `ATRIO` 27 · `CANTINA` 28 · `MARKET` 29 · `PORTAL` 30 · `KIOSCO` 31 · `PANTEON` 32 · `HACIENDA` 33 · `TOWER_W` 34 · `ARROYO` 35 · `ROAD_S` 36 · `Q` 39 · `reseed` 47 · `rnd` 48 · `pick` 49 · `sm` 50 · `FACADE` 53 · `BASE` 54 · `vc` 57 · `makeMats` 59 · `MAT` 86 · `MatKey` 87 · `prep` 92 · `Batch` 107 · `add()` 111 · `box()` 116 · `build()` 122 · `mtx` 152 · `signTexture` 156 · `sign` 172

@@ -176,6 +176,8 @@ export function aplicarLuzes(k?: number, rapido = false) {
   R.shadowMap.needsUpdate = true;
 }
 export function forcarLuzes(k: number | null) { luzesForcadas = k; aplicarLuzes(); }
+/** fator das luzes artificiais agora (0 = "a luz caiu"/clima sem lâmpadas) */
+export function fatorLuzes() { return luzesForcadas ?? PRE[st.pi].lamps; }
 
 /** Pré-carrega os HDRIs dos climas (em segundo plano). */
 export function preloadSkies() { PRE.forEach(p => loadHdr(p.hdr, p.skyTint).catch(() => {})); }
