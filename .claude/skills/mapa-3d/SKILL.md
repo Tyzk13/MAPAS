@@ -482,7 +482,8 @@ Meça antes de mexer: `node tools/medir.mjs --q=media` (chamadas, triângulos, e
 - Links atuais (atualize-os em vez de criar outros; quem já recebeu continua usando):
   Igreja do Casamento `https://claude.ai/artifact/65XS5FnzDBvfneK5AnFXUh` ·
   San Judas de las Ánimas `https://claude.ai/artifact/55cVSvDE5dfVtg2Km2iR9K` ·
-  Harlow, Texas `https://claude.ai/artifact/HHBUeQ8noXrMfhqAK6Q1PB`. Os três têm todos os mapas (Greywater Falls
+  Harlow, Texas `https://claude.ai/artifact/HHBUeQ8noXrMfhqAK6Q1PB` ·
+  Greywater Falls `https://claude.ai/artifact/19Taut7URvhL67RnSA4MHg` (`canada.html`, `MAPA_PADRAO="canada"`). Os três têm todos os mapas (Greywater Falls
   entrou depois; para um link próprio dele, crie `canada.html` com `MAPA_PADRAO="canada"`).
 - Passos: `npm run build:leve` → copie `dist-lite/` para o scratchpad (`pub/`) → crie `igreja.html` (troca o
   `<title>`) e `mexico.html` (`<title>` + `<script>window.MAPA_PADRAO="mexico"</script>`) a partir do
