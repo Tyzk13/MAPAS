@@ -30,6 +30,12 @@ let tintFx: ColorAverageEffect;
 const focusTarget = new THREE.Vector3();
 let enabled = true;
 // sombra do sol recalculada a cada N quadros (a cena é quase toda estática)
+// NaN/infinito testados pelos bits (isnan() some no otimizador de várias placas); limite do half-float; mínimo
+// 1e-4 porque o AgX faz log2(cor) e preto puro vira -infinito (branco em algumas placas).
+const LIMPA = /* glsl */ `void mainImage(const in vec4 c, const in vec2 uv, out vec4 o) {
+  bvec3 ruim = equal(floatBitsToUint(c.rgb) & 0x7f800000u, uvec3(0x7f800000u));
+  vec3 v = any(ruim) ? vec3(0.0) : c.rgb;
+  o = vec4(clamp(v, vec3(1e-4), vec3(6e4)), c.a); }`;
 let frameN = 0, shadowEvery = 3;
 // (a resolução adaptativa fica em core/desempenho.ts)
 
@@ -50,6 +56,9 @@ export const post = {
     aoPass = new N8AOPostPass(S, cam, innerWidth, innerHeight);
     Object.assign(aoPass.configuration, { aoRadius: 1.6, distanceFalloff: 0.6, intensity: 2.6, color: new THREE.Color(0, 0, 0), gammaCorrection: false, screenSpaceRadius: false });
     composer.addPass(aoPass);
+    // limpa NaN/infinito ANTES do bloom e da profundidade de campo: um único pixel inválido vira uma mancha
+    // grande (branca ou preta, com borda de ruído) quando o bloom o espalha.
+    composer.addPass(new EffectPass(cam, new Effect('limpaEntrada', LIMPA)));
 
     dof = new DepthOfFieldEffect(cam, { worldFocusDistance: 12, worldFocusRange: 18, bokehScale: 1.6, resolutionScale: 0.5 });
     dofPass = new EffectPass(cam, dof);
@@ -62,9 +71,7 @@ export const post = {
     tm = new ToneMappingEffect({ mode: ToneMappingMode.AGX });
     // O AgX faz log2(cor): preto puro (0) vira -infinito e várias placas (celular, algumas Intel/AMD) mostram
     // isso como BRANCO — manchas brancas nas roupas pretas das fichas no anoitecer/noite. Limpa antes do AgX.
-    const limpa = new Effect('limpaCor', `void mainImage(const in vec4 c, const in vec2 uv, out vec4 o) {
-      vec3 v = c.rgb; if (any(isnan(v)) || any(isinf(v))) v = vec3(0.0);
-      o = vec4(clamp(v, vec3(1e-4), vec3(6e4)), c.a); }`);
+    const limpa = new Effect('limpaCor', LIMPA);
     noise = new NoiseEffect({ premultiply: true, blendFunction: BlendFunction.SCREEN });
     noise.blendMode.opacity.value = 0.12;
     tintFx = new ColorAverageEffect(BlendFunction.SKIP);

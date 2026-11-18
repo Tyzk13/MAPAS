@@ -32,12 +32,12 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/core/binario.ts` | 21 | 1 KB |
 | `src/core/cenas.ts` | 26 | 1 KB |
 | `src/core/cinema.ts` | 246 | 12 KB |
-| `src/core/config.ts` | 32 | 1 KB |
+| `src/core/config.ts` | 34 | 1 KB |
 | `src/core/cull.ts` | 25 | 1 KB |
 | `src/core/desempenho.ts` | 38 | 2 KB |
 | `src/core/diag.ts` | 54 | 4 KB |
 | `src/core/docs.ts` | 140 | 9 KB |
-| `src/core/engine.ts` | 61 | 2 KB |
+| `src/core/engine.ts` | 78 | 3 KB |
 | `src/core/espelho.ts` | 235 | 13 KB |
 | `src/core/glbmap.ts` | 49 | 6 KB |
 | `src/core/grass.ts` | 79 | 4 KB |
@@ -53,7 +53,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/core/mostrar.ts` | 51 | 2 KB |
 | `src/core/net.ts` | 95 | 5 KB |
 | `src/core/pbr.ts` | 81 | 3 KB |
-| `src/core/post.ts` | 132 | 7 KB |
+| `src/core/post.ts` | 139 | 7 KB |
 | `src/core/probe.ts` | 53 | 2 KB |
 | `src/core/procedural.ts` | 138 | 8 KB |
 | `src/core/sky.ts` | 159 | 9 KB |
@@ -168,7 +168,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `alvo` 17 · `imagemDe` 30 · `montar` 40 · `abrir` 57 · `fechar` 66 · `abrirDoc` 69 · `irAte` 72 · `listarPistas` 87 · `initNotas` 101 · `initDocs` 123
 
 ### `src/core/engine.ts`
-`cv` 6 · `R` 8 · `S` 24 · `cam` 27 · `ctl` 30 · `onResize` 39 · `pixelRatioCap` 41 · `setPixelRatioCap` 42 · `renderScale` 45 · `setRenderScale` 46 · `fit` 52
+`cv` 6 · `R` 8 · `S` 41 · `cam` 44 · `ctl` 47 · `onResize` 56 · `pixelRatioCap` 58 · `setPixelRatioCap` 59 · `renderScale` 62 · `setRenderScale` 63 · `fit` 69
 
 ### `src/core/espelho.ts`
 `enviar` 36 · `espelho` 41 · `aplicarSobreposicao` 52 · `tickEspelho` 60 · `receber` 71 · `enviarQuadro` 117 · `r` 126 · `mandarEstado` 141 · `serJogadores` 155 · `dentroDeOutraPagina` 177 · `abrirJanelaJogadores` 184 · `initEspelho` 192 · `cheia` 212 · `avisarAparicao` 221 · `avisarMapa` 222 · `avisarClima` 223
@@ -216,7 +216,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `fileFor` 7 · `tex` 11 · `PbrOpts` 23 · `pbr` 41 · `rep` 45
 
 ### `src/core/post.ts`
-`Grade` 15 · `DEFAULT_GRADE` 18 · `post` 36 · `init()` 42 · `setQuality()` 83 · `setGrade()` 102 · `render()` 120
+`Grade` 15 · `DEFAULT_GRADE` 18 · `post` 42 · `init()` 48 · `setQuality()` 90 · `setGrade()` 109 · `render()` 127
 
 ### `src/core/probe.ts`
 `EnvProbe` 7 · `swap` 28 · `update()` 40

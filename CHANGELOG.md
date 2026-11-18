@@ -9,6 +9,13 @@
   névoa terem a mesma cor; a Noite usa um azul-lunar.
 - Novo: `tools/diag-climas.mjs` mede o brilho de cada vista por clima, carregando direto e depois de trocar de clima
   (confere se o resultado não depende da ordem das trocas).
+- Manchas brancas/pretas (folhas, beirais, postes): a trava de cor dos materiais e do pós usava `isnan()`, que
+  o otimizador de várias placas (ANGLE/D3D no Windows) remove. Agora NaN/infinito são testados pelos bits do
+  número, a cor é limitada a 60000 (acima disso o buffer de meia precisão vira infinito) e há uma limpeza
+  **antes** do bloom (um pixel inválido espalhado pelo bloom virava mancha grande com borda de ruído).
+- Novo: `?nan=1` pinta pixels inválidos (magenta NaN, ciano infinito, amarelo estouro, vermelho negativo).
+- Juntada a branch com todos os mapas (Greywater Falls, Harlow, San Judas) e funções (janela dos jogadores,
+  cinema, painel do mestre) com esta correção.
 
 ## Etapa A — projeto e ciclo de verificação visual
 

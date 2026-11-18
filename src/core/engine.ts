@@ -14,9 +14,26 @@ export const R = new THREE.WebGLRenderer({
 });
 R.outputColorSpace = THREE.SRGBColorSpace;
 R.toneMapping = THREE.ACESFilmicToneMapping;
-// Trava de segurança para TODO material: cor negativa ou NaN antes do tone mapping vira branco em muitas placas
-// (manchas brancas em postes/carros/tijolo na qualidade Baixa, que não usa o pós-processamento).
-THREE.ShaderChunk.tonemapping_fragment = 'gl_FragColor.rgb = max(gl_FragColor.rgb, vec3(0.0));\nif (any(isnan(gl_FragColor.rgb))) gl_FragColor.rgb = vec3(0.0);\n' + THREE.ShaderChunk.tonemapping_fragment;
+// Trava de segurança para TODO material, antes do tone mapping e da gravação no buffer de meia precisão:
+// - NaN/infinito: teste pelos BITS do float (isnan() é removido pelo otimizador de várias placas/ANGLE-D3D);
+// - cor negativa vira 0; acima de 60000 estoura o half-float (65504) e vira infinito → mancha branca/preta no bloom.
+// `?nan=1` pinta os pixels problemáticos (magenta = NaN, ciano = infinito, amarelo = estouro, vermelho = negativo).
+const GUARDA = /* glsl */ `
+{
+  uvec3 gb = floatBitsToUint(gl_FragColor.rgb) & 0x7f800000u;
+  bvec3 ruim = equal(gb, uvec3(0x7f800000u));
+  #ifdef DIAG_NAN
+    uvec3 gm = floatBitsToUint(gl_FragColor.rgb) & 0x007fffffu;
+    if (any(ruim) && any(notEqual(gm * uvec3(ruim), uvec3(0u)))) gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
+    else if (any(ruim)) gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);
+    else if (any(greaterThan(gl_FragColor.rgb, vec3(6e4)))) gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+    else if (any(lessThan(gl_FragColor.rgb, vec3(0.0)))) gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+  #else
+    gl_FragColor.rgb = any(ruim) ? vec3(0.0) : clamp(gl_FragColor.rgb, vec3(0.0), vec3(6e4));
+  #endif
+}
+`;
+THREE.ShaderChunk.tonemapping_fragment = (CFG.nan ? '#define DIAG_NAN\n' : '') + GUARDA + THREE.ShaderChunk.tonemapping_fragment;
 R.toneMappingExposure = 1;
 R.shadowMap.enabled = true;
 R.shadowMap.type = THREE.PCFShadowMap; // no three atual o PCF já é suave

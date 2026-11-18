@@ -316,9 +316,17 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
 - `scatter` com milhares de árvores: use grade de vizinhança (hash por célula), não `out.some(...)` (O(n²)).
 
 - Manchas brancas/pretas (3º relato, Greywater, Noite, câmera livre do alto): faces viradas para a LUA brancas, as do
-  lado oposto pretas puras, paredes normais — em postes e galhos também (não é material nem telhado). Ainda sem causa
-  confirmada: `core/diag.ts` (F9) deixa o dono desligar sombra/lua/céu/HDRI/pontuais/névoa/pós e informa a placa.
-  Quando ele disser qual chave resolve, corrija a causa e anote aqui.
+  lado oposto pretas puras, paredes normais — em postes e galhos também (não é material nem telhado).
+  `core/diag.ts` (F9) deixa o dono desligar uma coisa por vez. Correção aplicada (nov/2026, sem placa para
+  confirmar): `isnan()` é removido pelo otimizador de várias placas (ANGLE/D3D) — a trava agora testa os BITS
+  (`floatBitsToUint(x) & 0x7f800000u`), limita a 6e4 (half-float estoura em 65504 → infinito) e há um passe
+  `limpaEntrada` ANTES do bloom (o bloom espalhava um pixel ruim em mancha). Nunca volte a usar `isnan`/`isinf`.
+  Varredura: `?nan=1` pinta pixels inválidos; nos 5 mapas × 5 climas, swiftshader e llvmpipe deram zero.
+- Testar com driver "de verdade" sem GPU: `xvfb-run` + Playwright `headless: false` +
+  `--use-gl=angle --use-angle=gl` + `LIBGL_ALWAYS_SOFTWARE=1` = Mesa llvmpipe (headless cai sempre no swiftshader).
+- Noite: o HDRI `qwantani_night` vem claro quase como dia e com brilho de cidade no horizonte (≈7). Use `bg`/`env`
+  baixos e `skyTint` (tinge céu, reflexos e névoa juntos) — sem isso a névoa azul não bate com o céu marrom.
+- Ao mandar o HTML offline, gere da branch que tem tudo (a `main` só tem Igreja e Campo).
 
 ## Greywater Falls — decisões do dono e como retomar (sessão de nov/2026)
 

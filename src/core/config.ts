@@ -18,6 +18,8 @@ export const CFG = {
   /** chave de edição do servidor (quando ele exige EDIT_KEY) */
   key: Q.get('key') || '',
   ro: Q.get('ro') === '1',
+  /** ?nan=1: pinta pixels com cor inválida (diagnóstico das manchas) */
+  nan: Q.get('nan') === '1',
   time: Math.max(0, +(Q.get('time') || 0) || 0),
   map: Q.get('map') || (window as any).MAPA_PADRAO || 'igreja',
   ui: Q.get('ui') !== '0',
