@@ -12,6 +12,10 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
 **não reescreva o núcleo**. Leia `docs/NOVO-MAPA.md` antes de começar; como o dono usa tudo na mesa:
 `docs/GUIA-DO-MESTRE.md`. Para achar código gastando pouco: `docs/MAPA_DO_CODIGO.md` (regenere com
 `python3 -I scripts/mapa_do_codigo.py` depois de mexer em código) e o Graphify quando o repositório estiver indexado.
+  **Graphify**: `Tyzk13/MAPAS` está indexado (desde nov/2026), mas o índice é da branch **`main`**. Compare o
+  `commitSha` do resultado com `git rev-parse HEAD`: se a sua branch não contém esse commit (`git merge-base
+  --is-ancestor <sha> HEAD`), use o Graphify só para o núcleo antigo e leia direto os arquivos novos (ex.: `src/maps/barud/`,
+  que ainda não está na `main`). Depois que a branch for juntada à `main`, o índice passa a valer para tudo.
 
 **Tudo o que aprender (erro, truque, decisão do dono) vai para esta skill no mesmo commit.**
 
