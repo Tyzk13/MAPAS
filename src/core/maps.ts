@@ -44,6 +44,9 @@ export async function loadMap(id: string) {
     if (old) { S.remove(old.G); disposeTree(old.G); }
     S.add(M.G); st.MP = M; st.curMap = id;
     M.G.updateMatrixWorld(true); collectCull(M.G); R.shadowMap.needsUpdate = true;
+    // prepara os shaders ainda no carregamento (senão a câmera engasga na 1ª vez que vê cada material); o navegador
+    // sem compilação paralela compila aqui mesmo — melhor travar na tela de carregamento do que no meio da sessão
+    try { await Promise.race([R.compileAsync(S, cam), new Promise(r => setTimeout(r, 8000))]); } catch { /* segue */ }
     setShadowRadius(M.shadowRadius);
     ctl.maxDistance = M.camMax ?? 95;
     $('bmap').textContent = MAPS[id].n;

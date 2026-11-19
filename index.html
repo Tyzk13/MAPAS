@@ -110,6 +110,12 @@
 <div class="pop" id="px" hidden role="menu">
 <div class="h">Qualidade</div>
 <div class="seg full" id="bq"><button data-q="baixa">Baixa</button><button data-q="media">Média</button><button data-q="alta">Alta</button></div>
+<div class="h">Desempenho <small>· para o PC não travar enquanto mestra</small></div>
+<div class="seg full" id="bqps" title="Limite de quadros por segundo (menos = placa de vídeo mais folgada)"><button data-f="30">30 /s</button><button data-f="60">60 /s</button><button data-f="0">Livre</button></div>
+<button id="bleve" class="tg" aria-pressed="false" title="Sem oclusão de ambiente e profundidade de campo; sombra recalculada menos vezes">Modo leve (PC fraco)</button>
+<button id="btvleve" class="tg" aria-pressed="true" title="Com a janela dos jogadores aberta, esta janela desenha menos (a TV continua com a qualidade cheia)">Mestre leve com a TV aberta</button>
+<button id="bparado" class="tg" aria-pressed="true" title="Sem mexer por 20 s, esta janela desenha devagar; volta no primeiro movimento">Economizar quando parado</button>
+<small id="dstat" class="dstat"></small>
 <div class="h" id="bk">Camadas</div><div id="lay"></div>
 <div class="h">Segundo monitor (jogadores)</div>
 <button id="bjog">Abrir janela dos jogadores</button>

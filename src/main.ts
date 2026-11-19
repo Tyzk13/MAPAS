@@ -28,7 +28,7 @@ import { initLocais } from './core/locais';
 import { MAPS } from './maps/manifest';
 import { post } from './core/post';
 import { loading } from './core/loading';
-import { desempenho } from './core/desempenho';
+import { desempenho, economia, salvarEconomia, desenharQuadro, estadoEconomia } from './core/desempenho';
 
 st.pi = Math.min(CFG.time, PRE.length - 1);
 st.showC = CFG.chars;
@@ -373,6 +373,17 @@ function initUi() {
     const q = b.dataset.q as keyof typeof QN; if (q === CFG.quality) return;
     CFG.quality = q; marcarQ(); fecharMenu(); post.setQuality(q); await loadMap(st.curMap); desempenho.reiniciar();
   };
+  // mais: desempenho (para o PC não travar enquanto mestra) — muda na hora e fica salvo neste navegador
+  const marcarE = () => {
+    for (const b of $('bqps').children as HTMLCollectionOf<HTMLElement>) b.classList.toggle('act', +b.dataset.f! === economia.cap);
+    tg('bleve', economia.leve); tg('btvleve', economia.tvLeve); tg('bparado', economia.parado);
+  };
+  for (const b of $('bqps').children as HTMLCollectionOf<HTMLElement>) b.onclick = () => { economia.cap = +b.dataset.f!; salvarEconomia(); marcarE(); desempenho.reiniciar(); };
+  $('bleve').onclick = () => { economia.leve = !economia.leve; salvarEconomia(); marcarE(); desempenho.reiniciar(); };
+  $('btvleve').onclick = () => { economia.tvLeve = !economia.tvLeve; salvarEconomia(); marcarE(); };
+  $('bparado').onclick = () => { economia.parado = !economia.parado; salvarEconomia(); marcarE(); };
+  marcarE();
+  setInterval(() => { const el = $('dstat'); if (!el || !el.offsetParent) return; el.textContent = `Agora: ${estadoEconomia.qps} quadros/s · resolução ${Math.round(desempenho.escala * 100)}%${post.leve ? ' · leve' : ''}${estadoEconomia.motivo ? ' · ' + estadoEconomia.motivo : ''}`; }, 700);
   $('bim').addEventListener('click', fecharMenu); $('bx').addEventListener('click', fecharMenu);
   $('bfs').onclick = () => { fecharMenu(); const d = document.documentElement; if (document.fullscreenElement) document.exitFullscreen(); else if (d.requestFullscreen) d.requestFullscreen(); };
   if (!document.documentElement.requestFullscreen) $('bfs').style.display = 'none';
@@ -416,8 +427,13 @@ if (fpsEl) (window as any).__peso = (n = 25) => {
   out.sort((a, b) => b[1] - a[1]); return out.slice(0, n).map(([a, b, v]) => `${(b / 1000).toFixed(0)}k ${v ? '' : '(oculto) '}${a}`).join('\n');
 };
 if (fpsEl) Object.assign(fpsEl.style, { position: 'fixed', right: '8px', top: '8px', font: '12px monospace', background: '#000a', color: '#9f9', padding: '3px 6px', borderRadius: '6px', zIndex: '9' });
-let fpsN = 0, fpsT = performance.now();
+let fpsN = 0, fpsT = performance.now(), cineAtivo = false, leveAplicado = false;
+(window as any).__economia = estadoEconomia; // para conferir nos testes (quadros/s e motivo)
 function frame(ts?: number) {
+  // economia: limite de quadros, mestre leve com a TV aberta, devagar quando ninguém mexe (core/desempenho.ts)
+  if (!desenharQuadro(ts ?? performance.now(), { jogadores: espelho.jogadores, tvAberta: imersao.temJogadores, ocupado: !!st.anim || cineAtivo || WM.on })) return;
+  const querLeve = economia.leve || (!espelho.jogadores && imersao.temJogadores && economia.tvLeve);
+  if (querLeve !== leveAplicado) { leveAplicado = querLeve; post.economia(querLeve); if (querLeve && !economia.leve) toast('TV dos jogadores aberta: esta janela fica leve para não travar (a TV fica com a qualidade cheia)', 4200); }
   timer.update(ts);
   desempenho.quadro(performance.now());
   if (fpsEl) R.info.reset();
@@ -430,7 +446,8 @@ function frame(ts?: number) {
     const a = st.anim; ctl.target.lerp(a.tp, 0.1); cam.position.lerp(a.cp, 0.1);
     if (cam.position.distanceTo(a.cp) < 0.1 && ctl.target.distanceTo(a.tp) < 0.1) st.anim = null;
   }
-  if (tickEspelho(dt)) { /* janela dos jogadores: segue a câmera do mestre */ } else if (tickCinema(dt, t)) { /* a câmera de cinema está no controle */ } else if (WM.on) walkStep(); else ctl.update();
+  cineAtivo = false;
+  if (tickEspelho(dt)) { /* janela dos jogadores: segue a câmera do mestre */ } else if (tickCinema(dt, t)) { cineAtivo = true; /* a câmera de cinema está no controle */ } else if (WM.on) walkStep(); else ctl.update();
   updateCull(cam);
   tickImersao(dt);
   post.render(dt);

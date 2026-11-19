@@ -21,7 +21,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 
 | Arquivo | Linhas | Tamanho |
 |---|---|---|
-| `index.html` | 150 | 14 KB |
+| `index.html` | 156 | 15 KB |
 | `legacy/igreja-3d-site.html` | 620 | 899 KB |
 | `legacy/servidor-sync.js` | 26 | 1 KB |
 | `scripts/mapa_do_codigo.py` | 78 | 5 KB |
@@ -34,7 +34,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/core/cinema.ts` | 246 | 12 KB |
 | `src/core/config.ts` | 34 | 1 KB |
 | `src/core/cull.ts` | 25 | 1 KB |
-| `src/core/desempenho.ts` | 38 | 2 KB |
+| `src/core/desempenho.ts` | 76 | 5 KB |
 | `src/core/diag.ts` | 54 | 4 KB |
 | `src/core/docs.ts` | 140 | 9 KB |
 | `src/core/engine.ts` | 78 | 3 KB |
@@ -47,14 +47,14 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/core/kit.ts` | 160 | 11 KB |
 | `src/core/loading.ts` | 39 | 2 KB |
 | `src/core/locais.ts` | 165 | 14 KB |
-| `src/core/maps.ts` | 76 | 3 KB |
+| `src/core/maps.ts` | 79 | 4 KB |
 | `src/core/menu.ts` | 60 | 3 KB |
 | `src/core/merge.ts` | 52 | 3 KB |
 | `src/core/models.ts` | 177 | 9 KB |
 | `src/core/mostrar.ts` | 51 | 2 KB |
 | `src/core/net.ts` | 117 | 6 KB |
 | `src/core/pbr.ts` | 81 | 3 KB |
-| `src/core/post.ts` | 139 | 7 KB |
+| `src/core/post.ts` | 144 | 8 KB |
 | `src/core/probe.ts` | 53 | 2 KB |
 | `src/core/procedural.ts` | 138 | 8 KB |
 | `src/core/sky.ts` | 184 | 11 KB |
@@ -66,15 +66,16 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/core/vtt.ts` | 105 | 7 KB |
 | `src/core/walk.ts` | 229 | 12 KB |
 | `src/core/weathering.ts` | 46 | 2 KB |
-| `src/main.ts` | 512 | 32 KB |
+| `src/main.ts` | 529 | 34 KB |
 | `src/maps/arton/dados.ts` | 103 | 18 KB |
 | `src/maps/arton/geo.ts` | 408 | 34 KB |
-| `src/maps/arton/index.ts` | 188 | 15 KB |
+| `src/maps/arton/index.ts` | 190 | 15 KB |
 | `src/maps/arton/interiores.ts` | 325 | 40 KB |
 | `src/maps/arton/miniaturas.ts` | 557 | 53 KB |
 | `src/maps/arton/natureza.ts` | 188 | 24 KB |
 | `src/maps/arton/simbolos.ts` | 97 | 8 KB |
 | `src/maps/arton/terreno.ts` | 341 | 30 KB |
+| `src/maps/arton/vida.ts` | 191 | 19 KB |
 | `src/maps/barud/cidade.ts` | 413 | 30 KB |
 | `src/maps/barud/common.ts` | 149 | 9 KB |
 | `src/maps/barud/dados.ts` | 364 | 50 KB |
@@ -117,7 +118,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/maps/texas/onibus.ts` | 88 | 6 KB |
 | `src/maps/texas/pistas.ts` | 111 | 28 KB |
 | `src/maps/texas/police.ts` | 442 | 58 KB |
-| `src/style.css` | 297 | 24 KB |
+| `src/style.css` | 298 | 24 KB |
 | `src/vite-env.d.ts` | 2 | 0 KB |
 | `tools/_grid.mjs` | 7 | 1 KB |
 | `tools/arvores.sh` | 32 | 2 KB |
@@ -176,7 +177,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `collectCull` 9 · `updateCull` 14
 
 ### `src/core/desempenho.ts`
-`desempenho` 12 · `iniciar()` 14 · `quadro()` 23
+`economia` 17 · `salvarEconomia` 19 · `marcarAtividade` 22 · `estadoEconomia` 24 · `desenharQuadro` 29 · `lim` 32 · `desempenho` 47 · `iniciar()` 49 · `quadro()` 58
 
 ### `src/core/diag.ts`
 `guardar` 12 · `recompilar` 14 · `aplicarDiag` 27 · `initDiag` 29 · `abrir` 34
@@ -215,7 +216,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `esc` 17 · `L` 18 · `norm` 19 · `silhueta` 22 · `initLocais` 26 · `atualizarBotao` 52 · `alternar` 53 · `abrir` 54 · `fechar` 55 · `desenhar` 57 · `lista` 96 · `par` 97 · `segredo` 98 · `ficha` 102 · `distancias` 129 · `levarGrupo` 136 · `loopMarcas` 149
 
 ### `src/core/maps.ts`
-`newRuntime` 15 · `disposeTree` 25 · `mapHooks` 34 · `loadMap` 36 · `u` 54
+`newRuntime` 15 · `disposeTree` 25 · `mapHooks` 34 · `loadMap` 36 · `u` 57
 
 ### `src/core/menu.ts`
 `fecharMenu` 6 · `posicionar` 12 · `menu` 21 · `lista` 38 · `initMenus` 51
@@ -236,7 +237,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `fileFor` 7 · `tex` 11 · `PbrOpts` 23 · `pbr` 41 · `rep` 45
 
 ### `src/core/post.ts`
-`Grade` 15 · `DEFAULT_GRADE` 18 · `post` 42 · `init()` 48 · `setQuality()` 90 · `setGrade()` 109 · `render()` 127
+`Grade` 15 · `DEFAULT_GRADE` 18 · `post` 42 · `init()` 48 · `setQuality()` 90 · `setGrade()` 114 · `render()` 132
 
 ### `src/core/probe.ts`
 `EnvProbe` 7 · `swap` 28 · `update()` 40
@@ -272,7 +273,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `WeatherOpts` 5 · `weather` 7
 
 ### `src/main.ts`
-`cutBg` 42 · `push` 46 · `prep` 56 · `spawnPoint` 68 · `addChar` 73 · `pontoVista` 83 · `ondeEsta` 85 · `moverPara` 91 · `listaPersonagens` 96 · `bt` 104 · `revelar` 123 · `marcarQ` 127 · `escolherClima` 129 · `irParaVista` 130 · `tg` 137 · `rodarCine` 141 · `itemCine` 142 · `encherCine` 148 · `initCinemaUi` 159 · `mostrarPersonagens` 170 · `tocarCena` 174 · `gravarCenaAtual` 188 · `encherMestre` 194 · `alternarImagem` 209 · `initMestreUi` 214 · `toast` 237 · `telaLimpa` 242 · `initAtalhos` 249 · `atualizarSelo` 290 · `congelar` 298 · `escurecer` 302 · `lanterna` 303 · `marcarSom` 304 · `initImersaoUi` 305 · `initUi` 317 · `resz` 362 · `frame` 420 · `captureApi` 442 · `view()` 445 · `third()` 451 · `stats()` 463 · `start` 475
+`cutBg` 42 · `push` 46 · `prep` 56 · `spawnPoint` 68 · `addChar` 73 · `pontoVista` 83 · `ondeEsta` 85 · `moverPara` 91 · `listaPersonagens` 96 · `bt` 104 · `revelar` 123 · `marcarQ` 127 · `escolherClima` 129 · `irParaVista` 130 · `tg` 137 · `rodarCine` 141 · `itemCine` 142 · `encherCine` 148 · `initCinemaUi` 159 · `mostrarPersonagens` 170 · `tocarCena` 174 · `gravarCenaAtual` 188 · `encherMestre` 194 · `alternarImagem` 209 · `initMestreUi` 214 · `toast` 237 · `telaLimpa` 242 · `initAtalhos` 249 · `atualizarSelo` 290 · `congelar` 298 · `escurecer` 302 · `lanterna` 303 · `marcarSom` 304 · `initImersaoUi` 305 · `initUi` 317 · `resz` 362 · `marcarE` 377 · `frame` 432 · `captureApi` 459 · `view()` 462 · `third()` 468 · `stats()` 480 · `start` 492
 
 ### `src/maps/arton/dados.ts`
 `f` 6 · `FICHAS` 8
@@ -297,6 +298,9 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 
 ### `src/maps/arton/terreno.ts`
 `tempo` 15 · `FONTE_TIT` 18 · `fontesProntas` 19 · `GLSL_NUVEM` 28 · `fita` 36 · `Ponte` 57 · `PONTES` 58 · `acharPontes` 59 · `busca` 63 · `yRua` 83 · `construirRelevo` 90 · `construirMar` 131 · `pass` 136 · `ok` 139 · `construirAguasEcaminhos` 191 · `add` 209 · `insete` 217 · `CORES_REGIAO` 226 · `construirFronteiras` 227 · `alt` 238 · `rotulo` 247 · `desenhar` 249 · `MOLD` 267 · `desenharMoldura` 268 · `construirMoldura` 319 · `caixa` 333
+
+### `src/maps/arton/vida.ts`
+`pinta` 17 · `juntar` 18 · `dragoaVoando` 21 · `tubo` 25 · `pos` 47 · `bandos` 57 · `forma` 58 · `encher` 63 · `mk` 65 · `mover` 68 · `viajantes` 77 · `caixa` 78 · `cil` 79 · `cavalo` 80 · `comp` 88 · `neve` 114 · `tempestade` 134 · `nuvensBaixas` 164 · `farois` 172 · `construirVida` 183 · `clima` 188
 
 ### `src/maps/barud/cidade.ts`
 `LReq` 12 · `LUZES` 13 · `luz` 14 · `Cidade` 16 · `estiloEm` 22 · `construirCidade` 29 · `colisor` 33 · `sh` 36 · `muroSeg` 89 · `ponte` 162 · `ocupado` 180 · `casa` 209 · `hh` 223 · `fzz` 253 · `barr` 288 · `poste` 318 · `livre` 337 · `carroca` 357 · `animal` 367 · `retCantos` 402 · `mergeSimples` 406

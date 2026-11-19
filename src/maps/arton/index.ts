@@ -38,7 +38,7 @@ function ganchoCamera() {
 export async function build(M: MapRuntime) {
   begin(M, 51); ganchoCamera();
   // a mesa (mapa regional) e as cenas de bolso (interiores) ficam em grupos separados: só um aparece de cada vez
-  const G = M.G, mesa = new THREE.Group(), cenas = new THREE.Group(); mesa.name = 'Mesa'; cenas.name = 'Cenas de bolso'; cenas.visible = false; G.add(mesa, cenas);
+  const G = M.G, mesa = new THREE.Group(), cenas = new THREE.Group(); mesa.name = 'Mesa'; cenas.name = 'Cenas de bolso'; G.add(mesa, cenas); // as cenas ficam visíveis só no carregamento (para os shaders já virem prontos)
 
   // ---------- terreno, água, caminhos, fronteiras, moldura ----------
   const { colisores } = construirRelevo(mesa);
@@ -140,7 +140,7 @@ export async function build(M: MapRuntime) {
 
   // ---------- clima ----------
   const preenche = new THREE.HemisphereLight(0x9aa8c8, 0x2a2622, 0); preenche.userData.noExport = 1; G.add(preenche);
-  let solBase = 1, estavaDentro = false;
+  let solBase = 1, estavaDentro = false, primeiro = true;
   M.onTime = p => {
     // sol bem longe: a câmera de sombra cobre o mapa inteiro (sombras longas das montanhas)
     sun.position.normalize().multiplyScalar(720); sun.target.position.set(0, 0, 0); solBase = p.si; if (estavaDentro) { sun.intensity = 0; M.halos.forEach(h => (h.material.opacity = 0.22)); }
@@ -179,7 +179,9 @@ export async function build(M: MapRuntime) {
     mist.forEach(m => { m.position.x = m.userData.x0 + Math.sin(t * 0.03 * m.userData.v) * 5; });
     // dentro das cenas de bolso não há sol (ficam longe da mesa)
     // dentro das cenas de bolso não há sol nem o preenchimento do céu (só muda na troca, para não apagar os relâmpagos)
-    const dentro = dentroDeInterior(cam.position); if (dentro !== estavaDentro) { estavaDentro = dentro; sun.intensity = dentro ? 0 : solBase; sun.castShadow = !dentro; preenche.visible = !dentro; mesa.visible = !dentro; cenas.visible = dentro; if (dentro) M.halos.forEach(h => (h.material.opacity = 0.22)); else aplicarLuzes(undefined, true); escolher(); }
+    const dentro = dentroDeInterior(cam.position);
+    if (primeiro) { primeiro = false; cenas.visible = dentro; mesa.visible = !dentro; }
+    if (dentro !== estavaDentro) { estavaDentro = dentro; sun.intensity = dentro ? 0 : solBase; sun.castShadow = !dentro; preenche.visible = !dentro; mesa.visible = !dentro; cenas.visible = dentro; if (dentro) M.halos.forEach(h => (h.material.opacity = 0.22)); else aplicarLuzes(undefined, true); escolher(); }
     // na mesa a câmera não desce abaixo do horizonte (não vê embaixo da mesa); nos interiores pode olhar reto
     ctl.maxPolarAngle = ctl.target.y < -60 ? 1.78 : 1.42;
     void fogo; void S; void PRE;

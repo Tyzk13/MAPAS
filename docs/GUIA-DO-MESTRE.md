@@ -137,6 +137,18 @@ camadas): Nomes, Alfinetes, Fronteiras, Rotas de viagem e Marcos de altitude. No
 - **Distâncias** em linha reta, em km e dias de viagem (a pé ~30 km/dia, a cavalo ~50 km/dia; 1 unidade = 2 km).
 Arrastar um personagem mostra a distância em km e dias. As placas nas rotas tracejadas trazem o caminho pela estrada.
 
+### Desempenho (para o PC não travar enquanto mestra)
+Menu **⋯ → Desempenho** (fica salvo neste navegador, muda na hora, sem recarregar):
+- **30 /s · 60 /s · Livre**: limite de quadros por segundo. O padrão é 60 (um monitor de 144 Hz não precisa
+  desenhar 144 vezes). Em PC fraco ou notebook esquentando, use **30**.
+- **Mestre leve com a TV aberta** (ligado): quando a janela dos jogadores está aberta, a sua janela desenha a 24/s e
+  sem os efeitos pesados — quem vê a cena bonita é a TV. Você continua controlando tudo.
+- **Economizar quando parado** (ligado): 20 s sem mexer, a sua janela desenha só 10 vezes por segundo; o primeiro
+  movimento do mouse, toque ou tecla volta ao normal. Câmera de cinema e caminhar nunca ficam lentos.
+- **Modo leve (PC fraco)**: tira a oclusão de ambiente e a profundidade de campo e recalcula a sombra menos vezes.
+- Embaixo aparece **Agora: N quadros/s · resolução %**. A resolução já cai sozinha quando o PC aperta e volta quando
+  sobra folga. Os shaders são preparados no carregamento do mapa (menos engasgos na primeira volta da câmera).
+
 ### Painel Mestre
 
 Cenas · tela dos jogadores (congelar, escurecer) · luz e clima (a luz caiu, névoa, lanterna, relâmpago,
@@ -170,7 +182,7 @@ Ver `docs/VTT.md`.
 | Janela dos jogadores não liga | mesmo link, mesmo navegador, mesma sala; no claude.ai abra **o mesmo link** de novo (janela solta pela URL interna não liga) |
 | Sem som | clique uma vez na janela que deve tocar; confira Mestre → Som ambiente (modo e volume) |
 | Tomadas/cenas sumiram | ficam no navegador onde foram gravadas (outro navegador ou modo anônimo não tem) |
-| Lento | Qualidade Baixa na janela do mestre; a resolução já cai sozinha quando o FPS cai (`?fps=1` mostra) |
+| Lento / PC travando | **⋯ → Desempenho**: 30 /s, Modo leve, e deixe ligados "Mestre leve com a TV aberta" e "Economizar quando parado"; se ainda pesar, Qualidade Baixa na janela do mestre (`?fps=1` mostra os números) |
 | Jogador não consegue abrir o link | compartilhe pelo menu da página (links são privados) |
 | Algo travou no carregamento | o erro aparece na tela; recarregue; em celular antigo use Qualidade Baixa |
 | Manchas brancas/pretas em placas | **F9**: desligue uma coisa por vez (sombra, lua, céu, reflexos, luzes, névoa, pós) e diga ao Claude qual resolveu; fica salvo no navegador |

@@ -1,5 +1,19 @@
 # Changelog
 
+## Desempenho: mestrar sem travar o PC
+
+- Menu **⋯ → Desempenho** (vale para todos os mapas, salvo no navegador, muda na hora):
+  - **limite de quadros** 30 / 60 / livre (padrão 60: monitor de 144 Hz não desenha 144 vezes);
+  - **mestre leve com a TV aberta**: com a janela dos jogadores ligada, a do mestre desenha a 24/s e sem os efeitos
+    pesados (a TV fica com a qualidade cheia);
+  - **economizar quando parado**: 20 s sem mexer → 10 quadros/s; volta no primeiro movimento (cinema e caminhar
+    nunca ficam lentos);
+  - **modo leve**: sem oclusão de ambiente nem profundidade de campo, sombra recalculada a cada 8 quadros;
+  - leitura ao vivo dos quadros/s e da resolução.
+- A resolução automática respeita o limite (30/s de propósito não é tratado como lentidão).
+- Shaders preparados no carregamento do mapa (`compileAsync`): menos engasgos na primeira volta da câmera; no Sul de
+  Arton, as cenas dos interiores também (primeira entrada sem travar).
+
 ## Sul de Arton: mais qualidade e mais vida
 
 - Relevo com **sombreado de mapa** gravado na cor (luz de noroeste), escuro nos vales, claro nas cristas e faixas de

@@ -455,6 +455,20 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
 - Fontes web num canvas: carregue o CSS (link criado pelo próprio mapa), espere `document.fonts.load(...)` e
   **redesenhe** os canvases (nomes/moldura) quando chegarem; não bloqueie o carregamento do mapa.
 
+## Desempenho para o mestre (core/desempenho.ts → `economia`, nov/2026)
+
+- Pedido do dono: "o PC não travar tanto enquanto mestro". O laço (`R.setAnimationLoop`) roda na frequência do
+  monitor; `desenharQuadro(ts, {jogadores, tvAberta, ocupado})` pula quadros para o limite escolhido (agenda com
+  `proximo += 1000/qps`, que dá a média certa em 144 Hz). Regras: limite 30/60/livre; modo leve → 30; janela do
+  mestre com a TV ligada (`imersao.temJogadores`) → 24; 20 s sem toque/tecla/mouse → 10 (nunca durante transição de
+  câmera, cinema ou caminhar). Na janela dos jogadores só vale o limite.
+- `post.economia(true)`: sem N8AO/DOF, SMAA baixo, sombra a cada 8 quadros, pixel ratio ≤ 1,25 — sem recarregar.
+- A resolução automática compara com o limite (a 30/s de propósito não pode ser "lento") e não mede quando está
+  devagar de propósito (< 20/s).
+- `loadMap` faz `R.compileAsync(S, cam)` (com tempo máximo): só compila o que está visível — por isso o Sul de Arton
+  deixa as cenas de bolso visíveis no carregamento e esconde no 1º quadro.
+- Teste: `window.__economia` mostra `qps`, `alvo` e `motivo` (o check espera 23 s parado e confere ~10/s).
+
 ## Erros que já custaram tempo (não repita)
 
 - **Modelos da Poly Haven são pesados** (árvores 1–4 M faces). Sempre rode `tools/arvores.sh`
