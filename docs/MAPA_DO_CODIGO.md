@@ -69,7 +69,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/main.ts` | 512 | 32 KB |
 | `src/maps/arton/dados.ts` | 103 | 18 KB |
 | `src/maps/arton/geo.ts` | 385 | 31 KB |
-| `src/maps/arton/index.ts` | 181 | 14 KB |
+| `src/maps/arton/index.ts` | 183 | 15 KB |
 | `src/maps/arton/interiores.ts` | 297 | 36 KB |
 | `src/maps/arton/miniaturas.ts` | 555 | 53 KB |
 | `src/maps/arton/natureza.ts` | 182 | 23 KB |

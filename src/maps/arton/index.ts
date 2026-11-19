@@ -161,6 +161,8 @@ export async function build(M: MapRuntime) {
   // ---------- animação ----------
   const fogo = new THREE.Vector3();
   M.tick = (dt, t) => {
+    // teleporte: entre a mesa e uma cena de bolso a câmera corta direto (sem voar pelo vazio debaixo da mesa)
+    const an = st.anim; if (an && (an.tp.y < -60) !== (ctl.target.y < -60)) { cam.position.copy(an.cp); ctl.target.copy(an.tp); st.anim = null; ctl.update(); }
     tempo.value = t; ajustarNomes(dentroDeInterior(cam.position));
     if (Math.floor(t * 3) !== ult || cam.position.distanceToSquared(posEsc) > 25) { ult = Math.floor(t * 3); posEsc.copy(cam.position); escolher(); }
     const f = estavaDentro ? 1 : fatorLuzes();
@@ -175,6 +177,6 @@ export async function build(M: MapRuntime) {
     const dentro = dentroDeInterior(cam.position); if (dentro !== estavaDentro) { estavaDentro = dentro; sun.intensity = dentro ? 0 : solBase; sun.castShadow = !dentro; preenche.visible = !dentro; mesa.visible = !dentro; cenas.visible = dentro; if (dentro) M.halos.forEach(h => (h.material.opacity = 0.22)); else aplicarLuzes(undefined, true); escolher(); }
     // na mesa a câmera não desce abaixo do horizonte (não vê embaixo da mesa); nos interiores pode olhar reto
     ctl.maxPolarAngle = ctl.target.y < -60 ? 1.78 : 1.42;
-    void fogo; void S; void st; void PRE;
+    void fogo; void S; void PRE;
   };
 }

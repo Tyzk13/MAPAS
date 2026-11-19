@@ -436,6 +436,11 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
 - Ouro com metalness 0,9 fica preto sob céu nublado: metalness ~0,55 + um pouco de emissivo.
 - `mergeGeometries` exige os mesmos atributos: triângulos feitos à mão precisam de `computeVertexNormals()`.
 - `CanvasRenderingContext2D.roundRect` não existe em celulares antigos: desenhe com `arcTo`.
+- Teleporte entre a mesa e uma cena de bolso: no tick, se `st.anim` atravessa a fronteira (y < −60), corte direto
+  (copia posição/alvo e zera `st.anim`), senão a câmera voa pelo vazio debaixo da mesa.
+- O relâmpago (core/imersao) mexe em `sun.intensity`: mapa que liga/desliga o sol deve mexer só na troca de estado,
+  nunca a cada quadro.
+- Desempenho medido (qualidade baixa, vista geral): 364 chamadas, 512 mil triângulos; dentro da taverna, 36 e 18 mil.
 
 ## Erros que já custaram tempo (não repita)
 
@@ -558,7 +563,8 @@ Meça antes de mexer: `node tools/medir.mjs --q=media` (chamadas, triângulos, e
   San Judas de las Ánimas `https://claude.ai/artifact/55cVSvDE5dfVtg2Km2iR9K` ·
   Harlow, Texas `https://claude.ai/artifact/HHBUeQ8noXrMfhqAK6Q1PB` ·
   Greywater Falls `https://claude.ai/artifact/19Taut7URvhL67RnSA4MHg` (`canada.html`, `MAPA_PADRAO="canada"`) ·
-  Barud (Tormenta 20) `https://claude.ai/artifact/UpjK4X8KJrYW5LefuSuPUF` (`barud.html`, `MAPA_PADRAO="barud"`).
+  Barud (Tormenta 20) `https://claude.ai/artifact/UpjK4X8KJrYW5LefuSuPUF` (`barud.html`, `MAPA_PADRAO="barud"`) ·
+  Sul de Arton `https://claude.ai/artifact/Dzxp7GFmcpc2X9SXJP2VYZ` (`arton.html`, `MAPA_PADRAO="arton"`; criado em 2 partes).
   O build leve passou de 255 arquivos: publique o link novo em duas partes (mesmo `file_path`); nos links que já
   existem mande só os arquivos alterados (código .js/.css e imagens novas) — texturas/modelos têm o mesmo nome. Os três têm todos os mapas (Greywater Falls
   entrou depois; para um link próprio dele, crie `canada.html` com `MAPA_PADRAO="canada"`).
