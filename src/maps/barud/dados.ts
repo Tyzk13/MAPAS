@@ -7,6 +7,8 @@ export interface LocalFicha {
   id: string; n: string; cat: string; tipo: string;
   /** vista de fora e de dentro (nomes em M.views) */
   vista: string; dentro?: string;
+  /** outro mapa com este lugar (botão "Abrir mapa": a região de Arton) */
+  mapa?: string;
   publico: string;
   dono: string; funcao: string; npcs: string[];
   narrativa: string; rumores: string[]; pistas: string[]; objetos: string[]; segredos: string[]; obs: string;
@@ -21,7 +23,7 @@ export interface NpcFicha {
 
 export const LOCAIS: LocalFicha[] = [
   {
-    id: 'cidade', n: 'Barud, capital de Lomatubar', cat: 'Cidade', tipo: 'Capital murada sob domínio minotauro', vista: 'Geral',
+    id: 'cidade', n: 'Barud, capital de Lomatubar', cat: 'Cidade', tipo: 'Capital murada sob domínio minotauro', vista: 'Geral', mapa: 'arton',
     publico: 'Uma capital antiga de muralhas escuras e doze torres, cortada por um canal de água parada. Nas torres tremulam os estandartes vermelhos da legião minotaura; os chifrudos patrulham as ruas em duplas, de lança em punho. Os poucos humanos que restaram andam de cabeça baixa, remendados, carregando o que os senhores mandam. E há um bairro inteiro isolado por barricadas desde a Praga Coral.',
     dono: 'Império de Tauron — Pretor Cássio Taurano', funcao: 'Sede do governo da província, guarnição da legião e mercado do reino.', npcs: ['cascudo', 'tobias'],
     narrativa: 'Barud sobreviveu às guerras e à Praga Coral, que transformava a carne em coral vermelho. Quando a cidade estava de joelhos, a legião minotaura entrou pelo Portão do Rei "para restaurar a ordem" — e nunca mais saiu. Hoje os minotauros mandam, os humanos servem, e ninguém fala da Praga em voz alta.',

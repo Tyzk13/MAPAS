@@ -1,5 +1,30 @@
 # Changelog
 
+## Sul de Arton: mapa regional em relevo (Tormenta 20)
+
+- Novo mapa **Sul de Arton** (`src/maps/arton/`), feito a partir da imagem e do texto do dono: Montanhas Uivantes,
+  Floresta de Tollon, Lomatubar, parte de Deheon, costa oeste (Nova Malpetrim) e o Mar Negro com ilhas, como uma
+  mesa de relevo de wargame. Vista inclinada de 50°, exagero vertical, três texturas aéreas novas (campo, penhasco
+  de calcário, neve), mar com espuma e ondas, rios entalhados no relevo, estradas, trilhas na floresta, pontes onde
+  estradas e trilhas cruzam rios, fronteiras que brilham, moldura de pergaminho (título, rosa dos ventos, legenda e
+  escala em km) sobre uma bandeja de madeira na mesa.
+- Miniaturas com o jeito de cada povo: Giluk em terraços na encosta, aldeias bárbaras de seis cabanas, Catedral de
+  Gelo com escadarias, covil de Beluhga com a dragoa e o anel de geada, ruínas de gelo, cavernas; Barud (muralha,
+  torres, fortaleza na colina, Bairro Coral), Nimbarann entre dois rios, Asidon, Templo de Korl Khodan, torres em
+  ruína, acampamentos, campos de batalha com espadas cruzadas, pântano com coral; Valkaria com a estátua colossal,
+  palácios, jardins suspensos, viadutos, estátuas do Panteão e barracos; Nova Malpetrim na falésia (feira, arena,
+  circo, cais), Velha Malpetrim alagada, Zolkan, Azazel, centauros, kobolds, Tiberus com arena e estátuas de
+  minotauro; vilas de pescadores e faróis. Árvores negras de Tollon, taigas, bosques, manadas (mamutes, bisões,
+  renas, lobos), navios piratas, sombras do monstro marinho e um tentáculo, recifes.
+- **12 interiores** em escala de gente (cenas debaixo da mesa, "Ver por dentro" na ficha): tavernas Âncora Quebrada e
+  Macaco Caolho, salão de Asidon, masmorra de Azazel, Caverna Congelada, covil de Beluhga (tesouro e a dragoa),
+  Catedral de Gelo, Torre de Covariel, salão de Giluk, cabana da bruxa, Templo de Korl Khodan, Mansão de Zolkan.
+- Alfinetes coloridos por região, nomes que se ajustam à distância, rotas de viagem com placas de km e dias,
+  bandeirinhas de altitude, 32 fichas do mestre (regiões, cidades, masmorras, cavernas, tavernas…).
+- Núcleo (vale para qualquer mapa): na ficha do local, **Abrir mapa: …** (`LocalInfo.mapa`; Barud abre o mapa da
+  cidade e a ficha da cidade, em Barud, volta para a região), **Levar o grupo para cá** (teleporta os personagens dos jogadores) e **Distâncias** em linha reta;
+  `M.medida` formata distâncias (a régua do arrastar mostra km e dias neste mapa).
+
 ## Barud: Mata dos Chifres (floresta fora das muralhas)
 
 - Nova `src/maps/barud/floresta.ts`: mata sombria em volta da cidade (pinheiros escuros e árvores mortas retorcidas

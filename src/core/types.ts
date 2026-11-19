@@ -51,6 +51,8 @@ export interface MapRuntime {
   notas?: Record<string, string>;
   camMax?: number;
   fogScale?: number;
+  /** formata uma distância do mapa (em unidades) para a régua ao arrastar e o painel de locais (ex.: km e dias de viagem) */
+  medida?: (d: number) => string;
   /** painel de locais e fichas do mestre */
   locais?: LocalInfo[];
   fichas?: NpcInfo[];
@@ -62,6 +64,8 @@ export interface LocalInfo {
   dono: string; funcao: string; npcs: string[]; narrativa: string; rumores: string[]; pistas: string[]; objetos: string[]; segredos: string[]; obs: string;
   /** retângulo no mundo [x0,x1,z0,z1] (duplo clique abre a ficha) e ponto do marcador [x,y,z] */
   area?: [number, number, number, number]; marca?: [number, number, number];
+  /** id de outro mapa com este lugar em detalhe (botão "Abrir mapa detalhado"; ex.: Barud dentro do mapa regional) */
+  mapa?: string;
 }
 /** ficha de NPC; tok = id do personagem no mapa (para selecionar) */
 export interface NpcInfo {

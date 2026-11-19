@@ -6,7 +6,9 @@ import * as THREE from 'three';
 import { cam, cv } from './engine';
 import { st } from './state';
 import { espelho } from './espelho';
-import { selT } from './tokens';
+import { selT, setTarget, save, freeSpot } from './tokens';
+import { loadMap } from './maps';
+import { MAPS } from '../maps/manifest';
 import type { LocalInfo, NpcInfo } from './types';
 
 let painel: HTMLDivElement | null = null, marcas: HTMLDivElement | null = null, btn: HTMLButtonElement | null = null;
@@ -55,7 +57,7 @@ function fechar() { painel!.hidden = true; btn?.classList.remove('open'); }
 function desenhar() {
   if (!painel) return;
   const M = st.MP, cats = [...new Set(L().map(l => l.cat))];
-  const titulo = M?.locais?.find(l => l.cat === 'Cidade')?.n ?? 'Locais';
+  const titulo = M?.locais?.find(l => l.id === 'cidade')?.n ?? (M ? MAPS[M.id]?.n : '') ?? 'Locais';
   let h = `<header><b>${esc(titulo)}</b><button class="x" title="Fechar" aria-label="Fechar">×</button></header>`;
   h += `<div class="tg2"><button data-a="locais" class="${estado.aba === 'locais' ? 'on' : ''}">Locais</button><button data-a="npcs" class="${estado.aba === 'npcs' ? 'on' : ''}">NPCs</button>
     <span class="esp"></span><button class="sw ${estado.marcadores ? 'on' : ''}" data-sw="marcadores" title="Nomes dos lugares sobre o mapa">Marcadores</button>
@@ -84,6 +86,8 @@ function desenhar() {
   q('[data-n]').forEach(b => (b.onclick = () => { estado.sel = { t: 'n', id: b.dataset.n! }; desenhar(); painel!.scrollTop = 0; }));
   q('[data-v]').forEach(b => (b.onclick = () => irVista(b.dataset.v!)));
   q('[data-tok]').forEach(b => (b.onclick = () => { const t = st.T[b.dataset.tok!]; if (t) { selT(t); } }));
+  q('[data-mapa]').forEach(b => (b.onclick = () => { fechar(); loadMap(b.dataset.mapa!); }));
+  q('[data-grupo]').forEach(b => (b.onclick = () => { const l = L().find(x => x.id === b.dataset.grupo); if (l) levarGrupo(l); }));
   const vb = painel.querySelector('.volta') as HTMLElement | null; if (vb) vb.onclick = () => { estado.sel = null; desenhar(); };
   const bi = painel.querySelector('.busca') as HTMLInputElement | null;
   if (bi) { bi.oninput = () => { estado.busca = bi.value; const pos = bi.selectionStart; desenhar(); const nb = painel!.querySelector('.busca') as HTMLInputElement; nb.focus(); nb.setSelectionRange(pos, pos); }; }
@@ -102,12 +106,12 @@ function ficha(): string {
     const npcs = l.npcs.map(id => N().find(n => n.id === id)).filter(Boolean) as NpcInfo[];
     return `<button class="volta">‹ Lista</button><div class="ficha">
       <h3>${esc(l.n)}</h3><div class="tipo">${esc(l.tipo)} · ${esc(l.cat)}</div>
-      <div class="acoes">${l.vista ? `<button data-v="${esc(l.vista)}">Ir até lá</button>` : ''}${l.dentro ? `<button data-v="${esc(l.dentro)}">Ver por dentro</button>` : ''}</div>
+      <div class="acoes">${l.vista ? `<button data-v="${esc(l.vista)}">Ir até lá</button>` : ''}${l.dentro ? `<button data-v="${esc(l.dentro)}">Ver por dentro</button>` : ''}${l.mapa && MAPS[l.mapa] ? `<button data-mapa="${esc(l.mapa)}" title="Troca para o outro mapa deste lugar">Abrir mapa: ${esc(MAPS[l.mapa].n)}</button>` : ''}${l.marca || l.dentro ? `<button data-grupo="${l.id}" title="Teleporta os personagens dos jogadores para este lugar">Levar o grupo para cá</button>` : ''}</div>
       <div class="ler"><div class="tit">Para ler em voz alta</div>${esc(l.publico)}</div>
       ${par('Responsável', l.dono)}${par('Função', l.funcao)}
       ${npcs.length ? `<h4>NPCs presentes</h4><div class="chips">${npcs.map(n => `<button data-n="${n.id}">${esc(n.n)}</button>`).join('')}</div>` : ''}
       ${par('História do lugar', l.narrativa)}${lista('Rumores que circulam', l.rumores)}${lista('Pistas', l.pistas)}${lista('Objetos importantes', l.objetos)}
-      ${segredo(lista('Segredos', l.segredos) + par('Observações', l.obs))}</div>`;
+      ${distancias(l)}${segredo(lista('Segredos', l.segredos) + par('Observações', l.obs))}</div>`;
   }
   const n = N().find(x => x.id === s.id); if (!n) return '';
   const loc = L().find(l => l.id === n.local);
@@ -119,6 +123,25 @@ function ficha(): string {
     ${lista('O que sabe', n.sabe)}${lista('Rumores que pode contar', n.rumores)}${lista('Relações', n.relacoes)}
     ${segredo(par('Informações do mestre', n.mestre))}
     ${n.img ? '' : '<p class="dica">Imagem: ponha um PNG em <code>npcs-local/</code> (ver docs) e ele aparece aqui e na ficha do mapa.</p>'}</div>`;
+}
+
+/** distâncias em linha reta até os outros lugares (só em mapas com escala: M.medida) */
+function distancias(l: LocalInfo) {
+  const M = st.MP; if (!M?.medida || !l.marca) return '';
+  const xs = L().filter(o => o.id !== l.id && o.marca && o.cat !== 'Região').map(o => ({ o, d: Math.hypot(o.marca![0] - l.marca![0], o.marca![2] - l.marca![2]) })).sort((a, b) => a.d - b.d).slice(0, 12);
+  if (!xs.length) return '';
+  return `<h4>Distâncias (em linha reta)</h4><ul class="dist">${xs.map(({ o, d }) => `<li><button data-l="${o.id}">${esc(o.n)}</button><span>${esc(M.medida!(d))}</span></li>`).join('')}</ul>`;
+}
+/** teleporta os personagens dos jogadores (não os NPCs) para o lugar: dentro, se houver interior; senão, junto do marcador */
+function levarGrupo(l: LocalInfo) {
+  const M = st.MP; if (!M) return;
+  const vd = l.dentro ? st.V.find(v => v.n === l.dentro) : null;
+  const alvo = vd ? new THREE.Vector3(...vd.t) : l.marca ? new THREE.Vector3(l.marca[0], l.marca[1], l.marca[2]) : null; if (!alvo) return;
+  const ray = new THREE.Raycaster(new THREE.Vector3(alvo.x, alvo.y + (vd ? 2 : 60), alvo.z), new THREE.Vector3(0, -1, 0), 0, vd ? 30 : 400);
+  const chao = ray.intersectObjects(M.walk, false)[0]; const y = chao ? chao.point.y : alvo.y;
+  const grupo = Object.values(st.T).filter(t => !t.npc && t.g.visible);
+  grupo.forEach((t, i) => { const [x, z] = freeSpot(t, alvo.x - 1.2 + (i % 3) * 1.2, alvo.z + (vd ? 0 : 3) + Math.floor(i / 3) * 1.2, y); setTarget(t, x, z, y); t.g.position.set(t.target.x, y, t.target.y); save(t, true); });
+  irVista(vd ? vd.n : l.vista);
 }
 
 // ---------- marcadores (nomes sobre os prédios), só na janela do mestre ----------

@@ -39,7 +39,8 @@ com salas), F (arquitetura para novos mapas + `docs/NOVO-MAPA.md`). Todas foram 
 - Links publicados (os três têm todos os mapas): Igreja https://claude.ai/artifact/65XS5FnzDBvfneK5AnFXUh ·
   San Judas https://claude.ai/artifact/55cVSvDE5dfVtg2Km2iR9K · Harlow https://claude.ai/artifact/HHBUeQ8noXrMfhqAK6Q1PB ·
   Greywater Falls https://claude.ai/artifact/19Taut7URvhL67RnSA4MHg (criado em 18/11/2026; abre em `canada`) ·
-  Barud https://claude.ai/artifact/UpjK4X8KJrYW5LefuSuPUF (Tormenta 20; abre em `barud`)
+  Barud https://claude.ai/artifact/UpjK4X8KJrYW5LefuSuPUF (Tormenta 20; abre em `barud`) ·
+  Sul de Arton https://claude.ai/artifact/Dzxp7GFmcpc2X9SXJP2VYZ (Tormenta 20, mapa da região; abre em `arton`)
 - **Imagens locais**: moradores/jogadores/criaturas de Greywater ficam em `npcs-local/` (fora do git, repositório
   público). Uma sessão sem essa pasta **não deve republicar** os links (o build perderia essas imagens); a skill
   diz como refazê-las. Os links atuais foram publicados por uma sessão que tinha as imagens.
@@ -91,7 +92,8 @@ com salas), F (arquitetura para novos mapas + `docs/NOVO-MAPA.md`). Todas foram 
     offline lembra posições, menu de mapas por sistema.
 16. **Barud** (Tormenta 20): cidade murada com interiores, painel Locais com fichas e segredos, NPCs minotauros.
 17. Barud ganha a **Mata dos Chifres**: floresta sombria fora das muralhas com trilha, forca, cabana e círculo de pedras.
-18. Graphify passa a indexar `Tyzk13/MAPAS` (índice da `main`; Barud e a mata ainda estão só na branch de trabalho).
+18. Graphify passa a indexar `Tyzk13/MAPAS` (índice da `main`); PR #3 juntou Barud, a mata e os climas na `main`.
+19. **Sul de Arton** (Tormenta 20): mapa regional em relevo com miniaturas, 12 interiores, teleporte e distâncias.
 
 ## Arquivo offline (como o dono joga sem internet)
 

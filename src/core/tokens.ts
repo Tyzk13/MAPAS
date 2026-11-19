@@ -191,7 +191,7 @@ export function initTokenInput(walkActive: () => boolean, walkPointer: (e: Point
     ghost.position.set(x, drag.ty + 0.06, z); ghost.scale.setScalar(Math.max(0.7, drag.h / 1.7));
     const a = mline.geometry.attributes.position as THREE.BufferAttribute;
     a.setXYZ(0, st0.x, st0.y + 0.15, st0.z); a.setXYZ(1, x, drag.ty + 0.15, z); a.needsUpdate = true;
-    const mm = $('meas'); mm.textContent = d.toFixed(1) + ' quad. · ' + (d * 1.5).toFixed(1) + ' m';
+    const mm = $('meas'); mm.textContent = st.MP?.medida ? st.MP.medida(d) : d.toFixed(1) + ' quad. · ' + (d * 1.5).toFixed(1) + ' m';
     mm.style.left = e.clientX + 14 + 'px'; mm.style.top = e.clientY - 34 + 'px';
   });
   const end = (e: PointerEvent) => {

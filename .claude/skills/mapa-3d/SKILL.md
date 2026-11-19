@@ -12,10 +12,14 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
 **não reescreva o núcleo**. Leia `docs/NOVO-MAPA.md` antes de começar; como o dono usa tudo na mesa:
 `docs/GUIA-DO-MESTRE.md`. Para achar código gastando pouco: `docs/MAPA_DO_CODIGO.md` (regenere com
 `python3 -I scripts/mapa_do_codigo.py` depois de mexer em código) e o Graphify quando o repositório estiver indexado.
-  **Graphify**: `Tyzk13/MAPAS` está indexado (desde nov/2026), mas o índice é da branch **`main`**. Compare o
-  `commitSha` do resultado com `git rev-parse HEAD`: se a sua branch não contém esse commit (`git merge-base
-  --is-ancestor <sha> HEAD`), use o Graphify só para o núcleo antigo e leia direto os arquivos novos (ex.: `src/maps/barud/`,
-  que ainda não está na `main`). Depois que a branch for juntada à `main`, o índice passa a valer para tudo.
+  **Graphify**: `Tyzk13/MAPAS` está indexado e o índice segue a **`main`** (reindexa a cada push nela). Confira o
+  `commitSha` do resultado com `git rev-parse HEAD`; o que só existe na sua branch, leia direto do arquivo. Ao fim de
+  cada rodada, abra um pull request da branch para a `main` (o dono aprova) para o índice acompanhar.
+  Teste medido (nov/2026): `graphify_impact` em função muito usada (`docPlane`, 6 arquivos) custou ~3,3 mil
+  caracteres contra ~10,5 mil do grep e ~49 mil do grep + leitura em volta (−70 a −93%); em função com 1 uso
+  (`fatorLuzes`) o grep puro (~300) saiu mais barato que o Graphify (~1,2 mil). Regra: grep para 1–2 usos,
+  Graphify para "quem usa / o que quebra" em funções compartilhadas. Ele pode trazer ligação inferida falsa
+  (conf 0.5): confie nas de `resolution: typed`.
 
 **Tudo o que aprender (erro, truque, decisão do dono) vai para esta skill no mesmo commit.**
 
@@ -402,6 +406,42 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
   árvore morta L≈0.07. Luzes da mata seguem a escala da cidade (vela 25, fogueira 30, tocha 28).
 - Vistas da mata saem de `vistasMata()`; as câmeras baixas ficam com 7 m livres de árvores.
 
+## Mapa regional grande — Sul de Arton (aprendido em `src/maps/arton/`, nov/2026)
+
+- **Pedido do dono**: mapa de região em relevo (estilo mesa de wargame) a partir de uma imagem de referência (posições
+  em "px da referência" → mundo por `W()`, 1 px = 0,5 unidade) e de um texto longo; sempre **detalhes por dentro**
+  (tavernas, castelos, masmorras, cavernas), **teleporte** e **distâncias**; trilhas e pontes. Barud é o mapa
+  detalhado da cidade (`LocalInfo.mapa = 'barud'` → botão "Abrir mapa: …"; a ficha `cidade` de Barud tem `mapa: 'arton'`).
+- Arquivos: `geo.ts` (regiões, costa, ilhas, rios, lugares e a grade de alturas com cor por bioma e máscara
+  rocha/neve), `terreno.ts` (malha, mar, rios/estradas/trilhas/pontes, fronteiras, moldura), `miniaturas.ts`
+  (construção por povo + lugares únicos), `natureza.ts` (árvores instanciadas, manadas, navios, monstro), `simbolos.ts`
+  (alfinetes, nomes, rotas com km), `interiores.ts` (12 cenas de bolso), `dados.ts` (fichas), `index.ts`.
+- **Câmera**: o motor usa near 0,1 / far 700. Mapa grande ajusta pelo `mapHooks` (core/maps) — near 0,3, far 2600 e
+  `ctl.maxPolarAngle` — e devolve o padrão nos outros mapas. Não mexa no `engine.ts` por causa de um mapa.
+- **Sol**: fica a 80 unidades da origem; em mapa grande, no `onTime`, `sun.position.normalize().multiplyScalar(720)` e
+  `M.shadowRadius` cobrindo o mapa (a câmera de sombra tem far = 4×raio). Sem isso, um terço do mapa não faz sombra.
+- **Relevo**: grade própria com a triangulação conhecida e `Y(x,z)` igual aos triângulos (objetos não flutuam). Material
+  `terrainMaterial` do núcleo + `vertexColors = true` + atributo `splat` (rocha, neve). Texturas aéreas da Poly Haven:
+  `aerial_grass_rock` (campo), `marble_cliff_05` (penhasco cinza: montanha e calcário; a musgosa `aerial_rocks_02`
+  deixava as Uivantes verdes), `snow_02`. A cor de vértice multiplica a textura: neve precisa de ~1,3.
+- Montanhas "serrilhadas": `ridged()` com potência 1,3, anel junto à fronteira e bacias de tundra planas no centro;
+  depois **aplainar povoados** na grade (média num raio e mistura suave; Giluk em terraços subindo para o norte).
+- Rios: perfil sempre descendo (min do anterior) e o leito entalhado na grade; pontes onde estrada/trilha cruza rio
+  (grade de vizinhança dos pontos do rio), e a estrada sobe para o tabuleiro da ponte.
+- **Nomes**: sprites com `depthTest: false` e tamanho que acompanha a distância (legível de longe, discreto de perto);
+  nomes de região somem de perto. Esconda-os dentro dos interiores (senão aparecem através do teto).
+- **Interiores de bolso** debaixo da mesa (y = −150), porque `setTarget` dos personagens limita x/z a ±400. Lá dentro:
+  sol desligado (tick), `maxPolarAngle` volta a 1,78 (com 1,42 o OrbitControls empurrava a câmera para cima do teto
+  nas vistas compridas). Móveis de `barud/mobilia.ts`; peças das miniaturas por `comLote(lote, f)`.
+- Ouro com metalness 0,9 fica preto sob céu nublado: metalness ~0,55 + um pouco de emissivo.
+- `mergeGeometries` exige os mesmos atributos: triângulos feitos à mão precisam de `computeVertexNormals()`.
+- `CanvasRenderingContext2D.roundRect` não existe em celulares antigos: desenhe com `arcTo`.
+- Teleporte entre a mesa e uma cena de bolso: no tick, se `st.anim` atravessa a fronteira (y < −60), corte direto
+  (copia posição/alvo e zera `st.anim`), senão a câmera voa pelo vazio debaixo da mesa.
+- O relâmpago (core/imersao) mexe em `sun.intensity`: mapa que liga/desliga o sol deve mexer só na troca de estado,
+  nunca a cada quadro.
+- Desempenho medido (qualidade baixa, vista geral): 364 chamadas, 512 mil triângulos; dentro da taverna, 36 e 18 mil.
+
 ## Erros que já custaram tempo (não repita)
 
 - **Modelos da Poly Haven são pesados** (árvores 1–4 M faces). Sempre rode `tools/arvores.sh`
@@ -523,7 +563,8 @@ Meça antes de mexer: `node tools/medir.mjs --q=media` (chamadas, triângulos, e
   San Judas de las Ánimas `https://claude.ai/artifact/55cVSvDE5dfVtg2Km2iR9K` ·
   Harlow, Texas `https://claude.ai/artifact/HHBUeQ8noXrMfhqAK6Q1PB` ·
   Greywater Falls `https://claude.ai/artifact/19Taut7URvhL67RnSA4MHg` (`canada.html`, `MAPA_PADRAO="canada"`) ·
-  Barud (Tormenta 20) `https://claude.ai/artifact/UpjK4X8KJrYW5LefuSuPUF` (`barud.html`, `MAPA_PADRAO="barud"`).
+  Barud (Tormenta 20) `https://claude.ai/artifact/UpjK4X8KJrYW5LefuSuPUF` (`barud.html`, `MAPA_PADRAO="barud"`) ·
+  Sul de Arton `https://claude.ai/artifact/Dzxp7GFmcpc2X9SXJP2VYZ` (`arton.html`, `MAPA_PADRAO="arton"`; criado em 2 partes).
   O build leve passou de 255 arquivos: publique o link novo em duas partes (mesmo `file_path`); nos links que já
   existem mande só os arquivos alterados (código .js/.css e imagens novas) — texturas/modelos têm o mesmo nome. Os três têm todos os mapas (Greywater Falls
   entrou depois; para um link próprio dele, crie `canada.html` com `MAPA_PADRAO="canada"`).
