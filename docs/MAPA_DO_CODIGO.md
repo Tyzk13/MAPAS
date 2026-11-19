@@ -68,13 +68,13 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/core/weathering.ts` | 46 | 2 KB |
 | `src/main.ts` | 512 | 32 KB |
 | `src/maps/arton/dados.ts` | 103 | 18 KB |
-| `src/maps/arton/geo.ts` | 385 | 31 KB |
-| `src/maps/arton/index.ts` | 183 | 15 KB |
-| `src/maps/arton/interiores.ts` | 297 | 36 KB |
-| `src/maps/arton/miniaturas.ts` | 555 | 53 KB |
-| `src/maps/arton/natureza.ts` | 182 | 23 KB |
-| `src/maps/arton/simbolos.ts` | 92 | 8 KB |
-| `src/maps/arton/terreno.ts` | 300 | 27 KB |
+| `src/maps/arton/geo.ts` | 408 | 34 KB |
+| `src/maps/arton/index.ts` | 188 | 15 KB |
+| `src/maps/arton/interiores.ts` | 325 | 40 KB |
+| `src/maps/arton/miniaturas.ts` | 557 | 53 KB |
+| `src/maps/arton/natureza.ts` | 188 | 24 KB |
+| `src/maps/arton/simbolos.ts` | 97 | 8 KB |
+| `src/maps/arton/terreno.ts` | 341 | 30 KB |
 | `src/maps/barud/cidade.ts` | 413 | 30 KB |
 | `src/maps/barud/common.ts` | 149 | 9 KB |
 | `src/maps/barud/dados.ts` | 364 | 50 KB |
@@ -278,25 +278,25 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `f` 6 · `FICHAS` 8
 
 ### `src/maps/arton/geo.ts`
-`P` 8 · `ESC` 9 · `W` 10 · `w` 11 · `LIM` 12 · `KM_POR_UNIDADE` 14 · `clamp` 17 · `smooth` 18 · `lerp` 19 · `ridged` 20 · `reseed` 26 · `rnd` 27 · `entre` 28 · `bbox` 31 · `sdPoly` 33 · `distLinha` 47 · `suaviza` 60 · `f` 67 · `UIVANTES` 78 · `ESTEPE` 79 · `TOLLON` 80 · `LOMATUBAR` 81 · `DEHEON` 82 · `BB` 83 · `costaZ` 87 · `Ilha` 94 · `ilha` 95 · `ILHAS` 96 · `ilhaD` 105 · `RIOS` 114 · `LAGO` 125 · `Reg` 128 · `Lugar` 129 · `L` 130 · `V` 131 · `LUGARES` 132 · `lugar` 167 · `pts` 170 · `PICOS` 171 · `PICO_A` 172 · `CAVERNAS` 173 · `TORRES_RUINA` 174 · `ACAMPAMENTOS` 175 · `BATALHAS` 176 · `FAROIS` 177 · `PANTANO` 178 · `BOA_SORTE` 179 · `TAIGAS` 180 · `MANADAS` 181 · `LUG` 187 · `ESTRADAS` 188 · `TRILHAS` 203 · `CLAREIRAS` 211 · `Grade` 214 · `PASSO` 215 · `terraD` 218 · `campo` 228 · `PERFIS` 285 · `G` 287 · `construirGrade` 289 · `sdPolyCache` 373 · `Y` 376 · `Ysolo` 384
+`P` 8 · `ESC` 9 · `W` 10 · `w` 11 · `LIM` 12 · `KM_POR_UNIDADE` 14 · `clamp` 17 · `smooth` 18 · `lerp` 19 · `ridged` 20 · `reseed` 26 · `rnd` 27 · `entre` 28 · `bbox` 31 · `sdPoly` 33 · `distLinha` 47 · `suaviza` 60 · `f` 67 · `UIVANTES` 78 · `ESTEPE` 79 · `TOLLON` 80 · `LOMATUBAR` 81 · `DEHEON` 82 · `BB` 83 · `costaZ` 87 · `Ilha` 94 · `ilha` 95 · `ILHAS` 96 · `ilhaD` 105 · `RIOS` 114 · `LAGO` 125 · `Reg` 128 · `Lugar` 129 · `L` 130 · `V` 131 · `LUGARES` 132 · `lugar` 167 · `pts` 170 · `PICOS` 171 · `PICO_A` 172 · `CAVERNAS` 173 · `TORRES_RUINA` 174 · `ACAMPAMENTOS` 175 · `BATALHAS` 176 · `FAROIS` 177 · `PANTANO` 178 · `BOA_SORTE` 179 · `TAIGAS` 180 · `MANADAS` 181 · `LUG` 187 · `ESTRADAS` 188 · `TRILHAS` 203 · `CLAREIRAS` 211 · `Grade` 214 · `PASSO` 215 · `terraD` 218 · `campo` 228 · `PERFIS` 285 · `G` 287 · `construirGrade` 289 · `borrar` 374 · `sombrearRelevo` 382 · `sdPolyCache` 396 · `Y` 399 · `Ysolo` 407
 
 ### `src/maps/arton/index.ts`
-`P3` 22 · `vistaDe` 24 · `bbox` 28 · `ganchoCamera` 32 · `build` 37 · `escolher` 61 · `nevoa` 86 · `ajustarNomes` 153
+`P3` 23 · `vistaDe` 25 · `bbox` 29 · `ganchoCamera` 33 · `build` 38 · `escolher` 63 · `nevoa` 88 · `ajustarNomes` 156
 
 ### `src/maps/arton/interiores.ts`
-`Y0` 18 · `v3` 23 · `luz` 24 · `vista` 25 · `box` 26 · `cil` 27 · `geo` 28 · `solido` 30 · `piso` 32 · `contorno` 33 · `sala` 37 · `gruta` 50 · `tocha` 59 · `cartaz` 65 · `ancora` 72 · `macacoCaolho` 89 · `asidon` 108 · `masmorra` 124 · `cavernaGelo` 152 · `cristaisAzuis` 166 · `covil` 167 · `catedral` 183 · `covariel` 200 · `gilukSalao` 222 · `bruxa` 237 · `templo` 249 · `zolkan` 264 · `construirInteriores` 284 · `dentroDeInterior` 296
+`Y0` 21 · `v3` 27 · `luz` 28 · `vista` 29 · `box` 30 · `cil` 31 · `geo` 32 · `solido` 34 · `piso` 36 · `contorno` 37 · `sala` 41 · `gruta` 54 · `tocha` 63 · `cartaz` 69 · `ancora` 76 · `macacoCaolho` 94 · `asidon` 113 · `masmorra` 130 · `cavernaGelo` 158 · `cristaisAzuis` 172 · `covil` 173 · `catedral` 191 · `covariel` 208 · `gilukSalao` 233 · `bruxa` 249 · `templo` 262 · `zolkan` 278 · `construirInteriores` 298 · `dentroDeInterior` 312 · `particulas` 314
 
 ### `src/maps/arton/miniaturas.ts`
-`vc` 17 · `mats` 18 · `MM` 42 · `Mini` 44 · `P` 48 · `add` 49 · `prisma` 50 · `cone` 54 · `pt` 55 · `chao` 57 · `inclinacao` 58 · `pertoDeRio` 60 · `bom` 67 · `janela` 68 · `fumo` 69 · `bandeira` 70 · `casa` 79 · `povoado` 143 · `cerca` 152 · `paliçada` 159 · `torreVigia` 162 · `poco` 168 · `cristais` 174 · `arvoreMorta` 178 · `giluk` 186 · `catedral` 207 · `beluhga` 222 · `dragao` 236 · `osso` 247 · `geloAntigo` 254 · `cabana` 260 · `caverna` 267 · `barudMini` 273 · `nimbarann` 299 · `trigal` 304 · `vilaLom` 309 · `asidon` 310 · `korl` 319 · `torreRuina` 328 · `acampamento` 333 · `batalha` 338 · `pantano` 349 · `valkaria` 355 · `malpetrim` 388 · `velhaMalpetrim` 406 · `zolkan` 412 · `azazel` 422 · `centauros` 430 · `kobolds` 437 · `tiberus` 443 · `minotauroEstatua` 455 · `forteTapista` 462 · `covariel` 463 · `ancora` 470 · `eremita` 482 · `pesca` 483 · `farol` 491 · `porto` 498 · `vilaDeh` 499 · `aldeiaGelo` 506 · `aldeiaGeral` 507 · `pontes` 510 · `comLote` 524 · `construirMiniaturas` 527
+`vc` 18 · `mats` 19 · `MM` 44 · `Mini` 46 · `P` 50 · `add` 51 · `prisma` 52 · `cone` 56 · `pt` 57 · `chao` 59 · `inclinacao` 60 · `pertoDeRio` 62 · `bom` 69 · `janela` 70 · `fumo` 71 · `bandeira` 72 · `casa` 81 · `povoado` 145 · `cerca` 154 · `paliçada` 161 · `torreVigia` 164 · `poco` 170 · `cristais` 176 · `arvoreMorta` 180 · `giluk` 188 · `catedral` 209 · `beluhga` 224 · `dragao` 238 · `osso` 249 · `geloAntigo` 256 · `cabana` 262 · `caverna` 269 · `barudMini` 275 · `nimbarann` 301 · `trigal` 306 · `vilaLom` 311 · `asidon` 312 · `korl` 321 · `torreRuina` 330 · `acampamento` 335 · `batalha` 340 · `pantano` 351 · `valkaria` 357 · `malpetrim` 390 · `velhaMalpetrim` 408 · `zolkan` 414 · `azazel` 424 · `centauros` 432 · `kobolds` 439 · `tiberus` 445 · `minotauroEstatua` 457 · `forteTapista` 464 · `covariel` 465 · `ancora` 472 · `eremita` 484 · `pesca` 485 · `farol` 493 · `porto` 500 · `vilaDeh` 501 · `aldeiaGelo` 508 · `aldeiaGeral` 509 · `pontes` 512 · `comLote` 526 · `construirMiniaturas` 529
 
 ### `src/maps/arton/natureza.ts`
-`hashDe` 16 · `perto` 17 · `pinta` 20 · `tollonGeo` 26 · `coniferaGeo` 34 · `folhaGeo` 42 · `cipresteGeo` 50 · `longe` 54 · `plantar` 60 · `construirNatureza` 71 · `livre` 75 · `bicho` 109 · `corpo` 111 · `perna` 112 · `cab` 113 · `chifre` 114 · `cav` 127 · `navio` 134 · `pos` 144
+`hashDe` 17 · `perto` 18 · `pinta` 21 · `tollonGeo` 27 · `coniferaGeo` 35 · `folhaGeo` 43 · `cipresteGeo` 51 · `longe` 55 · `plantar` 61 · `construirNatureza` 72 · `livre` 76 · `bicho` 111 · `corpo` 113 · `perna` 114 · `cab` 115 · `chifre` 116 · `cav` 129 · `navio` 136 · `pos` 149
 
 ### `src/maps/arton/simbolos.ts`
-`COR_PINO` 8 · `altPino` 12 · `Rota` 14 · `pxDe` 15 · `ROTAS` 24 · `dias` 29 · `placa` 31 · `rr` 34 · `construirSimbolos` 43 · `pinta` 46 · `reg` 60
+`COR_PINO` 8 · `altPino` 12 · `Rota` 14 · `pxDe` 15 · `ROTAS` 24 · `dias` 29 · `placa` 31 · `desenhar` 33 · `rr` 36 · `construirSimbolos` 48 · `pinta` 51 · `reg` 65
 
 ### `src/maps/arton/terreno.ts`
-`tempo` 15 · `fita` 19 · `Ponte` 40 · `PONTES` 41 · `acharPontes` 42 · `busca` 46 · `yRua` 66 · `construirRelevo` 73 · `construirMar` 109 · `pass` 114 · `ok` 117 · `construirAguasEcaminhos` 166 · `add` 174 · `insete` 182 · `CORES_REGIAO` 191 · `construirFronteiras` 192 · `alt` 203 · `rotulo` 212 · `MOLD` 227 · `desenharMoldura` 228 · `construirMoldura` 279 · `caixa` 292
+`tempo` 15 · `FONTE_TIT` 18 · `fontesProntas` 19 · `GLSL_NUVEM` 28 · `fita` 36 · `Ponte` 57 · `PONTES` 58 · `acharPontes` 59 · `busca` 63 · `yRua` 83 · `construirRelevo` 90 · `construirMar` 131 · `pass` 136 · `ok` 139 · `construirAguasEcaminhos` 191 · `add` 209 · `insete` 217 · `CORES_REGIAO` 226 · `construirFronteiras` 227 · `alt` 238 · `rotulo` 247 · `desenhar` 249 · `MOLD` 267 · `desenharMoldura` 268 · `construirMoldura` 319 · `caixa` 333
 
 ### `src/maps/barud/cidade.ts`
 `LReq` 12 · `LUZES` 13 · `luz` 14 · `Cidade` 16 · `estiloEm` 22 · `construirCidade` 29 · `colisor` 33 · `sh` 36 · `muroSeg` 89 · `ponte` 162 · `ocupado` 180 · `casa` 209 · `hh` 223 · `fzz` 253 · `barr` 288 · `poste` 318 · `livre` 337 · `carroca` 357 · `animal` 367 · `retCantos` 402 · `mergeSimples` 406

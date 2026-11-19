@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { CFG } from '../../core/config';
 import { noise2, fbm } from '../../core/terrain';
+import { addWind } from '../../core/anim';
 import {
   type P, Y, Ysolo, rnd, reseed, sdPoly, TOLLON, DEHEON, LOMATUBAR, UIVANTES, BB, ILHAS, ilhaD, TAIGAS, BOA_SORTE, MANADAS,
   LUGARES, CLAREIRAS, ESTRADAS, TRILHAS, PERFIS, campo, W, LIM, smooth,
@@ -74,6 +75,7 @@ export function construirNatureza(Gr: THREE.Group, M: { lamps: THREE.MeshBasicMa
   const caminhos = hashDe([...ESTRADAS, ...TRILHAS], 3), rios = hashDe(PERFIS.map(R => R.pts), 3);
   const livre = (x: number, z: number, folga = 1) => Y(x, z) > 0.32 && !perto(caminhos, x, z, 0.75 * folga) && !perto(rios, x, z, 1.8 * folga) && !CLAREIRAS.some(c => Math.hypot(c.x - x, c.z - z) < c.r) && !LUGARES.some(l => l.tipo !== 'nada' && Math.hypot(l.x - x, l.z - z) < (l.tam ?? 1) * (['valkaria', 'giluk', 'tiberus'].includes(l.tipo) ? 15 : ['barud', 'malpetrim'].includes(l.tipo) ? 8.5 : 4.2));
   const sombra = Q === 'alta', matArv = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.72, metalness: 0.04, envMapIntensity: 0.32 });
+  addWind(matArv, { amp: 0.05, freq: 1.0, flutter: 0.004, height: 2.6 }, true); // copas balançando ao vento
   const passo = { baixa: 2.0, media: 1.55, alta: 1.25 }[Q];
   // Floresta de Tollon (densa)
   { const t: Inst[] = []; const [x0, x1, z0, z1] = BB.T;
@@ -141,9 +143,13 @@ export function construirNatureza(Gr: THREE.Group, M: { lamps: THREE.MeshBasicMa
     const g = mergeGeometries(ps)!; g.computeVertexNormals(); g.scale(s, s, s); return g;
   };
   const navios: { m: THREE.Mesh; c: P; r: number; v: number; f: number }[] = [];
+  const esteiraG = new THREE.BufferGeometry(); esteiraG.setAttribute('position', new THREE.Float32BufferAttribute([0, 0, -1.0, -2.2, 0, -7.5, 2.2, 0, -7.5, 0, 0, -1.0, 0, 0, -5.5, -2.2, 0, -7.5], 3));
+  esteiraG.setAttribute('color', new THREE.Float32BufferAttribute([1, 1, 1, 0.55, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0.55, 1, 1, 1, 0.1, 1, 1, 1, 0], 4));
+  const esteiraM = new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, depthWrite: false, side: THREE.DoubleSide });
   const pos = (px: number, py: number) => W(px, py);
   ([[pos(400, 1420), true, 7], [pos(560, 1452), true, 9], [pos(300, 1392), true, 6], [pos(722, 1462), true, 8], [pos(176, 1232), false, 2], [pos(150, 1228), false, 1.5], [pos(760, 1252), false, 3], [pos(470, 1352), false, 5]] as [P, boolean, number][]).forEach(([c, pirata, r], i) => {
     const m = new THREE.Mesh(navio(pirata, pirata ? 1.25 : 1.0), matN); m.castShadow = true; m.userData.ns = 1; grupo.add(m); navios.push({ m, c, r, v: (pirata ? 0.012 : 0.004) * (i % 2 ? 1 : -1), f: rnd() * 6.28 });
+    const est = new THREE.Mesh(esteiraG, esteiraM); est.position.y = 0.04; est.userData.ns = 1; est.userData.noExport = 1; est.renderOrder = 1; m.add(est); // esteira de espuma
   });
   anim.push(t => navios.forEach(n => { const a = n.f + t * n.v; n.m.position.set(n.c[0] + Math.cos(a) * n.r, 0.02 + Math.sin(t * 1.3 + n.f) * 0.06, n.c[1] + Math.sin(a) * n.r); n.m.rotation.set(Math.sin(t * 1.1 + n.f) * 0.04, -a + (n.v > 0 ? 0 : Math.PI), Math.sin(t * 0.9 + n.f) * 0.06); }));
   // sombras enormes sob a água

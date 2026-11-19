@@ -441,6 +441,19 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
 - O relâmpago (core/imersao) mexe em `sun.intensity`: mapa que liga/desliga o sol deve mexer só na troca de estado,
   nunca a cada quadro.
 - Desempenho medido (qualidade baixa, vista geral): 364 chamadas, 512 mil triângulos; dentro da taverna, 36 e 18 mil.
+  Com a vida (dragoa, aves, viajantes, neve, chuva, nuvens, faróis): 429 chamadas, mesmos triângulos.
+- **Relevo legível em qualquer clima**: grave um sombreado de mapa (luz fixa de noroeste), oclusão (altura menos a
+  média num raio, via soma acumulada) e estratos na cor de vértice. Muito mais efeito que subir a resolução.
+- Sombra de nuvens barata: `onBeforeCompile` encadeado (guarde o anterior e chame primeiro), escurecendo a cor no
+  `emissivemap_fragment` com ruído que anda; mude o `customProgramCacheKey`. O atributo `uv` sempre existe no
+  vertex shader do three (dá para fazer o rio correr com `uv.x` = comprimento da fita).
+- Partículas, nuvens e sprites sem luz própria (neve, chuva, nuvens baixas) ficam brancos demais no anoitecer:
+  passe um fator do céu (`p.bg`) pelo `onTime`.
+- Animações: tudo por instâncias (aves, viajantes) ou só na GPU (neve, chuva, brasas: posição = função do tempo);
+  a dragoa é um grupo com as asas em pivôs próprios (rotação no ombro). Viajantes andam pelas `ESTRADAS` com
+  comprimento acumulado (ida e volta).
+- Fontes web num canvas: carregue o CSS (link criado pelo próprio mapa), espere `document.fonts.load(...)` e
+  **redesenhe** os canvases (nomes/moldura) quando chegarem; não bloqueie o carregamento do mapa.
 
 ## Erros que já custaram tempo (não repita)
 

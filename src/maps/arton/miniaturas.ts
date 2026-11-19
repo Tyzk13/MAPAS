@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { Batch, mtx } from '../mexico/common';
 import { pbr, boxUV } from '../../core/pbr';
 import { peca } from '../barud/mobilia';
+import { addWind } from '../../core/anim';
 import {
   type Lugar, LUGARES, Y, Ysolo, rnd, entre, reseed, PERFIS, CAVERNAS, TORRES_RUINA, ACAMPAMENTOS, BATALHAS, FAROIS, PANTANO, LAGO, lugar,
 } from './geo';
@@ -29,6 +30,7 @@ function mats() {
     ouro: new THREE.MeshStandardMaterial({ vertexColors: true, metalness: 0.55, roughness: 0.32, envMapIntensity: 1.0, emissive: 0x2a1c04 }),
     gelo: new THREE.MeshStandardMaterial({ color: 0xd6f2ff, roughness: 0.06, metalness: 0, transparent: true, opacity: 0.86, envMapIntensity: 1.8, emissive: 0x1d5a7a, emissiveIntensity: 0.45 }),
     tecido: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.75, side: THREE.DoubleSide }),
+    bandeira: (() => { const b = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.75, side: THREE.DoubleSide }); addWind(b, { amp: 0.02, freq: 1.7, flutter: 0.035, height: 1 }, true); return b; })(),
     escuro: new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 1 }),
     coral: new THREE.MeshStandardMaterial({ color: 0xff7055, emissive: 0x7a1808, emissiveIntensity: 0.7, roughness: 0.3 }),
     agua: new THREE.MeshStandardMaterial({ color: 0x24434a, roughness: 0.12, metalness: 0.1, envMapIntensity: 1.1 }),
@@ -70,7 +72,7 @@ const fumo = (p: Peca, px: number, py: number, pz: number) => OUT.fumaca.push(p.
 function bandeira(p: Peca, px: number, py: number, pz: number, h: number, cor: number, s = 1) {
   p.cil(MM.plain, 0.025 * s, h, px, py, pz, 0x3a2a1a, 4);
   const g = new THREE.PlaneGeometry(0.55 * s, 0.32 * s, 3, 1), a = g.attributes.position; for (let i = 0; i < a.count; i++) a.setZ(i, Math.sin(a.getX(i) * 6) * 0.04 * s);
-  g.translate(0.29 * s, 0, 0); g.translate(px, py + h - 0.18 * s, pz); add(MM.tecido, g, cor, p.m);
+  g.translate(0.29 * s, 0, 0); g.translate(px, py + h - 0.18 * s, pz); add(MM.bandeira, g, cor, p.m);
 }
 
 // ---------- casas por povo ----------

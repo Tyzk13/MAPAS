@@ -1,5 +1,22 @@
 # Changelog
 
+## Sul de Arton: mais qualidade e mais vida
+
+- Relevo com **sombreado de mapa** gravado na cor (luz de noroeste), escuro nos vales, claro nas cristas e faixas de
+  estrato na rocha: as montanhas aparecem esculpidas com qualquer clima, sem custo por quadro.
+- **Sombras de nuvens** passando pelo terreno e pelo mar; mar com correntes que andam, cristas de espuma e brilho do
+  sol; **rios correndo** (riscos de espuma descendo para o mar).
+- Letras medievais (**Cinzel** e **IM Fell English**, Google Fonts, OFL) nos nomes, nas placas das rotas e na moldura;
+  até as fontes chegarem, vale a Georgia (e o arquivo offline continua funcionando).
+- Mapa vivo (`src/maps/arton/vida.ts`): a **Rainha Dragoa Beluhga voando** sobre as Uivantes (bate as asas e plana),
+  bandos de **corvos** (campos de batalha, Zolkan, Azazel, Velha Malpetrim, pântano) e **gaivotas** (portos e ilhas),
+  **caravanas, cavaleiros, patrulhas e peregrinos** andando pelas estradas, **neve** caindo nas Uivantes,
+  **tempestade com raios e chuva** no Mar Negro, **nuvens baixas** passando, **feixes dos faróis** girando à noite,
+  esteira de espuma atrás dos navios, árvores e bandeiras balançando ao vento, coral da Praga pulsando.
+- Interiores: brasas subindo das lareiras, da fogueira comprida de Giluk e dos braseiros do templo, bolhas no
+  caldeirão da bruxa, poeira na luz, o orbe do mago flutuando com o círculo de runas girando, olhos da dragoa acesos.
+- Neve, chuva e nuvens acompanham o clima (escurecem à noite).
+
 ## Sul de Arton: mapa regional em relevo (Tormenta 20)
 
 - Novo mapa **Sul de Arton** (`src/maps/arton/`), feito a partir da imagem e do texto do dono: Montanhas Uivantes,

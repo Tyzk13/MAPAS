@@ -367,7 +367,30 @@ export function construirGrade(): Grade {
     G.cor[k * 3] = r * wB + rr * R + 1.32 * N; G.cor[k * 3 + 1] = g * wB + rg * R + 1.36 * N; G.cor[k * 3 + 2] = b * wB + rb * R + 1.46 * N;
     G.splat[k * 2] = R; G.splat[k * 2 + 1] = N;
   }
+  sombrearRelevo(G, dl);
   return G;
+}
+/** média num quadrado de raio r células (soma acumulada por linha e por coluna) */
+function borrar(src: Float32Array, cols: number, rows: number, r: number) {
+  const tmp = new Float32Array(src.length), out = new Float32Array(src.length);
+  for (let j = 0; j < rows; j++) { let s = 0; const o = j * cols; for (let i = -r; i <= r; i++) s += src[o + Math.min(cols - 1, Math.max(0, i))]; for (let i = 0; i < cols; i++) { tmp[o + i] = s / (2 * r + 1); s += src[o + Math.min(cols - 1, i + r + 1)] - src[o + Math.max(0, i - r)]; } }
+  for (let i = 0; i < cols; i++) { let s = 0; for (let j = -r; j <= r; j++) s += tmp[Math.min(rows - 1, Math.max(0, j)) * cols + i]; for (let j = 0; j < rows; j++) { out[j * cols + i] = s / (2 * r + 1); s += tmp[Math.min(rows - 1, j + r + 1) * cols + i] - tmp[Math.max(0, j - r) * cols + i]; } }
+  return out;
+}
+/** relevo legível com qualquer clima: sombreado de mapa (luz de noroeste), escuro nos vales, claro nas cristas e
+ *  faixas de estrato na rocha — gravado na cor de vértice (não custa nada por quadro) */
+function sombrearRelevo(g: Grade, dl: Float32Array) {
+  const { cols, rows, passo, h, cor, splat } = g, media = borrar(h, cols, rows, Math.max(2, Math.round(4 / passo))), largo = borrar(h, cols, rows, Math.max(4, Math.round(12 / passo)));
+  const Lx = -0.55, Ly = 0.72, Lz = -0.42, Ln = Math.hypot(Lx, Ly, Lz);
+  for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
+    const k = j * cols + i; if (dl[k] < -0.5) continue;
+    const gx = (h[j * cols + Math.min(cols - 1, i + 1)] - h[j * cols + Math.max(0, i - 1)]) / (2 * passo), gz = (h[Math.min(rows - 1, j + 1) * cols + i] - h[Math.max(0, j - 1) * cols + i]) / (2 * passo);
+    const nl = Math.hypot(gx, 1, gz), lam = (-gx * Lx + Ly - gz * Lz) / (nl * Ln), sombra = clamp(lam / (Ly / Ln), 0.4, 1.4);
+    const cav = h[k] - media[k], vale = h[k] - largo[k];
+    let f = lerp(1, sombra, 0.55) * clamp(1 + cav * 0.14, 0.72, 1.14) * clamp(1 + vale * 0.025, 0.85, 1.08);
+    const R = splat[k * 2]; if (R > 0.2) f *= 1 + (Math.sin(h[k] * 2.6 + noise2(i * 0.15, j * 0.15) * 4) * 0.09) * R;
+    cor[k * 3] *= f; cor[k * 3 + 1] *= f; cor[k * 3 + 2] *= f * (sombra < 1 ? 1 + (1 - sombra) * 0.12 : 1); // sombras frias
+  }
 }
 // distância ao contorno das Uivantes (neve rala no planalto central): reaproveita sdPoly com a caixa
 const sdPolyCache = (x: number, z: number) => sdPoly(UIVANTES, x, z, BB.U);
