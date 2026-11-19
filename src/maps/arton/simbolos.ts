@@ -47,9 +47,9 @@ export function construirSimbolos(Gr: THREE.Group) {
   for (const l of LUGARES) {
     if (!l.pin) continue;
     const y = Ysolo(l.x, l.z), cap = CAPITAIS.includes(l.id), h = altPino(l.id), r = cap ? 1.35 : 1.05, c = cap ? [0.95, 0.72, 0.12] as [number, number, number] : COR_PINO[l.reg];
-    const ponta = new THREE.ConeGeometry(r * 0.42, h - r, 10); ponta.rotateX(Math.PI); ponta.translate(l.x, y + (h - r) / 2, l.z); ps.push(pinta(ponta, c));
-    const cab = new THREE.SphereGeometry(r, 16, 12); cab.translate(l.x, y + h, l.z); ps.push(pinta(cab, c));
-    const miolo = new THREE.SphereGeometry(r * 0.45, 10, 8); miolo.translate(l.x, y + h + r * 0.62, l.z); ps.push(pinta(miolo, [1, 1, 1]));
+    const ponta = new THREE.ConeGeometry(r * 0.42, h - r, 8, 1, true); ponta.rotateX(Math.PI); ponta.translate(l.x, y + (h - r) / 2, l.z); ps.push(pinta(ponta, c));
+    const cab = new THREE.SphereGeometry(r, 12, 8); cab.translate(l.x, y + h, l.z); ps.push(pinta(cab, c));
+    const miolo = new THREE.SphereGeometry(r * 0.45, 8, 5); miolo.translate(l.x, y + h + r * 0.62, l.z); ps.push(pinta(miolo, [1, 1, 1]));
   }
   const gp = mergeGeometries(ps)!; gp.computeVertexNormals();
   const alfinetes = new THREE.Mesh(gp, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.32, metalness: 0.05, emissive: 0x111111 })); alfinetes.name = 'Alfinetes'; alfinetes.castShadow = true; alfinetes.userData.ns = 1; alfinetes.userData.noExport = 1;
@@ -73,9 +73,10 @@ export function construirSimbolos(Gr: THREE.Group) {
   const rotas = new THREE.Group(); rotas.name = 'Rotas de viagem';
   const matR = new THREE.MeshBasicMaterial({ color: new THREE.Color(0.42, 0.78, 1.7), transparent: true, opacity: 0.9, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -8, polygonOffsetUnits: -8 });
   const matN = new THREE.MeshBasicMaterial({ color: 0xf2f6ff, transparent: true, opacity: 0.95, depthWrite: false });
+  { const m = new THREE.Mesh(mergeGeometries(ROTAS.map(R => fita(R.pts, 0.55, (x, z) => Math.max(0, Y(x, z)) + 1.0, [2.0, 1.3])))!, matR); m.renderOrder = 4; m.userData.ns = 1; rotas.add(m);
+    const an: THREE.BufferGeometry[] = []; for (const R of ROTAS) for (const p of [R.pts[0], R.pts[R.pts.length - 1]]) { const d = new THREE.RingGeometry(0.55, 0.95, 20); d.rotateX(-Math.PI / 2); d.translate(p[0], Ysolo(p[0], p[1]) + 1.05, p[1]); an.push(d); }
+    const d = new THREE.Mesh(mergeGeometries(an)!, matN); d.renderOrder = 4; d.userData.ns = 1; rotas.add(d); }
   for (const R of ROTAS) {
-    const m = new THREE.Mesh(fita(R.pts, 0.55, (x, z) => Math.max(0, Y(x, z)) + 1.0, [2.0, 1.3]), matR); m.renderOrder = 4; m.userData.ns = 1; rotas.add(m);
-    for (const p of [R.pts[0], R.pts[R.pts.length - 1]]) { const d = new THREE.Mesh(new THREE.RingGeometry(0.55, 0.95, 20), matN); d.rotation.x = -Math.PI / 2; d.position.set(p[0], Ysolo(p[0], p[1]) + 1.05, p[1]); d.renderOrder = 4; d.userData.ns = 1; rotas.add(d); }
     let acc = 0, tot = 0; for (let i = 1; i < R.pts.length; i++) tot += Math.hypot(R.pts[i][0] - R.pts[i - 1][0], R.pts[i][1] - R.pts[i - 1][1]);
     let meio = R.pts[0]; for (let i = 1; i < R.pts.length; i++) { acc += Math.hypot(R.pts[i][0] - R.pts[i - 1][0], R.pts[i][1] - R.pts[i - 1][1]); if (acc >= tot / 2) { meio = R.pts[i]; break; } }
     const s = placa([`${Math.round(R.km)} km`, `${dias(R.km, 30)} dias a pé · ${dias(R.km, 50)} a cavalo`]); s.position.set(meio[0], Ysolo(meio[0], meio[1]) + 2.2, meio[1]); s.userData.rota = R.n; rotas.add(s);

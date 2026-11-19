@@ -171,7 +171,7 @@ function poco(x: number, z: number, coral = false) {
   if (coral) cristais(x + 0.25, z, 0.5);
 }
 /** coral da Praga: cristais rosa-alaranjados */
-function cristais(x: number, z: number, s = 1, y?: number) {
+export function cristais(x: number, z: number, s = 1, y?: number) {
   const y0 = y ?? Ysolo(x, z); const n = 4 + ((rnd() * 4) | 0);
   for (let i = 0; i < n; i++) { const h = (0.18 + rnd() * 0.35) * s, g = new THREE.ConeGeometry(0.04 * s + rnd() * 0.03 * s, h, 5); g.translate(0, h / 2, 0); g.rotateZ((rnd() - 0.5) * 1.1); g.rotateX((rnd() - 0.5) * 1.1); g.translate(x + (rnd() - 0.5) * 0.3 * s, y0, z + (rnd() - 0.5) * 0.3 * s); add(MM.coral, g, 0xffffff); }
 }
@@ -233,17 +233,21 @@ function beluhga(L: Lugar) {
   OUT.luzes.push({ x, y: topo + 2, z, cor: 0x9fdcff, n: 50, dist: 18 });
 }
 /** dragão estilizado de gelo (corpo, pescoço, cabeça, asas e cauda) */
-function dragao(x: number, y: number, z: number, ry: number, s: number) {
+export function dragao(x: number, y: number, z: number, ry: number, s: number) {
   const p = P(x, y, z, ry, s), cor = 0xdaf0ff, esc = 0x9ab8d0;
   p.esf(MM.marmore, 0.55, 0, 0.6, 0, cor, 0.8); p.esf(MM.marmore, 0.45, 0, 0.55, -0.6, cor, 0.75);
   const pesc = new THREE.TubeGeometry(new THREE.CatmullRomCurve3([new THREE.Vector3(0, 0.7, 0.4), new THREE.Vector3(0, 1.3, 0.8), new THREE.Vector3(0, 1.9, 0.9)]), 8, 0.16, 6); add(MM.marmore, pesc, cor, p.m);
   const cab = new THREE.ConeGeometry(0.2, 0.75, 6); cab.rotateX(Math.PI / 2); cab.translate(0, 1.95, 1.25); add(MM.marmore, cab, cor, p.m);
   for (const s2 of [-1, 1]) { const ch = new THREE.ConeGeometry(0.04, 0.4, 4); ch.rotateX(-0.9); ch.rotateZ(s2 * 0.3); ch.translate(s2 * 0.1, 2.15, 0.9); add(MM.ouro, ch, 0x9ab8d0, p.m); }
   const cauda = new THREE.TubeGeometry(new THREE.CatmullRomCurve3([new THREE.Vector3(0, 0.5, -0.9), new THREE.Vector3(0.6, 0.3, -1.8), new THREE.Vector3(1.4, 0.2, -2.0), new THREE.Vector3(1.9, 0.35, -1.4)]), 10, 0.12, 5); add(MM.marmore, cauda, cor, p.m);
-  for (const sx of [-1, 1]) { // asas abertas
-    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute([0, 1.0, 0.2, sx * 2.6, 2.4, -0.4, sx * 2.2, 0.9, -1.3, 0, 1.0, 0.2, sx * 2.2, 0.9, -1.3, sx * 0.6, 0.8, -0.8], 3)); g.computeVertexNormals();
-    add(new THREE.MeshStandardMaterial({ color: esc, roughness: 0.5, side: THREE.DoubleSide, transparent: true, opacity: 0.92 }), g, esc, p.m);
-    p.cx(MM.marmore, 0.06, 0.06, 2.4, sx * 1.3, 1.7, -0.1, cor, 0, 0); // osso da asa
+  const memb = (MM as any)._memb ||= new THREE.MeshStandardMaterial({ color: esc, roughness: 0.55, side: THREE.DoubleSide, transparent: true, opacity: 0.85, depthWrite: false });
+  for (const sx of [-1, 1]) { // asas de morcego: ombro, cotovelo e três dedos com membrana entre eles
+    const om = new THREE.Vector3(sx * 0.3, 1.05, 0.25), co = new THREE.Vector3(sx * 1.3, 2.1, -0.15);
+    const dedos = [new THREE.Vector3(sx * 2.9, 2.9, -0.5), new THREE.Vector3(sx * 3.2, 2.0, -1.2), new THREE.Vector3(sx * 2.6, 1.15, -1.9)], base = new THREE.Vector3(sx * 0.4, 0.75, -1.0);
+    const osso = (a: THREE.Vector3, b2: THREE.Vector3, r: number) => { const L = a.distanceTo(b2), g = new THREE.CylinderGeometry(r * 0.6, r, L, 5); g.translate(0, L / 2, 0); g.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), b2.clone().sub(a).normalize())); g.translate(a.x, a.y, a.z); add(MM.marmore, g, cor, p.m); };
+    osso(om, co, 0.09); dedos.forEach(d => osso(co, d, 0.045));
+    const pts = [om, co, dedos[0], co, dedos[0], dedos[1], co, dedos[1], dedos[2], co, dedos[2], base, om, co, base];
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pts.flatMap(v => [v.x, v.y, v.z]), 3)); g.computeVertexNormals(); add(memb, g, esc, p.m);
   }
   for (const sx of [-1, 1]) for (const sz of [-0.5, 0.5]) p.cil(MM.marmore, 0.08, 0.5, sx * 0.35, 0.05, sz, cor, 5);
 }
@@ -515,6 +519,9 @@ function pontes() {
     }
   }
 }
+
+/** usa as peças daqui (dragão, cristais…) noutro lote (ex.: interiores) */
+export function comLote(b: Batch, f: () => void) { const v = B; B = b; try { f(); } finally { B = v; } }
 
 // ---------- tudo ----------
 export function construirMiniaturas(Gr: THREE.Group, M: { lamps: THREE.MeshBasicMaterial[] }): Mini {

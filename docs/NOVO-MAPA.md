@@ -67,7 +67,9 @@ meuMapa: { id: 'meuMapa', sis: 'Tormenta 20', n: 'Meu mapa', build: async M => (
 
 `sis` agrupa o menu de mapas por sistema de RPG. Para o painel **Locais** (fichas do mestre), preencha
 `M.locais` (tipo `LocalInfo`: texto público, dono, NPCs, rumores, pistas, segredos, `vista`/`dentro`, `area` para o
-duplo clique e `marca` para o marcador) e `M.fichas` (`NpcInfo`). Modelo: `src/maps/barud/dados.ts` + `index.ts`.
+duplo clique, `marca` para o marcador e `mapa` = id de outro mapa com o lugar em detalhe) e `M.fichas` (`NpcInfo`).
+Modelo: `src/maps/barud/dados.ts` + `index.ts`. Mapas com escala própria definem `M.medida(d)` (texto da distância:
+régua do arrastar e seção Distâncias). Mapa regional grande: veja `src/maps/arton/` (câmera longe via `mapHooks`).
 
 Pronto: o botão **Mapa** passa a alternar para ele, e `?map=meuMapa` abre direto nele. O
 `postMessage({cmd:'map', id:'meuMapa'})` também funciona.

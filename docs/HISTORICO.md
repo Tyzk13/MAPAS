@@ -92,6 +92,7 @@ com salas), F (arquitetura para novos mapas + `docs/NOVO-MAPA.md`). Todas foram 
 16. **Barud** (Tormenta 20): cidade murada com interiores, painel Locais com fichas e segredos, NPCs minotauros.
 17. Barud ganha a **Mata dos Chifres**: floresta sombria fora das muralhas com trilha, forca, cabana e círculo de pedras.
 18. Graphify passa a indexar `Tyzk13/MAPAS` (índice da `main`); PR #3 juntou Barud, a mata e os climas na `main`.
+19. **Sul de Arton** (Tormenta 20): mapa regional em relevo com miniaturas, 12 interiores, teleporte e distâncias.
 
 ## Arquivo offline (como o dono joga sem internet)
 

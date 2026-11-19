@@ -127,6 +127,15 @@ Fora das muralhas fica a **Mata dos Chifres**: no menu de vistas, *Trilha da Mat
 *Forca da Encruzilhada*, *Cabana do Lenhador* (e por dentro), *Círculo dos Chifres* (fim da trilha) e *Mata dos
 Chifres (do alto)*. As fichas ficam na categoria **Ermo** do painel Locais; o Pastor de Chifres começa oculto.
 
+### Sul de Arton (mapa da região)
+Menu **Mapa → Tormenta 20 → Sul de Arton**. Abre inclinado a 50°, como uma mesa de relevo. Camadas (botão de
+camadas): Nomes, Alfinetes, Fronteiras, Rotas de viagem e Marcos de altitude. No painel **Locais**, cada lugar tem:
+- **Ir até lá** (teleporta a câmera), **Ver por dentro** (tavernas, castelo, masmorra, cavernas, catedral…);
+- **Abrir mapa: …** (Barud abre o mapa da cidade; no mapa de Barud, a ficha da cidade volta para a região);
+- **Levar o grupo para cá** (teleporta os personagens dos jogadores, dentro do interior se houver);
+- **Distâncias** em linha reta, em km e dias de viagem (a pé ~30 km/dia, a cavalo ~50 km/dia; 1 unidade = 2 km).
+Arrastar um personagem mostra a distância em km e dias. As placas nas rotas tracejadas trazem o caminho pela estrada.
+
 ### Painel Mestre
 
 Cenas · tela dos jogadores (congelar, escurecer) · luz e clima (a luz caiu, névoa, lanterna, relâmpago,

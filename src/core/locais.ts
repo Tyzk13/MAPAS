@@ -106,7 +106,7 @@ function ficha(): string {
     const npcs = l.npcs.map(id => N().find(n => n.id === id)).filter(Boolean) as NpcInfo[];
     return `<button class="volta">‹ Lista</button><div class="ficha">
       <h3>${esc(l.n)}</h3><div class="tipo">${esc(l.tipo)} · ${esc(l.cat)}</div>
-      <div class="acoes">${l.vista ? `<button data-v="${esc(l.vista)}">Ir até lá</button>` : ''}${l.dentro ? `<button data-v="${esc(l.dentro)}">Ver por dentro</button>` : ''}${l.mapa && MAPS[l.mapa] ? `<button data-mapa="${esc(l.mapa)}" title="Troca para o mapa detalhado deste lugar">Abrir mapa detalhado</button>` : ''}${l.marca || l.dentro ? `<button data-grupo="${l.id}" title="Teleporta os personagens dos jogadores para este lugar">Levar o grupo para cá</button>` : ''}</div>
+      <div class="acoes">${l.vista ? `<button data-v="${esc(l.vista)}">Ir até lá</button>` : ''}${l.dentro ? `<button data-v="${esc(l.dentro)}">Ver por dentro</button>` : ''}${l.mapa && MAPS[l.mapa] ? `<button data-mapa="${esc(l.mapa)}" title="Troca para o outro mapa deste lugar">Abrir mapa: ${esc(MAPS[l.mapa].n)}</button>` : ''}${l.marca || l.dentro ? `<button data-grupo="${l.id}" title="Teleporta os personagens dos jogadores para este lugar">Levar o grupo para cá</button>` : ''}</div>
       <div class="ler"><div class="tit">Para ler em voz alta</div>${esc(l.publico)}</div>
       ${par('Responsável', l.dono)}${par('Função', l.funcao)}
       ${npcs.length ? `<h4>NPCs presentes</h4><div class="chips">${npcs.map(n => `<button data-n="${n.id}">${esc(n.n)}</button>`).join('')}</div>` : ''}

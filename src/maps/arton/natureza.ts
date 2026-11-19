@@ -25,38 +25,46 @@ function pinta(g: THREE.BufferGeometry, f: (x: number, y: number, z: number) => 
 /** árvore de Tollon: tronco negro como pedra e copa escura e fechada */
 function tollonGeo(v: number) {
   reseed(v * 7 + 3);
-  const h = 2.3 + rnd() * 0.8, tr = new THREE.CylinderGeometry(0.06, 0.12, h * 0.7, 5); tr.translate(0, h * 0.35, 0);
+  const h = 2.3 + rnd() * 0.8, tr = new THREE.CylinderGeometry(0.06, 0.12, h * 0.7, 5, 1, true); tr.translate(0, h * 0.35, 0);
   const partes = [pinta(tr, () => [0.05, 0.05, 0.06])];
-  for (let i = 0; i < 3; i++) { const c = new THREE.IcosahedronGeometry(0.62 - i * 0.12, 0); c.scale(1, 1.25, 1); c.translate((rnd() - 0.5) * 0.25, h * (0.62 + i * 0.17), (rnd() - 0.5) * 0.25); partes.push(pinta(c, (_x, y) => { const k = 0.7 + 0.55 * (y / h); return [0.06 * k, 0.12 * k, 0.045 * k]; })); }
+  for (let i = 0; i < 2; i++) { const c = new THREE.IcosahedronGeometry(0.66 - i * 0.16, 0); c.scale(1, 1.35, 1); c.translate((rnd() - 0.5) * 0.25, h * (0.66 + i * 0.22), (rnd() - 0.5) * 0.25); partes.push(pinta(c, (_x, y) => { const k = 0.7 + 0.55 * (y / h); return [0.06 * k, 0.12 * k, 0.045 * k]; })); }
   const g = mergeGeometries(partes)!; g.computeVertexNormals(); return g;
 }
 /** conífera (taiga): três saias de cone; nas Uivantes com neve na ponta */
 function coniferaGeo(v: number, neve: boolean) {
   reseed(v * 11 + 5);
-  const h = 1.6 + rnd() * 0.7, tr = new THREE.CylinderGeometry(0.04, 0.07, h * 0.4, 5); tr.translate(0, h * 0.2, 0);
+  const h = 1.6 + rnd() * 0.7, tr = new THREE.CylinderGeometry(0.04, 0.07, h * 0.4, 4, 1, true); tr.translate(0, h * 0.2, 0);
   const partes = [pinta(tr, () => [0.18, 0.12, 0.08])];
-  for (let i = 0; i < 3; i++) { const r = 0.55 - i * 0.14, ch = h * 0.42, c = new THREE.ConeGeometry(r, ch, 6); c.translate(0, h * (0.25 + i * 0.22) + ch / 2, 0); partes.push(pinta(c, (_x, y) => (neve && y > h * (0.32 + i * 0.22) + ch * 0.55 ? [0.92, 0.95, 1.0] : [0.06, 0.14, 0.09]))); }
+  for (let i = 0; i < 3; i++) { const r = 0.55 - i * 0.14, ch = h * 0.42, c = new THREE.ConeGeometry(r, ch, 6, 1, true); c.translate(0, h * (0.25 + i * 0.22) + ch / 2, 0); partes.push(pinta(c, (_x, y) => (neve && y > h * (0.32 + i * 0.22) + ch * 0.55 ? [0.92, 0.95, 1.0] : [0.06, 0.14, 0.09]))); }
   const g = mergeGeometries(partes)!; g.computeVertexNormals(); return g;
 }
 /** árvore de folhas (Deheon, Lomatubar, Boa Sorte) */
 function folhaGeo(v: number, cor: [number, number, number]) {
   reseed(v * 13 + 1);
-  const h = 1.2 + rnd() * 0.5, tr = new THREE.CylinderGeometry(0.04, 0.07, h * 0.6, 5); tr.translate(0, h * 0.3, 0);
+  const h = 1.2 + rnd() * 0.5, tr = new THREE.CylinderGeometry(0.04, 0.07, h * 0.6, 4, 1, true); tr.translate(0, h * 0.3, 0);
   const partes = [pinta(tr, () => [0.22, 0.15, 0.1])];
-  for (let i = 0; i < 2; i++) { const c = new THREE.IcosahedronGeometry(0.5 - i * 0.1, 1); c.translate((rnd() - 0.5) * 0.3, h * (0.75 + i * 0.18), (rnd() - 0.5) * 0.3); partes.push(pinta(c, (_x, y) => { const k = 0.8 + 0.4 * (y / h); return [cor[0] * k, cor[1] * k, cor[2] * k]; })); }
+  for (let i = 0; i < 2; i++) { const c = new THREE.IcosahedronGeometry(0.5 - i * 0.1, 0); c.translate((rnd() - 0.5) * 0.3, h * (0.75 + i * 0.18), (rnd() - 0.5) * 0.3); partes.push(pinta(c, (_x, y) => { const k = 0.8 + 0.4 * (y / h); return [cor[0] * k, cor[1] * k, cor[2] * k]; })); }
   const g = mergeGeometries(partes)!; g.computeVertexNormals(); return g;
 }
 /** cipreste da costa oeste */
 function cipresteGeo() { const tr = new THREE.CylinderGeometry(0.03, 0.05, 0.3, 4); tr.translate(0, 0.15, 0); const c = new THREE.ConeGeometry(0.22, 1.5, 6); c.translate(0, 0.95, 0); const g = mergeGeometries([pinta(tr, () => [0.2, 0.14, 0.1]), pinta(c, () => [0.1, 0.18, 0.1])])!; g.computeVertexNormals(); return g; }
 
 type Inst = { x: number; z: number; s: number; r: number; c?: number };
-function plantar(Gr: THREE.Group, geo: THREE.BufferGeometry, mat: THREE.Material, lista: Inst[], sombra: boolean, nome: string) {
-  const by = new Map<string, Inst[]>(); lista.forEach(t => { const k = Math.floor(t.x / 40) + ',' + Math.floor(t.z / 40); if (!by.has(k)) by.set(k, []); by.get(k)!.push(t); });
+/** versão de longe: um cone só, com a cor média da árvore */
+function longe(geo: THREE.BufferGeometry) {
+  geo.computeBoundingBox(); const bb = geo.boundingBox!, h = bb.max.y, r = Math.max(bb.max.x - bb.min.x, bb.max.z - bb.min.z) / 2;
+  const c = geo.attributes.color, m = [0, 0, 0]; for (let i = 0; i < c.count; i++) { m[0] += c.getX(i); m[1] += c.getY(i); m[2] += c.getZ(i); }
+  const cone = new THREE.ConeGeometry(r * 0.9, h * 0.85, 5, 1, true); cone.translate(0, h * 0.15 + h * 0.425, 0);
+  return pinta(cone, () => [m[0] / c.count, m[1] / c.count, m[2] / c.count]);
+}
+function plantar(Gr: THREE.Group, geo: THREE.BufferGeometry, mat: THREE.Material, lista: Inst[], sombra: boolean, nome: string, bloco = 80) {
+  const far = longe(geo);
+  const by = new Map<string, Inst[]>(); lista.forEach(t => { const k = Math.floor(t.x / bloco) + ',' + Math.floor(t.z / bloco); if (!by.has(k)) by.set(k, []); by.get(k)!.push(t); });
   const o = new THREE.Object3D(), c = new THREE.Color();
   by.forEach(L => {
     const im = new THREE.InstancedMesh(geo, mat, L.length); im.name = nome;
     L.forEach((t, i) => { o.position.set(t.x, Ysolo(t.x, t.z) - 0.08, t.z); o.rotation.set(0, t.r, 0); o.scale.setScalar(t.s); o.updateMatrix(); im.setMatrixAt(i, o.matrix); c.setScalar(t.c ?? 1); im.setColorAt(i, c); });
-    im.castShadow = sombra; im.receiveShadow = true; im.computeBoundingSphere(); im.userData.ns = 1; Gr.add(im);
+    im.castShadow = sombra; im.receiveShadow = true; im.computeBoundingSphere(); im.userData.ns = 1; im.userData.cullDist = 1e5; im.userData.lod = { d: 130, near: geo, far }; Gr.add(im);
   });
 }
 
@@ -65,7 +73,7 @@ export function construirNatureza(Gr: THREE.Group, M: { lamps: THREE.MeshBasicMa
   reseed(2024);
   const caminhos = hashDe([...ESTRADAS, ...TRILHAS], 3), rios = hashDe(PERFIS.map(R => R.pts), 3);
   const livre = (x: number, z: number, folga = 1) => Y(x, z) > 0.32 && !perto(caminhos, x, z, 0.75 * folga) && !perto(rios, x, z, 1.8 * folga) && !CLAREIRAS.some(c => Math.hypot(c.x - x, c.z - z) < c.r) && !LUGARES.some(l => l.tipo !== 'nada' && Math.hypot(l.x - x, l.z - z) < (l.tam ?? 1) * (['valkaria', 'giluk', 'tiberus'].includes(l.tipo) ? 15 : ['barud', 'malpetrim'].includes(l.tipo) ? 8.5 : 4.2));
-  const sombra = Q !== 'baixa', matArv = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.72, metalness: 0.04, envMapIntensity: 0.32 });
+  const sombra = Q === 'alta', matArv = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.72, metalness: 0.04, envMapIntensity: 0.32 });
   const passo = { baixa: 2.0, media: 1.55, alta: 1.25 }[Q];
   // Floresta de Tollon (densa)
   { const t: Inst[] = []; const [x0, x1, z0, z1] = BB.T;
@@ -92,17 +100,17 @@ export function construirNatureza(Gr: THREE.Group, M: { lamps: THREE.MeshBasicMa
       if (c.mW > 0.3 && rnd() < 0.3 && livre(px, pz)) cipr.push({ x: px, z: pz, s: 0.8 + rnd() * 0.5, r: rnd() * 6.28 });
       else if (pz < -230 && rnd() < 0.15 && livre(px, pz)) outono.push({ x: px, z: pz, s: 0.8, r: rnd() * 6.28, c: 0.7 });
     }
-    for (let v = 0; v < 2; v++) plantar(grupo, folhaGeo(v, [0.16, 0.3, 0.1]), matArv, verde.filter((_a, i) => i % 2 === v), sombra, 'Bosques');
-    plantar(grupo, folhaGeo(5, [0.36, 0.26, 0.09]), matArv, outono, sombra, 'Bosques secos');
-    plantar(grupo, cipresteGeo(), matArv, cipr, sombra, 'Ciprestes');
-    plantar(grupo, coniferaGeo(7, false), matArv, ilhas, sombra, 'Pinheiros das ilhas'); }
+    for (let v = 0; v < 2; v++) plantar(grupo, folhaGeo(v, [0.16, 0.3, 0.1]), matArv, verde.filter((_a, i) => i % 2 === v), sombra, 'Bosques', 150);
+    plantar(grupo, folhaGeo(5, [0.36, 0.26, 0.09]), matArv, outono, sombra, 'Bosques secos', 220);
+    plantar(grupo, cipresteGeo(), matArv, cipr, sombra, 'Ciprestes', 220);
+    plantar(grupo, coniferaGeo(7, false), matArv, ilhas, sombra, 'Pinheiros das ilhas', 220); }
 
   // ---------- manadas (miniaturas pequenas) ----------
   const bicho = (esp: string) => {
     const pts: THREE.BufferGeometry[] = [], cor = (r: number, g: number, b: number) => () => [r, g, b] as [number, number, number];
-    const corpo = (rx: number, ry: number, rz: number, y: number, c: [number, number, number]) => { const s = new THREE.SphereGeometry(1, 8, 6); s.scale(rx, ry, rz); s.translate(0, y, 0); pts.push(pinta(s, cor(...c))); };
+    const corpo = (rx: number, ry: number, rz: number, y: number, c: [number, number, number]) => { const s = new THREE.SphereGeometry(1, 7, 5); s.scale(rx, ry, rz); s.translate(0, y, 0); pts.push(pinta(s, cor(...c))); };
     const perna = (x: number, z: number, h: number, r: number, c: [number, number, number]) => { const p = new THREE.CylinderGeometry(r, r, h, 4); p.translate(x, h / 2, z); pts.push(pinta(p, cor(...c))); };
-    const cab = (y: number, z: number, r: number, c: [number, number, number]) => { const s = new THREE.SphereGeometry(r, 6, 5); s.translate(0, y, z); pts.push(pinta(s, cor(...c))); };
+    const cab = (y: number, z: number, r: number, c: [number, number, number]) => { const s = new THREE.SphereGeometry(r, 5, 4); s.translate(0, y, z); pts.push(pinta(s, cor(...c))); };
     const chifre = (x: number, y: number, z: number, L: number, rz: number, rx: number, c: [number, number, number]) => { const g = new THREE.ConeGeometry(0.025, L, 4); g.rotateZ(rz); g.rotateX(rx); g.translate(x, y, z); pts.push(pinta(g, cor(...c))); };
     if (esp === 'mamute') { const c: [number, number, number] = [0.32, 0.2, 0.13]; corpo(0.32, 0.3, 0.45, 0.5, c); cab(0.62, 0.42, 0.2, c); for (const s of [-1, 1]) { perna(s * 0.15, 0.22, 0.32, 0.07, c); perna(s * 0.15, -0.22, 0.32, 0.07, c); chifre(s * 0.1, 0.45, 0.6, 0.45, s * 0.6, 1.9, [0.95, 0.92, 0.85]); } const tr = new THREE.CylinderGeometry(0.03, 0.05, 0.4, 4); tr.translate(0, 0.35, 0.6); pts.push(pinta(tr, cor(...c))); }
     else if (esp === 'rinoceronte') { const c: [number, number, number] = [0.3, 0.26, 0.22]; corpo(0.25, 0.22, 0.4, 0.38, c); cab(0.38, 0.4, 0.15, c); chifre(0, 0.52, 0.55, 0.25, 0, 0.4, [0.8, 0.76, 0.7]); for (const s of [-1, 1]) { perna(s * 0.13, 0.2, 0.24, 0.06, c); perna(s * 0.13, -0.2, 0.24, 0.06, c); } }
@@ -119,7 +127,7 @@ export function construirNatureza(Gr: THREE.Group, M: { lamps: THREE.MeshBasicMa
   const cav = (id: string, n: number, raio: number) => { const l = LUGARES.find(q => q.id === id)!; for (let i = 0; i < n; i++) { const a = rnd() * 6.28, r = 1 + rnd() * raio; if (!porEsp.has('cavalo')) porEsp.set('cavalo', []); porEsp.get('cavalo')!.push({ x: l.x + Math.cos(a) * r, z: l.z + Math.sin(a) * r, s: 1.3, r: rnd() * 6.28 }); } };
   cav('centauros', 14, 4); cav('ancora', 3, 1.6); cav('nimbarann', 4, 5);
   for (let i = 0; i < 60; i++) { const l = LUGARES.filter(q => q.tipo === 'vila-deh')[i % 9]; if (!l) continue; const a = rnd() * 6.28, r = 4 + rnd() * 4, x = l.x + Math.cos(a) * r, z = l.z + Math.sin(a) * r; if (Y(x, z) < 0.5) continue; if (!porEsp.has('vaca')) porEsp.set('vaca', []); porEsp.get('vaca')!.push({ x, z, s: 1.2, r: rnd() * 6.28 }); }
-  porEsp.forEach((L, esp) => plantar(grupo, bicho(esp), matB, L, false, 'Animais: ' + esp));
+  porEsp.forEach((L, esp) => plantar(grupo, bicho(esp), matB, L, false, 'Animais: ' + esp, 500));
 
   // ---------- Mar Negro: navios, monstro, recifes ----------
   const matN = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.8, side: THREE.DoubleSide });

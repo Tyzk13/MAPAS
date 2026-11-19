@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import type { MapRuntime, View, LocalInfo } from '../../core/types';
 import { begin, halo, mistTex } from '../../core/kit';
 import { S, cam, ctl } from '../../core/engine';
-import { sun, fatorLuzes, PRE } from '../../core/sky';
+import { sun, fatorLuzes, aplicarLuzes, PRE } from '../../core/sky';
 import { st } from '../../core/state';
 import { mapHooks } from '../../core/maps';
 import { CFG } from '../../core/config';
@@ -36,18 +36,19 @@ function ganchoCamera() {
 
 export async function build(M: MapRuntime) {
   begin(M, 51); ganchoCamera();
-  const G = M.G;
+  // a mesa (mapa regional) e as cenas de bolso (interiores) ficam em grupos separados: só um aparece de cada vez
+  const G = M.G, mesa = new THREE.Group(), cenas = new THREE.Group(); mesa.name = 'Mesa'; cenas.name = 'Cenas de bolso'; cenas.visible = false; G.add(mesa, cenas);
 
   // ---------- terreno, água, caminhos, fronteiras, moldura ----------
-  const { colisores } = construirRelevo(G);
-  construirMar(G);
-  construirAguasEcaminhos(G);
-  const fronteiras = construirFronteiras(G);
-  construirMoldura(G);
-  const mini = construirMiniaturas(G, M);
-  const nat = construirNatureza(G, M);
-  const sim = construirSimbolos(G);
-  const inter = construirInteriores(G, M);
+  const { colisores } = construirRelevo(mesa);
+  construirMar(mesa);
+  construirAguasEcaminhos(mesa);
+  const fronteiras = construirFronteiras(mesa);
+  construirMoldura(mesa);
+  const mini = construirMiniaturas(mesa, M);
+  const nat = construirNatureza(mesa, M);
+  const sim = construirSimbolos(mesa);
+  const inter = construirInteriores(cenas, M);
 
   // ---------- auréolas (janelas, faróis, magia) ----------
   for (const [x, y, z, s] of mini.halos) halo(x, y, z, s);
@@ -58,7 +59,8 @@ export async function build(M: MapRuntime) {
   const pool = Array.from({ length: Q === 'alta' ? 14 : Q === 'media' ? 10 : 6 }, () => { const l = new THREE.PointLight(0xffffff, 0, 0, 2); G.add(l); return l; });
   const alvo: (typeof LUZES[number] | null)[] = [];
   const escolher = () => {
-    const c = cam.position, f = fatorLuzes();
+    // dentro (fogo de lareira, velas, tochas) a luz não depende do clima
+    const c = cam.position, f = dentroDeInterior(c) ? 1 : fatorLuzes();
     const l = LUZES.map(r => ({ r, s: Math.hypot(r.x - c.x, (r.y - c.y) * 1.3, r.z - c.z) })).sort((a, b) => a.s - b.s).slice(0, pool.length);
     pool.forEach((pl, i) => { const r = l[i]?.r ?? null; alvo[i] = r; if (!r || l[i].s > r.dist * 6) { pl.intensity = 0; alvo[i] = null; return; } pl.position.set(r.x, r.y, r.z); pl.color.setHex(r.cor); pl.distance = r.dist * 1.6; pl.intensity = r.n * f; });
   };
@@ -75,17 +77,17 @@ export async function build(M: MapRuntime) {
     fragmentShader: 'uniform sampler2D map; uniform vec3 uCor; varying float vA; void main(){ vec4 c = texture2D(map, gl_PointCoord); gl_FragColor = vec4(uCor, c.a * 0.6 * vA); }',
     transparent: true, depthWrite: false,
   });
-  const fumPts = new THREE.Points(fum, fumMat); fumPts.frustumCulled = false; fumPts.userData.ns = 1; fumPts.userData.noExport = 1; G.add(fumPts);
+  const fumPts = new THREE.Points(fum, fumMat); fumPts.frustumCulled = false; fumPts.userData.ns = 1; fumPts.userData.noExport = 1; mesa.add(fumPts);
   fumPts.onBeforeRender = r => { fumMat.uniforms.uScale.value = r.getDrawingBufferSize(new THREE.Vector2()).y / (2 * Math.tan(THREE.MathUtils.degToRad(cam.fov) / 2)); };
   const fase = cham.map((_c, i) => (i * 0.618) % 1 * 10);
 
   // ---------- névoa presa nos vales, na mata e no pântano ----------
   const mist: THREE.Sprite[] = [];
-  const nevoa = (x: number, z: number, esc: number, cor = 0xc8ccd4, op = 0.12) => { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: mistTex(), color: cor, transparent: true, depthWrite: false, opacity: op })); sp.scale.set(esc, esc * 0.3, 1); sp.position.set(x, Ysolo(x, z) + esc * 0.07 + 0.5, z); sp.userData = { x0: x, v: 0.5 + Math.random(), op, ns: 1, noExport: 1 }; G.add(sp); mist.push(sp); M.mist.push(sp); };
-  const [tx0, tx1, tz0, tz1] = bbox(TOLLON); for (let i = 0; i < 10; i++) nevoa(tx0 + Math.random() * (tx1 - tx0), tz0 + Math.random() * (tz1 - tz0), 26 + Math.random() * 18, 0xb8c4bc, 0.16);
+  const nevoa = (x: number, z: number, esc: number, cor = 0xc8ccd4, op = 0.12) => { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: mistTex(), color: cor, transparent: true, depthWrite: false, opacity: op })); sp.scale.set(esc, esc * 0.3, 1); sp.position.set(x, Ysolo(x, z) + esc * 0.07 + 0.5, z); sp.userData = { x0: x, v: 0.5 + Math.random(), op, ns: 1, noExport: 1 }; mesa.add(sp); mist.push(sp); M.mist.push(sp); };
+  const [tx0, tx1, tz0, tz1] = bbox(TOLLON); for (let i = 0; i < (Q === 'baixa' ? 5 : 10); i++) nevoa(tx0 + Math.random() * (tx1 - tx0), tz0 + Math.random() * (tz1 - tz0), 26 + Math.random() * 18, 0xb8c4bc, 0.16);
   TAIGAS.forEach(t => nevoa(t.x, t.z, 22, 0xdce8f4, 0.14));
   for (let i = 0; i < 4; i++) nevoa(PANTANO.x + (Math.random() - 0.5) * 14, PANTANO.z + (Math.random() - 0.5) * 14, 16, 0xa8b0a0, 0.18);
-  for (let i = 0; i < 8; i++) { const [x, z] = W(60 + i * 100, 1215 + Math.random() * 40); nevoa(x, z + 6, 30, 0xc0ccd0, 0.1); }
+  for (let i = 0; i < (Q === 'baixa' ? 4 : 8); i++) { const [x, z] = W(60 + i * (Q === 'baixa' ? 200 : 100), 1215 + Math.random() * 40); nevoa(x, z + 6, 30, 0xc0ccd0, 0.1); }
 
   // ---------- vistas ----------
   const vistas: View[] = [
@@ -136,10 +138,10 @@ export async function build(M: MapRuntime) {
 
   // ---------- clima ----------
   const preenche = new THREE.HemisphereLight(0x9aa8c8, 0x2a2622, 0); preenche.userData.noExport = 1; G.add(preenche);
-  let solBase = 1;
+  let solBase = 1, estavaDentro = false;
   M.onTime = p => {
     // sol bem longe: a câmera de sombra cobre o mapa inteiro (sombras longas das montanhas)
-    sun.position.normalize().multiplyScalar(720); sun.target.position.set(0, 0, 0); solBase = p.si;
+    sun.position.normalize().multiplyScalar(720); sun.target.position.set(0, 0, 0); solBase = p.si; if (estavaDentro) { sun.intensity = 0; M.halos.forEach(h => (h.material.opacity = 0.22)); }
     preenche.intensity = p.n === 'Noite' ? 2.4 : p.bg < 0.1 ? 1.7 : p.bg < 0.25 ? 0.7 : p.bg < 0.4 ? 0.5 : 0.25;
     preenche.color.setHex(p.n === 'Noite' ? 0x8a9ad8 : 0xb0b4bc);
     mist.forEach(m => (m.material.opacity = m.userData.op));
@@ -148,19 +150,20 @@ export async function build(M: MapRuntime) {
 
   // ---------- nomes e placas: tamanho acompanha a distância (legíveis de longe, discretos de perto) ----------
   const sprites: THREE.Sprite[] = []; [sim.nomes, sim.rotas].forEach(g => g.traverse((o: any) => { if (o.isSprite && o.userData.base) sprites.push(o); }));
-  const ajustarNomes = () => {
+  const ajustarNomes = (dentro: boolean) => {
     for (const s of sprites) {
+      if (dentro) { s.visible = false; continue; }
       const d = s.position.distanceTo(cam.position), u = s.userData;
       if (u.reg) { const op = Math.min(1, Math.max(0, (d - 95) / 60)); s.material.opacity = op; s.visible = op > 0.01; continue; }
-      const hh = Math.min(u.base * 1.2, Math.max(0.5, d * 0.013)); s.scale.set(hh * u.asp, hh, 1);
+      const hh = Math.min(u.base * 1.2, Math.max(0.5, d * 0.013)); s.scale.set(hh * u.asp, hh, 1); s.visible = true;
     }
   };
   // ---------- animação ----------
   const fogo = new THREE.Vector3();
   M.tick = (dt, t) => {
-    tempo.value = t; ajustarNomes();
+    tempo.value = t; ajustarNomes(dentroDeInterior(cam.position));
     if (Math.floor(t * 3) !== ult || cam.position.distanceToSquared(posEsc) > 25) { ult = Math.floor(t * 3); posEsc.copy(cam.position); escolher(); }
-    const f = fatorLuzes();
+    const f = estavaDentro ? 1 : fatorLuzes();
     if (f) pool.forEach((pl, k) => { const r = alvo[k]; if (r && pl.intensity > 0) pl.intensity = r.n * f * (0.86 + 0.14 * Math.sin(t * 11 + k * 7) * Math.sin(t * 6.3 + k)); });
     M.lamps.forEach((m, i) => { const b = m.userData.base; if (b && f) m.color.copy(b).multiplyScalar(f * (0.88 + 0.12 * Math.sin(t * 8 + i * 2.1))); });
     nat.anim.forEach(a => a(t)); inter.anim.forEach(a => a(t));
@@ -168,7 +171,10 @@ export async function build(M: MapRuntime) {
     fum.attributes.position.needsUpdate = true; (fum.attributes.size as THREE.BufferAttribute).needsUpdate = true;
     mist.forEach(m => { m.position.x = m.userData.x0 + Math.sin(t * 0.03 * m.userData.v) * 5; });
     // dentro das cenas de bolso não há sol (ficam longe da mesa)
-    const dentro = dentroDeInterior(cam.position); sun.intensity = dentro ? 0 : solBase; preenche.visible = !dentro;
+    // dentro das cenas de bolso não há sol nem o preenchimento do céu (só muda na troca, para não apagar os relâmpagos)
+    const dentro = dentroDeInterior(cam.position); if (dentro !== estavaDentro) { estavaDentro = dentro; sun.intensity = dentro ? 0 : solBase; sun.castShadow = !dentro; preenche.visible = !dentro; mesa.visible = !dentro; cenas.visible = dentro; if (dentro) M.halos.forEach(h => (h.material.opacity = 0.22)); else aplicarLuzes(undefined, true); escolher(); }
+    // na mesa a câmera não desce abaixo do horizonte (não vê embaixo da mesa); nos interiores pode olhar reto
+    ctl.maxPolarAngle = ctl.target.y < -60 ? 1.78 : 1.42;
     void fogo; void S; void st; void PRE;
   };
 }

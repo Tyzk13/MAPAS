@@ -406,6 +406,37 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
   árvore morta L≈0.07. Luzes da mata seguem a escala da cidade (vela 25, fogueira 30, tocha 28).
 - Vistas da mata saem de `vistasMata()`; as câmeras baixas ficam com 7 m livres de árvores.
 
+## Mapa regional grande — Sul de Arton (aprendido em `src/maps/arton/`, nov/2026)
+
+- **Pedido do dono**: mapa de região em relevo (estilo mesa de wargame) a partir de uma imagem de referência (posições
+  em "px da referência" → mundo por `W()`, 1 px = 0,5 unidade) e de um texto longo; sempre **detalhes por dentro**
+  (tavernas, castelos, masmorras, cavernas), **teleporte** e **distâncias**; trilhas e pontes. Barud é o mapa
+  detalhado da cidade (`LocalInfo.mapa = 'barud'` → botão "Abrir mapa: …"; a ficha `cidade` de Barud tem `mapa: 'arton'`).
+- Arquivos: `geo.ts` (regiões, costa, ilhas, rios, lugares e a grade de alturas com cor por bioma e máscara
+  rocha/neve), `terreno.ts` (malha, mar, rios/estradas/trilhas/pontes, fronteiras, moldura), `miniaturas.ts`
+  (construção por povo + lugares únicos), `natureza.ts` (árvores instanciadas, manadas, navios, monstro), `simbolos.ts`
+  (alfinetes, nomes, rotas com km), `interiores.ts` (12 cenas de bolso), `dados.ts` (fichas), `index.ts`.
+- **Câmera**: o motor usa near 0,1 / far 700. Mapa grande ajusta pelo `mapHooks` (core/maps) — near 0,3, far 2600 e
+  `ctl.maxPolarAngle` — e devolve o padrão nos outros mapas. Não mexa no `engine.ts` por causa de um mapa.
+- **Sol**: fica a 80 unidades da origem; em mapa grande, no `onTime`, `sun.position.normalize().multiplyScalar(720)` e
+  `M.shadowRadius` cobrindo o mapa (a câmera de sombra tem far = 4×raio). Sem isso, um terço do mapa não faz sombra.
+- **Relevo**: grade própria com a triangulação conhecida e `Y(x,z)` igual aos triângulos (objetos não flutuam). Material
+  `terrainMaterial` do núcleo + `vertexColors = true` + atributo `splat` (rocha, neve). Texturas aéreas da Poly Haven:
+  `aerial_grass_rock` (campo), `marble_cliff_05` (penhasco cinza: montanha e calcário; a musgosa `aerial_rocks_02`
+  deixava as Uivantes verdes), `snow_02`. A cor de vértice multiplica a textura: neve precisa de ~1,3.
+- Montanhas "serrilhadas": `ridged()` com potência 1,3, anel junto à fronteira e bacias de tundra planas no centro;
+  depois **aplainar povoados** na grade (média num raio e mistura suave; Giluk em terraços subindo para o norte).
+- Rios: perfil sempre descendo (min do anterior) e o leito entalhado na grade; pontes onde estrada/trilha cruza rio
+  (grade de vizinhança dos pontos do rio), e a estrada sobe para o tabuleiro da ponte.
+- **Nomes**: sprites com `depthTest: false` e tamanho que acompanha a distância (legível de longe, discreto de perto);
+  nomes de região somem de perto. Esconda-os dentro dos interiores (senão aparecem através do teto).
+- **Interiores de bolso** debaixo da mesa (y = −150), porque `setTarget` dos personagens limita x/z a ±400. Lá dentro:
+  sol desligado (tick), `maxPolarAngle` volta a 1,78 (com 1,42 o OrbitControls empurrava a câmera para cima do teto
+  nas vistas compridas). Móveis de `barud/mobilia.ts`; peças das miniaturas por `comLote(lote, f)`.
+- Ouro com metalness 0,9 fica preto sob céu nublado: metalness ~0,55 + um pouco de emissivo.
+- `mergeGeometries` exige os mesmos atributos: triângulos feitos à mão precisam de `computeVertexNormals()`.
+- `CanvasRenderingContext2D.roundRect` não existe em celulares antigos: desenhe com `arcTo`.
+
 ## Erros que já custaram tempo (não repita)
 
 - **Modelos da Poly Haven são pesados** (árvores 1–4 M faces). Sempre rode `tools/arvores.sh`

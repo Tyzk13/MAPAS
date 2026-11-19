@@ -212,7 +212,7 @@ export const CLAREIRAS = [...['ancora', 'covariel', 'eremita1', 'eremita2'].map(
 
 // ---------- grade do relevo ----------
 export interface Grade { cols: number; rows: number; passo: number; h: Float32Array; cor: Float32Array; splat: Float32Array }
-export const PASSO = { baixa: 2, media: 1.25, alta: 1 }[CFG.quality];
+export const PASSO = { baixa: 2, media: 1.5, alta: 1 }[CFG.quality];
 
 /** distância de "terra firme": positiva em terra (afasta da costa e das bordas das ilhas) */
 export function terraD(x: number, z: number) {

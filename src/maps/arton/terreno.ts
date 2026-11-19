@@ -2,8 +2,10 @@
 // lago, rios, estradas, trilhas, pontes (cruzamentos), fronteiras que brilham, moldura de pergaminho e a mesa.
 import * as THREE from 'three';
 import { terrainMaterial } from '../../core/terrain';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { pbr } from '../../core/pbr';
 import { CFG } from '../../core/config';
+import { sun } from '../../core/sky';
 import {
   type P, LIM, G, Y, Ysolo, construirGrade, PERFIS, LAGO, ESTRADAS, TRILHAS, UIVANTES, TOLLON, LOMATUBAR, DEHEON,
   suaviza, KM_POR_UNIDADE, clamp,
@@ -80,7 +82,12 @@ export function construirRelevo(Gr: THREE.Group) {
   geo.setIndex(new THREE.BufferAttribute(idx, 1)); geo.computeVertexNormals(); geo.computeBoundingSphere();
   const mat = terrainMaterial({ size: 0, seg: 0, height: () => 0, mask: () => [0, 0], base: { id: 'aerial_grass_rock', size: 9 }, r: { id: 'marble_cliff_05', size: 12 }, g: { id: 'snow_02', size: 7 }, normalScale: 1.25 });
   mat.vertexColors = true; mat.envMapIntensity = 0.55;
-  const me = new THREE.Mesh(geo, mat); me.receiveShadow = true; me.castShadow = true; me.name = 'Relevo'; me.userData.ns = 1; Gr.add(me);
+  const me = new THREE.Mesh(geo, mat); me.receiveShadow = true; me.castShadow = false; me.name = 'Relevo'; me.userData.ns = 1; Gr.add(me);
+  // sombra das montanhas: cópia leve (passo 2, meio palmo abaixo) que só a câmera do sol enxerga (camada 1)
+  { const sc = 2, nc = Math.round((LIM.x1 - LIM.x0) / sc) + 1, nr = Math.round((LIM.z1 - LIM.z0) / sc) + 1, sg = new THREE.PlaneGeometry(LIM.x1 - LIM.x0, LIM.z1 - LIM.z0, nc - 1, nr - 1); sg.rotateX(-Math.PI / 2);
+    const sp2 = sg.attributes.position; for (let i = 0; i < sp2.count; i++) sp2.setY(i, Math.max(-0.5, Y(sp2.getX(i), sp2.getZ(i))) - 0.45); sg.computeVertexNormals(); sg.computeBoundingSphere();
+    const somb = new THREE.Mesh(sg, new THREE.MeshBasicMaterial()); somb.castShadow = true; somb.receiveShadow = false; somb.layers.set(1); somb.userData.ns = 1; somb.userData.noExport = 1; somb.name = 'Sombra do relevo'; Gr.add(somb);
+    sun.shadow.camera.layers.enable(1); }
   // colisor leve (arrastar personagens, duplo clique, caminhar)
   const cs = 4, cc = Math.round((LIM.x1 - LIM.x0) / cs) + 1, cr = Math.round((LIM.z1 - LIM.z0) / cs) + 1;
   const cg = new THREE.PlaneGeometry(LIM.x1 - LIM.x0, LIM.z1 - LIM.z0, cc - 1, cr - 1); cg.rotateX(-Math.PI / 2);
@@ -159,12 +166,12 @@ export function construirMar(Gr: THREE.Group) {
 export function construirAguasEcaminhos(Gr: THREE.Group) {
   const agua = new THREE.MeshStandardMaterial({ color: 0x143840, roughness: 0.14, metalness: 0.05, envMapIntensity: 0.7, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
   const rios = new THREE.Group(); rios.name = 'Rios';
-  PERFIS.forEach(R => { const g = fita(R.pts, i => R.larg[i] * 2.1, (_x, _z, i) => R.y[i] - 0.08); const m = new THREE.Mesh(g, agua); m.receiveShadow = true; m.userData.ns = 1; rios.add(m); });
+  { const m = new THREE.Mesh(mergeGeometries(PERFIS.map(R => fita(R.pts, i => R.larg[i] * 2.1, (_x, _z, i) => R.y[i] - 0.08)))!, agua); m.receiveShadow = true; m.userData.ns = 1; rios.add(m); }
   Gr.add(rios);
   const terra = pbr('dry_ground_rocks', { size: 3, color: 0x8a7458 }).clone(); terra.polygonOffset = true; terra.polygonOffsetFactor = -4; terra.polygonOffsetUnits = -4;
   const trilhaM = pbr('dry_ground_rocks', { size: 3, color: 0xa08a68 }).clone(); trilhaM.polygonOffset = true; trilhaM.polygonOffsetFactor = -4; trilhaM.polygonOffsetUnits = -4;
   const ruas = new THREE.Group(); ruas.name = 'Estradas';
-  const add = (gs: THREE.BufferGeometry[], m: THREE.Material) => gs.forEach(g => { const me = new THREE.Mesh(g, m); me.receiveShadow = true; me.userData.ns = 1; ruas.add(me); });
+  const add = (gs: THREE.BufferGeometry[], m: THREE.Material) => { const me = new THREE.Mesh(mergeGeometries(gs)!, m); me.receiveShadow = true; me.userData.ns = 1; ruas.add(me); };
   add(ESTRADAS.map(r => fita(r, 0.62, (x, z) => yRua(x, z, 0.06))), terra);
   add(TRILHAS.map(r => fita(r, 0.36, (x, z) => yRua(x, z, 0.05))), trilhaM);
   Gr.add(ruas);
@@ -193,11 +200,9 @@ export function construirFronteiras(Gr: THREE.Group) {
     if (cur.length > 1) trechos.push(cur);
     const nucleo = new THREE.MeshBasicMaterial({ color: new THREE.Color(c[0], c[1], c[2]), transparent: true, opacity: 0.92, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -6, polygonOffsetUnits: -6 });
     const brilho = new THREE.MeshBasicMaterial({ color: new THREE.Color(c[0] * 0.6, c[1] * 0.6, c[2] * 0.6), transparent: true, opacity: 0.28, depthWrite: false, blending: THREE.AdditiveBlending, polygonOffset: true, polygonOffsetFactor: -5, polygonOffsetUnits: -5 });
-    for (const t of trechos) {
-      const s = suaviza(t, 0.6, 0.9), alt = (x: number, z: number) => Math.max(Y(x, z), 0) + 0.32;
-      const a = new THREE.Mesh(fita(s, 0.5, alt), nucleo), b = new THREE.Mesh(fita(s, 2.4, (x, z) => alt(x, z) - 0.05), brilho);
-      a.renderOrder = 3; b.renderOrder = 2; a.userData.ns = b.userData.ns = 1; a.userData.noExport = b.userData.noExport = 1; grupo.add(a, b);
-    }
+    const alt = (x: number, z: number) => Math.max(Y(x, z), 0) + 0.32, ss = trechos.map(t => suaviza(t, 0.6, 0.9));
+    const a = new THREE.Mesh(mergeGeometries(ss.map(s => fita(s, 0.5, alt)))!, nucleo), b = new THREE.Mesh(mergeGeometries(ss.map(s => fita(s, 2.4, (x, z) => alt(x, z) - 0.05)))!, brilho);
+    a.renderOrder = 3; b.renderOrder = 2; a.userData.ns = b.userData.ns = 1; a.userData.noExport = b.userData.noExport = 1; grupo.add(a, b);
   }
   Gr.add(grupo);
   return grupo;
