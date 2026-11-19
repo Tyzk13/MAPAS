@@ -12,7 +12,8 @@ THREE.ShaderChunk.fog_pars_vertex = /* glsl */ `
 THREE.ShaderChunk.fog_vertex = /* glsl */ `
 #ifdef USE_FOG
   vFogDepth = - mvPosition.z;
-  vFogWorld = (inverse(viewMatrix) * mvPosition).xyz;
+  // viewMatrix é rotação + translação: a inversa é a transposta (bem mais barato que inverse())
+  vFogWorld = transpose(mat3(viewMatrix)) * (mvPosition.xyz - viewMatrix[3].xyz);
 #endif`;
 THREE.ShaderChunk.fog_pars_fragment = /* glsl */ `
 #ifdef USE_FOG

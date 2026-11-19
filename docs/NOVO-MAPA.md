@@ -62,8 +62,12 @@ export async function build(M: MapRuntime) {
 Em `src/maps/manifest.ts`, uma linha:
 
 ```ts
-meuMapa: { id: 'meuMapa', n: 'Meu mapa', build: async M => (await import('./meu-mapa')).build(M) },
+meuMapa: { id: 'meuMapa', sis: 'Tormenta 20', n: 'Meu mapa', build: async M => (await import('./meu-mapa')).build(M) },
 ```
+
+`sis` agrupa o menu de mapas por sistema de RPG. Para o painel **Locais** (fichas do mestre), preencha
+`M.locais` (tipo `LocalInfo`: texto público, dono, NPCs, rumores, pistas, segredos, `vista`/`dentro`, `area` para o
+duplo clique e `marca` para o marcador) e `M.fichas` (`NpcInfo`). Modelo: `src/maps/barud/dados.ts` + `index.ts`.
 
 Pronto: o botão **Mapa** passa a alternar para ele, e `?map=meuMapa` abre direto nele. O
 `postMessage({cmd:'map', id:'meuMapa'})` também funciona.
@@ -93,6 +97,15 @@ Animação por quadro: `M.tick = (dt, t) => { … }`. Efeitos de shader usam `an
 pelo núcleo). Nas capturas automáticas o tempo é fixo, para as imagens serem comparáveis.
 
 ## Unidades e convenções
+
+- As **vistas** (`M.views`) também aparecem como tomadas no painel **Cinema**; dê vistas bem enquadradas, com `fov`.
+  A **primeira** vista é onde o mapa abre.
+- **Documentos legíveis**: `M.docs = [{ o: malha, n: 'Nome' }]` (planos com textura de canvas) — clicar abre
+  ampliado e o mestre pode mostrar aos jogadores (`src/core/docs.ts`). Dê `pt` (tradução/nota) e `onde` (local)
+  para a lista Mestre → Pistas do mapa.
+- **Notas do mestre**: `M.notas = { 'Nome da vista': 'texto' }` — cartão só na janela do mestre.
+- `M.walk` (chão) e `M.solid()` (paredes) são usados pelo Cinema para escolher o ponto clicado e evitar que a
+  câmera atravesse paredes; mantenha os dois corretos e baratos (caixas simples servem).
 
 - 1 unidade = 1 metro = 1 quadrado da grade. O chão fica em y = 0; frente do mapa = +z.
 - Intensidades de luz em unidades físicas (candelas para luzes pontuais, decaimento 2).

@@ -24,3 +24,8 @@ tree_small_02 30000 8000 5000 1500
 jacaranda_tree 36000 9000 6000 1800
 fir_tree_01 90000 15000 15000 3000
 LIST
+
+# floresta distante: 3º nível (bem leve) só para o abeto
+"$B" -b --python tools/blender/desbastar_arvore.py -- assets-src/models/fir_tree_01/fir_tree_01.gltf assets-src/thin/fir_tree_01_lod2.glb 3600 900 > assets-src/thin/fir_tree_01_lod2.log 2>&1
+npx gltf-transform optimize assets-src/thin/fir_tree_01_lod2.glb src/assets/models/fir_tree_01_lod2.glb --compress meshopt --texture-compress webp --texture-size 256 --simplify false --join true --instance false >/dev/null
+echo "✓ fir_tree_01_lod2"

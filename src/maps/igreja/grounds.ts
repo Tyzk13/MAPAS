@@ -43,7 +43,7 @@ export function groundH(x: number, z: number) {
 export async function buildGrounds(G: THREE.Group, F: Flowers, views: View[] = []): Promise<Grounds> {
   sd = 41;
   // densidade por qualidade: mato, floresta (quantidade e distância do LOD), sombra da vegetação
-  const Q = { baixa: { grass: 80, blades: 7000, forest: 70, lod: 40, vegShadow: false, ferns: 2 }, media: { grass: 250, blades: 32000, forest: 110, lod: 46, vegShadow: true, ferns: 5 }, alta: { grass: 500, blades: 80000, forest: 140, lod: 60, vegShadow: true, ferns: 7 } }[CFG.quality];
+  const Q = { baixa: { grass: 80, blades: 7000, forest: 70, lod: 0, vegShadow: false, ferns: 2 }, media: { grass: 250, blades: 32000, forest: 110, lod: 0, vegShadow: true, ferns: 5 }, alta: { grass: 500, blades: 80000, forest: 140, lod: 60, vegShadow: true, ferns: 7 } }[CFG.quality];
   const solids: THREE.Object3D[] = [], floors: THREE.Object3D[] = [], lightsVtt: Grounds['lightsVtt'] = [];
   const O = new THREE.Group(); O.name = 'exterior'; G.add(O);
   const lights = K.M.lights;
@@ -73,13 +73,13 @@ export async function buildGrounds(G: THREE.Group, F: Flowers, views: View[] = [
     if (!free(x, z, 1) || inner.some(t => Math.hypot(t.x - x, t.z - z) < 6.5)) continue;
     inner.push({ x, z, id: innerIds[(rnd() * innerIds.length) | 0], s: 1.15 + rnd() * 0.45, r: rnd() * 6.28 });
   }
-  const forest: { x: number; z: number; id: string; v: number; s: number; r: number; far: boolean }[] = [];
+  const forest: { x: number; z: number; id: string; v: number; s: number; r: number; tier: string }[] = [];
   for (let i = 0; i < 2500 && forest.length < Q.forest; i++) {
     const a = rnd() * Math.PI * 2, rr = 36 + Math.pow(rnd(), 0.8) * 70, x = Math.cos(a) * rr * 1.05, z = 8 + Math.sin(a) * rr * 1.15;
     if (Math.abs(x) < FENCE.x + 4 && z > FENCE.z0 - 4 && z < FENCE.z1 + 4) continue;
     if (Math.abs(x) < 9 && z > FENCE.z1) continue; // abertura da estrada de acesso
     if (forest.some(t => Math.hypot(t.x - x, t.z - z) < 5) || inCorridor(x, z)) continue;
-    forest.push({ x, z, id: 'fir_tree_01', v: (rnd() * 3) | 0, s: 0.85 + rnd() * 0.4, r: rnd() * 6.28, far: rr > Q.lod });
+    forest.push({ x, z, id: 'fir_tree_01', v: (rnd() * 3) | 0, s: 0.85 + rnd() * 0.4, r: rnd() * 6.28, tier: rr < Q.lod ? '' : rr < 68 ? '_lod1' : '_lod2' });
   }
   const underTree = (x: number, z: number) => {
     let m = 0;
@@ -316,13 +316,13 @@ export async function buildGrounds(G: THREE.Group, F: Flowers, views: View[] = [
   // ---------- árvores ----------
   { const byId: Record<string, Xf[]> = {};
     inner.forEach(t => (byId[t.id] ||= []).push({ x: t.x, y: groundH(t.x, t.z) - 0.05, z: t.z, ry: t.r, s: t.s }));
-    for (const [id, L] of Object.entries(byId)) (await instance(id, L, O, { wind: WIND.tree })).forEach(m => (m.userData.canopy = 1));
+    for (const [id, L] of Object.entries(byId)) (await instance(id, L, O, { wind: WIND.tree, tile: 25 })).forEach(m => (m.userData.canopy = 1));
     const fb: Record<string, Xf[]> = {};
-    forest.forEach(t => { const k = (t.far ? t.id + '_lod1' : t.id) + '#' + t.v; (fb[k] ||= []).push({ x: t.x, y: groundH(t.x, t.z) - 0.1, z: t.z, ry: t.r, s: t.s }); });
+    forest.forEach(t => { const k = t.id + t.tier + '#' + t.v; (fb[k] ||= []).push({ x: t.x, y: groundH(t.x, t.z) - 0.1, z: t.z, ry: t.r, s: t.s }); });
     for (const [k, L] of Object.entries(fb)) {
       const [id, v] = k.split('#');
-      const mid = hasModel(id) ? id : id.replace('_lod1', '');
-      (await instance(mid, L, O, { variant: +v, shadow: !id.includes('lod1'), wind: WIND.fir })).forEach(m => (m.userData.canopy = 1));
+      const mid = hasModel(id) ? id : id.replace(/_lod\d$/, '');
+      (await instance(mid, L, O, { variant: +v, shadow: false, wind: WIND.fir, tile: 35 } /* floresta fora da cerca: sombra cairia fora do terreno */)).forEach(m => (m.userData.canopy = 1));
     }
     // tronco morto, tocos e raízes
     await instance('dead_tree_trunk', [{ x: -24, y: 0, z: 22, ry: 1, s: 1.4 }, { x: 23.5, y: 0, z: -14, ry: 2.4, s: 1.2 }, { x: -6, y: 0, z: -21, ry: 0.4, s: 1.0 }], O).catch(() => {});
@@ -335,20 +335,20 @@ export async function buildGrounds(G: THREE.Group, F: Flowers, views: View[] = [
     const sk = Object.keys(shrubs);
     for (let z = FENCE.z0 + 1; z < FENCE.z1; z += 1.6) [-1, 1].forEach(s => { if (rnd() < 0.75) shrubs[sk[(rnd() * 4) | 0]].push({ x: s * (FENCE.x - 0.9) + (rnd() - 0.5) * 0.6, y: 0, z: z + (rnd() - 0.5), ry: rnd() * 6, s: 0.9 + rnd() * 0.7 }); });
     for (let x = -FENCE.x + 1; x < FENCE.x; x += 1.6) if (rnd() < 0.75) shrubs[sk[(rnd() * 4) | 0]].push({ x, y: 0, z: FENCE.z0 + 0.9 + (rnd() - 0.5) * 0.5, ry: rnd() * 6, s: 0.9 + rnd() * 0.7 });
-    for (const [id, L] of Object.entries(shrubs)) await instanceVariants(id, L, O, { shadow: Q.vegShadow, wind: WIND.shrub }).catch(() => {});
+    for (const [id, L] of Object.entries(shrubs)) await instanceVariants(id, L, O, { shadow: Q.vegShadow, wind: WIND.shrub, tile: 20, cullDist: 80 }).catch(() => {});
     // cerca-viva baixa ao longo das laterais da igreja
     const hedge: Xf[] = [];
     [-1, 1].forEach(s => { for (let z = -NZ + 0.5; z < NZ - 1; z += 0.9) hedge.push({ x: s * (NX + WT + 1.45), y: 0, z, ry: rnd() * 6, s: 0.55 + rnd() * 0.15 }); });
     for (let x = -4.5; x <= 4.5; x += 0.9) hedge.push({ x, y: 0, z: -NZ - WT - 1.4, ry: rnd() * 6, s: 0.6 });
-    await instance('moss_01', hedge, O, { wind: { amp: 0.02, freq: 1.1, flutter: 0.006 } }).catch(() => {});
+    await instance('moss_01', hedge, O, { wind: { amp: 0.02, freq: 1.1, flutter: 0.006 }, cullDist: 90 }).catch(() => {});
     // samambaias e urtigas sob as árvores; mato no gramado
     const ferns: Xf[] = [], nettles: Xf[] = [], grass: Xf[] = [], rocks: Xf[] = [];
     inner.forEach(t => { for (let i = 0; i < Q.ferns; i++) { const a = rnd() * 6.28, r = 1 + rnd() * 3; (rnd() < 0.6 ? ferns : nettles).push({ x: t.x + Math.cos(a) * r, y: groundH(t.x, t.z), z: t.z + Math.sin(a) * r, ry: rnd() * 6, s: 0.8 + rnd() * 0.8 }); } });
     for (let i = 0; i < 6000 && grass.length < Q.grass; i++) { const x = (rnd() - 0.5) * 2 * (FENCE.x - 1), z = FENCE.z0 + 1 + rnd() * (FENCE.z1 - FENCE.z0 - 2); if (!free(x, z, -3.5) && !(Math.abs(x) > 4 && Math.abs(x) < 9 && z > 13)) continue; if (Math.abs(x) < 2.6 && z > 11) continue; grass.push({ x, y: groundH(x, z) - 0.02, z, ry: rnd() * 6, s: 0.6 + rnd() * 0.7 }); }
     for (let i = 0; i < 14; i++) { const a = rnd() * 6.28, r = 30 + rnd() * 25; rocks.push({ x: Math.cos(a) * r, y: groundH(Math.cos(a) * r, 8 + Math.sin(a) * r) - 0.1, z: 8 + Math.sin(a) * r, ry: rnd() * 6, s: 0.8 + rnd() * 1.2 }); }
-    await instanceVariants('fern_02', ferns, O, { shadow: Q.vegShadow, wind: WIND.low }).catch(() => {});
-    await instanceVariants('nettle_plant', nettles, O, { shadow: Q.vegShadow, wind: WIND.low }).catch(() => {});
-    await instanceVariants('grass_medium_01', grass, O, { shadow: false, wind: WIND.grass }).catch(() => {});
+    await instanceVariants('fern_02', ferns, O, { shadow: Q.vegShadow, wind: WIND.low, tile: 15, cullDist: 50 }).catch(() => {});
+    await instanceVariants('nettle_plant', nettles, O, { shadow: Q.vegShadow, wind: WIND.low, tile: 15, cullDist: 50 }).catch(() => {});
+    await instanceVariants('grass_medium_01', grass, O, { shadow: false, wind: WIND.grass, tile: 15, cullDist: 45 }).catch(() => {});
     await instanceVariants('rock_moss_set_01', rocks, O).catch(() => {});
     await instance('boulder_01', [{ x: -25, y: 0, z: 36, ry: 1, s: 1 }, { x: 24, y: 0, z: -22, ry: 2, s: 1.2 }], O).catch(() => {});
   }

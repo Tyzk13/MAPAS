@@ -43,8 +43,8 @@ export class Flowers {
       const im = new THREE.InstancedMesh(geo, mat, arr.length); arr.forEach((m, i) => im.setMatrixAt(i, m));
       im.castShadow = shadow; im.receiveShadow = true; im.computeBoundingSphere(); parent.add(im);
     };
-    mk(roseGeometry(), new THREE.MeshStandardMaterial({ color: 0xf1ece2, roughness: 0.75, side: THREE.DoubleSide, envMapIntensity: 0.5 }), this.roses, true);
-    mk(leafGeometry(), new THREE.MeshStandardMaterial({ color: 0x2c3a26, roughness: 0.7, side: THREE.DoubleSide, envMapIntensity: 0.5 }), this.leaves, true);
+    mk(roseGeometry(), new THREE.MeshStandardMaterial({ color: 0xf1ece2, roughness: 0.75, side: THREE.DoubleSide, envMapIntensity: 0.5 }), this.roses, false);
+    mk(leafGeometry(), new THREE.MeshStandardMaterial({ color: 0x2c3a26, roughness: 0.7, side: THREE.DoubleSide, envMapIntensity: 0.5 }), this.leaves, false);
     mk(looseePetalGeometry(), new THREE.MeshStandardMaterial({ color: 0xeee8de, roughness: 0.8, side: THREE.DoubleSide }), this.petals, false);
   }
 }
