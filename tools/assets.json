@@ -33,7 +33,10 @@
     "asphalt_02": "1k",
     "rusty_corrugated_iron": "1k",
     "grey_roof_01": "1k",
-    "withered_grass": "1k"
+    "withered_grass": "1k",
+    "aerial_grass_rock": "1k",
+    "marble_cliff_05": "1k",
+    "snow_02": "1k"
   },
   "hdris": {
     "overcast_soil_puresky": "1k",

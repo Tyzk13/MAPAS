@@ -280,6 +280,7 @@ canvas.lupa{cursor:zoom-in}
 #locais .ficha .acoes{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
 #locais .ficha .acoes button{background:#5a1a22;border-color:#8a3a3a}
 #locais .chips{display:flex;flex-wrap:wrap;gap:4px}
+#locais ul.dist{list-style:none;padding:0;margin:0 0 6px}#locais ul.dist li{display:flex;justify-content:space-between;gap:8px;align-items:baseline;border-bottom:1px dotted #4a3c2c;padding:3px 0}#locais ul.dist button{background:none;border:0;padding:0;color:#e0bd6e;text-align:left}#locais ul.dist span{font-size:11.5px;color:#b8ab95;text-align:right}
 #locais .ler{background:#221b15;border-left:3px solid #c9a45c;border-radius:6px;padding:8px 10px;font-style:italic;color:#efe4cf}
 #locais .tit{font:600 10px system-ui;text-transform:uppercase;letter-spacing:.1em;color:#c9a45c;font-style:normal;margin-bottom:4px}
 #locais .segredo{margin-top:14px;background:#2a0f12;border:1px solid #6a2a2a;border-radius:8px;padding:8px 10px}

@@ -46,7 +46,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/core/importer.ts` | 44 | 2 KB |
 | `src/core/kit.ts` | 160 | 11 KB |
 | `src/core/loading.ts` | 39 | 2 KB |
-| `src/core/locais.ts` | 142 | 12 KB |
+| `src/core/locais.ts` | 165 | 14 KB |
 | `src/core/maps.ts` | 76 | 3 KB |
 | `src/core/menu.ts` | 60 | 3 KB |
 | `src/core/merge.ts` | 52 | 3 KB |
@@ -62,7 +62,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/core/state.ts` | 26 | 1 KB |
 | `src/core/terrain.ts` | 99 | 5 KB |
 | `src/core/tokens.ts` | 235 | 14 KB |
-| `src/core/types.ts` | 79 | 4 KB |
+| `src/core/types.ts` | 83 | 4 KB |
 | `src/core/vtt.ts` | 105 | 7 KB |
 | `src/core/walk.ts` | 229 | 12 KB |
 | `src/core/weathering.ts` | 46 | 2 KB |
@@ -71,6 +71,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/maps/barud/common.ts` | 149 | 9 KB |
 | `src/maps/barud/dados.ts` | 362 | 50 KB |
 | `src/maps/barud/edificios.ts` | 415 | 37 KB |
+| `src/maps/barud/floresta.ts` | 392 | 30 KB |
 | `src/maps/barud/index.ts` | 287 | 22 KB |
 | `src/maps/barud/mobilia.ts` | 216 | 14 KB |
 | `src/maps/campo.ts` | 53 | 4 KB |
@@ -90,7 +91,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/maps/igreja/grounds.ts` | 369 | 30 KB |
 | `src/maps/igreja/index.ts` | 162 | 9 KB |
 | `src/maps/igreja/interior.ts` | 246 | 18 KB |
-| `src/maps/manifest.ts` | 14 | 1 KB |
+| `src/maps/manifest.ts` | 15 | 1 KB |
 | `src/maps/mexico/common.ts` | 177 | 11 KB |
 | `src/maps/mexico/index.ts` | 176 | 10 KB |
 | `src/maps/mexico/landmarks.ts` | 503 | 46 KB |
@@ -108,7 +109,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/maps/texas/onibus.ts` | 88 | 6 KB |
 | `src/maps/texas/pistas.ts` | 111 | 28 KB |
 | `src/maps/texas/police.ts` | 442 | 58 KB |
-| `src/style.css` | 296 | 24 KB |
+| `src/style.css` | 297 | 24 KB |
 | `src/vite-env.d.ts` | 2 | 0 KB |
 | `tools/_grid.mjs` | 7 | 1 KB |
 | `tools/arvores.sh` | 32 | 2 KB |
@@ -203,7 +204,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `bar` 5 · `txt` 6 · `draw` 8 · `loading` 16 · `waitTextures()` 19 · `error()` 29
 
 ### `src/core/locais.ts`
-`esc` 15 · `L` 16 · `norm` 17 · `silhueta` 20 · `initLocais` 24 · `atualizarBotao` 50 · `alternar` 51 · `abrir` 52 · `fechar` 53 · `desenhar` 55 · `lista` 92 · `par` 93 · `segredo` 94 · `ficha` 98 · `loopMarcas` 126
+`esc` 17 · `L` 18 · `norm` 19 · `silhueta` 22 · `initLocais` 26 · `atualizarBotao` 52 · `alternar` 53 · `abrir` 54 · `fechar` 55 · `desenhar` 57 · `lista` 96 · `par` 97 · `segredo` 98 · `ficha` 102 · `distancias` 129 · `levarGrupo` 136 · `loopMarcas` 149
 
 ### `src/core/maps.ts`
 `newRuntime` 15 · `disposeTree` 25 · `mapHooks` 34 · `loadMap` 36 · `u` 54
@@ -251,7 +252,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `silhueta` 12 · `jog` 19 · `TokenDef` 21 · `Token` 24 · `DEF` 35 · `pick` 42 · `tempoFichas` 45 · `vivo` 50 · `K` 69 · `sizeT` 71 · `placeT` 77 · `makeToken` 85 · `dropT` 106 · `selT` 112 · `setTarget` 117 · `focusT` 121 · `save` 127 · `onPos` 133 · `onChar` 143 · `wk` 149 · `helpers` 154 · `setM` 156 · `freeSpot` 161 · `busy` 163 · `initTokenInput` 172 · `end` 197 · `tickTokens` 217 · `snapTokens` 234
 
 ### `src/core/types.ts`
-`View` 4 · `Layer` 5 · `VttData` 8 · `MapLight` 17 · `MapRuntime` 20 · `LocalInfo` 60 · `NpcInfo` 67 · `MapModule` 72
+`View` 4 · `Layer` 5 · `VttData` 8 · `MapLight` 17 · `MapRuntime` 20 · `LocalInfo` 62 · `NpcInfo` 71 · `MapModule` 76
 
 ### `src/core/vtt.ts`
 `fillAreas` 8 · `xcalc` 12 · `xinfo` 19 · `xrender` 21 · `clipPolyline` 50 · `push` 52 · `dd2vtt` 71 · `inb` 73 · `P` 74 · `dl` 88 · `initVtt` 94 · `opt` 98
@@ -276,6 +277,9 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 
 ### `src/maps/barud/edificios.ts`
 `Vao` 16 · `Predio` 17 · `Construido` 28 · `MATRIZ` 29 · `SPEC` 30 · `mundo` 32 · `retDe` 34 · `PREDIOS` 41 · `corDe` 65 · `parede` 67 · `seg` 70 · `construirPredio` 85 · `W` 91 · `luzI` 195 · `mobiliar` 197 · `W` 199 · `construirFortaleza` 391 · `mur` 400
+
+### `src/maps/barud/floresta.ts`
+`TRILHA` 18 · `FORCA` 19 · `CABANA` 20 · `CLAREIRA` 21 · `AREAS` 22 · `MARCAS` 28 · `naTrilha` 39 · `distTrilha` 41 · `distSeg` 49 · `mataMask` 54 · `vistasMata` 63 · `mortaGeo` 76 · `tubo` 81 · `pinheiroEscuro` 112 · `cranio` 137 · `Floresta` 149 · `construirFloresta` 151 · `coluna` 156 · `livre` 197 · `perto` 206 · `espalha` 235 · `vai` 249 · `placa` 286
 
 ### `src/maps/barud/index.ts`
 `retrato` 21 · `P3` 23 · `build` 25 · `barraca` 53 · `escolher` 112 · `tokId` 178 · `mundoXYZ` 247 · `silhuetaPng` 250 · `cartaz` 259 · `desenhar` 262 · `aviso` 278

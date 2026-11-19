@@ -9,5 +9,6 @@ export const MAPS: Record<string, MapModule> = {
   texas: { id: 'texas', sis: OP, n: 'Harlow (Texas)', build: async M => (await import('./texas/index')).build(M) },
   canada: { id: 'canada', sis: OP, n: 'Greywater Falls (Canadá, 1975)', build: async M => (await import('./canada/index')).build(M) },
   barud: { id: 'barud', sis: T20, n: 'Barud (Lomatubar)', build: async M => (await import('./barud/index')).build(M) },
+  arton: { id: 'arton', sis: T20, n: 'Sul de Arton (mapa da região)', build: async M => (await import('./arton/index')).build(M) },
   campo: { id: 'campo', sis: OP, n: 'Campo aberto', build: async M => (await import('./campo')).build(M) },
 };

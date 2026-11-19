@@ -51,6 +51,9 @@ Ferramentas usadas só no preparo (não distribuídas): Blender (GPL), gltf-tran
 | Rusty Corrugated Iron (`rusty_corrugated_iron`) | textura | Charlotte Baglioni | CC0 | https://polyhaven.com/a/rusty_corrugated_iron |
 | Grey Roof 01 (`grey_roof_01`) | textura | Rob Tuytel | CC0 | https://polyhaven.com/a/grey_roof_01 |
 | Withered Grass (`withered_grass`) | textura | Charlotte Baglioni | CC0 | https://polyhaven.com/a/withered_grass |
+| Aerial Grass Rock (`aerial_grass_rock`) | textura | Rob Tuytel | CC0 | https://polyhaven.com/a/aerial_grass_rock |
+| Marble Cliff 05 (`marble_cliff_05`) | textura | Amal Kumar | CC0 | https://polyhaven.com/a/marble_cliff_05 |
+| Snow 02 (`snow_02`) | textura | Rob Tuytel | CC0 | https://polyhaven.com/a/snow_02 |
 | Overcast Soil (Pure Sky) (`overcast_soil_puresky`) | HDRI | Jarod Guest, Sergej Majboroda | CC0 | https://polyhaven.com/a/overcast_soil_puresky |
 | Kloppenheim 07 (Pure Sky) (`kloppenheim_07_puresky`) | HDRI | Greg Zaal, Jarod Guest | CC0 | https://polyhaven.com/a/kloppenheim_07_puresky |
 | Qwantani Dusk 2 (Pure Sky) (`qwantani_dusk_2_puresky`) | HDRI | Greg Zaal, Jarod Guest | CC0 | https://polyhaven.com/a/qwantani_dusk_2_puresky |
