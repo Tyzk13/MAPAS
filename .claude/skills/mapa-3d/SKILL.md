@@ -15,6 +15,11 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
   **Graphify**: `Tyzk13/MAPAS` está indexado e o índice segue a **`main`** (reindexa a cada push nela). Confira o
   `commitSha` do resultado com `git rev-parse HEAD`; o que só existe na sua branch, leia direto do arquivo. Ao fim de
   cada rodada, abra um pull request da branch para a `main` (o dono aprova) para o índice acompanhar.
+  Teste medido (nov/2026): `graphify_impact` em função muito usada (`docPlane`, 6 arquivos) custou ~3,3 mil
+  caracteres contra ~10,5 mil do grep e ~49 mil do grep + leitura em volta (−70 a −93%); em função com 1 uso
+  (`fatorLuzes`) o grep puro (~300) saiu mais barato que o Graphify (~1,2 mil). Regra: grep para 1–2 usos,
+  Graphify para "quem usa / o que quebra" em funções compartilhadas. Ele pode trazer ligação inferida falsa
+  (conf 0.5): confie nas de `resolution: typed`.
 
 **Tudo o que aprender (erro, truque, decisão do dono) vai para esta skill no mesmo commit.**
 
