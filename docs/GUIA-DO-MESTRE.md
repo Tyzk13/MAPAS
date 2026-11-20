@@ -137,6 +137,22 @@ camadas): Nomes, Alfinetes, Fronteiras, Rotas de viagem e Marcos de altitude. No
 - **Distâncias** em linha reta, em km e dias de viagem (a pé ~30 km/dia, a cavalo ~50 km/dia; 1 unidade = 2 km).
 Arrastar um personagem mostra a distância em km e dias. As placas nas rotas tracejadas trazem o caminho pela estrada.
 
+**As cidades por dentro** (chegue perto com a roda do mouse: alfinetes e rotas ficam transparentes para não tapar):
+- **Barud**: a mesma planta do mapa da cidade — Portão do Rei (sul) e Portão Leste, Via Real, Rua das Lanternas,
+  canal com cais e pontes, Praça do Mercado com o poço, Fortaleza no alto, Templo de Lena, quartel da legião, tavernas
+  do Javali e da Lanterna, forja de Durnak e o **Bairro Coral** atrás das barricadas, com o lazareto em ruínas.
+- **Valkaria**: a deusa na praça do Panteão (20 estátuas e chafarizes), avenidas iluminadas até os cinco portões,
+  bulevares em anel, Palácio Imperial, **Academia Arcana** (torre de luz violeta), **Arena Imperial**, Grande Mercado,
+  jardins, torres dos nobres com viadutos, o rio com cais e pontes, barracos fora dos muros, lavouras e moinhos.
+- **Giluk**: terraços na encosta com muros de arrimo, escadaria, **Salão do Jarl** com cabeças de dragão, círculo de
+  runas com totem e braseiros, forja, paliçada com torres de vigia, curral dos mamutes e varais de peles.
+- **Nova Malpetrim**: cidade branca na falésia, Mirante com o templo, **Macaco Caolho**, feira de Marah, Arena de
+  Gideon, circo dos Thiannate, escadaria até o porto com píeres, navios, armazéns e guindastes; vinhedos ao norte.
+- **Tiberus**: castro tapista em grade, **fórum com o Templo de Tauron e o colosso minotauro**, basílica, arena,
+  quartéis com campo de treino, termas, aqueduto e os minotauros de pedra no portão sul.
+- **Nimbarann**, **Porto de Deheon** e as vilas: ruas de terra, igreja ou capela, poço, hortas atrás das casas,
+  lavouras, **moinhos que giram**, pomares, vinhedos (oeste), aldeias de neve com fogueira e vilas de pescadores.
+
 ### Desempenho (para o PC não travar enquanto mestra)
 Menu **⋯ → Desempenho** (fica salvo neste navegador, muda na hora, sem recarregar):
 - **30 /s · 60 /s · Livre**: limite de quadros por segundo. O padrão é 60 (um monitor de 144 Hz não precisa

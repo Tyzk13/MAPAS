@@ -1,5 +1,22 @@
 # Changelog
 
+## Sul de Arton: cidades com planta de verdade
+
+- Cada cidade tem ruas calçadas, muralha ou paliçada que segue o relevo (torres, **portões onde as estradas chegam**,
+  arcos sobre o rio), praças, bairros e prédios com nome; as casas ficam **viradas para a rua** (geminadas e de dois
+  andares no centro, soltas na periferia), com portas, janelas acesas à noite, enxaimel, chaminés com fumaça e toldos.
+- **Barud** segue o mapa detalhado (Via Real, Lanternas, canal com cais e pontes, Praça do Mercado, Fortaleza, Templo
+  de Lena, quartel, Javali, Lanterna, forja, Bairro Coral com barricadas e o lazareto).
+- **Valkaria** (praça do Panteão, avenidas, bulevares, palácio, Academia Arcana, Arena Imperial, mercado, jardins, rio
+  com cais e pontes, barracos fora dos muros), **Giluk** (terraços, Salão do Jarl, círculo de runas, forja),
+  **Nova Malpetrim** (falésia, Mirante, Macaco Caolho, feira, arena, circo, porto com navios), **Tiberus** (fórum,
+  Templo de Tauron, colosso, arena, quartéis, termas, aqueduto), **Nimbarann**, **Porto de Deheon** e as vilas
+  (igreja/capela, poço, hortas, lavouras, **moinhos que giram**, pomares, vinhedos, aldeias de neve, pescadores).
+- As estradas param no portão e a cidade continua com as próprias ruas; chão de terra batida dentro das cidades; árvores
+  e caravanas respeitam os muros; o rio de Valkaria passa ao lado da deusa (antes cortava a estátua).
+- **Alfinetes e rotas ficam transparentes quando a câmera chega perto** (não tapam mais a cidade).
+- Os detalhes miúdos somem de longe; vista geral (qualidade baixa): 498 chamadas e 614 mil triângulos.
+
 ## Desempenho: mestrar sem travar o PC
 
 - Menu **⋯ → Desempenho** (vale para todos os mapas, salvo no navegador, muda na hora):

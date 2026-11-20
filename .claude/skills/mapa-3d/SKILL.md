@@ -455,6 +455,31 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
 - Fontes web num canvas: carregue o CSS (link criado pelo próprio mapa), espere `document.fonts.load(...)` e
   **redesenhe** os canvases (nomes/moldura) quando chegarem; não bloqueie o carregamento do mapa.
 
+### Cidades do mapa regional (`cidades-kit.ts` + `cidades.ts`, nov/2026)
+- **Pedido do dono**: "faça as cidades com o cuidado de Barud, com detalhes dentro e não só casas jogadas". Cidade boa
+  = **planta** (ruas que levam a algum lugar, bairros, praças) + **prédios com nome** + casas **viradas para a rua**.
+  Espalhar casas num círculo parece um punhado de dados; nunca mais faça isso.
+- Ordem que funciona: (1) muralha/paliçada com portões **onde as estradas cruzam o contorno** (`portoes(m)`);
+  (2) reservar os marcos (`c.reservar`, `c.bloquear`) — castelo, templo, praça, arena; (3) registrar as ruas
+  (`c.rua`: desenha a fita e guarda os segmentos); (4) `casasNaRua` (lotes dos dois lados, frente para a rua, teste de
+  caixa orientada contra casas e ruas); (5) `preencher` os fundos de quarteirão alinhando com a rua mais perto.
+- Contornos das cidades em `geo.ts` (`MUROS`, `dentroMuro`, `cidadeEm`): as estradas são **cortadas no portão**
+  (`recortarNasCidades`, terreno.ts) e dentro a cidade desenha as próprias ruas calçadas; o chão dentro vira terra
+  batida na cor do relevo; árvores (`natureza.ts`) e caravanas (`vida.ts`) respeitam o contorno; `ocupar()` marca
+  lavouras e pomares para as árvores desviarem. O tremor das estradas é atenuado perto das cidades (`pertoDeMuro`),
+  senão a estrada chega ao lado do portão. Para escolher o portão, ponha um ponto de passagem na estrada
+  (Barud: Portão do Rei e Portão Leste, iguais ao mapa detalhado).
+- Duas camadas: `BC` (grosso, com sombra) e `BD` (janelas, portas, ameias, barracas, lampiões, carroças) com
+  `userData.cullDist` — somem de longe. Janelas/portas são **planos** (2 triângulos), não caixas. Telhados feitos à mão
+  (duas ou quatro águas, 6 triângulos) com os oitões no material da parede.
+- Ruas e praças: fitas/grades sobre o relevo, sem sombra, `polygonOffset` −5/−6 (acima das estradas, −4); pontes onde
+  rua cruza rio saem sozinhas (`pontesDaRua`) e a rua sobe para o tabuleiro (`yRuaC`).
+- Moinhos: uma `InstancedMesh` para todas as pás, girando no tick (1 chamada).
+- **Alfinetes e rotas somem de perto** (alfa por distância no shader, `cameraPosition`): sem isso o alfinete gigante
+  tapa a cidade quando o mestre aproxima. Alfinete sem sombra (o shader da sombra não sabe do alfa).
+- Telhado de neve branco puro vira "lençol": tinta azulada, inclinação menor e cumeeira de tronco escura.
+- Custo medido (qualidade baixa, vista geral): 498 chamadas e 614 mil triângulos (antes 429 / 516 mil).
+
 ## Desempenho para o mestre (core/desempenho.ts → `economia`, nov/2026)
 
 - Pedido do dono: "o PC não travar tanto enquanto mestro". O laço (`R.setAnimationLoop`) roda na frequência do

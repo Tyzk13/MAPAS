@@ -7,7 +7,7 @@ import { CFG } from '../../core/config';
 import { mistTex } from '../../core/kit';
 import { cam } from '../../core/engine';
 import { fatorLuzes, type Preset } from '../../core/sky';
-import { type P, W, Y, Ysolo, ESTRADAS, BATALHAS, FAROIS, UIVANTES, LIM, lugar, rnd, reseed } from './geo';
+import { type P, W, Y, Ysolo, ESTRADAS, cidadeEm, BATALHAS, FAROIS, UIVANTES, LIM, lugar, rnd, reseed } from './geo';
 import { tempo } from './terreno';
 
 const Q = CFG.quality;
@@ -103,7 +103,7 @@ function viajantes(Gr: THREE.Group, anim: Anim[]) {
         v.s += v.v * v.dir * Math.min(dt, 0.1); if (v.s > v.tot) { v.s = v.tot; v.dir = -1; } if (v.s < 0) { v.s = 0; v.dir = 1; }
         let i = 1; while (i < v.acc.length - 1 && v.acc[i] < v.s) i++;
         const a = v.rota[i - 1], b = v.rota[i], f = (v.s - v.acc[i - 1]) / Math.max(1e-6, v.acc[i] - v.acc[i - 1]), x = a[0] + (b[0] - a[0]) * f, z = a[1] + (b[1] - a[1]) * f;
-        o.position.set(x, Ysolo(x, z) + 0.05, z); o.rotation.set(0, Math.atan2((b[0] - a[0]) * v.dir, (b[1] - a[1]) * v.dir), 0); o.scale.setScalar(esc); o.updateMatrix(); im.setMatrixAt(k, o.matrix);
+        o.position.set(x, Ysolo(x, z) + 0.05, z); o.rotation.set(0, Math.atan2((b[0] - a[0]) * v.dir, (b[1] - a[1]) * v.dir), 0); o.scale.setScalar(cidadeEm(x, z, 0.3) ? 0.001 : esc); o.updateMatrix(); im.setMatrixAt(k, o.matrix); // dentro dos muros some (a cidade tem as próprias ruas)
       });
       im.instanceMatrix.needsUpdate = true;
     }

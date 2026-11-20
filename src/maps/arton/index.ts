@@ -13,6 +13,7 @@ import { CFG } from '../../core/config';
 import { type P, W, Y, Ysolo, LUGARES, LIM, KM_POR_UNIDADE, UIVANTES, TOLLON, LOMATUBAR, DEHEON, PANTANO, TAIGAS, lugar } from './geo';
 import { construirRelevo, construirMar, construirAguasEcaminhos, construirFronteiras, construirMoldura, tempo } from './terreno';
 import { construirMiniaturas, MM } from './miniaturas';
+import { construirCidades } from './cidades';
 import { construirVida } from './vida';
 import { construirNatureza } from './natureza';
 import { construirSimbolos, altPino } from './simbolos';
@@ -47,6 +48,7 @@ export async function build(M: MapRuntime) {
   const fronteiras = construirFronteiras(mesa);
   construirMoldura(mesa);
   const mini = construirMiniaturas(mesa, M);
+  const cid = construirCidades(mesa, M, mini);
   const nat = construirNatureza(mesa, M);
   const sim = construirSimbolos(mesa);
   const vida = construirVida(mesa);
@@ -172,6 +174,7 @@ export async function build(M: MapRuntime) {
     if (f) pool.forEach((pl, k) => { const r = alvo[k]; if (r && pl.intensity > 0) pl.intensity = r.n * f * (0.86 + 0.14 * Math.sin(t * 11 + k * 7) * Math.sin(t * 6.3 + k)); });
     M.lamps.forEach((m, i) => { const b = m.userData.base; if (b && f) m.color.copy(b).multiplyScalar(f * (0.88 + 0.12 * Math.sin(t * 8 + i * 2.1))); });
     nat.anim.forEach(a => a(t)); inter.anim.forEach(a => a(t));
+    if (!estavaDentro) cid.anim.forEach(a => a(t));
     if (!estavaDentro) vida.anim.forEach(a => a(t, dt));
     MM.coral.emissiveIntensity = 0.45 + 0.35 * Math.sin(t * 0.9) * Math.sin(t * 0.37 + 1); // a Praga pulsa devagar
     cham.forEach((c, i) => { for (let k = 0; k < NP; k++) { const u = (t * 0.1 + fase[i] + k / NP) % 1, j = i * NP + k; fp[j * 3] = c.x + u * 1.2 + Math.sin(t * 0.6 + k) * 0.15; fp[j * 3 + 1] = c.y + u * 3.2; fp[j * 3 + 2] = c.z + u * 0.5; fs[j] = 0.45 + u * 2.1; } });

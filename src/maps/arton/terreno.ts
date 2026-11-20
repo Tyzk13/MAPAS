@@ -7,7 +7,7 @@ import { pbr } from '../../core/pbr';
 import { CFG } from '../../core/config';
 import { sun } from '../../core/sky';
 import {
-  type P, LIM, G, Y, Ysolo, construirGrade, PERFIS, LAGO, ESTRADAS, TRILHAS, UIVANTES, TOLLON, LOMATUBAR, DEHEON,
+  type P, LIM, G, Y, Ysolo, construirGrade, cidadeEm, dentroMuro, PERFIS, LAGO, ESTRADAS, TRILHAS, UIVANTES, TOLLON, LOMATUBAR, DEHEON,
   suaviza, KM_POR_UNIDADE, clamp,
 } from './geo';
 
@@ -72,12 +72,27 @@ function acharPontes() {
       if (!hit && ini >= 0) {
         const m = Math.floor((ini + i - 1) / 2), [x, z] = rua[m], A = rua[Math.max(0, ini - 2)], B = rua[Math.min(rua.length - 1, i + 1)];
         const L = Math.hypot(B[0] - A[0], B[1] - A[1]) + 1.6, y = Math.max(Ysolo(A[0], A[1]), Ysolo(B[0], B[1])) + 0.12;
-        if (!PONTES.some(p => Math.hypot(p.x - x, p.z - z) < 3)) PONTES.push({ x, z, a: Math.atan2(B[0] - A[0], B[1] - A[1]), L: Math.max(L, wmax * 2 + 2.4), y, trilha });
+        if (!cidadeEm(x, z, -1.5) && !PONTES.some(p => Math.hypot(p.x - x, p.z - z) < 3)) PONTES.push({ x, z, a: Math.atan2(B[0] - A[0], B[1] - A[1]), L: Math.max(L, wmax * 2 + 2.4), y, trilha });
         ini = -1; wmax = 0;
       }
     }
   });
   busca(ESTRADAS, false); busca(TRILHAS, true);
+}
+/** estradas cortadas no contorno das cidades (entram 0,4 por baixo do portão; dentro, a cidade desenha as ruas) */
+export function recortarNasCidades(pts: P[]): P[][] {
+  const fora = (p: P) => { const m = cidadeEm(p[0], p[1], -1); return !m || dentroMuro(m, p[0], p[1]) < 0.4; };
+  const out: P[][] = []; let cur: P[] = [];
+  for (let i = 0; i < pts.length; i++) {
+    const p = pts[i], f = fora(p);
+    if (i && f !== fora(pts[i - 1])) { // ponto exato da borda (bissecção)
+      let a = pts[i - 1], b = p; for (let k = 0; k < 12; k++) { const m: P = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]; if (fora(m) === fora(a)) a = m; else b = m; }
+      cur.push(a); if (!f) { if (cur.length > 1) out.push(cur); cur = []; }
+    }
+    if (f) cur.push(p);
+  }
+  if (cur.length > 1) out.push(cur);
+  return out;
 }
 /** altura de estrada: sobe para o tabuleiro perto das pontes */
 function yRua(x: number, z: number, ergue: number) {
@@ -207,7 +222,7 @@ export function construirAguasEcaminhos(Gr: THREE.Group) {
   const trilhaM = pbr('dry_ground_rocks', { size: 3, color: 0xa08a68 }).clone(); trilhaM.polygonOffset = true; trilhaM.polygonOffsetFactor = -4; trilhaM.polygonOffsetUnits = -4;
   const ruas = new THREE.Group(); ruas.name = 'Estradas';
   const add = (gs: THREE.BufferGeometry[], m: THREE.Material) => { const me = new THREE.Mesh(mergeGeometries(gs)!, m); me.receiveShadow = true; me.userData.ns = 1; ruas.add(me); };
-  add(ESTRADAS.map(r => fita(r, 0.62, (x, z) => yRua(x, z, 0.06))), terra);
+  add(ESTRADAS.flatMap(recortarNasCidades).map(r => fita(r, 0.62, (x, z) => yRua(x, z, 0.06))), terra);
   add(TRILHAS.map(r => fita(r, 0.36, (x, z) => yRua(x, z, 0.05))), trilhaM);
   Gr.add(ruas);
   return { rios, ruas };

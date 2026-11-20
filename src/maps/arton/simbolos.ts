@@ -57,7 +57,12 @@ export function construirSimbolos(Gr: THREE.Group) {
     const miolo = new THREE.SphereGeometry(r * 0.45, 8, 5); miolo.translate(l.x, y + h + r * 0.62, l.z); ps.push(pinta(miolo, [1, 1, 1]));
   }
   const gp = mergeGeometries(ps)!; gp.computeVertexNormals();
-  const alfinetes = new THREE.Mesh(gp, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.32, metalness: 0.05, emissive: 0x111111 })); alfinetes.name = 'Alfinetes'; alfinetes.castShadow = true; alfinetes.userData.ns = 1; alfinetes.userData.noExport = 1;
+  const alfinetes = new THREE.Mesh(gp, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.32, metalness: 0.05, emissive: 0x111111 })); alfinetes.name = 'Alfinetes'; alfinetes.castShadow = false;
+  // de perto o alfinete fica transparente (não tapa a cidade que o mestre está olhando)
+  { const am = alfinetes.material as THREE.MeshStandardMaterial; am.transparent = true; am.onBeforeCompile = sh => {
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vPinoW;').replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvPinoW = (modelMatrix * vec4(transformed, 1.0)).xyz;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vPinoW;').replace('#include <dithering_fragment>', '#include <dithering_fragment>\ngl_FragColor.a *= smoothstep(14.0, 34.0, distance(vPinoW, cameraPosition));');
+  }; am.customProgramCacheKey = () => 'alfinete-some'; } alfinetes.userData.ns = 1; alfinetes.userData.noExport = 1;
   Gr.add(alfinetes);
 
   // ---------- nomes ----------
@@ -78,6 +83,11 @@ export function construirSimbolos(Gr: THREE.Group) {
   const rotas = new THREE.Group(); rotas.name = 'Rotas de viagem';
   const matR = new THREE.MeshBasicMaterial({ color: new THREE.Color(0.42, 0.78, 1.7), transparent: true, opacity: 0.9, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -8, polygonOffsetUnits: -8 });
   const matN = new THREE.MeshBasicMaterial({ color: 0xf2f6ff, transparent: true, opacity: 0.95, depthWrite: false });
+  // as rotas somem de perto (não flutuam por cima da cidade que o mestre está olhando)
+  for (const mt of [matR, matN]) { mt.onBeforeCompile = sh => {
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vRotaW;').replace('#include <project_vertex>', '#include <project_vertex>\nvRotaW = (modelMatrix * vec4(transformed, 1.0)).xyz;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vRotaW;').replace('#include <dithering_fragment>', '#include <dithering_fragment>\ngl_FragColor.a *= smoothstep(10.0, 28.0, distance(vRotaW, cameraPosition));');
+  }; mt.customProgramCacheKey = () => 'rota-some'; }
   { const m = new THREE.Mesh(mergeGeometries(ROTAS.map(R => fita(R.pts, 0.55, (x, z) => Math.max(0, Y(x, z)) + 1.0, [2.0, 1.3])))!, matR); m.renderOrder = 4; m.userData.ns = 1; rotas.add(m);
     const an: THREE.BufferGeometry[] = []; for (const R of ROTAS) for (const p of [R.pts[0], R.pts[R.pts.length - 1]]) { const d = new THREE.RingGeometry(0.55, 0.95, 20); d.rotateX(-Math.PI / 2); d.translate(p[0], Ysolo(p[0], p[1]) + 1.05, p[1]); an.push(d); }
     const d = new THREE.Mesh(mergeGeometries(an)!, matN); d.renderOrder = 4; d.userData.ns = 1; rotas.add(d); }

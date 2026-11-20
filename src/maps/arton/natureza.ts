@@ -7,7 +7,7 @@ import { noise2, fbm } from '../../core/terrain';
 import { addWind } from '../../core/anim';
 import {
   type P, Y, Ysolo, rnd, reseed, sdPoly, TOLLON, DEHEON, LOMATUBAR, UIVANTES, BB, ILHAS, ilhaD, TAIGAS, BOA_SORTE, MANADAS,
-  LUGARES, CLAREIRAS, ESTRADAS, TRILHAS, PERFIS, campo, W, LIM, smooth,
+  LUGARES, CLAREIRAS, ESTRADAS, TRILHAS, PERFIS, campo, W, LIM, smooth, cidadeEm, ocupado, VILAS,
 } from './geo';
 
 const Q = CFG.quality;
@@ -73,7 +73,7 @@ export function construirNatureza(Gr: THREE.Group, M: { lamps: THREE.MeshBasicMa
   const anim: Anim[] = [], grupo = new THREE.Group(); grupo.name = 'Natureza'; Gr.add(grupo);
   reseed(2024);
   const caminhos = hashDe([...ESTRADAS, ...TRILHAS], 3), rios = hashDe(PERFIS.map(R => R.pts), 3);
-  const livre = (x: number, z: number, folga = 1) => Y(x, z) > 0.32 && !perto(caminhos, x, z, 0.75 * folga) && !perto(rios, x, z, 1.8 * folga) && !CLAREIRAS.some(c => Math.hypot(c.x - x, c.z - z) < c.r) && !LUGARES.some(l => l.tipo !== 'nada' && Math.hypot(l.x - x, l.z - z) < (l.tam ?? 1) * (['valkaria', 'giluk', 'tiberus'].includes(l.tipo) ? 15 : ['barud', 'malpetrim'].includes(l.tipo) ? 8.5 : 4.2));
+  const livre = (x: number, z: number, folga = 1) => Y(x, z) > 0.32 && !perto(caminhos, x, z, 0.75 * folga) && !perto(rios, x, z, 1.8 * folga) && !CLAREIRAS.some(c => Math.hypot(c.x - x, c.z - z) < c.r) && !cidadeEm(x, z, -1.6) && !ocupado(x, z) && !LUGARES.some(l => l.tipo !== 'nada' && Math.hypot(l.x - x, l.z - z) < (l.tam ?? 1) * (['valkaria'].includes(l.tipo) ? 21 : ['malpetrim'].includes(l.tipo) ? 11 : VILAS.includes(l.tipo) ? 3.6 : 4.2));
   const sombra = Q === 'alta', matArv = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.72, metalness: 0.04, envMapIntensity: 0.32 });
   addWind(matArv, { amp: 0.05, freq: 1.0, flutter: 0.004, height: 2.6 }, true); // copas balançando ao vento
   const passo = { baixa: 2.0, media: 1.55, alta: 1.25 }[Q];

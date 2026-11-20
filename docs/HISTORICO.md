@@ -95,6 +95,9 @@ com salas), F (arquitetura para novos mapas + `docs/NOVO-MAPA.md`). Todas foram 
 18. Graphify passa a indexar `Tyzk13/MAPAS` (índice da `main`); PR #3 juntou Barud, a mata e os climas na `main`.
 19. **Sul de Arton** (Tormenta 20): mapa regional em relevo com miniaturas, 12 interiores, teleporte e distâncias.
 20. Sul de Arton mais bonito e vivo; **Desempenho** no menu (limite de quadros, mestre leve com a TV, economia parado, modo leve).
+21. **Cidades do Sul de Arton** com planta de verdade (ruas, muralhas com portões onde chegam as estradas, praças,
+    prédios com nome; Barud igual ao mapa detalhado); alfinetes e rotas somem de perto. Pedido do dono: "com o
+    cuidado de Barud, detalhes dentro e não só casas jogadas".
 
 ## Arquivo offline (como o dono joga sem internet)
 
