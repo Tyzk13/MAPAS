@@ -12,11 +12,14 @@ import { mapHooks } from '../../core/maps';
 import { CFG } from '../../core/config';
 import { type P, W, Y, Ysolo, LUGARES, LIM, KM_POR_UNIDADE, UIVANTES, TOLLON, LOMATUBAR, DEHEON, PANTANO, TAIGAS, lugar } from './geo';
 import { construirRelevo, construirMar, construirAguasEcaminhos, construirFronteiras, construirMoldura, tempo } from './terreno';
-import { construirMiniaturas } from './miniaturas';
+import { construirMiniaturas, MM } from './miniaturas';
+import { construirCidades } from './cidades';
+import { construirVida } from './vida';
 import { construirNatureza } from './natureza';
 import { construirSimbolos, altPino } from './simbolos';
 import { FICHAS } from './dados';
 import { construirInteriores, dentroDeInterior } from './interiores';
+import { npcsArton } from './npcs';
 
 const Q = CFG.quality;
 const P3 = (v: THREE.Vector3 | number[]) => (Array.isArray(v) ? v : [v.x, v.y, v.z]).map(n => +(+n).toFixed(2)) as [number, number, number];
@@ -37,7 +40,7 @@ function ganchoCamera() {
 export async function build(M: MapRuntime) {
   begin(M, 51); ganchoCamera();
   // a mesa (mapa regional) e as cenas de bolso (interiores) ficam em grupos separados: só um aparece de cada vez
-  const G = M.G, mesa = new THREE.Group(), cenas = new THREE.Group(); mesa.name = 'Mesa'; cenas.name = 'Cenas de bolso'; cenas.visible = false; G.add(mesa, cenas);
+  const G = M.G, mesa = new THREE.Group(), cenas = new THREE.Group(); mesa.name = 'Mesa'; cenas.name = 'Cenas de bolso'; G.add(mesa, cenas); // as cenas ficam visíveis só no carregamento (para os shaders já virem prontos)
 
   // ---------- terreno, água, caminhos, fronteiras, moldura ----------
   const { colisores } = construirRelevo(mesa);
@@ -46,8 +49,10 @@ export async function build(M: MapRuntime) {
   const fronteiras = construirFronteiras(mesa);
   construirMoldura(mesa);
   const mini = construirMiniaturas(mesa, M);
+  const cid = construirCidades(mesa, M, mini);
   const nat = construirNatureza(mesa, M);
   const sim = construirSimbolos(mesa);
+  const vida = construirVida(mesa);
   const inter = construirInteriores(cenas, M);
 
   // ---------- auréolas (janelas, faróis, magia) ----------
@@ -97,9 +102,10 @@ export async function build(M: MapRuntime) {
     vistaDe('Lomatubar', ...W(540, 1185), 110, 34, 10), vistaDe('Deheon', ...W(720, 1000), 125, 34, -20), vistaDe('Costa Oeste', ...W(160, 1080), 115, 34, 15),
     vistaDe('Mar Negro', ...W(450, 1430), 150, 26, 0, 50, 0), vistaDe('Ilha Grande', ...W(640, 1385), 62, 30, 20, 50, 4),
   ];
-  const DIST: Record<string, number> = { giluk: 42, valkaria: 62, tiberus: 46, barud: 30, malpetrim: 34, catedral: 34, beluhga: 44, nimbarann: 24, asidon: 18, korl: 15, velha: 22, azazel: 24, zolkan: 18, covariel: 18, ancora: 13, centauros: 20, kobolds: 26, pantano: 30, boasorte: 22, pescadores: 22, ilhasul: 30, porto: 24 };
-  const AZ: Record<string, number> = { malpetrim: 0, velha: 10, catedral: 35, beluhga: 200, giluk: 10, tiberus: 30 };
-  for (const l of LUGARES) if (l.rot && l.tipo !== 'nada' || ['pantano', 'boasorte'].includes(l.id)) vistas.push(vistaDe(l.n, l.x, l.z, DIST[l.id] ?? 15, 30, AZ[l.id] ?? 25, 50, l.id === 'valkaria' ? 8 : l.id === 'beluhga' ? 0 : 1.5));
+  const DIST: Record<string, number> = { giluk: 50, valkaria: 72, tiberus: 46, barud: 30, malpetrim: 42, catedral: 34, beluhga: 44, nimbarann: 32, asidon: 18, korl: 15, velha: 22, azazel: 24, zolkan: 18, covariel: 18, ancora: 13, centauros: 20, kobolds: 26, pantano: 30, boasorte: 22, pescadores: 22, ilhasul: 30, porto: 24 };
+  const AZ: Record<string, number> = { malpetrim: 0, velha: 10, catedral: 35, beluhga: 200, giluk: 10, tiberus: -25 };
+  const EL: Record<string, number> = { tiberus: 42 };
+  for (const l of LUGARES) if (l.rot && l.tipo !== 'nada' || ['pantano', 'boasorte'].includes(l.id)) vistas.push(vistaDe(l.n, l.x, l.z, DIST[l.id] ?? 15, EL[l.id] ?? 30, AZ[l.id] ?? 25, 50, l.id === 'valkaria' ? 8 : l.id === 'beluhga' ? 0 : 1.5));
   vistas.push(...inter.vistas);
   const unicas = new Map<string, View>(); vistas.forEach(v => { if (!unicas.has(v.n)) unicas.set(v.n, v); });
   M.views = [...unicas.values()];
@@ -135,16 +141,20 @@ export async function build(M: MapRuntime) {
     walls: inter.paredesVtt, portals: [], lights: [],
   };
   M.exportHide = () => [sim.nomes, sim.alfinetes, sim.rotas, fronteiras];
+  // personagens das folhas do dono (npcs.ts): só aparecem perto da câmera e na mesma cena (mesa × interior)
+  M.npcs = async () => npcsArton();
+  M.npcVisivel = t => { const c = cam.position, p = t.g.position, dc = c.y < -60, dt2 = p.y < -60; if (dc !== dt2) return false; return Math.hypot(c.x - p.x, c.y - p.y, c.z - p.z) < (dt2 ? 45 : 80); };
 
   // ---------- clima ----------
   const preenche = new THREE.HemisphereLight(0x9aa8c8, 0x2a2622, 0); preenche.userData.noExport = 1; G.add(preenche);
-  let solBase = 1, estavaDentro = false;
+  let solBase = 1, estavaDentro = false, primeiro = true;
   M.onTime = p => {
     // sol bem longe: a câmera de sombra cobre o mapa inteiro (sombras longas das montanhas)
     sun.position.normalize().multiplyScalar(720); sun.target.position.set(0, 0, 0); solBase = p.si; if (estavaDentro) { sun.intensity = 0; M.halos.forEach(h => (h.material.opacity = 0.22)); }
     preenche.intensity = p.n === 'Noite' ? 2.4 : p.bg < 0.1 ? 1.7 : p.bg < 0.25 ? 0.7 : p.bg < 0.4 ? 0.5 : 0.25;
     preenche.color.setHex(p.n === 'Noite' ? 0x8a9ad8 : 0xb0b4bc);
     mist.forEach(m => (m.material.opacity = m.userData.op));
+    vida.clima(p);
     escolher();
   };
 
@@ -169,12 +179,17 @@ export async function build(M: MapRuntime) {
     if (f) pool.forEach((pl, k) => { const r = alvo[k]; if (r && pl.intensity > 0) pl.intensity = r.n * f * (0.86 + 0.14 * Math.sin(t * 11 + k * 7) * Math.sin(t * 6.3 + k)); });
     M.lamps.forEach((m, i) => { const b = m.userData.base; if (b && f) m.color.copy(b).multiplyScalar(f * (0.88 + 0.12 * Math.sin(t * 8 + i * 2.1))); });
     nat.anim.forEach(a => a(t)); inter.anim.forEach(a => a(t));
+    if (!estavaDentro) cid.anim.forEach(a => a(t));
+    if (!estavaDentro) vida.anim.forEach(a => a(t, dt));
+    MM.coral.emissiveIntensity = 0.45 + 0.35 * Math.sin(t * 0.9) * Math.sin(t * 0.37 + 1); // a Praga pulsa devagar
     cham.forEach((c, i) => { for (let k = 0; k < NP; k++) { const u = (t * 0.1 + fase[i] + k / NP) % 1, j = i * NP + k; fp[j * 3] = c.x + u * 1.2 + Math.sin(t * 0.6 + k) * 0.15; fp[j * 3 + 1] = c.y + u * 3.2; fp[j * 3 + 2] = c.z + u * 0.5; fs[j] = 0.45 + u * 2.1; } });
     fum.attributes.position.needsUpdate = true; (fum.attributes.size as THREE.BufferAttribute).needsUpdate = true;
     mist.forEach(m => { m.position.x = m.userData.x0 + Math.sin(t * 0.03 * m.userData.v) * 5; });
     // dentro das cenas de bolso não há sol (ficam longe da mesa)
     // dentro das cenas de bolso não há sol nem o preenchimento do céu (só muda na troca, para não apagar os relâmpagos)
-    const dentro = dentroDeInterior(cam.position); if (dentro !== estavaDentro) { estavaDentro = dentro; sun.intensity = dentro ? 0 : solBase; sun.castShadow = !dentro; preenche.visible = !dentro; mesa.visible = !dentro; cenas.visible = dentro; if (dentro) M.halos.forEach(h => (h.material.opacity = 0.22)); else aplicarLuzes(undefined, true); escolher(); }
+    const dentro = dentroDeInterior(cam.position);
+    if (primeiro) { primeiro = false; cenas.visible = dentro; mesa.visible = !dentro; }
+    if (dentro !== estavaDentro) { estavaDentro = dentro; sun.intensity = dentro ? 0 : solBase; sun.castShadow = !dentro; preenche.visible = !dentro; mesa.visible = !dentro; cenas.visible = dentro; if (dentro) M.halos.forEach(h => (h.material.opacity = 0.22)); else aplicarLuzes(undefined, true); escolher(); }
     // na mesa a câmera não desce abaixo do horizonte (não vê embaixo da mesa); nos interiores pode olhar reto
     ctl.maxPolarAngle = ctl.target.y < -60 ? 1.78 : 1.42;
     void fogo; void S; void PRE;

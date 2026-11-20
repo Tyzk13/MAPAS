@@ -94,6 +94,16 @@ com salas), F (arquitetura para novos mapas + `docs/NOVO-MAPA.md`). Todas foram 
 17. Barud ganha a **Mata dos Chifres**: floresta sombria fora das muralhas com trilha, forca, cabana e círculo de pedras.
 18. Graphify passa a indexar `Tyzk13/MAPAS` (índice da `main`); PR #3 juntou Barud, a mata e os climas na `main`.
 19. **Sul de Arton** (Tormenta 20): mapa regional em relevo com miniaturas, 12 interiores, teleporte e distâncias.
+20. Sul de Arton mais bonito e vivo; **Desempenho** no menu (limite de quadros, mestre leve com a TV, economia parado, modo leve).
+21. **Cidades do Sul de Arton** com planta de verdade (ruas, muralhas com portões onde chegam as estradas, praças,
+    prédios com nome; Barud igual ao mapa detalhado); alfinetes e rotas somem de perto. Pedido do dono: "com o
+    cuidado de Barud, detalhes dentro e não só casas jogadas".
+22. Casas, tavernas (placa, lampião), catedrais (contrafortes, vitrais, duas torres) e interiores mais caprichados;
+    masmorra de Azazel com abóbada, poças, correntes, ossadas e névoa.
+23. Mecânicas (personagens andam, câmera por teclado/duplo clique, zoom para o mouse, clima com transição) e o
+    povo de Arton (folhas de personagens do dono recortadas em `npcs-local/arton/`, ~150 NPCs pelos lugares).
+24. **Cidades maiores** ("aumentar as cidades como em Barud"): escala por cidade em `ESCALA_CID` (geo.ts), plantas
+    com mais ruas, bairros e marcos, ruas de quarteirão que param nos prédios (`ruaLivre`), cemitérios (terror sutil).
 
 ## Arquivo offline (como o dono joga sem internet)
 

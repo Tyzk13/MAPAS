@@ -57,7 +57,7 @@ export function distLinha(L: P[], x: number, z: number) {
   return { d, u };
 }
 /** linha suavizada (Catmull-Rom) com passo ~p e um leve tremor de mão */
-export function suaviza(L: P[], p = 1, tremor = 0): P[] {
+export function suaviza(L: P[], p = 1, tremor = 0, atenua?: (x: number, z: number) => number): P[] {
   const out: P[] = [];
   for (let i = 0; i < L.length - 1; i++) {
     const p0 = L[Math.max(0, i - 1)], p1 = L[i], p2 = L[i + 1], p3 = L[Math.min(L.length - 1, i + 2)];
@@ -66,7 +66,7 @@ export function suaviza(L: P[], p = 1, tremor = 0): P[] {
       const t = k / n, t2 = t * t, t3 = t2 * t;
       const f = (a: number, b: number, c: number, d: number) => 0.5 * (2 * b + (-a + c) * t + (2 * a - 5 * b + 4 * c - d) * t2 + (-a + 3 * b - 3 * c + d) * t3);
       let x = f(p0[0], p1[0], p2[0], p3[0]), z = f(p0[1], p1[1], p2[1], p3[1]);
-      if (tremor) { x += (noise2(x * 0.3, z * 0.3 + 5) - 0.5) * tremor; z += (noise2(x * 0.3 + 9, z * 0.3) - 0.5) * tremor; }
+      if (tremor) { const tr = tremor * (atenua ? atenua(x, z) : 1); x += (noise2(x * 0.3, z * 0.3 + 5) - 0.5) * tr; z += (noise2(x * 0.3 + 9, z * 0.3) - 0.5) * tr; }
       out.push([x, z]);
     }
   }
@@ -118,7 +118,7 @@ export const RIOS: P[][] = [
   [[300, 1000], [305, 1060], [318, 1120], [305, 1180], [300, 1240], [296, 1280]],
   [[120, 885], [128, 960], [118, 1040], [112, 1120], [104, 1210]],
   [[215, 940], [222, 1010], [210, 1090], [205, 1150], [200, 1218]],
-  [[760, 815], [772, 900], [790, 975], [800, 1040], [808, 1120], [815, 1222]],
+  [[760, 815], [772, 900], [805, 958], [812, 995], [806, 1040], [808, 1120], [815, 1222]],
   [[690, 990], [705, 1050], [725, 1120], [742, 1180], [750, 1234]],
   [[225, 700], [250, 735], [270, 758]],
 ].map(r => suaviza(w(r as P[]), 0.8, 1.2));
@@ -159,12 +159,50 @@ export const LUGARES: Lugar[] = [
   // Deheon
   L('valkaria', 'Valkaria', 790, 990, 'deh', 'valkaria', { tam: 1.5 }), L('porto', 'Porto de Deheon', 752, 1220, 'deh', 'porto'),
   V(516, 1020, 'deh', 'vila-deh'), V(688, 860, 'deh', 'vila-deh'), V(740, 860, 'deh', 'vila-deh'), V(800, 890, 'deh', 'vila-deh'),
-  V(845, 945, 'deh', 'vila-deh'), V(750, 965, 'deh', 'vila-deh'), V(680, 1130, 'deh', 'vila-deh'), V(835, 1150, 'deh', 'vila-deh'), V(620, 1020, 'deh', 'vila-deh'),
+  V(845, 945, 'deh', 'vila-deh'), V(745, 930, 'deh', 'vila-deh'), V(680, 1130, 'deh', 'vila-deh'), V(835, 1150, 'deh', 'vila-deh'), V(620, 1020, 'deh', 'vila-deh'),
   // Ilhas do Mar Negro
   L('pescadores', 'Vila dos Pescadores', 612, 1364, 'ilha', 'pesca'), L('ilhasul', 'Arquipélago do Sul', 215, 1480, 'ilha', 'pesca'),
   V(838, 1292, 'ilha', 'pesca'), V(28, 1404, 'ilha', 'pesca'),
 ];
 export const lugar = (id: string) => LUGARES.find(l => l.id === id)!;
+
+// ---------- cidades com contorno (muralha, paliçada ou só a borda): as estradas param no portão e viram avenida,
+// o chão fica de terra batida e não nascem árvores dentro. pol = contorno em coordenadas locais (senão, círculo) ----------
+export interface Muro { id: string; x: number; z: number; r: number; pol?: P[]; tipo: 'pedra' | 'paliçada' | 'aberta'; aberto?: number[] }
+const MURO_BARUD: P[] = [104, 101, 106, 100, 103, 99, 105, 102, 100, 104, 98, 103].map((r, k) => { const a = ((15 + k * 30) * Math.PI) / 180, s = r * 0.0641; return [Math.cos(a) * s, Math.sin(a) * s]; });
+/** quanto cada cidade cresceu (as plantas, os muros e os personagens usam esta escala; Barud é a referência).
+ *  Nova Malpetrim e o Porto de Deheon só crescem para o norte, leste e oeste: ao sul ficam o mar e o porto. */
+export const ESCALA_CID: Record<string, number> = { barud: 1, valkaria: 1.2, giluk: 1.25, malpetrim: 1.35, tiberus: 1.4, nimbarann: 1.7, porto: 1.6 };
+/** desloca um ponto da planta (dx, dz em relação ao centro) pela escala da cidade */
+export function escalaLocal(id: string, dx: number, dz: number): P { const s = ESCALA_CID[id] ?? 1; return [dx * s, (id === 'malpetrim' || id === 'porto') && dz > 0 ? dz : dz * s]; }
+export const MUROS: Muro[] = ([
+  { id: 'barud', r: 6.8, pol: MURO_BARUD, tipo: 'pedra' },
+  { id: 'valkaria', r: 16, tipo: 'pedra' },
+  { id: 'giluk', r: 10.5, tipo: 'paliçada' },
+  // Nova Malpetrim: muralha só do lado de terra; o lado sul é a falésia (aberto = arestas sem muro)
+  { id: 'malpetrim', r: 11, pol: [[-9.6, 1.3], [-10.2, -5.5], [-7.4, -10], [0, -11], [7.4, -10], [10.6, -5], [10.8, 2.4], [6, 2.4], [0, 1.4]], tipo: 'pedra', aberto: [6, 7, 8] },
+  { id: 'tiberus', r: 13.5, pol: [[-9.5, -9.5], [9.5, -9.5], [9.5, 9.5], [-9.5, 9.5]], tipo: 'pedra' },
+  { id: 'nimbarann', r: 4.7, tipo: 'paliçada' },
+  { id: 'porto', r: 4.8, tipo: 'aberta' },
+] as Omit<Muro, 'x' | 'z'>[]).map(m => { const l = lugar(m.id); return { ...m, r: m.r * (ESCALA_CID[m.id] ?? 1), x: l.x, z: l.z, pol: m.pol?.map(([a, b]) => { const [u, v] = escalaLocal(m.id, a, b); return [u + l.x, v + l.z] as P; }) }; });
+/** raio do contorno circular numa direção (um pouco irregular) */
+export const raioMuro = (m: Muro, a: number) => m.r * (1 + 0.022 * Math.sin(3 * a + m.x) + 0.012 * Math.sin(7 * a + m.z));
+/** distância com sinal até o contorno da cidade (positiva dentro) */
+export function dentroMuro(m: Muro, x: number, z: number) {
+  if (m.pol) return sdPoly(m.pol, x, z);
+  return raioMuro(m, Math.atan2(z - m.z, x - m.x)) - Math.hypot(x - m.x, z - m.z);
+}
+/** a cidade em que o ponto está (folga > 0 = mais para dentro; < 0 inclui a vizinhança) */
+export function cidadeEm(x: number, z: number, folga = 0): Muro | null {
+  for (const m of MUROS) if (Math.abs(x - m.x) < m.r + 6 && Math.abs(z - m.z) < m.r + 6 && dentroMuro(m, x, z) > folga) return m;
+  return null;
+}
+const pertoDeMuro = (x: number, z: number) => { let f = 1; for (const m of MUROS) { const d = Math.hypot(x - m.x, z - m.z); if (d < m.r + 9) f = Math.min(f, smooth(m.r + 1, m.r + 8, d)); } return f; };
+/** áreas ocupadas por campos, pomares e casas fora dos muros (as árvores da natureza desviam) */
+const OCUP = new Map<string, [number, number, number][]>();
+export function ocupar(x: number, z: number, r: number) { for (let i = Math.floor((x - r) / 4); i <= Math.floor((x + r) / 4); i++) for (let j = Math.floor((z - r) / 4); j <= Math.floor((z + r) / 4); j++) { const k = i + ',' + j; if (!OCUP.has(k)) OCUP.set(k, []); OCUP.get(k)!.push([x, z, r]); } }
+export const ocupado = (x: number, z: number) => (OCUP.get(Math.floor(x / 4) + ',' + Math.floor(z / 4)) || []).some(([a, b, r]) => Math.hypot(a - x, b - z) < r);
+export const VILAS = ['vila-lom', 'vila-deh', 'vila', 'aldeia-gelo', 'pesca'];
 
 // ---------- marcos espalhados ----------
 const pts = (a: P[]) => a.map(([x, y]) => W(x, y));
@@ -186,20 +224,20 @@ export const MANADAS: { x: number; z: number; n: number; esp: string }[] = [
 // ---------- estradas (terra) e trilhas da floresta ----------
 const LUG = (id: string): P => { const l = lugar(id); return [l.x / ESC + 430, l.z / ESC + 1040]; };
 export const ESTRADAS: P[][] = ([
-  [LUG('malpetrim'), [205, 1175], [250, 1150], [300, 1150], [352, 1146], LUG('ancora'), [440, 1162], LUG('nimbarann'), [510, 1190], LUG('barud')],
-  [LUG('barud'), LUG('ralanda'), [530, 1060], [516, 1020], [560, 1000], [620, 1020], [700, 1002], LUG('valkaria')],
-  [LUG('barud'), LUG('karitania'), LUG('kurikondir'), [660, 1102], [680, 1130], [740, 1100], [780, 1050], LUG('valkaria')],
-  [LUG('barud'), [560, 1210], LUG('asidon'), [505, 1270], LUG('korl')],
+  [LUG('malpetrim'), [205, 1175], [250, 1150], [300, 1150], [352, 1146], LUG('ancora'), [440, 1162], LUG('nimbarann'), [510, 1190], [546, 1196], [565, 1182], LUG('barud')],
+  [LUG('barud'), [586, 1165], [589, 1140], [568, 1119], LUG('ralanda'), [530, 1060], [516, 1020], [560, 1000], [620, 1020], [700, 1002], LUG('valkaria')],
+  [LUG('barud'), [586, 1165], LUG('karitania'), LUG('kurikondir'), [660, 1102], [680, 1130], [740, 1100], [780, 1050], LUG('valkaria')],
+  [LUG('barud'), [565, 1182], [560, 1210], LUG('asidon'), [505, 1270], LUG('korl')],
   [LUG('nimbarann'), [462, 1250], LUG('korl')],
   [LUG('valkaria'), [750, 965], [742, 905], [740, 860], [700, 835], [650, 800], [600, 775], [520, 765], LUG('giluk')],
   [[688, 860], [740, 860], [800, 890], [845, 945], LUG('valkaria'), [810, 1070], [835, 1150]],
-  [LUG('valkaria'), [780, 1100], [760, 1180], LUG('porto')],
-  [LUG('malpetrim'), [168, 1140], [130, 1075], [110, 1020], LUG('centauros'), [70, 900], [40, 850], [30, 760], [42, 650], [60, 590], LUG('tiberus')],
+  [LUG('valkaria'), [780, 1050], [780, 1100], [760, 1180], LUG('porto')],
+  [LUG('malpetrim'), [168, 1140], [130, 1075], [110, 1020], LUG('centauros'), [70, 900], [40, 850], [30, 760], [42, 650], [60, 590], [88, 584], LUG('tiberus')],
   [[168, 1140], [220, 1112], LUG('zolkan')], [[130, 1075], [150, 1020], LUG('azazel'), [250, 960]],
   [LUG('giluk'), [438, 660], [400, 630], LUG('catedral')], [LUG('giluk'), [306, 755], [306, 668]],
   [LUG('giluk'), [420, 820], [380, 880], [365, 905], [330, 960], [300, 1000]],
   [[45, 1080], [78, 1160], [130, 1205]], [[22, 1150], [78, 1160]],
-] as P[][]).map(r => suaviza(w(r), 0.8, 1.6));
+] as P[][]).map(r => suaviza(w(r), 0.8, 1.6, pertoDeMuro));
 export const TRILHAS: P[][] = ([
   [LUG('ancora'), [380, 1110], [355, 1098], LUG('eremita1'), [282, 1062], [300, 1012], [330, 960]],
   [LUG('covariel'), [420, 1068], [392, 1084], [362, 1098]],
@@ -330,6 +368,7 @@ export function construirGrade(): Grade {
     const inc = 1 - 1 / Math.sqrt(1 + gx * gx + gz * gz); // 0 plano … 1 vertical
     const mU = mk[o], mT = mk[o + 1], mL = mk[o + 2], mD = mk[o + 3], mW = mk[o + 4], mE = mk[o + 5], tai = mk[o + 6], pan = mk[o + 7], cor = mk[o + 8], cal = mk[o + 9], plat = mk[o + 10];
     const aq = fbm(x * 0.03 + 17, z * 0.03, 3), mancha = 0.88 + 0.26 * aq; // manchas de aquarela
+    let urb = 0;
     let r = 0.85, g = 0.95, b = 0.62; // campo genérico
     const dlk = dl[k];
     if (dlk < 0 || hh < 0.05) { r = 0.55; g = 0.6; b = 0.5; } // fundo do mar (aparece pouco)
@@ -354,11 +393,16 @@ export function construirGrade(): Grade {
       if (plat > 0.01) { r = lerp(r, 1.1, plat); g = lerp(g, 0.86, plat); b = lerp(b, 0.6, plat); }
       if (praia > 0.01) { r = lerp(r, 1.45, praia); g = lerp(g, 1.32, praia); b = lerp(b, 1.0, praia); }
       r *= mancha; g *= mancha; b *= mancha * 0.98;
+      // chão de terra batida nas cidades e em volta das vilas
+      const mu = cidadeEm(x, z, -1.4); if (mu) urb = smooth(-1.4, 0.9, dentroMuro(mu, x, z)) * 0.88;
+      for (const l of LUGARES) if (VILAS.includes(l.tipo) && Math.abs(l.x - x) < 5 && Math.abs(l.z - z) < 5) urb = Math.max(urb, smooth(3.2 * (l.tam ?? 1), 0.8, Math.hypot(l.x - x, l.z - z)) * 0.5);
+      if (urb > 0) { r = lerp(r, 0.86, urb); g = lerp(g, 0.76, urb); b = lerp(b, 0.6, urb); }
     }
     // máscara de rocha e neve
-    let R = smooth(0.18, 0.42, inc) + mU * smooth(15, 24, hh) * 0.35 + plat * smooth(0.06, 0.2, inc) + cal;
+    let R = (1 - urb) * (smooth(0.18, 0.42, inc) + mU * smooth(15, 24, hh) * 0.35 + plat * smooth(0.06, 0.2, inc) + cal);
     let N = mU * (1 - 0.45 * smooth(14, 34, sdPolyCache(x, z))) * (1 - 0.8 * smooth(0.3, 0.6, inc)) * (1 - 0.75 * tai) * (1 - 0.7 * mE);
     if (dlk < 0.6) N *= smooth(0.1, 0.6, dlk);
+    N *= 1 - urb * 0.5; // neve pisada nas ruas
     R = clamp(R); N = clamp(N * 1.15);
     const lagoE = Math.hypot((x - LAGO.x) / LAGO.rx, (z - LAGO.z) / LAGO.rz); if (lagoE < 1.1) N = Math.max(N, 0.8);
     // tinta das camadas: rocha fria nas Uivantes, calcário claro em Malpetrim; neve branco-azulada
@@ -367,7 +411,30 @@ export function construirGrade(): Grade {
     G.cor[k * 3] = r * wB + rr * R + 1.32 * N; G.cor[k * 3 + 1] = g * wB + rg * R + 1.36 * N; G.cor[k * 3 + 2] = b * wB + rb * R + 1.46 * N;
     G.splat[k * 2] = R; G.splat[k * 2 + 1] = N;
   }
+  sombrearRelevo(G, dl);
   return G;
+}
+/** média num quadrado de raio r células (soma acumulada por linha e por coluna) */
+function borrar(src: Float32Array, cols: number, rows: number, r: number) {
+  const tmp = new Float32Array(src.length), out = new Float32Array(src.length);
+  for (let j = 0; j < rows; j++) { let s = 0; const o = j * cols; for (let i = -r; i <= r; i++) s += src[o + Math.min(cols - 1, Math.max(0, i))]; for (let i = 0; i < cols; i++) { tmp[o + i] = s / (2 * r + 1); s += src[o + Math.min(cols - 1, i + r + 1)] - src[o + Math.max(0, i - r)]; } }
+  for (let i = 0; i < cols; i++) { let s = 0; for (let j = -r; j <= r; j++) s += tmp[Math.min(rows - 1, Math.max(0, j)) * cols + i]; for (let j = 0; j < rows; j++) { out[j * cols + i] = s / (2 * r + 1); s += tmp[Math.min(rows - 1, j + r + 1) * cols + i] - tmp[Math.max(0, j - r) * cols + i]; } }
+  return out;
+}
+/** relevo legível com qualquer clima: sombreado de mapa (luz de noroeste), escuro nos vales, claro nas cristas e
+ *  faixas de estrato na rocha — gravado na cor de vértice (não custa nada por quadro) */
+function sombrearRelevo(g: Grade, dl: Float32Array) {
+  const { cols, rows, passo, h, cor, splat } = g, media = borrar(h, cols, rows, Math.max(2, Math.round(4 / passo))), largo = borrar(h, cols, rows, Math.max(4, Math.round(12 / passo)));
+  const Lx = -0.55, Ly = 0.72, Lz = -0.42, Ln = Math.hypot(Lx, Ly, Lz);
+  for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
+    const k = j * cols + i; if (dl[k] < -0.5) continue;
+    const gx = (h[j * cols + Math.min(cols - 1, i + 1)] - h[j * cols + Math.max(0, i - 1)]) / (2 * passo), gz = (h[Math.min(rows - 1, j + 1) * cols + i] - h[Math.max(0, j - 1) * cols + i]) / (2 * passo);
+    const nl = Math.hypot(gx, 1, gz), lam = (-gx * Lx + Ly - gz * Lz) / (nl * Ln), sombra = clamp(lam / (Ly / Ln), 0.4, 1.4);
+    const cav = h[k] - media[k], vale = h[k] - largo[k];
+    let f = lerp(1, sombra, 0.55) * clamp(1 + cav * 0.14, 0.72, 1.14) * clamp(1 + vale * 0.025, 0.85, 1.08);
+    const R = splat[k * 2]; if (R > 0.2) f *= 1 + (Math.sin(h[k] * 2.6 + noise2(i * 0.15, j * 0.15) * 4) * 0.09) * R;
+    cor[k * 3] *= f; cor[k * 3 + 1] *= f; cor[k * 3 + 2] *= f * (sombra < 1 ? 1 + (1 - sombra) * 0.12 : 1); // sombras frias
+  }
 }
 // distância ao contorno das Uivantes (neve rala no planalto central): reaproveita sdPoly com a caixa
 const sdPolyCache = (x: number, z: number) => sdPoly(UIVANTES, x, z, BB.U);

@@ -441,6 +441,109 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
 - O relâmpago (core/imersao) mexe em `sun.intensity`: mapa que liga/desliga o sol deve mexer só na troca de estado,
   nunca a cada quadro.
 - Desempenho medido (qualidade baixa, vista geral): 364 chamadas, 512 mil triângulos; dentro da taverna, 36 e 18 mil.
+  Com a vida (dragoa, aves, viajantes, neve, chuva, nuvens, faróis): 429 chamadas, mesmos triângulos.
+- **Relevo legível em qualquer clima**: grave um sombreado de mapa (luz fixa de noroeste), oclusão (altura menos a
+  média num raio, via soma acumulada) e estratos na cor de vértice. Muito mais efeito que subir a resolução.
+- Sombra de nuvens barata: `onBeforeCompile` encadeado (guarde o anterior e chame primeiro), escurecendo a cor no
+  `emissivemap_fragment` com ruído que anda; mude o `customProgramCacheKey`. O atributo `uv` sempre existe no
+  vertex shader do three (dá para fazer o rio correr com `uv.x` = comprimento da fita).
+- Partículas, nuvens e sprites sem luz própria (neve, chuva, nuvens baixas) ficam brancos demais no anoitecer:
+  passe um fator do céu (`p.bg`) pelo `onTime`.
+- Animações: tudo por instâncias (aves, viajantes) ou só na GPU (neve, chuva, brasas: posição = função do tempo);
+  a dragoa é um grupo com as asas em pivôs próprios (rotação no ombro). Viajantes andam pelas `ESTRADAS` com
+  comprimento acumulado (ida e volta).
+- Fontes web num canvas: carregue o CSS (link criado pelo próprio mapa), espere `document.fonts.load(...)` e
+  **redesenhe** os canvases (nomes/moldura) quando chegarem; não bloqueie o carregamento do mapa.
+
+### Cidades do mapa regional (`cidades-kit.ts` + `cidades.ts`, nov/2026)
+- **Pedido do dono**: "faça as cidades com o cuidado de Barud, com detalhes dentro e não só casas jogadas". Cidade boa
+  = **planta** (ruas que levam a algum lugar, bairros, praças) + **prédios com nome** + casas **viradas para a rua**.
+  Espalhar casas num círculo parece um punhado de dados; nunca mais faça isso.
+- Ordem que funciona: (1) muralha/paliçada com portões **onde as estradas cruzam o contorno** (`portoes(m)`);
+  (2) reservar os marcos (`c.reservar`, `c.bloquear`) — castelo, templo, praça, arena; (3) registrar as ruas
+  (`c.rua`: desenha a fita e guarda os segmentos); (4) `casasNaRua` (lotes dos dois lados, frente para a rua, teste de
+  caixa orientada contra casas e ruas); (5) `preencher` os fundos de quarteirão alinhando com a rua mais perto.
+- Contornos das cidades em `geo.ts` (`MUROS`, `dentroMuro`, `cidadeEm`): as estradas são **cortadas no portão**
+  (`recortarNasCidades`, terreno.ts) e dentro a cidade desenha as próprias ruas calçadas; o chão dentro vira terra
+  batida na cor do relevo; árvores (`natureza.ts`) e caravanas (`vida.ts`) respeitam o contorno; `ocupar()` marca
+  lavouras e pomares para as árvores desviarem. O tremor das estradas é atenuado perto das cidades (`pertoDeMuro`),
+  senão a estrada chega ao lado do portão. Para escolher o portão, ponha um ponto de passagem na estrada
+  (Barud: Portão do Rei e Portão Leste, iguais ao mapa detalhado).
+- Duas camadas: `BC` (grosso, com sombra) e `BD` (janelas, portas, ameias, barracas, lampiões, carroças) com
+  `userData.cullDist` — somem de longe. Janelas/portas são **planos** (2 triângulos), não caixas. Telhados feitos à mão
+  (duas ou quatro águas, 6 triângulos) com os oitões no material da parede.
+- Ruas e praças: fitas/grades sobre o relevo, sem sombra, `polygonOffset` −5/−6 (acima das estradas, −4); pontes onde
+  rua cruza rio saem sozinhas (`pontesDaRua`) e a rua sobe para o tabuleiro (`yRuaC`).
+- Moinhos: uma `InstancedMesh` para todas as pás, girando no tick (1 chamada).
+- **Alfinetes e rotas somem de perto** (alfa por distância no shader, `cameraPosition`): sem isso o alfinete gigante
+  tapa a cidade quando o mestre aproxima. Alfinete sem sombra (o shader da sombra não sabe do alfa).
+- Telhado de neve branco puro vira "lençol": tinta azulada, inclinação menor e cumeeira de tronco escura.
+- **Tamanho das cidades**: `ESCALA_CID` (geo.ts) multiplica o contorno (`MUROS`) e, via `escalaLocal(id, dx, dz)`,
+  as plantas e os personagens (`fora` em npcs.ts usa a mesma escala). Cidade de costa (Malpetrim, Porto) só cresce
+  para o lado de terra (dz > 0 fica igual), senão o cais vai parar no mar. Antes de crescer, faça um mapa de alturas
+  ASCII em volta (sonda.mjs + `geo.Y`, `RIOS`, `ESTRADAS`) para ver mar, rios, picos e vilas vizinhas; vila que cair
+  dentro do muro novo muda de lugar (e mude também `DIST` das vistas em index.ts).
+- Cidade maior com casas do mesmo tamanho = **mais ruas e bairros**, não casas maiores. Ruas de quarteirão em grade
+  ou anel usam `c.ruaLivre` (corta nos prédios/praças reservados e no muro; `semMuro` para avenidas que chegam ao
+  portão); por isso **reserve os marcos antes das ruas**. Com `c.rua` a fita passa por baixo da arena/templo.
+- Custo medido (q=baixa, visão do mestre): 500→524 chamadas, 620k→716k triângulos com as cidades maiores — aceitável;
+  se precisar cortar, comece pelo `preencher` (fundos de quarteirão).
+- Piso `CM.terra` com cor escura fica preto ao entardecer: em praça/mercado use `lajota`/`areia` e cores claras.
+- Detalhe de história que funciona de longe: cemitério (grama escura, lápides tortas ou cairns, árvores secas,
+  capela, luz fria) fora dos muros — terror sutil sem gore.
+- Custo medido (qualidade baixa, vista geral): 498 chamadas e 614 mil triângulos (antes 429 / 516 mil).
+- Detalhe barato que mais muda a leitura das casas: **moldura** atrás da janela e da porta (plano 2 mm atrás),
+  degrau, floreira e **cumeeira escura**. Taverna = placa pendurada (textura de canvas compartilhada) + lampião + bancos.
+- `geo()` do kit respeita `isUVd` (texturas de canvas precisam da UV própria; `boxUV` estragaria).
+
+### Povo do mapa regional (`arton/npcs.ts`) e folhas de fundo escuro
+- **Pedido do dono**: personagens "onde a história os põe" (masmorra, floresta…); cidade de uma raça foca nela mas
+  tem outras. Tiberus/Barud = minotauros (+ humanos capengas), Giluk = bárbaros/anões, Valkaria = todos, etc.
+- Folhas de raças com **fundo escuro** (fumaça + faixas com o nome): `tools/fatiar-folha-escura.py` — bordas (Sobel)
+  + contorno escuro acham as faixas e os vãos; o fundo atrás de cada figura é interpolado entre os vãos; buracos
+  fechados viram figura. Varinha mágica a partir da borda **não** serve (roupa escura vaza para o fundo). Saída
+  `<folha><linha>-NN.png` (linha = raça). A 1ª figura de algumas linhas leva a faixa do nome: pule a -01.
+- Folhas de fundo branco sem grade regular: corte pelos mínimos da projeção por coluna (n figuras por linha).
+  Franja branca na borda: apague pixels claros e sem cor na borda do alfa (2 passadas).
+- NPCs do mapa (`M.npcs`) com `M.npcVisivel` (núcleo): mapa grande mostra só os perto da câmera e na mesma cena
+  (mesa × cena de bolso) — 150 personagens sem custo. Base pequena para miniaturas (h < 1,2). Nas capturas,
+  `__cap.personagens(true)` depois do `view()`.
+- Pacote leve: `python3 -I tools/npcs-arton.py` copia só as imagens citadas em `npcs.ts` (listas `L('a1', [...])` e
+  nomes soltos) para `npcs-local/arton/usar/*.webp` (300 px, ~1 MB) e o `vite.config.ts` as **embute** no JS
+  (`assetsInlineLimit` por caminho): o link do claude.ai tem limite de arquivos (511 por versão). Rode-o depois de
+  mudar quem aparece. Capturas com essas artes **não vão para o git** (repositório público).
+
+### Mecânicas da mesa (núcleo, nov/2026)
+- Tudo que anima com "lerp por quadro" fica lento em PC fraco e brusco em 144 Hz: use `1 - exp(-dt·k)`.
+- Personagem solto **anda** com velocidade limitada (perto: freia; longe: corre) e passo/balanço no sprite.
+- `core/orbita.ts`: WASD/QE/ZX na órbita e duplo clique (personagem selecionado anda; sem ele, a câmera voa).
+  O 1º clique do duplo clique desmarca o personagem: `ultimoSelecionado(ms)` recupera.
+- `ctl.zoomToCursor = true`. Troca de clima com transição (`sky.ts`, `foto`/`aplicarFoto`; larga o sol se outra
+  coisa mexer nele) e pré-carga dos céus um por vez.
+
+### Interiores mais ricos (`interiores.ts`, extras por cena)
+- Cada cena tem um "extra" (`ancoraMais`, `masmorraMais`…) com peças de decoração reutilizáveis: `acabamento`
+  (lambri/rodapé/cornija/pilastras), `arandela`, `penduricalhos`, `comida`, `escudo`, `trofeu`, `teia` (canvas),
+  `feixe` (plano aditivo com degradê, cruzado), `vitral` (canvas), `poca`, `musgo`, `corrente`, `ossada`, `gaiola`,
+  `arcoPedra` + `abobada` (meio cilindro com as faces viradas para dentro), `nevoaChao`.
+- Abóbada precisa ficar **abaixo do teto plano** da `sala` (senão o teto a esconde). Meio cilindro em z:
+  `CylinderGeometry(r, r, D, n, 1, true, π/2, π)` + `rotateX(π/2)` e inverter a ordem dos índices.
+- Poça com envMap fica branca no swiftshader: cor quase preta, `envMapIntensity` 0,2, opacidade 0,6.
+- Feixes de luz fortes viram "sabres de luz": cor escura (≈0x384050) e largura ~0,5.
+
+## Desempenho para o mestre (core/desempenho.ts → `economia`, nov/2026)
+
+- Pedido do dono: "o PC não travar tanto enquanto mestro". O laço (`R.setAnimationLoop`) roda na frequência do
+  monitor; `desenharQuadro(ts, {jogadores, tvAberta, ocupado})` pula quadros para o limite escolhido (agenda com
+  `proximo += 1000/qps`, que dá a média certa em 144 Hz). Regras: limite 30/60/livre; modo leve → 30; janela do
+  mestre com a TV ligada (`imersao.temJogadores`) → 24; 20 s sem toque/tecla/mouse → 10 (nunca durante transição de
+  câmera, cinema ou caminhar). Na janela dos jogadores só vale o limite.
+- `post.economia(true)`: sem N8AO/DOF, SMAA baixo, sombra a cada 8 quadros, pixel ratio ≤ 1,25 — sem recarregar.
+- A resolução automática compara com o limite (a 30/s de propósito não pode ser "lento") e não mede quando está
+  devagar de propósito (< 20/s).
+- `loadMap` faz `R.compileAsync(S, cam)` (com tempo máximo): só compila o que está visível — por isso o Sul de Arton
+  deixa as cenas de bolso visíveis no carregamento e esconde no 1º quadro.
+- Teste: `window.__economia` mostra `qps`, `alvo` e `motivo` (o check espera 23 s parado e confere ~10/s).
 
 ## Erros que já custaram tempo (não repita)
 

@@ -110,6 +110,12 @@
 <div class="pop" id="px" hidden role="menu">
 <div class="h">Qualidade</div>
 <div class="seg full" id="bq"><button data-q="baixa">Baixa</button><button data-q="media">Média</button><button data-q="alta">Alta</button></div>
+<div class="h">Desempenho <small>· para o PC não travar enquanto mestra</small></div>
+<div class="seg full" id="bqps" title="Limite de quadros por segundo (menos = placa de vídeo mais folgada)"><button data-f="30">30 /s</button><button data-f="60">60 /s</button><button data-f="0">Livre</button></div>
+<button id="bleve" class="tg" aria-pressed="false" title="Sem oclusão de ambiente e profundidade de campo; sombra recalculada menos vezes">Modo leve (PC fraco)</button>
+<button id="btvleve" class="tg" aria-pressed="true" title="Com a janela dos jogadores aberta, esta janela desenha menos (a TV continua com a qualidade cheia)">Mestre leve com a TV aberta</button>
+<button id="bparado" class="tg" aria-pressed="true" title="Sem mexer por 20 s, esta janela desenha devagar; volta no primeiro movimento">Economizar quando parado</button>
+<small id="dstat" class="dstat"></small>
 <div class="h" id="bk">Camadas</div><div id="lay"></div>
 <div class="h">Segundo monitor (jogadores)</div>
 <button id="bjog">Abrir janela dos jogadores</button>
@@ -131,7 +137,8 @@
 <div id="fly" hidden><button id="flu" aria-label="Subir">▲</button><button id="fld" aria-label="Descer">▼</button></div>
 <div id="help" class="dlg" hidden><b>Atalhos e controles</b>
 <dl>
-<dt>Órbita</dt><dd>arrastar: girar · roda/pinça: zoom · botão direito ou dois dedos: mover · arraste os personagens para posicioná-los (setas movem o selecionado)</dd>
+<dt>Órbita</dt><dd>arrastar: girar · roda/pinça: zoom (vai para onde o mouse aponta) · botão direito ou dois dedos: mover · W A S D: deslizar a mesa · Q/E: girar · Z/X: aproximar/afastar · Shift: mais rápido · duplo clique no chão: a câmera vai até lá</dd>
+<dt>Personagens</dt><dd>arraste para posicionar (mostra a distância) · com um personagem selecionado, duplo clique no chão: ele anda até lá · setas: um passo · Esc: desmarcar</dd>
 <dt>Câmera livre</dt><dd>WASD: mover (segurar acelera sozinho) · arrastar: olhar · Q/E (ou Espaço): descer/subir · Shift: rápido · quanto mais alto, mais rápido · joystick no limite: correr · roda: velocidade · G: atravessar paredes · ▲▼ no celular</dd>
 <dt>Cinema</dt><dd>escolha um ponto na cena (ou uma tomada gravada) e a câmera vai até lá como num filme: Suave, Corte ou Susto · legenda opcional · Revelar faz um personagem aparecer no ponto quando a câmera chega · Esc ou ✕ volta</dd>
 <dt>Transmitir</dt><dd>Ocultar (ou H): tela limpa, sem botões nem dicas; o cursor some parado · H ou o canto inferior direito trazem a interface de volta</dd>

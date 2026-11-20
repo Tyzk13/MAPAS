@@ -137,6 +137,55 @@ camadas): Nomes, Alfinetes, Fronteiras, Rotas de viagem e Marcos de altitude. No
 - **Distâncias** em linha reta, em km e dias de viagem (a pé ~30 km/dia, a cavalo ~50 km/dia; 1 unidade = 2 km).
 Arrastar um personagem mostra a distância em km e dias. As placas nas rotas tracejadas trazem o caminho pela estrada.
 
+**Gente do mapa**: cada lugar tem o seu povo (taverneiros, fregueses, guardas, prisioneiros, cultistas, elfos
+pelas trilhas, orcs nos acampamentos…). Eles só aparecem quando você chega perto; dá para arrastar, ocultar e
+revelar como os outros personagens. Covariel, o vampiro de Zolkan, o esqueleto e o tenente da masmorra e um devoto
+da catedral começam **ocultos** (só você vê, meio transparentes) para você revelar na hora certa.
+**Vilões** têm a **base vermelha** e "vilão" no nome: cultistas e o tenente de Azazel, a família Zolkan, o comprador
+de coral da Âncora, o espião e o assassino da Irmandade Pirata, o escriba traidor de Asidon, o executor e o centurião
+de Barud, o senador conspirador de Tiberus, a espiã e o feiticeiro renegado de Valkaria, o capitão pirata de
+Malpetrim, os chefes de guerra orcs, o chefe kobold, o saqueador de Tollon, a Velha das Neves e o coletor de coral.
+
+**Câmera e personagens**: roda = zoom para onde o mouse aponta · W A S D deslizam a mesa · Q/E giram · Z/X
+aproximam · duplo clique no chão leva a câmera até lá · com um personagem selecionado, duplo clique no chão faz
+ele andar até o ponto.
+
+**As cidades por dentro** (chegue perto com a roda do mouse: alfinetes e rotas ficam transparentes para não tapar).
+Valkaria, Tiberus, Giluk, Malpetrim, Nimbarann e o Porto cresceram (nov/2026): mais ruas, bairros e prédios com nome.
+- **Barud**: a mesma planta do mapa da cidade — Portão do Rei (sul) e Portão Leste, Via Real, Rua das Lanternas,
+  canal com cais e pontes, Praça do Mercado com o poço, Fortaleza no alto, Templo de Lena, quartel da legião, tavernas
+  do Javali e da Lanterna, forja de Durnak e o **Bairro Coral** atrás das barricadas, com o lazareto em ruínas.
+- **Valkaria** (a maior): a deusa na praça do Panteão (20 estátuas, chafarizes e canteiros), avenidas iluminadas
+  até os portões, bulevares em anel, Palácio Imperial com jardim, **Academia Arcana** (torre de luz violeta), **Arena
+  Imperial**, dois mercados, Grande Biblioteca, termas, quartel da guarda imperial, catedral, jardins, torres dos
+  nobres com viadutos, o rio com cais, armazéns e pontes, a rua das forjas dos anões, barracos fora dos muros, o
+  **cemitério com capela** ao norte, lavouras e moinhos.
+- **Giluk**: seis terraços na encosta com muros de arrimo, escadaria, **Salão do Jarl** com cabeças de dragão e as
+  casas dos escaldos dos lados, círculo de runas com totem e braseiros, salão do hidromel, mercado de peles, duas
+  forjas, paliçada com torres de vigia, curral dos mamutes, varais de peles e o **campo dos cairns** (os mortos).
+- **Nova Malpetrim**: cidade branca na falésia, praça com o templo, **Macaco Caolho**, feira de Marah, Arena de
+  Gideon, circo dos Thiannate, palácio do governador, guilda dos mercadores, o **Mirante** (balaustrada e luneta),
+  farol na ponta leste, escadaria até o porto com píeres, navios, armazéns e guindastes; vinhedos ao norte e o
+  cemitério dos marujos a oeste.
+- **Tiberus**: castro tapista em grade (quarteirões de sobrados), **fórum com o Templo de Tauron e o colosso
+  minotauro**, estátuas, basílica e cúria do senado, arena grande, quartéis com campo de treino, termas, mercado do
+  gado, aqueduto, os minotauros de pedra no portão sul e o cemitério dos legionários na estrada.
+- **Nimbarann** (feira no poço, casa da milícia, celeiro comunal, dois anéis de ruas), **Porto de Deheon**
+  (alfândega, capela dos marinheiros, quatro cais, torre com farolete) e as vilas: ruas de terra, igreja ou capela, poço, hortas atrás das casas,
+  lavouras, **moinhos que giram**, pomares, vinhedos (oeste), aldeias de neve com fogueira e vilas de pescadores.
+
+### Desempenho (para o PC não travar enquanto mestra)
+Menu **⋯ → Desempenho** (fica salvo neste navegador, muda na hora, sem recarregar):
+- **30 /s · 60 /s · Livre**: limite de quadros por segundo. O padrão é 60 (um monitor de 144 Hz não precisa
+  desenhar 144 vezes). Em PC fraco ou notebook esquentando, use **30**.
+- **Mestre leve com a TV aberta** (ligado): quando a janela dos jogadores está aberta, a sua janela desenha a 24/s e
+  sem os efeitos pesados — quem vê a cena bonita é a TV. Você continua controlando tudo.
+- **Economizar quando parado** (ligado): 20 s sem mexer, a sua janela desenha só 10 vezes por segundo; o primeiro
+  movimento do mouse, toque ou tecla volta ao normal. Câmera de cinema e caminhar nunca ficam lentos.
+- **Modo leve (PC fraco)**: tira a oclusão de ambiente e a profundidade de campo e recalcula a sombra menos vezes.
+- Embaixo aparece **Agora: N quadros/s · resolução %**. A resolução já cai sozinha quando o PC aperta e volta quando
+  sobra folga. Os shaders são preparados no carregamento do mapa (menos engasgos na primeira volta da câmera).
+
 ### Painel Mestre
 
 Cenas · tela dos jogadores (congelar, escurecer) · luz e clima (a luz caiu, névoa, lanterna, relâmpago,
@@ -170,7 +219,7 @@ Ver `docs/VTT.md`.
 | Janela dos jogadores não liga | mesmo link, mesmo navegador, mesma sala; no claude.ai abra **o mesmo link** de novo (janela solta pela URL interna não liga) |
 | Sem som | clique uma vez na janela que deve tocar; confira Mestre → Som ambiente (modo e volume) |
 | Tomadas/cenas sumiram | ficam no navegador onde foram gravadas (outro navegador ou modo anônimo não tem) |
-| Lento | Qualidade Baixa na janela do mestre; a resolução já cai sozinha quando o FPS cai (`?fps=1` mostra) |
+| Lento / PC travando | **⋯ → Desempenho**: 30 /s, Modo leve, e deixe ligados "Mestre leve com a TV aberta" e "Economizar quando parado"; se ainda pesar, Qualidade Baixa na janela do mestre (`?fps=1` mostra os números) |
 | Jogador não consegue abrir o link | compartilhe pelo menu da página (links são privados) |
 | Algo travou no carregamento | o erro aparece na tela; recarregue; em celular antigo use Qualidade Baixa |
 | Manchas brancas/pretas em placas | **F9**: desligue uma coisa por vez (sombra, lua, céu, reflexos, luzes, névoa, pós) e diga ao Claude qual resolveu; fica salvo no navegador |

@@ -1,6 +1,7 @@
 // Céu (HDRI), luz ambiente/reflexos (PMREM do HDRI), sol/lua, névoa e predefinições de clima.
 // Cada clima carrega seu HDRI sob demanda; a cor da névoa é tirada do horizonte do próprio HDRI.
 import * as THREE from 'three';
+import { CFG } from './config';
 import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';
 import { R, S } from './engine';
 import { st } from './state';
@@ -129,13 +130,36 @@ export function applyHdr(tex: THREE.Texture | null) {
 
 let reqId = 0, baseRot = 0;
 /** Nuvens andando: gira o céu bem devagar (o ambiente/luz não gira). */
-export function driftSky(t: number) { S.backgroundRotation.y = baseRot + t * 0.0035; }
+export function driftSky(t: number) { S.backgroundRotation.y = baseRot + t * 0.0035; tickTransicao(); }
+
+// ---------- transição suave entre climas (luz, névoa e céu mudam em ~1,2 s em vez de saltar) ----------
+type Foto = { bg: number; envI: number; fog: THREE.Color; fogD: number; hc: THREE.Color; hg: THREE.Color; hi: number; sc: THREE.Color; si: number };
+const foto = (): Foto => { const f = S.fog as THREE.FogExp2; return { bg: S.backgroundIntensity, envI: S.environmentIntensity, fog: f.color.clone(), fogD: f.density, hc: hemi.color.clone(), hg: hemi.groundColor.clone(), hi: hemi.intensity, sc: sun.color.clone(), si: sun.intensity }; };
+let trans: { de: Foto; para: Foto; t0: number; dur: number; siEscrito: number } | null = null;
+function aplicarFoto(a: Foto, b: Foto, u: number, tr: { siEscrito: number }) {
+  const f = S.fog as THREE.FogExp2, L = THREE.MathUtils.lerp;
+  S.backgroundIntensity = L(a.bg * 0.55, b.bg, u); S.environmentIntensity = L(a.envI, b.envI, u);
+  f.color.copy(a.fog).lerp(b.fog, u); f.density = L(a.fogD, b.fogD, u);
+  hemi.color.copy(a.hc).lerp(b.hc, u); hemi.groundColor.copy(a.hg).lerp(b.hg, u); hemi.intensity = L(a.hi, b.hi, u);
+  sun.color.copy(a.sc).lerp(b.sc, u);
+  // se outra coisa mexeu no sol no meio (interior apagou o sol, relâmpago), a transição larga o sol
+  if (Math.abs(sun.intensity - tr.siEscrito) < 1e-4) { sun.intensity = L(a.si, b.si, u); tr.siEscrito = sun.intensity; }
+}
+function tickTransicao() {
+  if (!trans) return;
+  const u0 = Math.min(1, (performance.now() - trans.t0) / trans.dur), u = u0 * u0 * (3 - 2 * u0);
+  aplicarFoto(trans.de, trans.para, u, trans);
+  if (u0 >= 1) trans = null;
+}
+let primeiraVez = true;
 export const timeHooks: ((p: Preset) => void)[] = [];
 
 export async function setTime(i: number) {
   const p = PRE[i], my = ++reqId;
   const h = await loadHdr(p.hdr, p.skyTint);
   if (my !== reqId) return; // outro clima foi pedido enquanto carregava
+  const de = primeiraVez || CFG.capture ? null : foto(); primeiraVez = false;
+  if (trans) { aplicarFoto(trans.de, trans.para, 1, trans); trans = null; }
   const tex = userHdr?.tex || h.tex, envT = userHdr?.env || h.env;
   S.background = tex; S.environment = envT;
   S.backgroundIntensity = p.bg; S.environmentIntensity = p.env; S.backgroundBlurriness = p.blur;
@@ -156,6 +180,7 @@ export async function setTime(i: number) {
   aplicarLuzes();
   R.shadowMap.needsUpdate = true;
   timeHooks.forEach(f => f(p));
+  if (de) { const para = foto(); trans = { de, para, t0: performance.now(), dur: 1200, siEscrito: 0 }; aplicarFoto(de, para, 0, trans); trans.siEscrito = sun.intensity; }
 }
 
 /** Luzes artificiais forçadas (null = as do clima; 0 = apagadas, "a luz caiu"). */
@@ -180,4 +205,7 @@ export function forcarLuzes(k: number | null) { luzesForcadas = k; aplicarLuzes(
 export function fatorLuzes() { return luzesForcadas ?? PRE[st.pi].lamps; }
 
 /** Pré-carrega os HDRIs dos climas (em segundo plano). */
-export function preloadSkies() { PRE.forEach(p => loadHdr(p.hdr, p.skyTint).catch(() => {})); }
+export async function preloadSkies() {
+  // um por vez, com folga entre eles: preparar o céu (PMREM) pesa e cinco de uma vez davam um engasgo
+  for (const p of PRE) { try { await loadHdr(p.hdr, p.skyTint); } catch { /* segue */ } await new Promise(r => setTimeout(r, 700)); }
+}

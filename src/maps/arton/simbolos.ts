@@ -3,7 +3,7 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { type P, LUGARES, Ysolo, Y, W, suaviza, PICOS, PICO_A, KM_POR_UNIDADE, lugar } from './geo';
-import { fita, rotulo } from './terreno';
+import { fita, rotulo, fontesProntas, FONTE_TIT, FONTE_TXT } from './terreno';
 
 export const COR_PINO: Record<string, [number, number, number]> = {
   uiv: [0.08, 0.6, 0.58], nam: [0.08, 0.6, 0.58], oeste: [0.78, 0.1, 0.1], tap: [0.78, 0.1, 0.1], lom: [0.95, 0.74, 0.08], deh: [0.48, 0.22, 0.75], ilha: [0.12, 0.42, 0.9], tollon: [0.15, 0.7, 0.3],
@@ -29,14 +29,19 @@ export const ROTAS: Rota[] = ROTAS_DEF.map(([de, para, meio]) => {
 export const dias = (km: number, porDia: number) => Math.max(1, Math.round(km / porDia));
 
 function placa(linhas: [string, string]) {
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ transparent: true, depthWrite: false, depthTest: false, fog: false }));
+  const desenhar = () => {
   const c = document.createElement('canvas'); c.width = 512; c.height = 200; const g = c.getContext('2d')!;
   g.fillStyle = 'rgba(232,218,184,0.95)'; g.strokeStyle = '#3a2412'; g.lineWidth = 8;
   const rr = (x: number, y: number, w: number, h: number, r: number) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
   rr(8, 8, 496, 184, 26); g.fill(); g.stroke();
-  g.fillStyle = '#3a2412'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.font = '600 74px Georgia, serif'; g.fillText(linhas[0], 256, 78);
-  g.font = 'italic 40px Georgia, serif'; g.fillText(linhas[1], 256, 150);
+  g.fillStyle = '#3a2412'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.font = `700 70px ${FONTE_TIT}`; g.fillText(linhas[0], 256, 78);
+  g.font = `italic 42px ${FONTE_TXT}`; g.fillText(linhas[1], 256, 150);
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
-  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, depthWrite: false, depthTest: false, fog: false })); s.center.set(0.5, 0); s.scale.set(9, 9 * 200 / 512, 1); s.renderOrder = 21; s.userData.ns = 1; s.userData.noExport = 1; s.userData.base = 9 * 200 / 512 * 1.6; s.userData.asp = 512 / 200;
+  const velho = s.material.map; s.material.map = t; s.material.needsUpdate = true; velho?.dispose();
+  };
+  desenhar(); fontesProntas.then(desenhar);
+  s.center.set(0.5, 0); s.scale.set(9, 9 * 200 / 512, 1); s.renderOrder = 21; s.userData.ns = 1; s.userData.noExport = 1; s.userData.base = 9 * 200 / 512 * 1.6; s.userData.asp = 512 / 200;
   return s;
 }
 
@@ -52,7 +57,12 @@ export function construirSimbolos(Gr: THREE.Group) {
     const miolo = new THREE.SphereGeometry(r * 0.45, 8, 5); miolo.translate(l.x, y + h + r * 0.62, l.z); ps.push(pinta(miolo, [1, 1, 1]));
   }
   const gp = mergeGeometries(ps)!; gp.computeVertexNormals();
-  const alfinetes = new THREE.Mesh(gp, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.32, metalness: 0.05, emissive: 0x111111 })); alfinetes.name = 'Alfinetes'; alfinetes.castShadow = true; alfinetes.userData.ns = 1; alfinetes.userData.noExport = 1;
+  const alfinetes = new THREE.Mesh(gp, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.32, metalness: 0.05, emissive: 0x111111 })); alfinetes.name = 'Alfinetes'; alfinetes.castShadow = false;
+  // de perto o alfinete fica transparente (não tapa a cidade que o mestre está olhando)
+  { const am = alfinetes.material as THREE.MeshStandardMaterial; am.transparent = true; am.onBeforeCompile = sh => {
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vPinoW;').replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvPinoW = (modelMatrix * vec4(transformed, 1.0)).xyz;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vPinoW;').replace('#include <dithering_fragment>', '#include <dithering_fragment>\ngl_FragColor.a *= smoothstep(14.0, 34.0, distance(vPinoW, cameraPosition));');
+  }; am.customProgramCacheKey = () => 'alfinete-some'; } alfinetes.userData.ns = 1; alfinetes.userData.noExport = 1;
   Gr.add(alfinetes);
 
   // ---------- nomes ----------
@@ -73,6 +83,11 @@ export function construirSimbolos(Gr: THREE.Group) {
   const rotas = new THREE.Group(); rotas.name = 'Rotas de viagem';
   const matR = new THREE.MeshBasicMaterial({ color: new THREE.Color(0.42, 0.78, 1.7), transparent: true, opacity: 0.9, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -8, polygonOffsetUnits: -8 });
   const matN = new THREE.MeshBasicMaterial({ color: 0xf2f6ff, transparent: true, opacity: 0.95, depthWrite: false });
+  // as rotas somem de perto (não flutuam por cima da cidade que o mestre está olhando)
+  for (const mt of [matR, matN]) { mt.onBeforeCompile = sh => {
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vRotaW;').replace('#include <project_vertex>', '#include <project_vertex>\nvRotaW = (modelMatrix * vec4(transformed, 1.0)).xyz;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vRotaW;').replace('#include <dithering_fragment>', '#include <dithering_fragment>\ngl_FragColor.a *= smoothstep(10.0, 28.0, distance(vRotaW, cameraPosition));');
+  }; mt.customProgramCacheKey = () => 'rota-some'; }
   { const m = new THREE.Mesh(mergeGeometries(ROTAS.map(R => fita(R.pts, 0.55, (x, z) => Math.max(0, Y(x, z)) + 1.0, [2.0, 1.3])))!, matR); m.renderOrder = 4; m.userData.ns = 1; rotas.add(m);
     const an: THREE.BufferGeometry[] = []; for (const R of ROTAS) for (const p of [R.pts[0], R.pts[R.pts.length - 1]]) { const d = new THREE.RingGeometry(0.55, 0.95, 20); d.rotateX(-Math.PI / 2); d.translate(p[0], Ysolo(p[0], p[1]) + 1.05, p[1]); an.push(d); }
     const d = new THREE.Mesh(mergeGeometries(an)!, matN); d.renderOrder = 4; d.userData.ns = 1; rotas.add(d); }

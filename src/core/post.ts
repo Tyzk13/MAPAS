@@ -36,7 +36,7 @@ const LIMPA = /* glsl */ `void mainImage(const in vec4 c, const in vec2 uv, out 
   bvec3 ruim = equal(floatBitsToUint(c.rgb) & 0x7f800000u, uvec3(0x7f800000u));
   vec3 v = any(ruim) ? vec3(0.0) : c.rgb;
   o = vec4(clamp(v, vec3(1e-4), vec3(6e4)), c.a); }`;
-let frameN = 0, shadowEvery = 3;
+let frameN = 0, shadowEvery = 3, leve = false;
 // (a resolução adaptativa fica em core/desempenho.ts)
 
 export const post = {
@@ -90,20 +90,25 @@ export const post = {
   setQuality(q: Quality) {
     this.quality = q;
     const p = QP[q];
-    shadowEvery = p.shadowEvery; R.shadowMap.needsUpdate = true;
-    setPixelRatioCap(p.pr);
+    shadowEvery = leve ? Math.max(8, p.shadowEvery) : p.shadowEvery; R.shadowMap.needsUpdate = true;
+    setPixelRatioCap(leve ? Math.min(p.pr, 1.25) : p.pr);
     if (sun.shadow.mapSize.x !== p.shadow) {
       sun.shadow.mapSize.set(p.shadow, p.shadow);
       sun.shadow.map?.dispose(); (sun.shadow as any).map = null;
     }
-    aoPass.enabled = p.ao;
+    aoPass.enabled = p.ao && !leve;
     aoPass.configuration.halfRes = p.aoHalf;
     aoPass.setQualityMode(p.aoQ);
-    dofPass.enabled = p.dof;
-    smaa.applyPreset(p.smaa);
-    noise.blendMode.opacity.value = p.grain ? 0.1 : 0;
+    dofPass.enabled = p.dof && !leve;
+    smaa.applyPreset(leve ? SMAAPreset.LOW : p.smaa);
+    noise.blendMode.opacity.value = p.grain && !leve ? 0.1 : 0;
     fit();
   },
+
+  /** Modo leve (economia): sem oclusão de ambiente nem profundidade de campo, sombra recalculada a cada 8 quadros,
+   *  resolução no máximo 1,25×. Muda na hora, sem recarregar o mapa. */
+  economia(v: boolean) { if (leve === v) return; leve = v; this.setQuality(this.quality); },
+  get leve() { return leve; },
 
   /** Aplica a gradação de cor de um clima. */
   setGrade(g: Partial<Grade>) {

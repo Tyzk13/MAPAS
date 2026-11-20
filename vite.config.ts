@@ -31,7 +31,8 @@ export default defineConfig(({ mode }) => {
     resolve: { alias: { '@assets': path.resolve(__dirname, lite ? 'src/assets-lite' : 'src/assets') } },
     build: single
       ? { outDir: 'dist-single', assetsInlineLimit: () => true, chunkSizeWarningLimit: 100000 }
-      : { outDir: mode === 'lite' ? 'dist-lite' : 'dist', chunkSizeWarningLimit: 4000 },
+      // personagens do Sul de Arton (npcs-local/arton/usar, ~1 MB): embutidos no código — não viram 126 arquivos soltos
+      : { outDir: mode === 'lite' ? 'dist-lite' : 'dist', chunkSizeWarningLimit: 4000, assetsInlineLimit: (f: string) => (f.replace(/\\/g, '/').includes('npcs-local/arton/usar/') ? true : undefined) },
     plugins: single ? [viteSingleFile({ removeViteModuleLoader: true })] : mode === 'lite' ? [binariosComoJs()] : [],
     server: { host: true },
   };

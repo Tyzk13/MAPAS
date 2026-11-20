@@ -1,5 +1,100 @@
 # Changelog
 
+## Cidades maiores no Sul de Arton
+
+- **Valkaria, Tiberus, Giluk, Nova Malpetrim, Nimbarann e Porto de Deheon cresceram** (1,2× a 1,7×), com a mesma
+  planta cuidadosa de Barud: muralhas maiores, mais ruas e quarteirões, e bairros novos em vez de casas espalhadas.
+- Prédios novos: em Valkaria a Grande Biblioteca, termas, quartel da guarda, segundo mercado, jardim do palácio,
+  armazéns no rio, rua das forjas dos anões e um cemitério com capela; em Tiberus a cúria do senado, estátuas no
+  fórum, arena maior, mercado do gado e o cemitério dos legionários; em Giluk seis terraços, casas dos escaldos,
+  salão do hidromel, mercado de peles, segunda forja e o campo dos cairns; em Malpetrim o palácio do governador, a
+  guilda, o Mirante, um farol e o cemitério dos marujos; Nimbarann com feira, milícia e celeiro; o Porto com
+  alfândega, capela e mais cais. As vilas ficaram um pouco maiores.
+- Ruas de quarteirão agora **param nos prédios e praças** (antes passavam por baixo da arena e do templo).
+- Os personagens das cidades acompanham a escala; uma vila de Deheon que ficaria colada na muralha de Valkaria
+  foi para a estrada do norte.
+
+## Mecânicas mais gostosas e o povo de Arton
+
+- **Personagens andam** até o destino (rápido no começo, param devagar, com passo e balanço) em vez de deslizar;
+  a suavidade não depende mais dos quadros/s do PC. **Duplo clique no chão** com um personagem selecionado: ele
+  anda até lá (anel marca o destino).
+- **Câmera**: a roda aproxima para onde o mouse aponta; **W A S D** deslizam a mesa, **Q/E** giram, **Z/X**
+  aproximam/afastam (Shift mais rápido); **duplo clique no chão** voa até o ponto; voos de câmera iguais em PC
+  rápido e lento.
+- **Climas**: a troca é uma transição suave (~1,2 s) de luz, névoa e céu; os céus são pré-carregados um por vez
+  (antes os cinco de uma vez davam um engasgo 3 s depois de abrir). Medido: sem erros; primeira troca 0,15–0,35 s
+  sem placa de vídeo, as seguintes instantâneas.
+- **Sul de Arton ganhou gente** (artes do dono, fora do git): taverneiros, fregueses, cavaleiros, prisioneiros e
+  cultistas na masmorra de Azazel, a bruxa, o mago Covariel (oculto), sacerdotes de Korl, a família Zolkan; nas
+  cidades, miniaturas do povo de cada lugar — minotauros em Tiberus e na legião de Barud (com humanos capengas),
+  bárbaros e anões em Giluk, todos os povos em Valkaria, marujos e dracônicos em Malpetrim, elfos em Tollon,
+  kobolds no planalto, orcs nos acampamentos, centauros na aldeia. Só aparecem perto da câmera.
+- **Vilões** com base vermelha e "vilão" no nome (cultistas de Azazel, família Zolkan, Irmandade Pirata, executor
+  de Barud, senador conspirador, chefes orcs, chefe kobold…); vários começam ocultos para revelar na hora.
+
+## Sul de Arton: casas, tavernas, catedrais e interiores mais caprichados
+
+- Casas com moldura nas janelas e na porta, degrau de pedra, floreiras coloridas (Deheon, Valkaria, oeste) e
+  cumeeira escura nos telhados.
+- **Tavernas** espalhadas pelas cidades e vilas: placa pendurada com caneca, lampião na porta, bancos, barris,
+  janelas acesas e fumaça (Javali, Lanterna, Macaco Caolho e outras em cada cidade; uma estalagem em cada vila).
+- **Catedrais e templos** com contrafortes e pináculos, vitrais acesos, escadaria e símbolo na cumeeira; naves
+  laterais no Templo de Lena; **Catedral de Valkaria** com duas torres e praça com chafariz.
+- Interiores: lambri, rodapé e cornija; arandelas com velas; presuntos, linguiças, alho, ervas e panelas pendurados;
+  comida e canecas nas mesas; escudos e troféus nas paredes; teias; feixes de luz pelas janelas; vitrais coloridos
+  na Catedral de Gelo e no Templo de Korl Khodan; Asidon com bases e capitéis, arcos, escudos e estandartes.
+- **Masmorra de Azazel**: abóbada de pedra com arcos, poças, musgo, correntes com grilhões, ossadas nas celas,
+  gaiolas penduradas, mesa de tortura, grade de escoamento, velas no círculo do ritual e névoa rasteira.
+
+## Sul de Arton: cidades com planta de verdade
+
+- Cada cidade tem ruas calçadas, muralha ou paliçada que segue o relevo (torres, **portões onde as estradas chegam**,
+  arcos sobre o rio), praças, bairros e prédios com nome; as casas ficam **viradas para a rua** (geminadas e de dois
+  andares no centro, soltas na periferia), com portas, janelas acesas à noite, enxaimel, chaminés com fumaça e toldos.
+- **Barud** segue o mapa detalhado (Via Real, Lanternas, canal com cais e pontes, Praça do Mercado, Fortaleza, Templo
+  de Lena, quartel, Javali, Lanterna, forja, Bairro Coral com barricadas e o lazareto).
+- **Valkaria** (praça do Panteão, avenidas, bulevares, palácio, Academia Arcana, Arena Imperial, mercado, jardins, rio
+  com cais e pontes, barracos fora dos muros), **Giluk** (terraços, Salão do Jarl, círculo de runas, forja),
+  **Nova Malpetrim** (falésia, Mirante, Macaco Caolho, feira, arena, circo, porto com navios), **Tiberus** (fórum,
+  Templo de Tauron, colosso, arena, quartéis, termas, aqueduto), **Nimbarann**, **Porto de Deheon** e as vilas
+  (igreja/capela, poço, hortas, lavouras, **moinhos que giram**, pomares, vinhedos, aldeias de neve, pescadores).
+- As estradas param no portão e a cidade continua com as próprias ruas; chão de terra batida dentro das cidades; árvores
+  e caravanas respeitam os muros; o rio de Valkaria passa ao lado da deusa (antes cortava a estátua).
+- **Alfinetes e rotas ficam transparentes quando a câmera chega perto** (não tapam mais a cidade).
+- Os detalhes miúdos somem de longe; vista geral (qualidade baixa): 498 chamadas e 614 mil triângulos.
+
+## Desempenho: mestrar sem travar o PC
+
+- Menu **⋯ → Desempenho** (vale para todos os mapas, salvo no navegador, muda na hora):
+  - **limite de quadros** 30 / 60 / livre (padrão 60: monitor de 144 Hz não desenha 144 vezes);
+  - **mestre leve com a TV aberta**: com a janela dos jogadores ligada, a do mestre desenha a 24/s e sem os efeitos
+    pesados (a TV fica com a qualidade cheia);
+  - **economizar quando parado**: 20 s sem mexer → 10 quadros/s; volta no primeiro movimento (cinema e caminhar
+    nunca ficam lentos);
+  - **modo leve**: sem oclusão de ambiente nem profundidade de campo, sombra recalculada a cada 8 quadros;
+  - leitura ao vivo dos quadros/s e da resolução.
+- A resolução automática respeita o limite (30/s de propósito não é tratado como lentidão).
+- Shaders preparados no carregamento do mapa (`compileAsync`): menos engasgos na primeira volta da câmera; no Sul de
+  Arton, as cenas dos interiores também (primeira entrada sem travar).
+
+## Sul de Arton: mais qualidade e mais vida
+
+- Relevo com **sombreado de mapa** gravado na cor (luz de noroeste), escuro nos vales, claro nas cristas e faixas de
+  estrato na rocha: as montanhas aparecem esculpidas com qualquer clima, sem custo por quadro.
+- **Sombras de nuvens** passando pelo terreno e pelo mar; mar com correntes que andam, cristas de espuma e brilho do
+  sol; **rios correndo** (riscos de espuma descendo para o mar).
+- Letras medievais (**Cinzel** e **IM Fell English**, Google Fonts, OFL) nos nomes, nas placas das rotas e na moldura;
+  até as fontes chegarem, vale a Georgia (e o arquivo offline continua funcionando).
+- Mapa vivo (`src/maps/arton/vida.ts`): a **Rainha Dragoa Beluhga voando** sobre as Uivantes (bate as asas e plana),
+  bandos de **corvos** (campos de batalha, Zolkan, Azazel, Velha Malpetrim, pântano) e **gaivotas** (portos e ilhas),
+  **caravanas, cavaleiros, patrulhas e peregrinos** andando pelas estradas, **neve** caindo nas Uivantes,
+  **tempestade com raios e chuva** no Mar Negro, **nuvens baixas** passando, **feixes dos faróis** girando à noite,
+  esteira de espuma atrás dos navios, árvores e bandeiras balançando ao vento, coral da Praga pulsando.
+- Interiores: brasas subindo das lareiras, da fogueira comprida de Giluk e dos braseiros do templo, bolhas no
+  caldeirão da bruxa, poeira na luz, o orbe do mago flutuando com o círculo de runas girando, olhos da dragoa acesos.
+- Neve, chuva e nuvens acompanham o clima (escurecem à noite).
+
 ## Sul de Arton: mapa regional em relevo (Tormenta 20)
 
 - Novo mapa **Sul de Arton** (`src/maps/arton/`), feito a partir da imagem e do texto do dono: Montanhas Uivantes,

@@ -7,12 +7,29 @@ import { pbr } from '../../core/pbr';
 import { CFG } from '../../core/config';
 import { sun } from '../../core/sky';
 import {
-  type P, LIM, G, Y, Ysolo, construirGrade, PERFIS, LAGO, ESTRADAS, TRILHAS, UIVANTES, TOLLON, LOMATUBAR, DEHEON,
+  type P, LIM, G, Y, Ysolo, construirGrade, cidadeEm, dentroMuro, PERFIS, LAGO, ESTRADAS, TRILHAS, UIVANTES, TOLLON, LOMATUBAR, DEHEON,
   suaviza, KM_POR_UNIDADE, clamp,
 } from './geo';
 
 const Q = CFG.quality;
 export const tempo = { value: 0 };
+
+// ---------- fontes medievais (Google Fonts, OFL): carregadas só neste mapa; até chegarem vale a Georgia ----------
+export const FONTE_TIT = "'Cinzel', Georgia, 'Times New Roman', serif", FONTE_TXT = "'IM Fell English', Georgia, 'Times New Roman', serif";
+export const fontesProntas: Promise<void> = (() => {
+  if (typeof document === 'undefined' || !document.fonts) return Promise.resolve();
+  let l = document.querySelector<HTMLLinkElement>('link[data-fontes-arton]');
+  if (!l) { l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=IM+Fell+English:ital@0;1&display=swap'; l.dataset.fontesArton = '1'; document.head.appendChild(l); }
+  const css = new Promise<void>(r => { l!.addEventListener('load', () => r()); l!.addEventListener('error', () => r()); setTimeout(r, 6000); });
+  return css.then(() => Promise.all(['600 40px Cinzel', '700 40px Cinzel', "30px 'IM Fell English'", "italic 30px 'IM Fell English'"].map(f => document.fonts.load(f)))).then(() => {}).catch(() => {});
+})();
+
+// ---------- sombra de nuvens passando (mesma no terreno e no mar) ----------
+export const GLSL_NUVEM = /* glsl */ `
+float nuvemSombra(vec2 p, float t) {
+  float n = vn(p * 0.011 + vec2(t * 0.006, t * 0.0035)) * 0.62 + vn(p * 0.029 + vec2(-t * 0.009, t * 0.004)) * 0.38;
+  return mix(1.0, 0.64, smoothstep(0.5, 0.72, n));
+}`;
 
 // ---------- fita (estradas, rios, fronteiras, rotas) ----------
 /** fita deitada sobre o relevo: y(x,z,i) dá a altura de cada vértice */
@@ -55,12 +72,27 @@ function acharPontes() {
       if (!hit && ini >= 0) {
         const m = Math.floor((ini + i - 1) / 2), [x, z] = rua[m], A = rua[Math.max(0, ini - 2)], B = rua[Math.min(rua.length - 1, i + 1)];
         const L = Math.hypot(B[0] - A[0], B[1] - A[1]) + 1.6, y = Math.max(Ysolo(A[0], A[1]), Ysolo(B[0], B[1])) + 0.12;
-        if (!PONTES.some(p => Math.hypot(p.x - x, p.z - z) < 3)) PONTES.push({ x, z, a: Math.atan2(B[0] - A[0], B[1] - A[1]), L: Math.max(L, wmax * 2 + 2.4), y, trilha });
+        if (!cidadeEm(x, z, -1.5) && !PONTES.some(p => Math.hypot(p.x - x, p.z - z) < 3)) PONTES.push({ x, z, a: Math.atan2(B[0] - A[0], B[1] - A[1]), L: Math.max(L, wmax * 2 + 2.4), y, trilha });
         ini = -1; wmax = 0;
       }
     }
   });
   busca(ESTRADAS, false); busca(TRILHAS, true);
+}
+/** estradas cortadas no contorno das cidades (entram 0,4 por baixo do portão; dentro, a cidade desenha as ruas) */
+export function recortarNasCidades(pts: P[]): P[][] {
+  const fora = (p: P) => { const m = cidadeEm(p[0], p[1], -1); return !m || dentroMuro(m, p[0], p[1]) < 0.4; };
+  const out: P[][] = []; let cur: P[] = [];
+  for (let i = 0; i < pts.length; i++) {
+    const p = pts[i], f = fora(p);
+    if (i && f !== fora(pts[i - 1])) { // ponto exato da borda (bissecção)
+      let a = pts[i - 1], b = p; for (let k = 0; k < 12; k++) { const m: P = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]; if (fora(m) === fora(a)) a = m; else b = m; }
+      cur.push(a); if (!f) { if (cur.length > 1) out.push(cur); cur = []; }
+    }
+    if (f) cur.push(p);
+  }
+  if (cur.length > 1) out.push(cur);
+  return out;
 }
 /** altura de estrada: sobe para o tabuleiro perto das pontes */
 function yRua(x: number, z: number, ergue: number) {
@@ -82,6 +114,11 @@ export function construirRelevo(Gr: THREE.Group) {
   geo.setIndex(new THREE.BufferAttribute(idx, 1)); geo.computeVertexNormals(); geo.computeBoundingSphere();
   const mat = terrainMaterial({ size: 0, seg: 0, height: () => 0, mask: () => [0, 0], base: { id: 'aerial_grass_rock', size: 9 }, r: { id: 'marble_cliff_05', size: 12 }, g: { id: 'snow_02', size: 7 }, normalScale: 1.25 });
   mat.vertexColors = true; mat.envMapIntensity = 0.55;
+  { const base0 = mat.onBeforeCompile;
+    mat.onBeforeCompile = (sh, r) => { base0.call(mat, sh, r); sh.uniforms.uT = tempo;
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform float uT;\n' + GLSL_RUIDO + GLSL_NUVEM)
+        .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n  diffuseColor.rgb *= nuvemSombra(vec2(vTUv.x, -vTUv.y), uT);'); };
+    mat.customProgramCacheKey = () => 'terreno3-nuvens'; }
   const me = new THREE.Mesh(geo, mat); me.receiveShadow = true; me.castShadow = false; me.name = 'Relevo'; me.userData.ns = 1; Gr.add(me);
   // sombra das montanhas: cópia leve (passo 2, meio palmo abaixo) que só a câmera do sol enxerga (camada 1)
   { const sc = 2, nc = Math.round((LIM.x1 - LIM.x0) / sc) + 1, nr = Math.round((LIM.z1 - LIM.z0) / sc) + 1, sg = new THREE.PlaneGeometry(LIM.x1 - LIM.x0, LIM.z1 - LIM.z0, nc - 1, nr - 1); sg.rotateX(-Math.PI / 2);
@@ -130,7 +167,7 @@ export function construirMar(Gr: THREE.Group) {
     sh.uniforms.uT = tempo; sh.uniforms.tD = { value: tex }; sh.uniforms.uLim = { value: new THREE.Vector4(LIM.x0, LIM.z0, LIM.x1 - LIM.x0, LIM.z1 - LIM.z0) };
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vMar;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvMar = (modelMatrix * vec4(transformed, 1.0)).xyz;');
     sh.fragmentShader = sh.fragmentShader
-      .replace('#include <common>', `#include <common>\nuniform float uT; uniform sampler2D tD; uniform vec4 uLim; varying vec3 vMar; float espuma = 0.0;\n${GLSL_RUIDO}`)
+      .replace('#include <common>', `#include <common>\nuniform float uT; uniform sampler2D tD; uniform vec4 uLim; varying vec3 vMar; float espuma = 0.0, brilho = 0.0;\n${GLSL_RUIDO}${GLSL_NUVEM}`)
       .replace('#include <color_fragment>', `
   vec2 pm = vMar.xz; vec2 uvd = (pm - uLim.xy) / uLim.zw;
   float dl = texture2D(tD, uvd).r;
@@ -139,10 +176,13 @@ export function construirMar(Gr: THREE.Group) {
   espuma = clamp(smoothstep(0.05, 0.0, dl) * 0.9 + banda * 0.6, 0.0, 1.0);
   vec3 raso = vec3(0.05, 0.17, 0.17), fundo = vec3(0.008, 0.04, 0.05), azul = vec3(0.004, 0.012, 0.045);
   vec3 cm = mix(raso, fundo, smoothstep(0.0, 0.42, dl));
-  float man = vn(pm * 0.017 + 3.0) * 0.6 + vn(pm * 0.05) * 0.4;
+  float man = vn(pm * 0.017 + 3.0 + vec2(uT * 0.004, -uT * 0.003)) * 0.6 + vn(pm * 0.05 - vec2(uT * 0.006, 0.0)) * 0.4;
   cm = mix(cm, azul, smoothstep(0.48, 0.74, man) * smoothstep(0.25, 0.8, dl));
-  diffuseColor.rgb = mix(cm, vec3(0.86, 0.9, 0.9), espuma);`)
-      .replace('#include <roughnessmap_fragment>', 'float roughnessFactor = mix(roughness, 0.85, espuma);')
+  float crista = smoothstep(0.9, 0.985, vn(pm * 0.85 + vec2(uT * 0.32, uT * 0.11))) * smoothstep(0.35, 0.9, dl) * smoothstep(0.6, 0.85, man) * 0.4;
+  espuma = max(espuma, crista);
+  brilho = smoothstep(0.55, 0.85, vn(pm * 0.18 + vec2(uT * 0.05, uT * 0.02)));
+  diffuseColor.rgb = mix(cm, vec3(0.86, 0.9, 0.9), espuma) * nuvemSombra(pm, uT);`)
+      .replace('#include <roughnessmap_fragment>', 'float roughnessFactor = mix(mix(roughness, 0.06, brilho * 0.75), 0.85, espuma);')
       .replace('#include <normal_fragment_maps>', `
   { vec2 q = vMar.xz; vec2 gr = vec2(0.0);
     gr += 0.050 * 0.55 * cos(dot(q, vec2(0.80, 0.60)) * 0.55 + uT * 0.9) * vec2(0.80, 0.60);
@@ -165,6 +205,16 @@ export function construirMar(Gr: THREE.Group) {
 // ---------- rios, estradas, trilhas ----------
 export function construirAguasEcaminhos(Gr: THREE.Group) {
   const agua = new THREE.MeshStandardMaterial({ color: 0x143840, roughness: 0.14, metalness: 0.05, envMapIntensity: 0.7, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+  agua.onBeforeCompile = sh => {
+    sh.uniforms.uT = tempo;
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec2 vRio;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvRio = uv;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform float uT; varying vec2 vRio;\n' + GLSL_RUIDO)
+      .replace('#include <color_fragment>', `#include <color_fragment>
+  float fl = vn(vec2(vRio.x * 0.85 - uT * 1.2, vRio.y * 2.5)) * 0.7 + vn(vec2(vRio.x * 2.3 - uT * 2.0, vRio.y * 5.0)) * 0.3;
+  float risco = smoothstep(0.62, 0.88, fl) * (0.35 + 0.65 * sin(vRio.y * 3.14159));
+  diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.6, 0.72, 0.74), risco * 0.5);`);
+  };
+  agua.customProgramCacheKey = () => 'rio-arton';
   const rios = new THREE.Group(); rios.name = 'Rios';
   { const m = new THREE.Mesh(mergeGeometries(PERFIS.map(R => fita(R.pts, i => R.larg[i] * 2.1, (_x, _z, i) => R.y[i] - 0.08)))!, agua); m.receiveShadow = true; m.userData.ns = 1; rios.add(m); }
   Gr.add(rios);
@@ -172,7 +222,7 @@ export function construirAguasEcaminhos(Gr: THREE.Group) {
   const trilhaM = pbr('dry_ground_rocks', { size: 3, color: 0xa08a68 }).clone(); trilhaM.polygonOffset = true; trilhaM.polygonOffsetFactor = -4; trilhaM.polygonOffsetUnits = -4;
   const ruas = new THREE.Group(); ruas.name = 'Estradas';
   const add = (gs: THREE.BufferGeometry[], m: THREE.Material) => { const me = new THREE.Mesh(mergeGeometries(gs)!, m); me.receiveShadow = true; me.userData.ns = 1; ruas.add(me); };
-  add(ESTRADAS.map(r => fita(r, 0.62, (x, z) => yRua(x, z, 0.06))), terra);
+  add(ESTRADAS.flatMap(recortarNasCidades).map(r => fita(r, 0.62, (x, z) => yRua(x, z, 0.06))), terra);
   add(TRILHAS.map(r => fita(r, 0.36, (x, z) => yRua(x, z, 0.05))), trilhaM);
   Gr.add(ruas);
   return { rios, ruas };
@@ -210,7 +260,9 @@ export function construirFronteiras(Gr: THREE.Group) {
 
 // ---------- rótulos (nomes em letra serifada) ----------
 export function rotulo(txt: string, alt: number, o: { cor?: string; borda?: string; esp?: number; italico?: boolean; peso?: string } = {}) {
-  const fs = 96, c = document.createElement('canvas'), g = c.getContext('2d')!, fonte = `${o.italico ? 'italic ' : ''}${o.peso ?? '600'} ${fs}px Georgia, 'Times New Roman', serif`;
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ transparent: true, depthWrite: false, depthTest: false, fog: false }));
+  const desenhar = () => {
+  const fs = 96, c = document.createElement('canvas'), g = c.getContext('2d')!, fonte = o.italico ? `italic ${fs}px ${FONTE_TXT}` : `${o.peso ?? '600'} ${fs}px ${FONTE_TIT}`;
   g.font = fonte; const esp = (o.esp ?? 0) * fs, letras = [...txt], wl = letras.map(l => g.measureText(l).width), W0 = wl.reduce((a, b) => a + b, 0) + esp * (letras.length - 1);
   c.width = Math.ceil(W0 + 48); c.height = Math.ceil(fs * 1.45);
   g.font = fonte; g.textBaseline = 'middle'; g.lineJoin = 'round';
@@ -218,8 +270,11 @@ export function rotulo(txt: string, alt: number, o: { cor?: string; borda?: stri
   g.strokeStyle = o.borda ?? 'rgba(30,20,10,0.85)'; g.lineWidth = fs * 0.16; for (let i = 0; i < letras.length; i++) { g.strokeText(letras[i], x, y); x += wl[i] + esp; }
   x = 24; g.fillStyle = o.cor ?? '#f3e6c8'; for (let i = 0; i < letras.length; i++) { g.fillText(letras[i], x, y); x += wl[i] + esp; }
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
-  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, depthWrite: false, depthTest: false, fog: false }));
-  s.center.set(0.5, 0); s.scale.set((alt * c.width) / c.height, alt, 1); s.renderOrder = 20; s.userData.ns = 1; s.userData.noExport = 1; s.userData.base = alt; s.userData.asp = c.width / c.height;
+  const velho = s.material.map; s.material.map = t; s.material.needsUpdate = true; velho?.dispose();
+  const asp = c.width / c.height, h0 = s.scale.y || alt; s.scale.set(h0 * asp, h0, 1); s.userData.asp = asp;
+  };
+  desenhar(); fontesProntas.then(desenhar);
+  s.center.set(0.5, 0); s.scale.set(alt * s.userData.asp, alt, 1); s.renderOrder = 20; s.userData.ns = 1; s.userData.noExport = 1; s.userData.base = alt;
   return s;
 }
 
@@ -244,22 +299,22 @@ export function desenharMoldura(canvas: HTMLCanvasElement, kmPorUn = KM_POR_UNID
   // título
   const cx = Wc / 2, ty = V(LIM.z0) - 21 * sx;
   g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#3a2412';
-  g.font = `600 ${16 * sx}px Georgia, serif`; const tit = 'S U L   D E   A R T O N'; g.fillText(tit, cx, ty);
-  g.font = `italic ${5.2 * sx}px Georgia, serif`; g.fillStyle = '#5a3a1c'; g.fillText('Uivantes · Floresta de Tollon · Lomatubar · Deheon · Costa Oeste · Mar Negro', cx, ty + 12 * sx);
+  g.font = `700 ${16 * sx}px ${FONTE_TIT}`; const tit = 'S U L   D E   A R T O N'; g.fillText(tit, cx, ty);
+  g.font = `italic ${5.6 * sx}px ${FONTE_TXT}`; g.fillStyle = '#5a3a1c'; g.fillText('Uivantes · Floresta de Tollon · Lomatubar · Deheon · Costa Oeste · Mar Negro', cx, ty + 12 * sx);
   g.strokeStyle = '#5a3a1c'; g.lineWidth = 0.4 * sx; for (const s of [-1, 1]) { g.beginPath(); g.moveTo(cx + s * 70 * sx, ty); g.lineTo(cx + s * 120 * sx, ty); g.stroke(); g.beginPath(); g.arc(cx + s * 124 * sx, ty, 2 * sx, 0, 6.3); g.stroke(); }
-  g.font = `${4.5 * sx}px Georgia, serif`; g.textAlign = 'right'; g.fillText('Tormenta 20', U(LIM.x1), ty - 9 * sx);
+  g.font = `${4.8 * sx}px ${FONTE_TXT}`; g.textAlign = 'right'; g.fillText('Tormenta 20', U(LIM.x1), ty - 9 * sx);
   // rosa dos ventos (canto inferior esquerdo)
   const rx = U(LIM.x0) + 34 * sx, ry = V(LIM.z1) + 26 * sx, R = 18 * sx;
   g.save(); g.translate(rx, ry);
   for (let i = 0; i < 16; i++) { const a = (i * Math.PI) / 8, L = i % 4 === 0 ? R : i % 2 === 0 ? R * 0.62 : R * 0.4, wdt = i % 4 === 0 ? R * 0.16 : R * 0.1;
     for (const lado of [0, 1]) { g.beginPath(); g.moveTo(0, 0); g.lineTo(Math.sin(a) * L, -Math.cos(a) * L); g.lineTo(Math.sin(a + (lado ? 1 : -1) * 1.57) * wdt, -Math.cos(a + (lado ? 1 : -1) * 1.57) * wdt); g.closePath(); g.fillStyle = lado ? '#3a2412' : '#c9ad7a'; g.fill(); g.strokeStyle = '#3a2412'; g.lineWidth = 0.15 * sx; g.stroke(); } }
   g.beginPath(); g.arc(0, 0, R * 0.72, 0, 6.3); g.lineWidth = 0.25 * sx; g.stroke(); g.beginPath(); g.arc(0, 0, R * 0.12, 0, 6.3); g.fillStyle = '#7a1c14'; g.fill();
-  g.fillStyle = '#3a2412'; g.font = `600 ${5.5 * sx}px Georgia, serif`; g.textAlign = 'center';
+  g.fillStyle = '#3a2412'; g.font = `700 ${5.5 * sx}px ${FONTE_TIT}`; g.textAlign = 'center';
   g.fillText('N', 0, -R - 4 * sx); g.fillText('S', 0, R + 4.5 * sx); g.fillText('L', R + 4.5 * sx, 0); g.fillText('O', -R - 4.5 * sx, 0);
   g.restore();
   // legenda (centro)
   const lx = cx - 46 * sx, ly = V(LIM.z1) + 13 * sx, it = [['Uivantes', '#9fd0ff'], ['Floresta de Tollon', '#4cd36a'], ['Lomatubar', '#f2c534'], ['Deheon', '#b25ce6']];
-  g.textAlign = 'left'; g.font = `${4.6 * sx}px Georgia, serif`; g.fillStyle = '#3a2412'; g.fillText('Legenda', lx, ly - 5 * sx);
+  g.textAlign = 'left'; g.font = `${4.8 * sx}px ${FONTE_TXT}`; g.fillStyle = '#3a2412'; g.fillText('Legenda', lx, ly - 5 * sx);
   it.forEach(([n, c], i) => { const yy = ly + 3 * sx + i * 7 * sx; g.fillStyle = c; g.fillRect(lx, yy - 1.2 * sx, 9 * sx, 2.4 * sx); g.strokeStyle = '#3a2412'; g.lineWidth = 0.15 * sx; g.strokeRect(lx, yy - 1.2 * sx, 9 * sx, 2.4 * sx); g.fillStyle = '#3a2412'; g.fillText(n, lx + 12 * sx, yy); });
   const it2 = [['Capital', '#f0d040', 'estrela'], ['Cidade ou vila', '#c43a2a', 'pino'], ['Campo de batalha', '#3a2412', 'x'], ['Rota de viagem', '#2a7fd0', 'traco']];
   it2.forEach(([n, c, k], i) => { const xx = lx + 52 * sx, yy = ly + 3 * sx + i * 7 * sx; g.fillStyle = c; g.strokeStyle = c;
@@ -270,11 +325,11 @@ export function desenharMoldura(canvas: HTMLCanvasElement, kmPorUn = KM_POR_UNID
     g.fillStyle = '#3a2412'; g.fillText(n, xx + 12 * sx, yy); });
   // escala (canto inferior direito), com valores reais na escala atual
   const ex = U(LIM.x1) - 92 * sx, ey = V(LIM.z1) + 24 * sx, seg = 10, nSeg = 6;
-  g.font = `${4.4 * sx}px Georgia, serif`; g.textAlign = 'center'; g.fillStyle = '#3a2412';
+  g.font = `${4.6 * sx}px ${FONTE_TXT}`; g.textAlign = 'center'; g.fillStyle = '#3a2412';
   for (let i = 0; i < nSeg; i++) { g.fillStyle = i % 2 ? '#e8dcc0' : '#3a2412'; g.fillRect(ex + i * seg * sx, ey, seg * sx, 2.2 * sx); }
   g.strokeStyle = '#3a2412'; g.lineWidth = 0.25 * sx; g.strokeRect(ex, ey, nSeg * seg * sx, 2.2 * sx);
   g.fillStyle = '#3a2412'; for (let i = 0; i <= nSeg; i += 2) g.fillText(String(Math.round(i * seg * kmPorUn)), ex + i * seg * sx, ey + 6.5 * sx);
-  g.fillText('quilômetros', ex + (nSeg * seg * sx) / 2, ey + 13 * sx); g.font = `italic ${3.6 * sx}px Georgia, serif`; g.fillText(`1 légua ≈ 6 km · a pé ~30 km/dia · a cavalo ~50 km/dia`, ex + (nSeg * seg * sx) / 2, ey - 5 * sx);
+  g.fillText('quilômetros', ex + (nSeg * seg * sx) / 2, ey + 13 * sx); g.font = `italic ${3.9 * sx}px ${FONTE_TXT}`; g.fillText(`1 légua ≈ 6 km · a pé ~30 km/dia · a cavalo ~50 km/dia`, ex + (nSeg * seg * sx) / 2, ey - 5 * sx);
 }
 export function construirMoldura(Gr: THREE.Group) {
   const grupo = new THREE.Group(); grupo.name = 'Moldura';
@@ -285,6 +340,7 @@ export function construirMoldura(Gr: THREE.Group) {
   const cv = document.createElement('canvas'); cv.width = Q === 'alta' ? 2048 : Q === 'media' ? 1536 : 1024; cv.height = Math.round(cv.width * (MOLD.z1 - MOLD.z0) / (MOLD.x1 - MOLD.x0));
   desenharMoldura(cv);
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+  fontesProntas.then(() => { desenharMoldura(cv); t.needsUpdate = true; });
   const pap = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ map: t, roughness: 0.92, envMapIntensity: 0.5 })); pap.receiveShadow = true; pap.userData.ns = 1; grupo.add(pap);
   // bandeja de madeira (borda elevada) e o bloco até a mesa
   const mad = pbr('dark_wood', { size: 12, color: 0x8a6a4a }), tabua = pbr('dark_wooden_planks', { size: 140, color: 0x9a7a5a });
