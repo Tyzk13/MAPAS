@@ -150,20 +150,28 @@ Malpetrim, os chefes de guerra orcs, o chefe kobold, o saqueador de Tollon, a Ve
 aproximam · duplo clique no chão leva a câmera até lá · com um personagem selecionado, duplo clique no chão faz
 ele andar até o ponto.
 
-**As cidades por dentro** (chegue perto com a roda do mouse: alfinetes e rotas ficam transparentes para não tapar):
+**As cidades por dentro** (chegue perto com a roda do mouse: alfinetes e rotas ficam transparentes para não tapar).
+Valkaria, Tiberus, Giluk, Malpetrim, Nimbarann e o Porto cresceram (nov/2026): mais ruas, bairros e prédios com nome.
 - **Barud**: a mesma planta do mapa da cidade — Portão do Rei (sul) e Portão Leste, Via Real, Rua das Lanternas,
   canal com cais e pontes, Praça do Mercado com o poço, Fortaleza no alto, Templo de Lena, quartel da legião, tavernas
   do Javali e da Lanterna, forja de Durnak e o **Bairro Coral** atrás das barricadas, com o lazareto em ruínas.
-- **Valkaria**: a deusa na praça do Panteão (20 estátuas e chafarizes), avenidas iluminadas até os cinco portões,
-  bulevares em anel, Palácio Imperial, **Academia Arcana** (torre de luz violeta), **Arena Imperial**, Grande Mercado,
-  jardins, torres dos nobres com viadutos, o rio com cais e pontes, barracos fora dos muros, lavouras e moinhos.
-- **Giluk**: terraços na encosta com muros de arrimo, escadaria, **Salão do Jarl** com cabeças de dragão, círculo de
-  runas com totem e braseiros, forja, paliçada com torres de vigia, curral dos mamutes e varais de peles.
-- **Nova Malpetrim**: cidade branca na falésia, Mirante com o templo, **Macaco Caolho**, feira de Marah, Arena de
-  Gideon, circo dos Thiannate, escadaria até o porto com píeres, navios, armazéns e guindastes; vinhedos ao norte.
-- **Tiberus**: castro tapista em grade, **fórum com o Templo de Tauron e o colosso minotauro**, basílica, arena,
-  quartéis com campo de treino, termas, aqueduto e os minotauros de pedra no portão sul.
-- **Nimbarann**, **Porto de Deheon** e as vilas: ruas de terra, igreja ou capela, poço, hortas atrás das casas,
+- **Valkaria** (a maior): a deusa na praça do Panteão (20 estátuas, chafarizes e canteiros), avenidas iluminadas
+  até os portões, bulevares em anel, Palácio Imperial com jardim, **Academia Arcana** (torre de luz violeta), **Arena
+  Imperial**, dois mercados, Grande Biblioteca, termas, quartel da guarda imperial, catedral, jardins, torres dos
+  nobres com viadutos, o rio com cais, armazéns e pontes, a rua das forjas dos anões, barracos fora dos muros, o
+  **cemitério com capela** ao norte, lavouras e moinhos.
+- **Giluk**: seis terraços na encosta com muros de arrimo, escadaria, **Salão do Jarl** com cabeças de dragão e as
+  casas dos escaldos dos lados, círculo de runas com totem e braseiros, salão do hidromel, mercado de peles, duas
+  forjas, paliçada com torres de vigia, curral dos mamutes, varais de peles e o **campo dos cairns** (os mortos).
+- **Nova Malpetrim**: cidade branca na falésia, praça com o templo, **Macaco Caolho**, feira de Marah, Arena de
+  Gideon, circo dos Thiannate, palácio do governador, guilda dos mercadores, o **Mirante** (balaustrada e luneta),
+  farol na ponta leste, escadaria até o porto com píeres, navios, armazéns e guindastes; vinhedos ao norte e o
+  cemitério dos marujos a oeste.
+- **Tiberus**: castro tapista em grade (quarteirões de sobrados), **fórum com o Templo de Tauron e o colosso
+  minotauro**, estátuas, basílica e cúria do senado, arena grande, quartéis com campo de treino, termas, mercado do
+  gado, aqueduto, os minotauros de pedra no portão sul e o cemitério dos legionários na estrada.
+- **Nimbarann** (feira no poço, casa da milícia, celeiro comunal, dois anéis de ruas), **Porto de Deheon**
+  (alfândega, capela dos marinheiros, quatro cais, torre com farolete) e as vilas: ruas de terra, igreja ou capela, poço, hortas atrás das casas,
   lavouras, **moinhos que giram**, pomares, vinhedos (oeste), aldeias de neve com fogueira e vilas de pescadores.
 
 ### Desempenho (para o PC não travar enquanto mestra)

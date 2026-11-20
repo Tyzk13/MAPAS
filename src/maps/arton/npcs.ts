@@ -9,7 +9,7 @@
 // dos recortes; sem a pasta, ninguém aparece (nada quebra).
 // São personagens do mapa (arrastáveis pelo mestre); só aparecem perto da câmera e na mesma cena (index.ts).
 import type { TokenDef } from '../../core/tokens';
-import { type P, LUGARES, TRILHAS, ACAMPAMENTOS, BATALHAS, CAVERNAS, CLAREIRAS, Ysolo, Y, lugar } from './geo';
+import { type P, LUGARES, TRILHAS, ACAMPAMENTOS, BATALHAS, CAVERNAS, CLAREIRAS, Ysolo, Y, lugar, escalaLocal } from './geo';
 import { ORIGENS, Y0 } from './interiores';
 
 const IMG = import.meta.glob('../../../npcs-local/arton/usar/*.webp', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
@@ -43,8 +43,8 @@ function por(im: string, nome: string, x: number, y: number, z: number, h: numbe
 const vil = (d: TokenDef | null | undefined) => { if (d) { d.c = 0x9a1a14; d.name += ' — vilão'; } };
 /** dentro de uma cena de bolso (índice de ORIGENS), em metros locais; yy = degrau/estrado */
 const dentro = (i: number, im: string, nome: string, x: number, z: number, tipo: keyof typeof ALT, yy = 0, oc = false): TokenDef | null => por(im, nome, ORIGENS[i][0] + x, Y0 + yy, ORIGENS[i][1] + z, ALT[tipo], oc);
-/** no mapa regional, perto de um lugar (dx, dz em unidades do mapa) */
-const fora = (id: string, im: string, nome: string, dx: number, dz: number, tipo: keyof typeof ALT): TokenDef | null => { const l = lugar(id); if (!l) return null; const x = l.x + dx, z = l.z + dz; if (Y(x, z) < 0.15) return null; return por(im, nome, x, Ysolo(x, z), z, ALT[tipo] * MINI); };
+/** no mapa regional, perto de um lugar (dx, dz em unidades do mapa, na planta original: a escala da cidade é aplicada) */
+const fora = (id: string, im: string, nome: string, dx: number, dz: number, tipo: keyof typeof ALT): TokenDef | null => { const l = lugar(id); if (!l) return null; const [ex, ez] = escalaLocal(id, dx, dz), x = l.x + ex, z = l.z + ez; if (Y(x, z) < 0.15) return null; return por(im, nome, x, Ysolo(x, z), z, ALT[tipo] * MINI); };
 const solto = (x: number, z: number, im: string, nome: string, tipo: keyof typeof ALT): TokenDef | null => (Y(x, z) < 0.15 ? null : por(im, nome, x, Ysolo(x, z), z, ALT[tipo] * MINI));
 /** um grupo do mesmo povo em volta de um ponto */
 function grupo(id: string, imgs: string[], nome: string, tipo: keyof typeof ALT, qtd: number, r0: number, r1: number, cx = 0, cz = 0) {

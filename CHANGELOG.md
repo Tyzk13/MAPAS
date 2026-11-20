@@ -1,5 +1,19 @@
 # Changelog
 
+## Cidades maiores no Sul de Arton
+
+- **Valkaria, Tiberus, Giluk, Nova Malpetrim, Nimbarann e Porto de Deheon cresceram** (1,2× a 1,7×), com a mesma
+  planta cuidadosa de Barud: muralhas maiores, mais ruas e quarteirões, e bairros novos em vez de casas espalhadas.
+- Prédios novos: em Valkaria a Grande Biblioteca, termas, quartel da guarda, segundo mercado, jardim do palácio,
+  armazéns no rio, rua das forjas dos anões e um cemitério com capela; em Tiberus a cúria do senado, estátuas no
+  fórum, arena maior, mercado do gado e o cemitério dos legionários; em Giluk seis terraços, casas dos escaldos,
+  salão do hidromel, mercado de peles, segunda forja e o campo dos cairns; em Malpetrim o palácio do governador, a
+  guilda, o Mirante, um farol e o cemitério dos marujos; Nimbarann com feira, milícia e celeiro; o Porto com
+  alfândega, capela e mais cais. As vilas ficaram um pouco maiores.
+- Ruas de quarteirão agora **param nos prédios e praças** (antes passavam por baixo da arena e do templo).
+- Os personagens das cidades acompanham a escala; uma vila de Deheon que ficaria colada na muralha de Valkaria
+  foi para a estrada do norte.
+
 ## Mecânicas mais gostosas e o povo de Arton
 
 - **Personagens andam** até o destino (rápido no começo, param devagar, com passo e balanço) em vez de deslizar;

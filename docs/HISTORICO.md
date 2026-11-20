@@ -102,6 +102,8 @@ com salas), F (arquitetura para novos mapas + `docs/NOVO-MAPA.md`). Todas foram 
     masmorra de Azazel com abóbada, poças, correntes, ossadas e névoa.
 23. Mecânicas (personagens andam, câmera por teclado/duplo clique, zoom para o mouse, clima com transição) e o
     povo de Arton (folhas de personagens do dono recortadas em `npcs-local/arton/`, ~150 NPCs pelos lugares).
+24. **Cidades maiores** ("aumentar as cidades como em Barud"): escala por cidade em `ESCALA_CID` (geo.ts), plantas
+    com mais ruas, bairros e marcos, ruas de quarteirão que param nos prédios (`ruaLivre`), cemitérios (terror sutil).
 
 ## Arquivo offline (como o dono joga sem internet)
 

@@ -131,6 +131,24 @@ export class Cid {
     if (o.desenhar !== false) { pontesDaRua(r, larg, o.ponte ?? 0x9a948a); FAIXAS.push({ pts: r, larg, mat, cor: o.cor ?? 0xffffff }); }
     return r;
   }
+  /** o ponto está fora de prédios e praças reservados (ignora as outras ruas) */
+  vazio(x: number, z: number, r: number) {
+    for (const [cx, cz, cr] of this.circ) if (Math.hypot(cx - x, cz - z) < cr + r) return false;
+    const B = caixa(x, z, r, r, 0); let ok = true;
+    this.ks(x - r - 0.6, x + r + 0.6, z - r - 0.6, z + r + 0.6, k => { if (ok) for (const C of this.caixas.get(k) || []) if (sobrepoe(B, C)) { ok = false; return; } });
+    return ok;
+  }
+  /** rua de quarteirão: para nos prédios/praças reservados e no muro (cada trecho livre vira uma rua; trechos curtos somem) */
+  ruaLivre(pts: V[], larg: number, mat: Mat = CM.calcada, o: { cor?: number; ponte?: number; min?: number; semMuro?: boolean } = {}): V[][] {
+    const out: V[][] = []; let cur: V[] = [];
+    const fecha = () => { if (cur.length > 1 && comprimentos(cur)[cur.length - 1] >= (o.min ?? 0.9)) out.push(cur); cur = []; };
+    for (const p of reamostra(pts, 0.15)) {
+      const dentro = o.semMuro || !this.muro || this.muro.tipo === 'aberta' || dentroMuro(this.muro, p[0], p[1]) > 0.45;
+      if (dentro && this.vazio(p[0], p[1], larg / 2 + 0.04)) cur.push(p); else fecha();
+    }
+    fecha();
+    return out.map(t => this.rua(t, larg, mat, o));
+  }
   /** a estrada (de terra) que passa pela vila também é rua */
   estradasPerto(raio: number) {
     const out: V[][] = [];

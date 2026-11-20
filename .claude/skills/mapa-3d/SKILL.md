@@ -478,6 +478,19 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
 - **Alfinetes e rotas somem de perto** (alfa por distância no shader, `cameraPosition`): sem isso o alfinete gigante
   tapa a cidade quando o mestre aproxima. Alfinete sem sombra (o shader da sombra não sabe do alfa).
 - Telhado de neve branco puro vira "lençol": tinta azulada, inclinação menor e cumeeira de tronco escura.
+- **Tamanho das cidades**: `ESCALA_CID` (geo.ts) multiplica o contorno (`MUROS`) e, via `escalaLocal(id, dx, dz)`,
+  as plantas e os personagens (`fora` em npcs.ts usa a mesma escala). Cidade de costa (Malpetrim, Porto) só cresce
+  para o lado de terra (dz > 0 fica igual), senão o cais vai parar no mar. Antes de crescer, faça um mapa de alturas
+  ASCII em volta (sonda.mjs + `geo.Y`, `RIOS`, `ESTRADAS`) para ver mar, rios, picos e vilas vizinhas; vila que cair
+  dentro do muro novo muda de lugar (e mude também `DIST` das vistas em index.ts).
+- Cidade maior com casas do mesmo tamanho = **mais ruas e bairros**, não casas maiores. Ruas de quarteirão em grade
+  ou anel usam `c.ruaLivre` (corta nos prédios/praças reservados e no muro; `semMuro` para avenidas que chegam ao
+  portão); por isso **reserve os marcos antes das ruas**. Com `c.rua` a fita passa por baixo da arena/templo.
+- Custo medido (q=baixa, visão do mestre): 500→524 chamadas, 620k→716k triângulos com as cidades maiores — aceitável;
+  se precisar cortar, comece pelo `preencher` (fundos de quarteirão).
+- Piso `CM.terra` com cor escura fica preto ao entardecer: em praça/mercado use `lajota`/`areia` e cores claras.
+- Detalhe de história que funciona de longe: cemitério (grama escura, lápides tortas ou cairns, árvores secas,
+  capela, luz fria) fora dos muros — terror sutil sem gore.
 - Custo medido (qualidade baixa, vista geral): 498 chamadas e 614 mil triângulos (antes 429 / 516 mil).
 - Detalhe barato que mais muda a leitura das casas: **moldura** atrás da janela e da porta (plano 2 mm atrás),
   degrau, floreira e **cumeeira escura**. Taverna = placa pendurada (textura de canvas compartilhada) + lampião + bancos.

@@ -102,9 +102,10 @@ export async function build(M: MapRuntime) {
     vistaDe('Lomatubar', ...W(540, 1185), 110, 34, 10), vistaDe('Deheon', ...W(720, 1000), 125, 34, -20), vistaDe('Costa Oeste', ...W(160, 1080), 115, 34, 15),
     vistaDe('Mar Negro', ...W(450, 1430), 150, 26, 0, 50, 0), vistaDe('Ilha Grande', ...W(640, 1385), 62, 30, 20, 50, 4),
   ];
-  const DIST: Record<string, number> = { giluk: 42, valkaria: 62, tiberus: 46, barud: 30, malpetrim: 34, catedral: 34, beluhga: 44, nimbarann: 24, asidon: 18, korl: 15, velha: 22, azazel: 24, zolkan: 18, covariel: 18, ancora: 13, centauros: 20, kobolds: 26, pantano: 30, boasorte: 22, pescadores: 22, ilhasul: 30, porto: 24 };
-  const AZ: Record<string, number> = { malpetrim: 0, velha: 10, catedral: 35, beluhga: 200, giluk: 10, tiberus: 30 };
-  for (const l of LUGARES) if (l.rot && l.tipo !== 'nada' || ['pantano', 'boasorte'].includes(l.id)) vistas.push(vistaDe(l.n, l.x, l.z, DIST[l.id] ?? 15, 30, AZ[l.id] ?? 25, 50, l.id === 'valkaria' ? 8 : l.id === 'beluhga' ? 0 : 1.5));
+  const DIST: Record<string, number> = { giluk: 50, valkaria: 72, tiberus: 46, barud: 30, malpetrim: 42, catedral: 34, beluhga: 44, nimbarann: 32, asidon: 18, korl: 15, velha: 22, azazel: 24, zolkan: 18, covariel: 18, ancora: 13, centauros: 20, kobolds: 26, pantano: 30, boasorte: 22, pescadores: 22, ilhasul: 30, porto: 24 };
+  const AZ: Record<string, number> = { malpetrim: 0, velha: 10, catedral: 35, beluhga: 200, giluk: 10, tiberus: -25 };
+  const EL: Record<string, number> = { tiberus: 42 };
+  for (const l of LUGARES) if (l.rot && l.tipo !== 'nada' || ['pantano', 'boasorte'].includes(l.id)) vistas.push(vistaDe(l.n, l.x, l.z, DIST[l.id] ?? 15, EL[l.id] ?? 30, AZ[l.id] ?? 25, 50, l.id === 'valkaria' ? 8 : l.id === 'beluhga' ? 0 : 1.5));
   vistas.push(...inter.vistas);
   const unicas = new Map<string, View>(); vistas.forEach(v => { if (!unicas.has(v.n)) unicas.set(v.n, v); });
   M.views = [...unicas.values()];

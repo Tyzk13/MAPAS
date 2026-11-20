@@ -159,7 +159,7 @@ export const LUGARES: Lugar[] = [
   // Deheon
   L('valkaria', 'Valkaria', 790, 990, 'deh', 'valkaria', { tam: 1.5 }), L('porto', 'Porto de Deheon', 752, 1220, 'deh', 'porto'),
   V(516, 1020, 'deh', 'vila-deh'), V(688, 860, 'deh', 'vila-deh'), V(740, 860, 'deh', 'vila-deh'), V(800, 890, 'deh', 'vila-deh'),
-  V(845, 945, 'deh', 'vila-deh'), V(750, 965, 'deh', 'vila-deh'), V(680, 1130, 'deh', 'vila-deh'), V(835, 1150, 'deh', 'vila-deh'), V(620, 1020, 'deh', 'vila-deh'),
+  V(845, 945, 'deh', 'vila-deh'), V(745, 930, 'deh', 'vila-deh'), V(680, 1130, 'deh', 'vila-deh'), V(835, 1150, 'deh', 'vila-deh'), V(620, 1020, 'deh', 'vila-deh'),
   // Ilhas do Mar Negro
   L('pescadores', 'Vila dos Pescadores', 612, 1364, 'ilha', 'pesca'), L('ilhasul', 'Arquipélago do Sul', 215, 1480, 'ilha', 'pesca'),
   V(838, 1292, 'ilha', 'pesca'), V(28, 1404, 'ilha', 'pesca'),
@@ -170,6 +170,11 @@ export const lugar = (id: string) => LUGARES.find(l => l.id === id)!;
 // o chão fica de terra batida e não nascem árvores dentro. pol = contorno em coordenadas locais (senão, círculo) ----------
 export interface Muro { id: string; x: number; z: number; r: number; pol?: P[]; tipo: 'pedra' | 'paliçada' | 'aberta'; aberto?: number[] }
 const MURO_BARUD: P[] = [104, 101, 106, 100, 103, 99, 105, 102, 100, 104, 98, 103].map((r, k) => { const a = ((15 + k * 30) * Math.PI) / 180, s = r * 0.0641; return [Math.cos(a) * s, Math.sin(a) * s]; });
+/** quanto cada cidade cresceu (as plantas, os muros e os personagens usam esta escala; Barud é a referência).
+ *  Nova Malpetrim e o Porto de Deheon só crescem para o norte, leste e oeste: ao sul ficam o mar e o porto. */
+export const ESCALA_CID: Record<string, number> = { barud: 1, valkaria: 1.2, giluk: 1.25, malpetrim: 1.35, tiberus: 1.4, nimbarann: 1.7, porto: 1.6 };
+/** desloca um ponto da planta (dx, dz em relação ao centro) pela escala da cidade */
+export function escalaLocal(id: string, dx: number, dz: number): P { const s = ESCALA_CID[id] ?? 1; return [dx * s, (id === 'malpetrim' || id === 'porto') && dz > 0 ? dz : dz * s]; }
 export const MUROS: Muro[] = ([
   { id: 'barud', r: 6.8, pol: MURO_BARUD, tipo: 'pedra' },
   { id: 'valkaria', r: 16, tipo: 'pedra' },
@@ -179,7 +184,7 @@ export const MUROS: Muro[] = ([
   { id: 'tiberus', r: 13.5, pol: [[-9.5, -9.5], [9.5, -9.5], [9.5, 9.5], [-9.5, 9.5]], tipo: 'pedra' },
   { id: 'nimbarann', r: 4.7, tipo: 'paliçada' },
   { id: 'porto', r: 4.8, tipo: 'aberta' },
-] as Omit<Muro, 'x' | 'z'>[]).map(m => { const l = lugar(m.id); return { ...m, x: l.x, z: l.z, pol: m.pol?.map(([a, b]) => [a + l.x, b + l.z] as P) }; });
+] as Omit<Muro, 'x' | 'z'>[]).map(m => { const l = lugar(m.id); return { ...m, r: m.r * (ESCALA_CID[m.id] ?? 1), x: l.x, z: l.z, pol: m.pol?.map(([a, b]) => { const [u, v] = escalaLocal(m.id, a, b); return [u + l.x, v + l.z] as P; }) }; });
 /** raio do contorno circular numa direção (um pouco irregular) */
 export const raioMuro = (m: Muro, a: number) => m.r * (1 + 0.022 * Math.sin(3 * a + m.x) + 0.012 * Math.sin(7 * a + m.z));
 /** distância com sinal até o contorno da cidade (positiva dentro) */
@@ -390,7 +395,7 @@ export function construirGrade(): Grade {
       r *= mancha; g *= mancha; b *= mancha * 0.98;
       // chão de terra batida nas cidades e em volta das vilas
       const mu = cidadeEm(x, z, -1.4); if (mu) urb = smooth(-1.4, 0.9, dentroMuro(mu, x, z)) * 0.88;
-      for (const l of LUGARES) if (VILAS.includes(l.tipo) && Math.abs(l.x - x) < 4 && Math.abs(l.z - z) < 4) urb = Math.max(urb, smooth(2.6 * (l.tam ?? 1), 0.8, Math.hypot(l.x - x, l.z - z)) * 0.5);
+      for (const l of LUGARES) if (VILAS.includes(l.tipo) && Math.abs(l.x - x) < 5 && Math.abs(l.z - z) < 5) urb = Math.max(urb, smooth(3.2 * (l.tam ?? 1), 0.8, Math.hypot(l.x - x, l.z - z)) * 0.5);
       if (urb > 0) { r = lerp(r, 0.86, urb); g = lerp(g, 0.76, urb); b = lerp(b, 0.6, urb); }
     }
     // máscara de rocha e neve
