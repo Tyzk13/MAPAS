@@ -137,6 +137,15 @@ camadas): Nomes, Alfinetes, Fronteiras, Rotas de viagem e Marcos de altitude. No
 - **Distâncias** em linha reta, em km e dias de viagem (a pé ~30 km/dia, a cavalo ~50 km/dia; 1 unidade = 2 km).
 Arrastar um personagem mostra a distância em km e dias. As placas nas rotas tracejadas trazem o caminho pela estrada.
 
+**Gente do mapa**: cada lugar tem o seu povo (taverneiros, fregueses, guardas, prisioneiros, cultistas, elfos
+pelas trilhas, orcs nos acampamentos…). Eles só aparecem quando você chega perto; dá para arrastar, ocultar e
+revelar como os outros personagens. Covariel, o vampiro de Zolkan, o esqueleto e o tenente da masmorra e um devoto
+da catedral começam **ocultos** (só você vê, meio transparentes) para você revelar na hora certa.
+
+**Câmera e personagens**: roda = zoom para onde o mouse aponta · W A S D deslizam a mesa · Q/E giram · Z/X
+aproximam · duplo clique no chão leva a câmera até lá · com um personagem selecionado, duplo clique no chão faz
+ele andar até o ponto.
+
 **As cidades por dentro** (chegue perto com a roda do mouse: alfinetes e rotas ficam transparentes para não tapar):
 - **Barud**: a mesma planta do mapa da cidade — Portão do Rei (sul) e Portão Leste, Via Real, Rua das Lanternas,
   canal com cais e pontes, Praça do Mercado com o poço, Fortaleza no alto, Templo de Lena, quartel da legião, tavernas

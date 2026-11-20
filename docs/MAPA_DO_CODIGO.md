@@ -7,7 +7,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 
 | Pasta | Arquivos | Tamanho |
 |---|---|---|
-| `capturas/` | 370 | 100.8 MB |
+| `capturas/` | 396 | 103.7 MB |
 | `src/assets/` | 188 | 90.6 MB |
 | `referencias/` | 5 | 2.4 MB |
 
@@ -21,7 +21,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 
 | Arquivo | Linhas | Tamanho |
 |---|---|---|
-| `index.html` | 156 | 15 KB |
+| `index.html` | 157 | 15 KB |
 | `legacy/igreja-3d-site.html` | 620 | 899 KB |
 | `legacy/servidor-sync.js` | 26 | 1 KB |
 | `scripts/mapa_do_codigo.py` | 78 | 5 KB |
@@ -37,7 +37,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/core/desempenho.ts` | 76 | 5 KB |
 | `src/core/diag.ts` | 54 | 4 KB |
 | `src/core/docs.ts` | 140 | 9 KB |
-| `src/core/engine.ts` | 78 | 3 KB |
+| `src/core/engine.ts` | 80 | 3 KB |
 | `src/core/espelho.ts` | 235 | 13 KB |
 | `src/core/glbmap.ts` | 49 | 6 KB |
 | `src/core/grass.ts` | 79 | 4 KB |
@@ -57,21 +57,21 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/core/post.ts` | 144 | 8 KB |
 | `src/core/probe.ts` | 53 | 2 KB |
 | `src/core/procedural.ts` | 138 | 8 KB |
-| `src/core/sky.ts` | 184 | 11 KB |
+| `src/core/sky.ts` | 212 | 13 KB |
 | `src/core/som.ts` | 220 | 14 KB |
 | `src/core/state.ts` | 26 | 1 KB |
 | `src/core/terrain.ts` | 99 | 5 KB |
-| `src/core/tokens.ts` | 235 | 14 KB |
-| `src/core/types.ts` | 83 | 4 KB |
+| `src/core/tokens.ts` | 255 | 17 KB |
+| `src/core/types.ts` | 85 | 4 KB |
 | `src/core/vtt.ts` | 105 | 7 KB |
 | `src/core/walk.ts` | 229 | 12 KB |
 | `src/core/weathering.ts` | 46 | 2 KB |
-| `src/main.ts` | 529 | 34 KB |
+| `src/main.ts` | 535 | 35 KB |
 | `src/maps/arton/cidades-kit.ts` | 716 | 63 KB |
 | `src/maps/arton/cidades.ts` | 384 | 48 KB |
 | `src/maps/arton/dados.ts` | 103 | 18 KB |
 | `src/maps/arton/geo.ts` | 447 | 37 KB |
-| `src/maps/arton/index.ts` | 193 | 15 KB |
+| `src/maps/arton/index.ts` | 197 | 16 KB |
 | `src/maps/arton/interiores.ts` | 528 | 63 KB |
 | `src/maps/arton/miniaturas.ts` | 319 | 30 KB |
 | `src/maps/arton/natureza.ts` | 188 | 24 KB |
@@ -142,7 +142,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `tools/testar-vtt.mjs` | 41 | 4 KB |
 | `tools/ver-modelo.mjs` | 25 | 2 KB |
 | `tools/visualizador.html` | 32 | 2 KB |
-| `vite.config.ts` | 39 | 2 KB |
+| `vite.config.ts` | 40 | 2 KB |
 
 Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKILL.md`, `.github/workflows/ci.yml`, `CHANGELOG.md`, `CLAUDE.md`, `CREDITS.md`, `README.md`, `capturas/README.md`, `docs/BRIEFING.md`, `docs/GUIA-DO-MESTRE.md`, `docs/HISTORICO.md`, `docs/HOSPEDAGEM.md`, `docs/NOVO-MAPA.md`, `docs/PROMPT-NOVO-MAPA.md`, `docs/VTT.md`, `docs/casos/greywater-caso-ashdown.md`, `docs/casos/harlow-caso-whitlock.md`, `package.json`, `server/package-lock.json`, `server/package.json`, `tools/assets.json`, `tsconfig.json`
 
@@ -188,7 +188,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `alvo` 17 · `imagemDe` 30 · `montar` 40 · `abrir` 57 · `fechar` 66 · `abrirDoc` 69 · `irAte` 72 · `listarPistas` 87 · `initNotas` 101 · `initDocs` 123
 
 ### `src/core/engine.ts`
-`cv` 6 · `R` 8 · `S` 41 · `cam` 44 · `ctl` 47 · `onResize` 56 · `pixelRatioCap` 58 · `setPixelRatioCap` 59 · `renderScale` 62 · `setRenderScale` 63 · `fit` 69
+`cv` 6 · `R` 8 · `S` 41 · `cam` 44 · `ctl` 47 · `onResize` 58 · `pixelRatioCap` 60 · `setPixelRatioCap` 61 · `renderScale` 64 · `setRenderScale` 65 · `fit` 71
 
 ### `src/core/espelho.ts`
 `enviar` 36 · `espelho` 41 · `aplicarSobreposicao` 52 · `tickEspelho` 60 · `receber` 71 · `enviarQuadro` 117 · `r` 126 · `mandarEstado` 141 · `serJogadores` 155 · `dentroDeOutraPagina` 177 · `abrirJanelaJogadores` 184 · `initEspelho` 192 · `cheia` 212 · `avisarAparicao` 221 · `avisarMapa` 222 · `avisarClima` 223
@@ -248,7 +248,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `rnd` 6 · `stainedGlass` 9 · `pane` 16 · `roseGeometry` 73 · `petal` 75 · `leafGeometry` 98 · `looseePetalGeometry` 106 · `oldPainting` 113
 
 ### `src/core/sky.ts`
-`Preset` 11 · `PRE` 33 · `hdrUrl` 42 · `loadHdr` 47 · `tintHalf` 70 · `limitarBrilho` 79 · `horizonColor` 94 · `hemi` 105 · `sun` 106 · `dome` 113 · `env` 114 · `setShadowRadius` 116 · `applyHdr` 123 · `driftSky` 132 · `timeHooks` 133 · `setTime` 135 · `aplicarLuzes` 167 · `forcarLuzes` 178 · `fatorLuzes` 180 · `preloadSkies` 183
+`Preset` 12 · `PRE` 34 · `hdrUrl` 43 · `loadHdr` 48 · `tintHalf` 71 · `limitarBrilho` 80 · `horizonColor` 95 · `hemi` 106 · `sun` 107 · `dome` 114 · `env` 115 · `setShadowRadius` 117 · `applyHdr` 124 · `driftSky` 133 · `foto` 137 · `aplicarFoto` 139 · `tickTransicao` 148 · `timeHooks` 155 · `setTime` 157 · `aplicarLuzes` 192 · `forcarLuzes` 203 · `fatorLuzes` 205 · `preloadSkies` 208
 
 ### `src/core/som.ts`
 `Efeito` 7 · `Fonte` 8 · `montar` 21 · `lfo` 49 · `env` 52 · `rajadaRuido` 55 · `tom` 62 · `batida` 70 · `passos` 76 · `sussurro` 84 · `rangido` 95 · `sino` 105 · `criarFontes` 114 · `crepitar` 123 · `trovao` 128 · `grilo` 134 · `som` 139 · `desbloquear()` 142 · `efeito()` 151 · `tick()` 161 · `ouvinte()` 176 · `tocarEfeito` 187 · `aplicar` 214
@@ -260,10 +260,10 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `hash` 7 · `noise2` 8 · `fbm` 14 · `TerrainLayer` 16 · `TerrainOpts` 17 · `terrainMaterial` 26 · `makeTerrain` 75
 
 ### `src/core/tokens.ts`
-`silhueta` 12 · `jog` 19 · `TokenDef` 21 · `Token` 24 · `DEF` 35 · `pick` 42 · `tempoFichas` 45 · `vivo` 50 · `K` 69 · `sizeT` 71 · `placeT` 77 · `makeToken` 85 · `dropT` 106 · `selT` 112 · `setTarget` 117 · `focusT` 121 · `save` 127 · `onPos` 133 · `onChar` 143 · `wk` 149 · `helpers` 154 · `setM` 156 · `freeSpot` 161 · `busy` 163 · `initTokenInput` 172 · `end` 197 · `tickTokens` 217 · `snapTokens` 234
+`silhueta` 12 · `jog` 19 · `TokenDef` 21 · `Token` 24 · `DEF` 35 · `pick` 42 · `tempoFichas` 45 · `vivo` 50 · `K` 69 · `sizeT` 71 · `placeT` 77 · `makeToken` 85 · `dropT` 106 · `selT` 112 · `setTarget` 117 · `focusT` 121 · `save` 127 · `onPos` 133 · `onChar` 143 · `wk` 149 · `marcarDestino` 158 · `helpers` 159 · `ultimoSelecionado` 162 · `setM` 164 · `freeSpot` 169 · `busy` 171 · `initTokenInput` 180 · `end` 205 · `andandoAgora` 226 · `tickTokens` 227 · `snapTokens` 254
 
 ### `src/core/types.ts`
-`View` 4 · `Layer` 5 · `VttData` 8 · `MapLight` 17 · `MapRuntime` 20 · `LocalInfo` 62 · `NpcInfo` 71 · `MapModule` 76
+`View` 4 · `Layer` 5 · `VttData` 8 · `MapLight` 17 · `MapRuntime` 20 · `LocalInfo` 64 · `NpcInfo` 73 · `MapModule` 78
 
 ### `src/core/vtt.ts`
 `fillAreas` 8 · `xcalc` 12 · `xinfo` 19 · `xrender` 21 · `clipPolyline` 50 · `push` 52 · `dd2vtt` 71 · `inb` 73 · `P` 74 · `dl` 88 · `initVtt` 94 · `opt` 98
@@ -275,7 +275,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `WeatherOpts` 5 · `weather` 7
 
 ### `src/main.ts`
-`cutBg` 42 · `push` 46 · `prep` 56 · `spawnPoint` 68 · `addChar` 73 · `pontoVista` 83 · `ondeEsta` 85 · `moverPara` 91 · `listaPersonagens` 96 · `bt` 104 · `revelar` 123 · `marcarQ` 127 · `escolherClima` 129 · `irParaVista` 130 · `tg` 137 · `rodarCine` 141 · `itemCine` 142 · `encherCine` 148 · `initCinemaUi` 159 · `mostrarPersonagens` 170 · `tocarCena` 174 · `gravarCenaAtual` 188 · `encherMestre` 194 · `alternarImagem` 209 · `initMestreUi` 214 · `toast` 237 · `telaLimpa` 242 · `initAtalhos` 249 · `atualizarSelo` 290 · `congelar` 298 · `escurecer` 302 · `lanterna` 303 · `marcarSom` 304 · `initImersaoUi` 305 · `initUi` 317 · `resz` 362 · `marcarE` 377 · `frame` 432 · `captureApi` 459 · `view()` 462 · `third()` 468 · `stats()` 480 · `start` 492
+`cutBg` 43 · `push` 47 · `prep` 57 · `spawnPoint` 69 · `addChar` 74 · `pontoVista` 84 · `ondeEsta` 86 · `moverPara` 92 · `listaPersonagens` 97 · `bt` 105 · `revelar` 124 · `marcarQ` 128 · `escolherClima` 130 · `irParaVista` 131 · `tg` 138 · `rodarCine` 142 · `itemCine` 143 · `encherCine` 149 · `initCinemaUi` 160 · `mostrarPersonagens` 171 · `tocarCena` 175 · `gravarCenaAtual` 189 · `encherMestre` 195 · `alternarImagem` 210 · `initMestreUi` 215 · `toast` 238 · `telaLimpa` 243 · `initAtalhos` 250 · `atualizarSelo` 291 · `congelar` 299 · `escurecer` 303 · `lanterna` 304 · `marcarSom` 305 · `initImersaoUi` 306 · `initUi` 318 · `resz` 363 · `marcarE` 378 · `frame` 434 · `captureApi` 463 · `view()` 466 · `third()` 474 · `stats()` 486 · `start` 498
 
 ### `src/maps/arton/cidades-kit.ts`
 `V` 15 · `Peca` 16 · `Q` 18 · `BC` 21 · `PONTES_C` 23 · `matsCidade` 28 · `piso` 29 · `vc` 30 · `iniciarKit` 45 · `pick` 51 · `entreR` 52 · `Pc` 53 · `det` 54 · `geo` 55 · `plano` 56 · `cone` 57 · `cupula` 58 · `fumo` 60 · `luz` 61 · `brilho` 62 · `Caixa` 65 · `caixa` 66 · `sobrepoe` 67 · `distSegCaixa` 75 · `clip` 78 · `pb` 80 · `ps` 81 · `comprimentos` 84 · `noPonto` 86 · `reamostra` 91 · `arco` 96 · `Cid` 99 · `livre()` 114 · `rua()` 128 · `estradasPerto()` 135 · `direcaoRua()` 142 · `addChao` 151 · `yRuaC` 152 · `corAttr` 153 · `faixa` 154 · `piso` 165 · `pontesDaRua` 185 · `construirPontes` 197 · `geoTelhado` 209 · `tri` 212 · `OpTelhado` 219 · `telhado` 220 · `Est` 229 · `OC` 230 · `janela` 231 · `fachada` 239 · `enxaimel` 249 · `chamine` 255 · `corpo` 259 · `casa` 261 · `placaTex` 349 · `taverna` 355 · `OpLote` 367 · `casasNaRua` 368 · `preencher` 384 · `Portao` 394 · `portoes` 396 · `contorno` 407 · `OpMuro` 413 · `muralha` 414 · `naPorta` 416 · `molhado` 417 · `aberto` 418 · `palicada` 473 · `torreVigia` 492 · `bandeira` 501 · `poco` 506 · `chafariz` 512 · `estatua` 518 · `barraca` 523 · `lampiao` 530 · `lampioesNaRua` 535 · `arvore` 539 · `carroca` 543 · `barris` 548 · `fogueira` 549 · `lenha` 555 · `tenda` 556 · `OpTemplo` 564 · `templo` 566 · `OpCastelo` 596 · `castelo` 598 · `salaoLongo` 619 · `armazem` 630 · `arena` 637 · `geoPas` 645 · `moinho` 647 · `navio` 654 · `barco` 662 · `cais` 664 · `guindaste` 670 · `lavoura` 673 · `cerca` 679 · `cercaRet` 686 · `pomar` 687 · `vinhedo` 691 · `terminarKit` 698
@@ -290,10 +290,10 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `P` 8 · `ESC` 9 · `W` 10 · `w` 11 · `LIM` 12 · `KM_POR_UNIDADE` 14 · `clamp` 17 · `smooth` 18 · `lerp` 19 · `ridged` 20 · `reseed` 26 · `rnd` 27 · `entre` 28 · `bbox` 31 · `sdPoly` 33 · `distLinha` 47 · `suaviza` 60 · `f` 67 · `UIVANTES` 78 · `ESTEPE` 79 · `TOLLON` 80 · `LOMATUBAR` 81 · `DEHEON` 82 · `BB` 83 · `costaZ` 87 · `Ilha` 94 · `ilha` 95 · `ILHAS` 96 · `ilhaD` 105 · `RIOS` 114 · `LAGO` 125 · `Reg` 128 · `Lugar` 129 · `L` 130 · `V` 131 · `LUGARES` 132 · `lugar` 167 · `Muro` 171 · `MUROS` 173 · `raioMuro` 184 · `dentroMuro` 186 · `cidadeEm` 191 · `pertoDeMuro` 195 · `ocupar` 198 · `ocupado` 199 · `VILAS` 200 · `pts` 203 · `PICOS` 204 · `PICO_A` 205 · `CAVERNAS` 206 · `TORRES_RUINA` 207 · `ACAMPAMENTOS` 208 · `BATALHAS` 209 · `FAROIS` 210 · `PANTANO` 211 · `BOA_SORTE` 212 · `TAIGAS` 213 · `MANADAS` 214 · `LUG` 220 · `ESTRADAS` 221 · `TRILHAS` 236 · `CLAREIRAS` 244 · `Grade` 247 · `PASSO` 248 · `terraD` 251 · `campo` 261 · `PERFIS` 318 · `G` 320 · `construirGrade` 322 · `borrar` 413 · `sombrearRelevo` 421 · `sdPolyCache` 435 · `Y` 438 · `Ysolo` 446
 
 ### `src/maps/arton/index.ts`
-`P3` 24 · `vistaDe` 26 · `bbox` 30 · `ganchoCamera` 34 · `build` 39 · `escolher` 65 · `nevoa` 90 · `ajustarNomes` 158
+`P3` 25 · `vistaDe` 27 · `bbox` 31 · `ganchoCamera` 35 · `build` 40 · `escolher` 66 · `nevoa` 91 · `ajustarNomes` 162
 
 ### `src/maps/arton/interiores.ts`
-`Y0` 21 · `v3` 27 · `luz` 28 · `vista` 29 · `box` 30 · `cil` 31 · `geo` 32 · `solido` 34 · `piso` 36 · `contorno` 37 · `sala` 41 · `gruta` 54 · `tocha` 63 · `cartaz` 69 · `texCanvas` 77 · `matFeixe` 79 · `matTeia` 80 · `matPoca` 81 · `matMusgo` 82 · `acabamento` 85 · `arandela` 93 · `penduricalhos` 100 · `comida` 114 · `escudo` 123 · `trofeu` 131 · `teia` 135 · `feixe` 137 · `poca` 140 · `musgo` 141 · `corrente` 143 · `ossada` 149 · `gaiola` 156 · `arcoPedra` 164 · `abobada` 170 · `vitral` 175 · `nevoaChao` 181 · `ancoraMais` 188 · `macacoMais` 201 · `asidonMais` 211 · `masmorraMais` 222 · `catedralMais` 239 · `covarielMais` 251 · `gilukMais` 252 · `bruxaMais` 260 · `temploMais` 261 · `zolkanMais` 269 · `ancora` 279 · `macacoCaolho` 297 · `asidon` 316 · `masmorra` 333 · `cavernaGelo` 360 · `cristaisAzuis` 374 · `covil` 375 · `catedral` 393 · `covariel` 410 · `gilukSalao` 435 · `bruxa` 451 · `templo` 464 · `zolkan` 480 · `construirInteriores` 500 · `dentroDeInterior` 515 · `particulas` 517
+`Y0` 21 · `ORIGENS` 22 · `v3` 27 · `luz` 28 · `vista` 29 · `box` 30 · `cil` 31 · `geo` 32 · `solido` 34 · `piso` 36 · `contorno` 37 · `sala` 41 · `gruta` 54 · `tocha` 63 · `cartaz` 69 · `texCanvas` 77 · `matFeixe` 79 · `matTeia` 80 · `matPoca` 81 · `matMusgo` 82 · `acabamento` 85 · `arandela` 93 · `penduricalhos` 100 · `comida` 114 · `escudo` 123 · `trofeu` 131 · `teia` 135 · `feixe` 137 · `poca` 140 · `musgo` 141 · `corrente` 143 · `ossada` 149 · `gaiola` 156 · `arcoPedra` 164 · `abobada` 170 · `vitral` 175 · `nevoaChao` 181 · `ancoraMais` 188 · `macacoMais` 201 · `asidonMais` 211 · `masmorraMais` 222 · `catedralMais` 239 · `covarielMais` 251 · `gilukMais` 252 · `bruxaMais` 260 · `temploMais` 261 · `zolkanMais` 269 · `ancora` 279 · `macacoCaolho` 297 · `asidon` 316 · `masmorra` 333 · `cavernaGelo` 360 · `cristaisAzuis` 374 · `covil` 375 · `catedral` 393 · `covariel` 410 · `gilukSalao` 435 · `bruxa` 451 · `templo` 464 · `zolkan` 480 · `construirInteriores` 500 · `dentroDeInterior` 515 · `particulas` 517
 
 ### `src/maps/arton/miniaturas.ts`
 `vc` 18 · `mats` 19 · `MM` 44 · `Mini` 46 · `P` 50 · `add` 51 · `prisma` 52 · `cone` 56 · `pt` 57 · `chao` 59 · `inclinacao` 60 · `pertoDeRio` 62 · `bom` 69 · `janela` 70 · `fumo` 71 · `bandeira` 72 · `cerca` 80 · `cristais` 88 · `arvoreMorta` 92 · `catedral` 100 · `beluhga` 115 · `dragao` 129 · `osso` 140 · `geloAntigo` 147 · `cabana` 153 · `caverna` 160 · `asidon` 166 · `korl` 175 · `torreRuina` 184 · `acampamento` 189 · `batalha` 194 · `pantano` 205 · `velhaMalpetrim` 211 · `zolkan` 217 · `azazel` 227 · `centauros` 235 · `kobolds` 242 · `forteTapista` 248 · `covariel` 249 · `ancora` 256 · `eremita` 268 · `farol` 269 · `pontes` 277 · `comLote` 291 · `construirMiniaturas` 294

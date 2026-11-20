@@ -33,6 +33,8 @@ export interface MapRuntime {
   spawn: (i: number) => { x: number; z: number; y?: number };
   /** NPCs móveis do mapa (viram personagens arrastáveis; o mestre pode ocultar/mover) */
   npcs?: () => Promise<import('./tokens').TokenDef[]>;
+  /** mapa grande: um NPC só aparece perto da câmera / na mesma cena (economiza desenho) */
+  npcVisivel?: (t: import('./tokens').Token) => boolean;
   solid: () => THREE.Object3D[];
   walkStart: { x: number; z: number };
   vtt: VttData;

@@ -19,7 +19,7 @@ import { tempo } from './terreno';
 type M4 = THREE.Matrix4;
 type Luz = { x: number; y: number; z: number; cor: number; n: number; dist: number };
 export const Y0 = -150;
-const ORIGENS: [number, number][] = [[-250, -240], [-90, -240], [70, -240], [230, -240], [-250, -80], [-90, -80], [70, -80], [230, -80], [-250, 80], [-90, 80], [70, 80], [230, 80]];
+export const ORIGENS: [number, number][] = [[-250, -240], [-90, -240], [70, -240], [230, -240], [-250, -80], [-90, -80], [70, -80], [230, -80], [-250, 80], [-90, 80], [70, 80], [230, 80]];
 
 let B: Batch, luzes: Luz[], halos: [number, number, number, number][], vistas: View[], pisos: THREE.Object3D[], colGeo: THREE.BufferGeometry[], paredes: [number, number][][], areas: { n: string; b: [number, number, number, number]; lv: number }[], anim: ((t: number) => void)[];
 let brasas: THREE.Vector3[] = [], bolhas: THREE.Vector3[] = [], poeiras: THREE.Box3[] = [];

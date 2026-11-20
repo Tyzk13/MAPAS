@@ -50,6 +50,8 @@ ctl.maxPolarAngle = 1.78; // permite olhar um pouco para cima (interiores)
 ctl.minDistance = 1.5;
 ctl.maxDistance = 95;
 ctl.target.set(-2, 6, 8);
+ctl.zoomToCursor = true; // a roda aproxima para onde o mouse aponta (achar um lugar no mapa sem arrastar)
+ctl.dampingFactor = 0.08;
 
 type ResizeFn = (w: number, h: number) => void;
 const resizers: ResizeFn[] = [];

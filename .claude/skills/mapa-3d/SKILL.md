@@ -483,6 +483,31 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
   degrau, floreira e **cumeeira escura**. Taverna = placa pendurada (textura de canvas compartilhada) + lampião + bancos.
 - `geo()` do kit respeita `isUVd` (texturas de canvas precisam da UV própria; `boxUV` estragaria).
 
+### Povo do mapa regional (`arton/npcs.ts`) e folhas de fundo escuro
+- **Pedido do dono**: personagens "onde a história os põe" (masmorra, floresta…); cidade de uma raça foca nela mas
+  tem outras. Tiberus/Barud = minotauros (+ humanos capengas), Giluk = bárbaros/anões, Valkaria = todos, etc.
+- Folhas de raças com **fundo escuro** (fumaça + faixas com o nome): `tools/fatiar-folha-escura.py` — bordas (Sobel)
+  + contorno escuro acham as faixas e os vãos; o fundo atrás de cada figura é interpolado entre os vãos; buracos
+  fechados viram figura. Varinha mágica a partir da borda **não** serve (roupa escura vaza para o fundo). Saída
+  `<folha><linha>-NN.png` (linha = raça). A 1ª figura de algumas linhas leva a faixa do nome: pule a -01.
+- Folhas de fundo branco sem grade regular: corte pelos mínimos da projeção por coluna (n figuras por linha).
+  Franja branca na borda: apague pixels claros e sem cor na borda do alfa (2 passadas).
+- NPCs do mapa (`M.npcs`) com `M.npcVisivel` (núcleo): mapa grande mostra só os perto da câmera e na mesma cena
+  (mesa × cena de bolso) — 150 personagens sem custo. Base pequena para miniaturas (h < 1,2). Nas capturas,
+  `__cap.personagens(true)` depois do `view()`.
+- Pacote leve: `python3 -I tools/npcs-arton.py` copia só as imagens citadas em `npcs.ts` (listas `L('a1', [...])` e
+  nomes soltos) para `npcs-local/arton/usar/*.webp` (300 px, ~1 MB) e o `vite.config.ts` as **embute** no JS
+  (`assetsInlineLimit` por caminho): o link do claude.ai tem limite de arquivos (511 por versão). Rode-o depois de
+  mudar quem aparece. Capturas com essas artes **não vão para o git** (repositório público).
+
+### Mecânicas da mesa (núcleo, nov/2026)
+- Tudo que anima com "lerp por quadro" fica lento em PC fraco e brusco em 144 Hz: use `1 - exp(-dt·k)`.
+- Personagem solto **anda** com velocidade limitada (perto: freia; longe: corre) e passo/balanço no sprite.
+- `core/orbita.ts`: WASD/QE/ZX na órbita e duplo clique (personagem selecionado anda; sem ele, a câmera voa).
+  O 1º clique do duplo clique desmarca o personagem: `ultimoSelecionado(ms)` recupera.
+- `ctl.zoomToCursor = true`. Troca de clima com transição (`sky.ts`, `foto`/`aplicarFoto`; larga o sol se outra
+  coisa mexer nele) e pré-carga dos céus um por vez.
+
 ### Interiores mais ricos (`interiores.ts`, extras por cena)
 - Cada cena tem um "extra" (`ancoraMais`, `masmorraMais`…) com peças de decoração reutilizáveis: `acabamento`
   (lambri/rodapé/cornija/pilastras), `arandela`, `penduricalhos`, `comida`, `escudo`, `trofeu`, `teia` (canvas),

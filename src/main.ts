@@ -8,9 +8,10 @@ import { st, $ } from './core/state';
 import { PRE, setTime, timeHooks, preloadSkies, driftSky } from './core/sky';
 import { anim } from './core/anim';
 import { updateCull } from './core/cull';
-import { DEF, makeToken, dropT, onChar, onPos, selT, sizeT, save, placeT, initTokenInput, tickTokens, snapTokens, setTarget, focusT, wk, freeSpot, type Token } from './core/tokens';
+import { DEF, makeToken, dropT, onChar, onPos, selT, sizeT, save, placeT, initTokenInput, tickTokens, snapTokens, andandoAgora, setTarget, focusT, wk, freeSpot, type Token } from './core/tokens';
 import { NET, handlers, startNet } from './core/net';
 import { WM, setWalk, setMode, modeHooks, freeLookAt, walkStep, walkPointer, initWalk, placeWalkCam } from './core/walk';
+import { initOrbita, tickOrbita } from './core/orbita';
 import { menu, lista, fecharMenu, initMenus } from './core/menu';
 import { espelho, initEspelho, serJogadores, abrirJanelaJogadores, dentroDeOutraPagina, tickEspelho, enviarQuadro, avisarMapa, avisarClima, avisarAparicao } from './core/espelho';
 import { aparicao } from './core/aparicao';
@@ -393,6 +394,7 @@ function initUi() {
   // indicador de conexão (ponto verde quando ao vivo)
   new MutationObserver(() => document.body.classList.toggle('ao-vivo', /^ao vivo/.test($('st').textContent))).observe($('st'), { childList: true, characterData: true, subtree: true });
   ctl.addEventListener('start', () => { st.anim = null; });
+  initOrbita(() => !WM.on && !cineAtivo && !espelho.jogadores);
 }
 
 // API para a página que incorpora (iframe): postMessage({cmd:'map',id:'campo'}) e ({cmd:'time',i:2})
@@ -431,7 +433,7 @@ let fpsN = 0, fpsT = performance.now(), cineAtivo = false, leveAplicado = false;
 (window as any).__economia = estadoEconomia; // para conferir nos testes (quadros/s e motivo)
 function frame(ts?: number) {
   // economia: limite de quadros, mestre leve com a TV aberta, devagar quando ninguém mexe (core/desempenho.ts)
-  if (!desenharQuadro(ts ?? performance.now(), { jogadores: espelho.jogadores, tvAberta: imersao.temJogadores, ocupado: !!st.anim || cineAtivo || WM.on })) return;
+  if (!desenharQuadro(ts ?? performance.now(), { jogadores: espelho.jogadores, tvAberta: imersao.temJogadores, ocupado: !!st.anim || cineAtivo || WM.on || andandoAgora })) return;
   const querLeve = economia.leve || (!espelho.jogadores && imersao.temJogadores && economia.tvLeve);
   if (querLeve !== leveAplicado) { leveAplicado = querLeve; post.economia(querLeve); if (querLeve && !economia.leve) toast('TV dos jogadores aberta: esta janela fica leve para não travar (a TV fica com a qualidade cheia)', 4200); }
   timer.update(ts);
@@ -440,10 +442,12 @@ function frame(ts?: number) {
   const dt = Math.min(0.1, timer.getDelta()), t = timer.getElapsed(), M = st.MP;
   if (!M) return;
   anim.time.value = t; driftSky(t);
-  tickTokens(WM.on && !WM.free, WM.third, WM.av);
+  tickTokens(WM.on && !WM.free, WM.third, WM.av, dt);
   if (M.tick) M.tick(dt, t);
+  tickOrbita(dt);
   if (st.anim) {
-    const a = st.anim; ctl.target.lerp(a.tp, 0.1); cam.position.lerp(a.cp, 0.1);
+    // voo da câmera com a mesma suavidade em qualquer PC (antes andava 10% por quadro: lento a 20/s, brusco a 144/s)
+    const a = st.anim, kv = 1 - Math.exp(-dt * 6.3); ctl.target.lerp(a.tp, kv); cam.position.lerp(a.cp, kv);
     if (cam.position.distanceTo(a.cp) < 0.1 && ctl.target.distanceTo(a.tp) < 0.1) st.anim = null;
   }
   cineAtivo = false;
@@ -465,6 +469,8 @@ function captureApi() {
       st.anim = null; cam.fov = v.fov || 50; cam.updateProjectionMatrix();
       cam.position.set(...v.p); ctl.target.set(...v.t); ctl.update();
     },
+    /** mostra os personagens nas capturas (view() os esconde) */
+    personagens(v: boolean) { st.showC = v; },
     third(o: { x: number; z: number; yaw: number; pitch: number }) {
       st.showC = true; setWalk(true); WM.third = true;
       const a = WM.av!; WM.x = o.x; WM.z = o.z; WM.yaw = o.yaw; WM.pitch = o.pitch;

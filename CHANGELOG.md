@@ -1,5 +1,22 @@
 # Changelog
 
+## Mecânicas mais gostosas e o povo de Arton
+
+- **Personagens andam** até o destino (rápido no começo, param devagar, com passo e balanço) em vez de deslizar;
+  a suavidade não depende mais dos quadros/s do PC. **Duplo clique no chão** com um personagem selecionado: ele
+  anda até lá (anel marca o destino).
+- **Câmera**: a roda aproxima para onde o mouse aponta; **W A S D** deslizam a mesa, **Q/E** giram, **Z/X**
+  aproximam/afastam (Shift mais rápido); **duplo clique no chão** voa até o ponto; voos de câmera iguais em PC
+  rápido e lento.
+- **Climas**: a troca é uma transição suave (~1,2 s) de luz, névoa e céu; os céus são pré-carregados um por vez
+  (antes os cinco de uma vez davam um engasgo 3 s depois de abrir). Medido: sem erros; primeira troca 0,15–0,35 s
+  sem placa de vídeo, as seguintes instantâneas.
+- **Sul de Arton ganhou gente** (artes do dono, fora do git): taverneiros, fregueses, cavaleiros, prisioneiros e
+  cultistas na masmorra de Azazel, a bruxa, o mago Covariel (oculto), sacerdotes de Korl, a família Zolkan; nas
+  cidades, miniaturas do povo de cada lugar — minotauros em Tiberus e na legião de Barud (com humanos capengas),
+  bárbaros e anões em Giluk, todos os povos em Valkaria, marujos e dracônicos em Malpetrim, elfos em Tollon,
+  kobolds no planalto, orcs nos acampamentos, centauros na aldeia. Só aparecem perto da câmera.
+
 ## Sul de Arton: casas, tavernas, catedrais e interiores mais caprichados
 
 - Casas com moldura nas janelas e na porta, degrau de pedra, floreiras coloridas (Deheon, Valkaria, oeste) e

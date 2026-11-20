@@ -71,7 +71,7 @@ export const K = (id: string) => CFG.room + '__' + st.curMap + '__' + id;
 export function sizeT(t: Token) {
   const h = t.h;
   if (t.mesh) { t.mesh.scale.set(t.fl ? -h : h, h, 1); t.mesh.position.y = h / 2 + 0.1; }
-  const k = Math.max(0.7, h / 1.7);
+  const k = h < 1.2 ? h / 1.7 : Math.max(0.7, h / 1.7); // miniaturas (mapa regional) têm base pequena
   t.base.scale.set(k, 1, k); t.ring.scale.set(k, 1, k); t.hit.scale.set(k, h + 0.2, k); t.hit.position.y = (h + 0.2) / 2;
 }
 export function placeT(t: Token, i?: number) {
@@ -151,7 +151,15 @@ const ghost = new THREE.Mesh(new THREE.RingGeometry(0.5, 0.62, 32).rotateX(-Math
 ghost.visible = false; ghost.renderOrder = 4; S.add(ghost);
 const mline = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new V3(), new V3()]), new THREE.LineBasicMaterial({ color: 0xe8c27a, depthTest: false }));
 mline.visible = false; mline.renderOrder = 4; mline.frustumCulled = false; S.add(mline);
-export const helpers = [ghost, mline];
+// marca do destino (duplo clique no chão): anel que some devagar
+const destino = new THREE.Mesh(new THREE.RingGeometry(0.42, 0.56, 32).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0xe8c27a, transparent: true, opacity: 0, depthTest: false }));
+destino.visible = false; destino.renderOrder = 4; S.add(destino);
+let destinoT = 0;
+export function marcarDestino(x: number, y: number, z: number) { destino.position.set(x, y + 0.06, z); destino.visible = true; destinoT = 1; }
+export const helpers = [ghost, mline, destino];
+// último personagem desmarcado por um clique no vazio (o 1º clique do duplo clique desmarca; o duplo clique o recupera)
+let desmarcado: { t: Token; em: number } | null = null;
+export const ultimoSelecionado = (ms: number) => (desmarcado && performance.now() - desmarcado.em < ms && st.T[desmarcado.t.id] === desmarcado.t ? desmarcado.t : null);
 
 function setM(e: PointerEvent) {
   const r = cv.getBoundingClientRect();
@@ -175,7 +183,7 @@ export function initTokenInput(walkActive: () => boolean, walkPointer: (e: Point
     if (walkActive()) { walkPointer(e, 'down'); return; }
     setM(e);
     const h = ray.intersectObjects(pick.filter(m => (m.userData.t as Token).g.visible), false)[0];
-    if (!h) { selT(null); return; }
+    if (!h) { if (st.sel) desmarcado = { t: st.sel, em: performance.now() }; selT(null); return; }
     const t = h.object.userData.t as Token; selT(t); st.anim = null; if (CFG.ro) return;
     st.drag = t; ctl.enabled = false; cv.setPointerCapture(e.pointerId);
     const f = ray.intersectObjects(wk(), false)[0];
@@ -214,20 +222,32 @@ export function initTokenInput(walkActive: () => boolean, walkPointer: (e: Point
 }
 
 /** Atualiza posição/rotação dos billboards a cada quadro. */
-export function tickTokens(walkOn: boolean, third: boolean, av: Token | null) {
+/** algum personagem está andando (o laço não economiza quadros nessa hora) */
+export let andandoAgora = false;
+export function tickTokens(walkOn: boolean, third: boolean, av: Token | null, dt = 1 / 60) {
+  andandoAgora = false;
   tempoFichas.value = performance.now() / 1000;
+  if (destino.visible) { destinoT -= dt * 0.9; const m = destino.material as THREE.MeshBasicMaterial; m.opacity = Math.max(0, destinoT) * 0.9; destino.scale.setScalar(1 + (1 - destinoT) * 0.4); if (destinoT <= 0) destino.visible = false; }
   const cx = cam.position.x, cz = cam.position.z, M = st.MP!, hi = !M.loft || M.loft.visible;
   for (const k in st.T) {
-    const t = st.T[k], p = t.g.position, s = t === st.drag ? 0.45 : 0.25;
-    p.x += (t.target.x - p.x) * s; p.z += (t.target.y - p.z) * s; p.y += (t.ty - p.y) * s;
+    const t = st.T[k], p = t.g.position, arrasto = t === st.drag, dx0 = t.target.x - p.x, dz0 = t.target.y - p.z, d0 = Math.hypot(dx0, dz0);
+    // independente dos quadros/s: arrastando segue o dedo; solto, ANDA até o destino (rápido no começo, para devagar)
+    const kk = 1 - Math.exp(-dt * (arrasto ? 28 : 12));
+    let andando = false;
+    if (arrasto || d0 < 0.03 || d0 > 60) { p.x += dx0 * kk; p.z += dz0 * kk; }
+    else { const v = Math.min(d0 * 5, Math.max(2.5, Math.min(60, d0 * 2.2))), passo = Math.min(d0, v * dt); p.x += (dx0 / d0) * passo; p.z += (dz0 / d0) * passo; andando = d0 > 0.08; if (andando) andandoAgora = true; }
+    p.y += (t.ty - p.y) * kk;
+    const ud = t.g.userData; ud.passo = (ud.passo ?? Math.random() * 6) + (andando ? dt * 11 : 0); ud.balanco = (ud.balanco ?? 0) + ((andando ? 1 : 0) - (ud.balanco ?? 0)) * (1 - Math.exp(-dt * 8));
     // oculto: some na tela dos jogadores e para quem só vê; o mestre vê meio transparente
     const ocultoAqui = t.oc && (st.jogadores || CFG.ro);
-    t.g.visible = st.showC && (hi || t.ty < 1.5) && !(walkOn && !third && t === av) && !ocultoAqui;
+    t.g.visible = st.showC && (hi || t.ty < 1.5) && !(walkOn && !third && t === av) && !ocultoAqui && (!t.npc || !M.npcVisivel || t === st.sel || t === st.drag || M.npcVisivel(t));
     if (t.mesh) { const m = t.mesh.material as THREE.MeshBasicMaterial, op = t.oc ? 0.4 : 1; if (m.opacity !== op) { m.opacity = op; m.depthWrite = !t.oc; } }
     t.base.visible = !t.oc; t.btn.classList.toggle('oc', t.oc);
     const dx = cx - p.x, dz = cz - p.z, el = Math.atan2(cam.position.y - p.y - 1, Math.hypot(dx, dz));
     t.sp.rotation.y = Math.atan2(dx, dz); t.sp.rotation.x = -Math.min(1.25, Math.max(0, el - 0.6) * 1.1);
-    t.sp.position.y += ((t === st.drag ? 0.35 : 0) - t.sp.position.y) * 0.3; t.ring.visible = t === st.sel && !walkOn;
+    // passo: pulinho e balanço enquanto anda; levantado enquanto é arrastado
+    const bal = ud.balanco as number, alvoY = arrasto ? 0.35 : Math.abs(Math.sin(ud.passo)) * 0.07 * t.h * bal;
+    t.sp.position.y += (alvoY - t.sp.position.y) * (1 - Math.exp(-dt * 18)); t.sp.rotation.z = Math.sin(ud.passo) * 0.05 * bal; t.ring.visible = t === st.sel && !walkOn;
   }
 }
 /** Coloca todos os personagens exatamente no alvo (sem animação). */

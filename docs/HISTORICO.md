@@ -100,6 +100,8 @@ com salas), F (arquitetura para novos mapas + `docs/NOVO-MAPA.md`). Todas foram 
     cuidado de Barud, detalhes dentro e não só casas jogadas".
 22. Casas, tavernas (placa, lampião), catedrais (contrafortes, vitrais, duas torres) e interiores mais caprichados;
     masmorra de Azazel com abóbada, poças, correntes, ossadas e névoa.
+23. Mecânicas (personagens andam, câmera por teclado/duplo clique, zoom para o mouse, clima com transição) e o
+    povo de Arton (folhas de personagens do dono recortadas em `npcs-local/arton/`, ~150 NPCs pelos lugares).
 
 ## Arquivo offline (como o dono joga sem internet)
 

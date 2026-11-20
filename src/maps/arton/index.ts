@@ -19,6 +19,7 @@ import { construirNatureza } from './natureza';
 import { construirSimbolos, altPino } from './simbolos';
 import { FICHAS } from './dados';
 import { construirInteriores, dentroDeInterior } from './interiores';
+import { npcsArton } from './npcs';
 
 const Q = CFG.quality;
 const P3 = (v: THREE.Vector3 | number[]) => (Array.isArray(v) ? v : [v.x, v.y, v.z]).map(n => +(+n).toFixed(2)) as [number, number, number];
@@ -139,6 +140,9 @@ export async function build(M: MapRuntime) {
     walls: inter.paredesVtt, portals: [], lights: [],
   };
   M.exportHide = () => [sim.nomes, sim.alfinetes, sim.rotas, fronteiras];
+  // personagens das folhas do dono (npcs.ts): só aparecem perto da câmera e na mesma cena (mesa × interior)
+  M.npcs = async () => npcsArton();
+  M.npcVisivel = t => { const c = cam.position, p = t.g.position, dc = c.y < -60, dt2 = p.y < -60; if (dc !== dt2) return false; return Math.hypot(c.x - p.x, c.y - p.y, c.z - p.z) < (dt2 ? 45 : 80); };
 
   // ---------- clima ----------
   const preenche = new THREE.HemisphereLight(0x9aa8c8, 0x2a2622, 0); preenche.userData.noExport = 1; G.add(preenche);
