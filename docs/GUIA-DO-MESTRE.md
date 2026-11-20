@@ -141,6 +141,10 @@ Arrastar um personagem mostra a distância em km e dias. As placas nas rotas tra
 pelas trilhas, orcs nos acampamentos…). Eles só aparecem quando você chega perto; dá para arrastar, ocultar e
 revelar como os outros personagens. Covariel, o vampiro de Zolkan, o esqueleto e o tenente da masmorra e um devoto
 da catedral começam **ocultos** (só você vê, meio transparentes) para você revelar na hora certa.
+**Vilões** têm a **base vermelha** e "vilão" no nome: cultistas e o tenente de Azazel, a família Zolkan, o comprador
+de coral da Âncora, o espião e o assassino da Irmandade Pirata, o escriba traidor de Asidon, o executor e o centurião
+de Barud, o senador conspirador de Tiberus, a espiã e o feiticeiro renegado de Valkaria, o capitão pirata de
+Malpetrim, os chefes de guerra orcs, o chefe kobold, o saqueador de Tollon, a Velha das Neves e o coletor de coral.
 
 **Câmera e personagens**: roda = zoom para onde o mouse aponta · W A S D deslizam a mesa · Q/E giram · Z/X
 aproximam · duplo clique no chão leva a câmera até lá · com um personagem selecionado, duplo clique no chão faz

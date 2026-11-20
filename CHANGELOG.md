@@ -16,6 +16,8 @@
   cidades, miniaturas do povo de cada lugar — minotauros em Tiberus e na legião de Barud (com humanos capengas),
   bárbaros e anões em Giluk, todos os povos em Valkaria, marujos e dracônicos em Malpetrim, elfos em Tollon,
   kobolds no planalto, orcs nos acampamentos, centauros na aldeia. Só aparecem perto da câmera.
+- **Vilões** com base vermelha e "vilão" no nome (cultistas de Azazel, família Zolkan, Irmandade Pirata, executor
+  de Barud, senador conspirador, chefes orcs, chefe kobold…); vários começam ocultos para revelar na hora.
 
 ## Sul de Arton: casas, tavernas, catedrais e interiores mais caprichados
 
