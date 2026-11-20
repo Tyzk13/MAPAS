@@ -52,17 +52,17 @@ function barud(L: Lugar) {
   lampioesNaRua(via, 0.42, 1.3); lampioesNaRua(lant, 0.34, 1.5);
   // prédios com nome (do mapa detalhado)
   const coral = (x: number, z: number) => { const u = (x - L.x) / k, v = (z - L.z) / k; return u < -51 && v > -66 && v < -12; };
-  { const [x, z] = A(36, -25); templo(x, z, Math.PI / 2, 0.85, { parede: 0xd8d0c0, teto: 0x4a4e5a, torre: 'agulha' }); c.reservar(x, z, 1.9, 1.4, Math.PI / 2); }
+  { const [x, z] = A(36, -25); templo(x, z, Math.PI / 2, 0.85, { parede: 0xd8d0c0, teto: 0x4a4e5a, torre: 'agulha', naves: true }); c.reservar(x, z, 1.9, 1.4, Math.PI / 2); }
   { const [x, z] = A(-36, -24), p = armazem(x, z, -Math.PI / 2, 1.1, 0.8, 0x6a645a, 0x3e3a40); bandeira(p, 0.55, 0.5, 0.1, 0.5, 0xa01a14, 0.8); bandeira(p, -0.55, 0.5, 0.1, 0.5, 0xa01a14, 0.8); c.reservar(x, z, 1.2, 0.9, -Math.PI / 2); }
   { const [x, z] = A(-17, -52); casa(x, z, 0, 0.78, 0.66, 'barud', { and: 2, luz: 0.8, cor: 0xd0c4b0 }); c.reservar(x, z, 0.8, 0.7); arvore(x + 0.6, z + 0.1, 0.8); arvore(x - 0.6, z, 0.7); }
-  { const [x, z] = A(13, 77); const p = casa(x, z, -Math.PI / 2, 0.9, 0.75, 'barud', { and: 2, luz: 1, loja: 0x8a2a1a }); c.reservar(x, z, 0.9, 0.78, -Math.PI / 2); const v = p.pos(0, 0.5, 0.5); luz(v.x, v.y, v.z, 0xffa050, 18, 7); brilho(v.x, v.y, v.z, 1.1); barris(x - 0.3, z + 0.6); }
-  { const [x, z] = A(-34, 34); const p = casa(x, z, Math.PI, 0.78, 0.64, 'barud', { and: 2, luz: 1, loja: 0x3a4a2a }); c.reservar(x, z, 0.8, 0.66, Math.PI); const v = p.pos(0.25, 0.45, 0.42); lampiao(v.x, v.z); luz(v.x, v.y, v.z, 0xffb060, 14, 6); }
+  { const [x, z] = A(13, 77); const p = casa(x, z, -Math.PI / 2, 0.9, 0.75, 'barud', { and: 2, luz: 1, loja: 0x8a2a1a, taverna: true }); c.reservar(x, z, 0.9, 0.78, -Math.PI / 2); const v = p.pos(0, 0.5, 0.5); luz(v.x, v.y, v.z, 0xffa050, 18, 7); brilho(v.x, v.y, v.z, 1.1); barris(x - 0.3, z + 0.6); }
+  { const [x, z] = A(-34, 34); const p = casa(x, z, Math.PI, 0.78, 0.64, 'barud', { and: 2, luz: 1, loja: 0x3a4a2a, taverna: true }); c.reservar(x, z, 0.8, 0.66, Math.PI); const v = p.pos(0.25, 0.45, 0.42); lampiao(v.x, v.z); luz(v.x, v.y, v.z, 0xffb060, 14, 6); }
   { const [x, z] = A(-11, 36); const p = casa(x, z, Math.PI / 2, 0.66, 0.58, 'barud', { luz: 0.2 }); c.reservar(x, z, 0.68, 0.6, Math.PI / 2); plano(BD, p.m, CM.forja, 0.16, 0.1, 0, 0.09, 0.3, 0, 0xffffff); const v = p.pos(0, 0.15, 0.45); brilho(v.x, v.y, v.z, 0.9); luz(v.x, v.y, v.z, 0xff7a30, 10, 4); fumo(p.pos(0.2, 0.9, 0), 1); }
   { const [x, z] = A(-72, -41); casa(x, z, Math.PI / 2, 1.0, 0.84, 'ruina', { cor: 0x8a7a6a }); c.reservar(x, z, 1.0, 0.86, Math.PI / 2); comLote(BC, () => { for (let i = 0; i < 6; i++) cristais(x + (rnd() - 0.5) * 0.8, z + (rnd() - 0.5) * 0.7, 0.45); }); }
   // casas ao longo de todas as ruas (geminadas, dois andares no miolo)
   ruas.forEach((r, i) => casasNaRua(c, r, larg[i], {
     w: [0.42, 0.6], d: [0.38, 0.5], gap: [0.01, 0.05], prob: 0.96,
-    casa: (x, z, ry, w, d) => { const cr = coral(x, z); if (cr) { casa(x, z, ry, w, d, rnd() < 0.7 ? 'ruina' : 'barud', { luz: 0 }); if (rnd() < 0.4) comLote(BC, () => cristais(x, z, 0.4)); } else casa(x, z, ry, w, d, 'barud', { and: andares(dist(x, z, L.x, L.z), 3.6), luz: z > L.z + 2.4 ? 0.7 : 0.35, loja: i < 2 && rnd() < 0.25 ? pick([0x8a2a1a, 0x3a5a2a, 0x2a3a6a, 0x8a6a1a]) : undefined, fumo: 0.12 }); },
+    casa: (x, z, ry, w, d) => { const cr = coral(x, z); if (cr) { casa(x, z, ry, w, d, rnd() < 0.7 ? 'ruina' : 'barud', { luz: 0 }); if (rnd() < 0.4) comLote(BC, () => cristais(x, z, 0.4)); } else casa(x, z, ry, w, d, 'barud', { and: andares(dist(x, z, L.x, L.z), 3.6), luz: z > L.z + 2.4 ? 0.7 : 0.35, loja: i < 2 && rnd() < 0.25 ? pick([0x8a2a1a, 0x3a5a2a, 0x2a3a6a, 0x8a6a1a]) : undefined, taverna: i > 3 && i < 8 && rnd() < 0.06, fumo: 0.12 }); },
     vazio: (x, z) => arvore(x, z, 0.65),
   }));
   preencher(c, 420, () => { const a = rnd() * 6.283, r = Math.sqrt(rnd()) * 6.2; return [L.x + Math.cos(a) * r, L.z + Math.sin(a) * r]; }, { w: [0.36, 0.5], d: [0.32, 0.44], casa: (x, z, ry, w, d) => casa(x, z, ry, w, d, coral(x, z) ? 'ruina' : 'barud', { luz: 0.25, fumo: 0.08 }) });
@@ -105,14 +105,15 @@ function valkaria(L: Lugar) {
   for (const a of [-Math.PI / 2 - 0.5, 0.15, 2.4, -2.5]) if (!radiais.some(b => Math.abs(Math.atan2(Math.sin(a - b), Math.cos(a - b))) < 0.45)) radiais.push(a);
   const perto = (a: number, lim: number) => radiais.some(b => Math.abs(Math.atan2(Math.sin(a - b), Math.cos(a - b))) < lim);
   // prédios grandes (reservados)
-  const marcos: [string, number, number][] = [['palacio', -1.25, 9.3], ['academia', -2.05, 9.4], ['arena', 1.95, 12.6], ['mercado', 1.52, 12.2], ['jardim', 0.75, 9.2], ['jardim2', -0.55, 9.2], ['jardim3', 2.75, 9.2]];
+  const marcos: [string, number, number][] = [['palacio', -1.25, 9.3], ['academia', -2.05, 9.4], ['arena', 1.95, 12.6], ['mercado', 1.52, 12.2], ['jardim', 0.75, 9.2], ['jardim2', -0.55, 9.2], ['catedral', 2.75, 9.4]];
   const ajusta = (a: number) => { for (let k = 0; k < 20 && perto(a, 0.28); k++) a += 0.06; return a; };
   const pos: Record<string, V> = {}; for (const [n, a, r] of marcos) pos[n] = P(ajusta(a), r);
   { const [px, pz] = pos.palacio, ry = Math.atan2(x - px, z - pz); castelo(px, pz, ry, 1.15, { mat: MM.marmore, cor: 0xece6f2, teto: 0x4a5a98, bandeira: 0x5a3a9a, S: 1.25 }); c.reservar(px, pz, 3.2, 3.2, ry); const p = Pc(px, Ysolo(px, pz), pz, ry); cupula(p, MM.ouro, 0.55, 0, 3.45, -0.35, OURO, 1.3); }
   { const [ax, az] = pos.academia, p = Pc(ax, chao(ax, az, 0.6), az, rnd()), q = det(p); p.cil(MM.marmore, 0.5, 5.2, 0, -0.2, 0, 0xe0d8f0, 12, 0.36); cone(p, MM.ardosia, 0.55, 1.6, 0, 5.0, 0, 0x3a2a6a, 12); for (let k = 0; k < 6; k++) plano(BD, q.m, CM.arcano, 0.08, 0.16, Math.sin(k * 1.1) * 0.39, 1.2 + k * 0.62, Math.cos(k * 1.1) * 0.39, k * 1.1, 0xffffff); const g = new THREE.TorusGeometry(0.62, 0.035, 5, 24); g.rotateX(Math.PI / 2); g.translate(0, 4.2, 0); geo(BC, CM.arcano, g, 0xffffff, p.m); brilho(ax, Ysolo(ax, az) + 5.5, az, 3.2); luz(ax, Ysolo(ax, az) + 4.4, az, 0x9a7cff, 18, 8); for (const s of [-1, 1]) casa(ax + s * 0.95, az + 0.5, Math.atan2(x - ax, z - az), 0.7, 0.55, 'valk', { and: 2, luz: 0.8, cor: 0xd8d0ec }); c.bloquear(ax, az, 1.6); }
   { const [ax, az] = pos.arena, ry = Math.atan2(x - ax, z - az); arena(ax, az, ry, 2.0, 1.55, 0xd8d0c4, 4); c.reservar(ax, az, 4.6, 3.6, ry); for (const s of [-1, 1]) { const p = Pc(ax, Ysolo(ax, az), az, ry); bandeira(p, s * 2.1, 1.1, 0, 0.6, 0x5a3a9a); } }
   { const [mx, mz] = pos.mercado; piso(mx, mz, { r: 1.35 }, CM.lajota, 0xd8ccb8); c.bloquear(mx, mz, 1.45); chafariz(mx, mz, 0.3); for (let i = 0; i < 12; i++) { const a = (i / 12) * 6.283, bx = mx + Math.cos(a) * 1.0, bz = mz + Math.sin(a) * 1.0; barraca(bx, bz, Math.atan2(mx - bx, mz - bz), pick([0xa83a6a, 0xd8a838, 0x3a6a9a, 0x5a8a3a, 0xc86a2a, 0x7a3a9a])); } carroca(mx + 1.5, mz, 1.2); luz(mx, Ysolo(mx, mz) + 1, mz, 0xffb060, 14, 6); }
-  for (const n of ['jardim', 'jardim2', 'jardim3']) { const [gx, gz] = pos[n]; piso(gx, gz, { r: 1.0 }, CM.campo, 0x5a8a3a); c.bloquear(gx, gz, 1.05); chafariz(gx, gz, 0.22); for (let i = 0; i < 7; i++) { const a = (i / 7) * 6.283; arvore(gx + Math.cos(a) * 0.72, gz + Math.sin(a) * 0.72, 0.75, pick([0x4a7a3a, 0x5a8a40, 0x3a6a32, 0x8a6aa0])); } }
+  { const [cx, cz] = pos.catedral, ry = Math.atan2(x - cx, z - cz); templo(cx, cz, ry, 1.6, { mat: MM.marmore, parede: 0xe8e2f0, tetoMat: MM.ardosia, teto: 0x4a5a8a, naves: true, duasTorres: true }); c.reservar(cx, cz, 3.0, 3.8, ry); const fx = cx + Math.sin(ry) * 2.6, fz = cz + Math.cos(ry) * 2.6; piso(fx, fz, { r: 0.9 }, CM.lajota, 0xe0d8e4); c.bloquear(fx, fz, 0.95); chafariz(fx, fz, 0.25); }
+  for (const n of ['jardim', 'jardim2']) { const [gx, gz] = pos[n]; piso(gx, gz, { r: 1.0 }, CM.campo, 0x5a8a3a); c.bloquear(gx, gz, 1.05); chafariz(gx, gz, 0.22); for (let i = 0; i < 7; i++) { const a = (i / 7) * 6.283; arvore(gx + Math.cos(a) * 0.72, gz + Math.sin(a) * 0.72, 0.75, pick([0x4a7a3a, 0x5a8a40, 0x3a6a32, 0x8a6aa0])); } }
   // torres dos nobres com jardins suspensos e viadutos
   const torres: THREE.Vector3[] = [];
   for (let i = 0; i < 7; i++) { const a = ajusta((i / 7) * 6.283 + 0.5); const [tx, tz] = P(a, 8.4); if (Object.values(pos).some(([u, v]) => dist(u, v, tx, tz) < 1.8) || pertoDeRio(tx, tz, 1)) continue; const h = 6 + rnd() * 5, q = Pc(tx, Ysolo(tx, tz) - 0.2, tz, a), qd = det(q);
@@ -135,7 +136,7 @@ function valkaria(L: Lugar) {
   const todas = [...av.map(r => [r, 0.62] as const), [anel1, 0.44] as const, [anel2, 0.36] as const, ...trav.map(r => [r, 0.22] as const)];
   for (const [r, lg] of todas) casasNaRua(c, r, lg, {
     w: [0.55, 0.85], d: [0.5, 0.68], gap: [0.02, 0.08], prob: 0.95,
-    casa: (hx, hz, ry, w, d) => { const dd = dist(hx, hz, x, z); casa(hx, hz, ry, w, d, 'valk', { and: andares(dd, 13.2, 11.2), luz: 0.6, loja: lg > 0.5 && rnd() < 0.3 ? pick([0x7a3a9a, 0x3a5a9a, 0xa83a3a, 0xd8a838]) : undefined, fumo: 0.06 }); },
+    casa: (hx, hz, ry, w, d) => { const dd = dist(hx, hz, x, z); casa(hx, hz, ry, w, d, 'valk', { and: andares(dd, 13.2, 11.2), luz: 0.6, loja: lg > 0.5 && rnd() < 0.3 ? pick([0x7a3a9a, 0x3a5a9a, 0xa83a3a, 0xd8a838]) : undefined, taverna: lg < 0.5 && lg > 0.3 && rnd() < 0.04, fumo: 0.06 }); },
     vazio: (hx, hz) => arvore(hx, hz, 0.7, 0x4a7a3a),
   });
   preencher(c, 900, () => { const a = rnd() * 6.283, r = 7.6 + rnd() * 8; return P(a, r); }, { w: [0.5, 0.75], d: [0.45, 0.6], casa: (hx, hz, ry, w, d) => casa(hx, hz, ry, w, d, 'valk', { and: andares(dist(hx, hz, x, z), 12.5), luz: 0.5, fumo: 0.05 }) });
@@ -191,7 +192,7 @@ function malpetrim(L: Lugar) {
   const [mx, mz] = A(0.2, -0.7); piso(mx, mz, { r: 1.2 }, CM.lajota, 0xe8e0d0); c.bloquear(mx, mz, 1.25); chafariz(mx, mz, 0.3, 0xf0e8dc, MM.reboco);
   for (let i = 0; i < 6; i++) lampiao(mx + Math.cos(i * 1.05) * 1.1, mz + Math.sin(i * 1.05) * 1.1);
   { const [tx, tz] = A(0.2, -2.55); templo(tx, tz, 0, 0.7, { mat: MM.reboco, parede: 0xf4f0e6, tetoMat: MM.telha, teto: 0xc8683a, torre: 'cupula' }); c.reservar(tx, tz, 0.9, 1.9); }
-  { const [ex, ez] = A(2.3, -0.9), p = casa(ex, ez, -Math.PI / 2 + 0.2, 0.95, 0.75, 'oeste', { and: 2, luz: 1, loja: 0xd8a040, cor: 0xe8c890 }); c.reservar(ex, ez, 1.0, 0.8, -Math.PI / 2 + 0.2); const v = p.pos(0, 0.5, 0.5); luz(v.x, v.y, v.z, 0xffa050, 20, 8); brilho(v.x, v.y, v.z, 1.1); barris(ex + 0.6, ez + 0.3); }
+  { const [ex, ez] = A(2.3, -0.9), p = casa(ex, ez, -Math.PI / 2 + 0.2, 0.95, 0.75, 'oeste', { and: 2, luz: 1, loja: 0xd8a040, cor: 0xe8c890, taverna: true }); c.reservar(ex, ez, 1.0, 0.8, -Math.PI / 2 + 0.2); const v = p.pos(0, 0.5, 0.5); luz(v.x, v.y, v.z, 0xffa050, 20, 8); brilho(v.x, v.y, v.z, 1.1); barris(ex + 0.6, ez + 0.3); }
   { const [fx, fz] = A(-5.4, -7.2); piso(fx, fz, { r: 1.3 }, CM.areia, 0xe8d8b0); c.bloquear(fx, fz, 1.35); for (let i = 0; i < 11; i++) { const a = (i / 11) * 6.283 + rnd() * 0.2, r = 0.45 + (i % 2) * 0.5; tenda(fx + Math.cos(a) * r, fz + Math.sin(a) * r, 0.2 + rnd() * 0.08, pick([0xc83a2a, 0xe8c040, 0x2a6ac8, 0x3a9a4a, 0xe86a20])); } }
   { const [ax, az] = A(6.3, -7.0); arena(ax, az, 0.2, 1.55, 1.15, 0xe0d8c8, 3); c.reservar(ax, az, 3.6, 2.8, 0.2); }
   { const [tx, tz] = A(-7.6, -2.4); const p = tenda(tx, tz, 1.0, 0xd8261e, 0xf2ece0); bandeira(p, 0, 1.2, 0, 0.5, 0xe8c040, 0.8); for (let i = 0; i < 4; i++) tenda(tx + 1.2 * Math.cos(i * 1.6), tz + 1.1 * Math.sin(i * 1.6), 0.22, pick([0x2a6ac8, 0xe8c040])); c.bloquear(tx, tz, 1.6); }
@@ -253,7 +254,7 @@ function tiberus(L: Lugar) {
   { const [qx, qz] = A(-4.8, -4.8); piso(qx, qz + 0.75, { w: 2.3, d: 1.1 }, CM.areia, 0xd8c8a0); c.reservar(qx, qz + 0.75, 2.3, 1.1); for (let i = 0; i < 6; i++) det(Pc(qx - 0.9 + (i % 3) * 0.9, Ysolo(qx, qz), qz + 0.5 + ((i / 3) | 0) * 0.5)).cil(MM.madeira, 0.03, 0.2, 0, 0, 0, 0x6a5038, 5); for (const v of [-0.85, -0.25]) { armazem(qx, qz + v, 0, 2.3, 0.45, 0x8a7a6a, 0x9a4a30); c.reservar(qx, qz + v, 2.4, 0.5); } bandeira(Pc(qx + 1.25, Ysolo(qx, qz), qz), 0, 0, 0, 1.2, 0x9a1a14); }
   { const [bx, bz] = A(4.8, 4.8), p = Pc(bx, chao(bx, bz, 1), bz); p.cx(CM.tijolo, 2.2, 0.6, 2.0, 0, 0.2, 0, 0xc88068); cupula(p, MM.marmore, 0.75, 0, 0.5, 0, 0xd8d0c4, 0.7); for (const s of [-1, 1]) cupula(p, MM.marmore, 0.4, s * 0.75, 0.5, 0.55, 0xd8d0c4, 0.7); c.reservar(bx, bz, 2.3, 2.1); fumo(p.pos(0.8, 0.8, -0.6), 1); }
   // ínsulas (sobrados de tijolo com lojas no térreo)
-  ruas.forEach(([r, w]) => casasNaRua(c, r, w, { w: [0.6, 0.95], d: [0.55, 0.8], gap: [0.0, 0.04], prob: 0.97, casa: (hx, hz, ry, w2, d) => casa(hx, hz, ry, w2, d, 'tap', { and: rnd() < 0.5 ? 3 : 2, luz: 0.45 }) }));
+  ruas.forEach(([r, w]) => casasNaRua(c, r, w, { w: [0.6, 0.95], d: [0.55, 0.8], gap: [0.0, 0.04], prob: 0.97, casa: (hx, hz, ry, w2, d) => casa(hx, hz, ry, w2, d, 'tap', { and: rnd() < 0.5 ? 3 : 2, luz: 0.45, taverna: rnd() < 0.025 }) }));
   preencher(c, 300, () => A((rnd() - 0.5) * 18, (rnd() - 0.5) * 18), { w: [0.5, 0.8], d: [0.5, 0.7], casa: (hx, hz, ry, w, d) => casa(hx, hz, ry, w, d, 'tap', { and: 2, luz: 0.3 }) });
   for (let v = -8; v <= 8; v += 1.6) if (Math.abs(v) > 2.2) { cone(Pc(x - 0.5, Ysolo(x - 0.5, z + v), z + v), MM.plain, 0.12, 0.6, 0, 0, 0, 0x2a4a2a, 6); cone(Pc(x + 0.5, Ysolo(x + 0.5, z + v), z + v), MM.plain, 0.12, 0.6, 0, 0, 0, 0x2a4a2a, 6); }
   // aqueduto chegando do norte
@@ -272,7 +273,7 @@ function nimbarann(L: Lugar) {
   { const tx = x - 1.6, tz = z - 1.6; templo(tx, tz, Math.atan2(x - tx, z - tz), 0.55, { parede: 0xc8b898, teto: 0x7a3e2a, tetoMat: MM.telha, torre: 'quadrada' }); c.bloquear(tx, tz, 1.0); }
   const ruas: V[][] = gates.map(g => c.rua([[g.x, g.z], [x + (g.x - x) * 0.25, z + (g.z - z) * 0.25]], 0.3, CM.terra, { cor: 0xa89a88 }));
   ruas.push(c.rua(arco(x, z, 2.75, 0, 6.283, 0.3), 0.24, CM.terra, { cor: 0xa89a88 }));
-  ruas.forEach(r => casasNaRua(c, r, 0.3, { w: [0.5, 0.7], d: [0.42, 0.55], gap: [0.05, 0.2], prob: 0.9, casa: (hx, hz, ry, w, d) => casa(hx, hz, ry, w, d, 'lom', { luz: 0.55, fumo: 0.2 }), vazio: (hx, hz) => arvore(hx, hz, 0.6, 0x8a8a3a) }));
+  ruas.forEach(r => casasNaRua(c, r, 0.3, { w: [0.5, 0.7], d: [0.42, 0.55], gap: [0.05, 0.2], prob: 0.9, casa: (hx, hz, ry, w, d) => casa(hx, hz, ry, w, d, 'lom', { luz: 0.55, fumo: 0.2, taverna: rnd() < 0.06 }), vazio: (hx, hz) => arvore(hx, hz, 0.6, 0x8a8a3a) }));
   preencher(c, 80, () => { const a = rnd() * 6.283, r = Math.sqrt(rnd()) * 4.3; return [x + Math.cos(a) * r, z + Math.sin(a) * r]; }, { w: [0.4, 0.55], d: [0.35, 0.45], casa: (hx, hz, ry, w, d) => casa(hx, hz, ry, w, d, 'lom', { luz: 0.4, fumo: 0.15 }) });
   campos(x, z, 6, 10, 9, 'lom');
   moinho(x + 6.5, z + 3.2, 2.5, 1);
@@ -297,7 +298,7 @@ function porto(L: Lugar) {
   for (const u of [1.0, 2.8, 4.6]) { cais(x + u, z + 3.9, 0, 2.0, 0.34); navio(x + u + 0.55, z + 5.4, 0.1, 0.85); }
   for (let i = 0; i < 3; i++) barco(x - 1.4 + (rnd() - 0.5) * 0.4, z - 2.5 + i * 1.2, 0.1 + rnd() * 0.3);
   guindaste(x + 2, z + 3.6, Math.PI);
-  ruas.forEach(([r, w]) => casasNaRua(c, r, w, { w: [0.5, 0.72], d: [0.45, 0.6], gap: [0.03, 0.12], prob: 0.92, casa: (hx, hz, ry, w2, d) => casa(hx, hz, ry, w2, d, 'deh', { and: rnd() < 0.5 ? 2 : 1, luz: 0.55, fumo: 0.15 }) }));
+  ruas.forEach(([r, w]) => casasNaRua(c, r, w, { w: [0.5, 0.72], d: [0.45, 0.6], gap: [0.03, 0.12], prob: 0.92, casa: (hx, hz, ry, w2, d) => casa(hx, hz, ry, w2, d, 'deh', { and: rnd() < 0.5 ? 2 : 1, luz: 0.55, fumo: 0.15, taverna: rnd() < 0.08 }) }));
   preencher(c, 60, () => A((rnd() - 0.5) * 11, (rnd() - 0.5) * 9), { w: [0.45, 0.6], d: [0.4, 0.5], casa: (hx, hz, ry, w, d) => casa(hx, hz, ry, w, d, 'deh', { luz: 0.4, fumo: 0.1 }) });
   moinho(x - 5.6, z - 5.6, 0.6, 1);
   campos(x, z + -2, 7, 11, 6, 'deh');
@@ -335,7 +336,7 @@ function vila(L: Lugar, est: Est, povo: 'lom' | 'deh' | 'oeste') {
   ruas.push([c.rua([[meio[0] + nx * 0.35, meio[1] + nz * 0.35], [meio[0] + nx * R * 0.9, meio[1] + nz * R * 0.9]], 0.22, CM.terra, { cor: 0xa89a88 }), 0.22]);
   { const a = Math.atan2(nz, nx) + (rnd() < 0.5 ? 0.6 : -0.6); ruas.push([c.rua([[meio[0] - nx * 0.35, meio[1] - nz * 0.35], [meio[0] + Math.cos(a + Math.PI) * R * 0.85, meio[1] + Math.sin(a + Math.PI) * R * 0.85]], 0.22, CM.terra, { cor: 0xa89a88 }), 0.22]); }
   ruas.forEach(([r, w]) => casasNaRua(c, r, w, { w: [0.48, 0.7], d: [0.4, 0.55], gap: [0.05, 0.22], recuo: 0.08, prob: 0.92,
-    casa: (hx, hz, ry2, w2, d) => { casa(hx, hz, ry2, w2, d, povo === 'lom' && rnd() < 0.12 ? 'ruina' : est, { and: est === 'deh' && rnd() < 0.3 ? 2 : 1, luz: 0.5, fumo: 0.15 }); if (rnd() < 0.35) { const bx = hx - Math.sin(ry2) * (d / 2 + 0.3), bz = hz - Math.cos(ry2) * (d / 2 + 0.3); if (c.livre(caixa(bx, bz, 0.25, 0.18, ry2))) { piso(bx, bz, { w: 0.5, d: 0.34, ry: ry2 }, CM.campo, 0x6a8a3a, 0.035); cercaRet(bx, bz, 0.52, 0.36, ry2); } } },
+    casa: (hx, hz, ry2, w2, d, i) => { const tav = i === 1 && w > 0.5; casa(hx, hz, ry2, w2, d, povo === 'lom' && !tav && rnd() < 0.12 ? 'ruina' : est, { and: tav || (est === 'deh' && rnd() < 0.3) ? 2 : 1, luz: tav ? 1 : 0.5, fumo: 0.15, taverna: tav }); if (rnd() < 0.35) { const bx = hx - Math.sin(ry2) * (d / 2 + 0.3), bz = hz - Math.cos(ry2) * (d / 2 + 0.3); if (c.livre(caixa(bx, bz, 0.25, 0.18, ry2))) { piso(bx, bz, { w: 0.5, d: 0.34, ry: ry2 }, CM.campo, 0x6a8a3a, 0.035); cercaRet(bx, bz, 0.52, 0.36, ry2); } } },
     vazio: (hx, hz) => (rnd() < 0.5 ? arvore(hx, hz, 0.6, povo === 'oeste' ? 0x3a5a2a : 0x5a8a3a) : barris(hx, hz, 2)) }));
   preencher(c, 40, () => { const a = rnd() * 6.283, r = Math.sqrt(rnd()) * R; return [x + Math.cos(a) * r, z + Math.sin(a) * r]; }, { w: [0.42, 0.6], d: [0.36, 0.5], casa: (hx, hz, ry, w, d) => casa(hx, hz, ry, w, d, est, { luz: 0.4, fumo: 0.1 }) });
   if (rnd() < 0.5) carroca(meio[0] + nx * 0.5, meio[1] + nz * 0.5 + 0.3, rnd() * 6);

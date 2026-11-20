@@ -98,6 +98,8 @@ com salas), F (arquitetura para novos mapas + `docs/NOVO-MAPA.md`). Todas foram 
 21. **Cidades do Sul de Arton** com planta de verdade (ruas, muralhas com portões onde chegam as estradas, praças,
     prédios com nome; Barud igual ao mapa detalhado); alfinetes e rotas somem de perto. Pedido do dono: "com o
     cuidado de Barud, detalhes dentro e não só casas jogadas".
+22. Casas, tavernas (placa, lampião), catedrais (contrafortes, vitrais, duas torres) e interiores mais caprichados;
+    masmorra de Azazel com abóbada, poças, correntes, ossadas e névoa.
 
 ## Arquivo offline (como o dono joga sem internet)
 

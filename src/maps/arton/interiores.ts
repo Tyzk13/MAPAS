@@ -72,6 +72,209 @@ function cartaz(b: M4, x: number, y: number, z: number, ry: number, w: number, h
   m.position.copy(v3(b, x, y, z)); m.rotation.y = ry; m.userData.ns = 1; return m;
 }
 
+// ---------------- decoração (mais leitura e mais vida dentro) ----------------
+const texCache: Record<string, THREE.Texture> = {};
+function texCanvas(id: string, W: number, H: number, f: (g: CanvasRenderingContext2D) => void) { if (texCache[id]) return texCache[id]; const c = document.createElement('canvas'); c.width = W; c.height = H; f(c.getContext('2d')!); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return (texCache[id] = t); }
+const matCache: Record<string, THREE.Material> = {};
+const matFeixe = () => (matCache.feixe ||= new THREE.MeshBasicMaterial({ map: texCanvas('feixe', 8, 128, g => { const gr = g.createLinearGradient(0, 0, 0, 128); gr.addColorStop(0, 'rgba(255,255,255,0.55)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, 8, 128); }), vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide }));
+const matTeia = () => (matCache.teia ||= new THREE.MeshBasicMaterial({ map: texCanvas('teia', 128, 128, g => { g.strokeStyle = 'rgba(230,230,230,0.7)'; g.lineWidth = 1; for (let k = 0; k < 9; k++) { const a = (k / 8) * Math.PI / 2; g.beginPath(); g.moveTo(0, 0); g.lineTo(Math.cos(a) * 128, Math.sin(a) * 128); g.stroke(); } for (let r = 14; r < 128; r += 13) { g.beginPath(); for (let k = 0; k <= 8; k++) { const a = (k / 8) * Math.PI / 2, rr = r * (0.92 + 0.08 * Math.sin(k * 3 + r)); k ? g.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : g.moveTo(Math.cos(a) * rr, Math.sin(a) * rr); } g.stroke(); } }), transparent: true, depthWrite: false, side: THREE.DoubleSide, opacity: 0.55 }));
+const matPoca = () => (matCache.poca ||= new THREE.MeshStandardMaterial({ color: 0x050607, roughness: 0.08, metalness: 0.05, envMapIntensity: 0.2, transparent: true, opacity: 0.6, polygonOffset: true, polygonOffsetFactor: -2 }));
+const matMusgo = () => (matCache.musgo ||= new THREE.MeshStandardMaterial({ color: 0x2a3a1e, roughness: 1, transparent: true, opacity: 0.75, polygonOffset: true, polygonOffsetFactor: -2, depthWrite: false }));
+const uvFixo = <T extends THREE.BufferGeometry>(g: T) => { (g as any).isUVd = true; return g; };
+/** lambri de madeira, rodapé, cornija e pilastras nas quatro paredes */
+function acabamento(b: M4, W: number, D: number, H: number, o: { lambri?: number; alt?: number; cornija?: number; pilastras?: number; mat?: THREE.Material } = {}) {
+  const M = MAT(), alt = o.alt ?? 1.0, cl = o.lambri ?? 0x4a3020, cc = o.cornija ?? 0x3a2818, mat = o.mat ?? M.madeira;
+  for (const [w, x, z, ry] of [[W, 0, -D / 2 + 0.04, 0], [W, 0, D / 2 - 0.04, 0], [D, -W / 2 + 0.04, 0, Math.PI / 2], [D, W / 2 - 0.04, 0, Math.PI / 2]] as [number, number, number, number][]) {
+    box(b, mat, w, alt, 0.06, x, alt / 2, z, cl, ry); box(b, mat, w, 0.07, 0.1, x, alt + 0.02, z, cc, ry); box(b, mat, w, 0.16, 0.12, x, H - 0.08, z, cc, ry);
+    if (o.pilastras) for (let u = -w / 2 + o.pilastras / 2; u < w / 2; u += o.pilastras) { const px = ry ? x : u, pz = ry ? u : z; box(b, mat, 0.22, H, 0.14, px, H / 2, pz, cc, ry); }
+  }
+}
+/** arandela com vela na parede (luz quente fraca) */
+function arandela(b: M4, x: number, y: number, z: number, ry: number, n = 7) {
+  const M = MAT(), p = peca(B, b, x, y, z, ry);
+  p.cx(M.ferro, 0.12, 0.2, 0.03, 0, 0, 0, 0x6a5a3a); p.cx(M.ferro, 0.03, 0.03, 0.18, 0, -0.05, 0.09, 0x6a5a3a); p.cil(M.ferro, 0.05, 0.03, 0, -0.04, 0.17, 0x6a5a3a, 8);
+  p.cil(M.plain, 0.022, 0.14, 0, -0.02, 0.17, 0xf0e6cc, 6); const f = new THREE.ConeGeometry(0.018, 0.06, 5); f.translate(0, 0.15, 0.17); por(B, MAT().aceso, f, 0xffffff, p.m);
+  const w = p.pos(0, 0.15, 0.2); luzes.push({ x: w.x, y: w.y, z: w.z, cor: 0xffa860, n, dist: 4 }); halos.push([w.x, w.y, w.z, 0.5]);
+}
+/** coisas penduradas nas vigas: presuntos, linguiças, alho, ervas, panelas */
+function penduricalhos(b: M4, x0: number, x1: number, z: number, H: number, n = 8) {
+  const M = MAT();
+  for (let i = 0; i < n; i++) {
+    const x = x0 + ((x1 - x0) * (i + 0.5)) / n + (rnd() - 0.5) * 0.3, k = (rnd() * 5) | 0, L = 0.25 + rnd() * 0.35, y = H - 0.3 - L;
+    box(b, M.plain, 0.01, L, 0.01, x, H - 0.3 - L / 2, z, 0x6a5a40);
+    if (k === 0) { const g = new THREE.SphereGeometry(0.12, 8, 6); g.scale(0.8, 1.5, 0.8); g.translate(x, y - 0.12, z); geo(b, M.plain, g, 0x8a3a2a); }
+    else if (k === 1) for (let q = 0; q < 4; q++) cil(b, M.plain, 0.025, 0.28, x + (q - 1.5) * 0.04, y - 0.3, z, 0x7a2a1a, 6);
+    else if (k === 2) for (let q = 0; q < 5; q++) { const g = new THREE.SphereGeometry(0.04, 6, 4); g.translate(x + (rnd() - 0.5) * 0.06, y - q * 0.06, z + (rnd() - 0.5) * 0.04); geo(b, M.plain, g, 0xe8e0c8); }
+    else if (k === 3) { const g = new THREE.ConeGeometry(0.08, 0.32, 6); g.rotateX(Math.PI); g.translate(x, y - 0.16, z); geo(b, MM.palha, g, pick3([0x5a7a30, 0x7a8a40, 0x8a6a3a])); }
+    else { cil(b, M.ferro, 0.13, 0.11, x, y - 0.11, z, 0x3a3634, 10); }
+  }
+}
+const pick3 = <T,>(a: T[]) => a[(rnd() * a.length) | 0];
+/** caneca, prato com comida, garrafa, pão (em cima de uma mesa na altura y) */
+function comida(b: M4, x: number, y: number, z: number) {
+  const M = MAT();
+  for (let i = 0; i < 2 + ((rnd() * 3) | 0); i++) { const a = rnd() * 6.28, r = 0.15 + rnd() * 0.25, px = x + Math.cos(a) * r, pz = z + Math.sin(a) * r * 0.6, k = (rnd() * 4) | 0;
+    if (k === 0) { cil(b, M.madeira, 0.045, 0.11, px, y, pz, 0x6a4a2a, 8); }
+    else if (k === 1) { cil(b, M.plain, 0.1, 0.015, px, y, pz, 0xd8d0c0, 12); const g = new THREE.SphereGeometry(0.06, 8, 5); g.scale(1.3, 0.6, 1); g.translate(px, y + 0.03, pz); geo(b, M.plain, g, pick3([0x8a4a2a, 0xc89a50, 0x6a8a3a])); }
+    else if (k === 2) { cil(b, M.plain, 0.035, 0.2, px, y, pz, pick3([0x2a4a2a, 0x4a2a1a, 0x3a3a5a]), 8, 0.02); }
+    else { const g = new THREE.SphereGeometry(0.08, 8, 5); g.scale(1.4, 0.7, 1); g.translate(px, y + 0.04, pz); geo(b, M.plain, g, 0xb88a4a); } }
+}
+/** escudo redondo de parede com faixa (ou brasão) */
+function escudo(b: M4, x: number, y: number, z: number, ry: number, cor: number, cor2: number, r = 0.4) {
+  const M = MAT(), p = peca(B, b, x, y, z, ry);
+  const g = new THREE.CylinderGeometry(r, r, 0.05, 18); g.rotateX(Math.PI / 2); por(B, M.madeira, g, cor, p.m);
+  p.cx(M.madeira, r * 2, r * 0.35, 0.06, 0, 0, 0.01, cor2); p.cx(M.madeira, r * 0.35, r * 2, 0.06, 0, 0, 0.012, cor2);
+  const c = new THREE.SphereGeometry(r * 0.22, 10, 6); c.scale(1, 1, 0.5); c.translate(0, 0, 0.04); por(B, M.ferro, c, 0x8a8478, p.m);
+  const a = new THREE.TorusGeometry(r, 0.03, 4, 20); por(B, M.ferro, a, 0x5a5650, p.m);
+}
+/** chifres de troféu na parede */
+function trofeu(b: M4, x: number, y: number, z: number, ry: number) {
+  const M = MAT(), p = peca(B, b, x, y, z, ry); p.cx(M.madeira, 0.3, 0.36, 0.04, 0, 0, 0, 0x4a3020); p.esf(M.plain, 0.12, 0, 0, 0.1, 0x6a4a30, 1.2);
+  for (const s of [-1, 1]) for (let k = 0; k < 3; k++) { const g = new THREE.ConeGeometry(0.025, 0.32 - k * 0.06, 5); g.rotateZ(-s * (0.5 + k * 0.35)); g.translate(s * (0.12 + k * 0.1), 0.2 + k * 0.08, 0.1); por(B, M.plain, g, 0xd8cca8, p.m); }
+}
+function teia(b: M4, x: number, y: number, z: number, ry: number, s = 0.9) { const g = uvFixo(new THREE.PlaneGeometry(s, s)); g.translate(s / 2, -s / 2, 0); g.rotateY(ry); g.translate(x, y, z); geo(b, matTeia(), g); }
+/** feixe de luz entrando por uma janela (plano aditivo com degradê, cruzado) */
+function feixe(b: M4, x: number, y: number, z: number, rx: number, ry: number, w: number, L: number, cor = 0xb8c8ff) {
+  for (const r2 of [0, Math.PI / 2]) { const g = uvFixo(new THREE.PlaneGeometry(w, L)); g.translate(0, -L / 2, 0); g.rotateY(r2); g.rotateX(rx); g.rotateY(ry); g.translate(x, y, z); geo(b, matFeixe(), g, cor); }
+}
+function poca(b: M4, x: number, z: number, r: number) { const g = new THREE.CircleGeometry(r, 18); g.scale(1, 0.6 + rnd() * 0.5, 1); g.rotateX(-Math.PI / 2); g.rotateY(rnd() * 3); g.translate(x, 0.012, z); geo(b, matPoca(), g); }
+function musgo(b: M4, x: number, y: number, z: number, ry: number, w: number, h: number, chao = false) { const g = new THREE.CircleGeometry(0.5, 10); g.scale(w, h, 1); if (chao) g.rotateX(-Math.PI / 2); g.rotateY(ry); g.translate(x, y, z); geo(b, matMusgo(), g); }
+/** correntes com grilhões descendo da parede */
+function corrente(b: M4, x: number, y: number, z: number, ry: number, L: number) {
+  const M = MAT(), p = peca(B, b, x, y, z, ry); p.cx(M.ferro, 0.12, 0.12, 0.05, 0, 0, 0);
+  for (let k = 0; k < Math.round(L / 0.09); k++) { const t = new THREE.TorusGeometry(0.035, 0.012, 4, 8); if (k % 2) t.rotateY(Math.PI / 2); t.translate(0, -0.06 - k * 0.075, 0.05); por(B, M.ferro, t, 0x5a5650, p.m); }
+  const gr = new THREE.TorusGeometry(0.07, 0.02, 4, 10); gr.rotateX(Math.PI / 2); gr.translate(0, -0.1 - L, 0.06); por(B, M.ferro, gr, 0x4a4640, p.m);
+}
+/** ossada no chão: crânio, costelas e ossos longos */
+function ossada(b: M4, x: number, z: number, ry: number, s = 1) {
+  const M = MAT(), p = peca(B, b, x, 0, z, ry), c = 0xd8d0b8;
+  p.esf(M.plain, 0.1 * s, 0.35 * s, 0.08 * s, 0, c, 1.05); p.cx(M.plain, 0.06 * s, 0.03 * s, 0.05 * s, 0.43 * s, 0.05 * s, 0, 0x2a2622);
+  for (let k = 0; k < 4; k++) { const t = new THREE.TorusGeometry(0.1 * s, 0.012 * s, 4, 8, Math.PI); t.rotateY(Math.PI / 2); t.translate(0.1 * s - k * 0.06 * s, 0.03, 0); por(B, M.plain, t, c, p.m); }
+  for (let k = 0; k < 3; k++) { const g = new THREE.CylinderGeometry(0.018 * s, 0.018 * s, 0.38 * s, 5); g.rotateZ(Math.PI / 2); g.rotateY(rnd() * 3); g.translate(-0.25 * s + rnd() * 0.2, 0.02, (rnd() - 0.5) * 0.3 * s); por(B, M.plain, g, c, p.m); }
+}
+/** gaiola de ferro pendurada */
+function gaiola(b: M4, x: number, y: number, z: number, osso = true) {
+  const M = MAT(); box(b, M.ferro, 0.02, 1.0, 0.02, x, y + 1.35, z, 0x3a3634);
+  for (let k = 0; k < 10; k++) { const a = (k / 10) * 6.283; cil(b, M.ferro, 0.012, 1.1, x + Math.cos(a) * 0.38, y - 0.25, z + Math.sin(a) * 0.38, 0x3a3634, 4); }
+  for (const yy of [-0.25, 0.85]) { const t = new THREE.TorusGeometry(0.38, 0.02, 4, 16); t.rotateX(Math.PI / 2); t.translate(x, y + yy, z); geo(b, M.ferro, t, 0x3a3634); }
+  const c = new THREE.ConeGeometry(0.4, 0.3, 10); c.translate(x, y + 1.0, z); geo(b, M.ferro, c, 0x3a3634);
+  if (osso) { const g = new THREE.SphereGeometry(0.09, 8, 6); g.translate(x + 0.1, y - 0.15, z); geo(b, M.plain, g, 0xd8d0b8); }
+}
+/** arco de pedra atravessando a sala (abóbada de berço feita de arcos) */
+function arcoPedra(b: M4, z: number, larg: number, H: number, cor: number, esp = 0.45) {
+  const M = MAT(), r = larg / 2, h0 = H - r * 0.6;
+  const a = new THREE.TorusGeometry(r, 0.18, 6, 20, Math.PI); a.scale(1, 0.6, esp / 0.36); a.translate(0, h0, z); geo(b, M.pedra, a, cor);
+  for (const s of [-1, 1]) box(b, M.pedra, 0.4, h0, esp, s * (r - 0.05), h0 / 2, z, cor);
+}
+/** abóbada: casca curva por dentro entre os arcos */
+function abobada(b: M4, W: number, D: number, H: number, cor: number) {
+  const r = W / 2, g = new THREE.CylinderGeometry(r, r, D, 24, 1, true, Math.PI / 2, Math.PI); g.rotateX(Math.PI / 2); g.scale(1, 0.6, 1); g.translate(0, H - r * 0.6, 0);
+  const ix = g.index!.array as any; for (let i = 0; i < ix.length; i += 3) { const t = ix[i]; ix[i] = ix[i + 1]; ix[i + 1] = t; } g.computeVertexNormals(); geo(b, MAT().pedra, g, cor);
+}
+/** vitral colorido (canvas) que brilha, com um feixe colorido entrando */
+function vitral(b: M4, x: number, y: number, z: number, ry: number, w: number, h: number, cores: string[], id: string, feixeCor?: number) {
+  const t = texCanvas('vitral-' + id, 64, Math.round(64 * h / w), g => { const W = 64, H = g.canvas.height; g.fillStyle = '#1a1612'; g.fillRect(0, 0, W, H); for (let j = 0; j < 9; j++) for (let i = 0; i < 4; i++) { g.fillStyle = cores[(i * 3 + j * 5 + (i * j) % 3) % cores.length]; g.fillRect(i * 16 + 2, j * H / 9 + 2, 13, H / 9 - 3); } g.fillStyle = '#1a1612'; g.beginPath(); g.moveTo(0, 0); g.lineTo(W / 2, -H * 0.02); g.lineTo(W, 0); g.lineTo(W, H * 0.12); g.quadraticCurveTo(W / 2, -H * 0.06, 0, H * 0.12); g.fill(); g.fillStyle = '#fff3c0'; g.beginPath(); g.arc(W / 2, H * 0.3, 9, 0, 6.3); g.fill(); });
+  const m = (matCache['vit' + id] ||= new THREE.MeshBasicMaterial({ map: t })); const g = uvFixo(new THREE.PlaneGeometry(w, h)); g.rotateY(ry); g.translate(x, y, z); geo(b, m, g);
+  if (feixeCor !== undefined) { const n = new THREE.Vector3(Math.sin(ry), 0, Math.cos(ry)); feixe(b, x + n.x * 0.1, y + h * 0.3, z + n.z * 0.1, 0.75, ry, w * 0.9, y * 1.6, feixeCor); }
+}
+/** névoa rasteira: placas transparentes no chão (masmorra, cripta) */
+function nevoaChao(G: THREE.Group, b: M4, W: number, D: number, n: number, cor = 0x9aa0a8) {
+  const m = new THREE.SpriteMaterial({ map: (matFeixe() as THREE.MeshBasicMaterial).map, color: cor, transparent: true, opacity: 0.0, depthWrite: false });
+  const t = texCanvas('nevoa', 64, 64, g => { const r = g.createRadialGradient(32, 32, 0, 32, 32, 32); r.addColorStop(0, 'rgba(255,255,255,0.5)'); r.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = r; g.fillRect(0, 0, 64, 64); }); m.map = t; m.opacity = 0.22;
+  for (let i = 0; i < n; i++) { const sp = new THREE.Sprite(m), p = v3(b, (rnd() - 0.5) * W, 0.25, (rnd() - 0.5) * D); sp.position.copy(p); sp.scale.set(3 + rnd() * 2, 0.8, 1); sp.userData.ns = 1; sp.userData.noExport = 1; G.add(sp); const x0 = p.x, f = rnd() * 6; anim.push(t2 => { sp.position.x = x0 + Math.sin(t2 * 0.15 + f) * 0.6; }); }
+}
+
+// ---------------- extras de cada cena ----------------
+function ancoraMais(b: M4) {
+  const M = MAT(), W = 14, D = 10, H = 3.6;
+  acabamento(b, W, D, H, { lambri: 0x5a3a24, alt: 1.1 });
+  penduricalhos(b, -5.5, 5.5, 0.6, H, 12); penduricalhos(b, -5.5, 2, -2.6, H, 7);
+  for (const [x, z] of [[-1.8, 1.6], [1.6, 2.6], [4.1, 0.6], [-4.6, 2.9], [1.0, -1.0]]) comida(b, x, 0.8, z);
+  for (const [x, z, ry] of [[-6.9, 0.5, Math.PI / 2], [-6.9, -2.5, Math.PI / 2], [6.9, 2.6, -Math.PI / 2], [2.0, 4.9, Math.PI], [-3.0, 4.9, Math.PI]] as [number, number, number][]) arandela(b, x, 2.0, z, ry);
+  escudo(b, 5.6, 2.3, -4.92, 0, 0x2a3a5a, 0xd8c8a0, 0.35); escudo(b, -0.8, 2.6, -4.92, 0, 0x6a1a1a, 0xd8b048, 0.3);
+  for (let k = 0; k < 6; k++) box(b, M.madeira, 0.08, 0.1, 0.08, -4.6 + k * 0.32, 1.05, -2.65, 0x7a5a3a); // canecas no balcão
+  for (let i = 0; i < 3; i++) { const g = new THREE.SphereGeometry(0.12, 10, 8); g.translate(-0.2 + i * 1.7, 1.75, -4.8); geo(b, M.plain, g, [0x3a6a7a, 0x2a5a4a, 0x6a7a8a][i]); } // boias de vidro nas redes
+  teia(b, -W / 2 + 0.05, H - 0.05, -D / 2 + 0.05, 0, 0.8); teia(b, W / 2 - 0.05, H - 0.05, -D / 2 + 0.05, -Math.PI / 2, 0.7);
+  feixe(b, -W / 2 + 4.67, 2.2, D / 2 - 0.1, 0.8, Math.PI, 0.9, 3.2, 0x8090b0); feixe(b, -W / 2 + 9.33, 2.2, D / 2 - 0.1, 0.8, Math.PI, 0.9, 3.2, 0x8090b0);
+  tapete(B, b, 4.6, 0.6, 0.2, 2.2, 1.4);
+}
+function macacoMais(b: M4) {
+  const W = 16, D = 12, H = 4;
+  acabamento(b, W, D, H, { lambri: 0x6a4428, alt: 1.0 });
+  penduricalhos(b, -6, 6, 2.5, H, 12);
+  for (let i = 0; i < 7; i++) comida(b, -3 + (i % 4) * 2.6, 0.8, 0.5 + Math.floor(i / 4) * 2.8);
+  for (const [x, z, ry] of [[-7.9, 3.5, Math.PI / 2], [7.9, 4.5, -Math.PI / 2], [-3, 5.9, Math.PI], [4, 5.9, Math.PI]] as [number, number, number][]) arandela(b, x, 2.2, z, ry);
+  for (let k = 0; k < 8; k++) { const g = new THREE.SphereGeometry(0.05, 6, 4); g.translate(-1 + k * 0.85, 3.6, -3.4); geo(b, MAT().aceso, g); } luz(b, 2, 3.5, -3.3, 0xffd090, 12, 6); // ribalta
+  escudo(b, -4.5, 2.6, -5.92, 0, 0x2a6ac8, 0xf0e8d0, 0.35); escudo(b, 6.5, 2.6, -5.92, 0, 0xc8302a, 0xe8c040, 0.35);
+  feixe(b, -W / 2 + 4, 2.3, D / 2 - 0.1, 0.8, Math.PI, 0.9, 3.4, 0x8090b0); feixe(b, -W / 2 + 12, 2.3, D / 2 - 0.1, 0.8, Math.PI, 0.9, 3.4, 0x8090b0);
+}
+function asidonMais(b: M4) {
+  const M = MAT(), W = 22, D = 12, H = 7;
+  acabamento(b, W, D, H, { lambri: 0x5a3a24, alt: 1.4 });
+  for (let x = -W / 2 + 2; x < W / 2; x += 3) for (const s of [-1, 1]) { const z = s * (D / 2 - 1.2); cil(b, M.pedra, 0.52, 0.4, x, 0, z, 0x9a9282, 12); cil(b, M.pedra, 0.52, 0.35, x, H - 0.55, z, 0x9a9282, 12, 0.4); tapecaria(B, b, x, 4.4, z - s * 0.4, s > 0 ? Math.PI : 0, 0.6, 2.4, [0x8a1a1a, 0x1a2a6a][(x + 11) % 2 ? 1 : 0]); }
+  for (let x = -W / 2 + 2; x < W / 2; x += 3) { const a = new THREE.TorusGeometry(D / 2 - 1.2, 0.2, 6, 18, Math.PI); a.scale(1, 0.35, 1); a.rotateY(Math.PI / 2); a.translate(x, H - 0.6, 0); geo(b, M.pedra, a, 0xa8a090); }
+  for (let i = 0; i < 4; i++) escudo(b, -8 + i * 5.3, 5.6, -D / 2 + 0.1, 0, [0x8a1a1a, 0x1a2a6a, 0xc8a030, 0x2a5a2a][i], 0xe8e0d0, 0.45);
+  tapete(B, b, 0, 0.6, 0, 1.6, 9.5);
+  for (let i = 0; i < 3; i++) comida(b, -4 + i * 4, 0.8, 0.5);
+  for (const s of [-1, 1]) { const p = peca(B, b, s * 9.8, 0, 3.8, s * -Math.PI / 2); for (let k = 0; k < 4; k++) p.cx(M.madeira, 0.04, 1.6, 0.04, -0.4 + k * 0.27, 0.8, 0, 0x5a4030, 0.06); p.cx(M.madeira, 1.2, 0.06, 0.1, 0, 0.5, 0, 0x4a3020); p.cx(M.madeira, 1.2, 0.06, 0.1, 0, 1.4, 0, 0x4a3020); }
+  for (let k = 0; k < 6; k++) { const x = -8 + k * 3.2; feixe(b, x, 5.3, -D / 2 + 0.1, -0.55, 0, 0.5, 5.0, 0x384050); }
+}
+function masmorraMais(b: M4, G: THREE.Group) {
+  const W = 20, D = 16, H = 4;
+  abobada(b, 4.4, D, H - 0.03, 0x6e6a62);
+  for (let z = -D / 2 + 0.6; z < D / 2; z += 2.6) arcoPedra(b, z, 4.4, H - 0.03, 0x5e5a54, 0.5);
+  for (let i = 0; i < 14; i++) poca(b, (rnd() - 0.5) * 3.6, -7 + rnd() * 14, 0.25 + rnd() * 0.45);
+  for (let i = 0; i < 18; i++) { const s = rnd() < 0.5 ? -1 : 1; musgo(b, s * (W / 2 - 0.03), 0.4 + rnd() * 2.2, -7 + rnd() * 14, -s * Math.PI / 2, 0.6 + rnd(), 0.4 + rnd() * 0.8); }
+  for (let i = 0; i < 14; i++) musgo(b, (rnd() - 0.5) * 18, 0.02, -7 + rnd() * 14, 0, 0.6 + rnd(), 0.4 + rnd(), true);
+  for (const s of [-1, 1]) for (let c = 0; c < 3; c++) { const z = 3.5 - c * 4.2; if ((c + (s > 0 ? 0 : 1)) % 2) ossada(b, s * 7.5, z - 0.2, rnd() * 3, 1.3); corrente(b, s * (W / 2 - 0.08), 2.4, z + 0.6, s > 0 ? -Math.PI / 2 : Math.PI / 2, 1.0); cil(b, MAT().madeira, 0.18, 0.3, s * 3.6, 0, z + 1.2, 0x4a3a2a, 8); }
+  gaiola(b, 0, 2.0, 1.5); gaiola(b, -1.3, 2.3, -2.2, false);
+  // mesa de tortura e grade de escoamento
+  { const M = MAT(), p = peca(B, b, -5.5, 0, -6.5, 0.3); p.cx(M.madeira, 0.9, 0.12, 2.0, 0, 0.85, 0, 0x3a2a1e); for (const sx of [-1, 1]) for (const sz of [-1, 1]) p.cx(M.madeira, 0.1, 0.85, 0.1, sx * 0.38, 0.42, sz * 0.9, 0x3a2a1e); for (const sz of [-1, 1]) p.cil(M.madeira, 0.08, 1.0, -0.5, 1.0, sz * 1.0, 0x4a3a2a, 8); }
+  box(b, MAT().ferro, 0.8, 0.02, 0.8, 0, 0.015, 3, 0x2a2826); for (let k = 0; k < 6; k++) box(b, MAT().escuro, 0.7, 0.025, 0.04, 0, 0.02, 2.7 + k * 0.12);
+  for (let k = 0; k < 6; k++) { const a = (k / 6) * 6.283; vela(B, b, Math.cos(a) * 2.6, 0, -6 + Math.sin(a) * 2.6); }
+  teia(b, -W / 2 + 0.05, H + 0.6, -D / 2 + 0.05, 0, 1.2); teia(b, W / 2 - 0.05, H + 0.6, -D / 2 + 0.05, -Math.PI / 2, 1.0); teia(b, -2.2, H - 0.2, 5, 0.3, 0.8);
+  nevoaChao(G, b, W - 2, D - 2, 14, 0x8a8a90);
+  luz(b, 0, 2.5, 0, 0x6a7a9a, 10, 10);
+}
+function catedralMais(b: M4, G: THREE.Group) {
+  const W = 12, D = 30, H = 14, ic = MM.gelo as THREE.Material;
+  const pal = ['#8fd0ff', '#4a7ac8', '#c8e8ff', '#7a5ac8', '#e8f4ff', '#3a9ac8'];
+  for (const s of [-1, 1]) for (let k = 0; k < 4; k++) vitral(b, s * (W / 2 - 0.04), 6, -10 + k * 6, s > 0 ? -Math.PI / 2 : Math.PI / 2, 1.4, 4.4, pal, 'gelo', 0x5a8ac8);
+  vitral(b, 0, H - 4, -D / 2 + 0.05, 0, 3.2, 5, ['#9ad8ff', '#5a8ae8', '#d8f0ff', '#a07ad8'], 'rosa');
+  tapete(B, b, 0, 0, 0, 1.6, D - 6); 
+  // dragoa de gelo sobre o altar e lustres de pingentes
+  const w = v3(b, 0, 2.2, -D / 2 + 2.2); comLote(B, () => dragao(w.x, w.y, w.z, 0, 1.2));
+  for (let k = 0; k < 7; k++) vela(B, b, -1.2 + k * 0.4, 2.0, -D / 2 + 3.4);
+  for (const z of [-6, 2, 9]) { const t = new THREE.TorusGeometry(1.1, 0.05, 5, 24); t.rotateX(Math.PI / 2); t.translate(0, H - 4.5, z); geo(b, ic, t); for (let k = 0; k < 10; k++) { const c = new THREE.ConeGeometry(0.05, 0.6, 5); c.rotateX(Math.PI); c.translate(Math.cos(k * 0.63) * 1.1, H - 4.85, z + Math.sin(k * 0.63) * 1.1); geo(b, MM.gelado, c); } luz(b, 0, H - 5, z, 0xbfe8ff, 14, 10, 1.4); }
+  nevoaChao(G, b, W - 2, D - 4, 12, 0xc8e4f4);
+}
+function covarielMais(b: M4) { teia(b, -3.5, 4.9, -3.4, 0.8, 0.8); arandela(b, 4.9, 2.0, 1.2, -Math.PI / 2); arandela(b, -4.9, 2.0, 0.8, Math.PI / 2); for (let i = 0; i < 4; i++) { const x = 1.2 + i * 0.35; box(b, MAT().plain, 0.25, 0.04, 0.32, x, 0.86, -1.6, 0xe8dcb8, 0.3); } }
+function gilukMais(b: M4) {
+  const W = 9, D = 24, H = 3.2;
+  for (let z = -9; z <= 9; z += 6) for (const s of [-1, 1]) trofeu(b, s * (W / 2 - 0.06), 2.7, z + 2.5, s > 0 ? -Math.PI / 2 : Math.PI / 2);
+  for (let k = 0; k < 4; k++) tapete(B, b, (k % 2 ? 1 : -1) * 1.6, -9 + k * 5.5, 0.3, 1.4, 1.0); // peles no chão
+  penduricalhos(b, -3.5, 3.5, -10.5, H + 1.2, 8); penduricalhos(b, -3.5, 3.5, 10.5, H + 1.2, 8);
+  for (let i = 0; i < 6; i++) comida(b, (i % 2 ? 1 : -1) * 2.0, 0.8, -6 + Math.floor(i / 2) * 5);
+  for (let z = -8; z <= 8; z += 8) { cil(b, MAT().ferro, 0.18, 0.3, 0, H + 0.4, z, 0x3a3634, 8); box(b, MAT().plain, 0.01, 1.0, 0.01, 0, H + 0.9, z, 0x3a3634); luz(b, 0, H + 0.3, z, 0xffa050, 8, 6, 0.8); }
+}
+function bruxaMais(b: M4) { teia(b, -2.95, 2.75, -2.45, 0, 0.7); teia(b, 2.95, 2.75, -2.45, -Math.PI / 2, 0.6); penduricalhos(b, -2.5, 2.5, 1.5, 2.8, 8); for (let i = 0; i < 5; i++) ossada(b, -2.2 + rnd() * 0.6, 1.8 + rnd() * 0.4, rnd() * 6, 0.35); }
+function temploMais(b: M4) {
+  const W = 12, D = 18, H = 7;
+  acabamento(b, W, D, H, { lambri: 0x8a8070, alt: 0.8, cornija: 0x7a7060, mat: MAT().pedra, pilastras: 3 });
+  for (let z = -6; z <= 6; z += 3) for (const s of [-1, 1]) { cil(b, MM.marmore, 0.55, 0.35, s * 3.8, 0, z, 0xd8d2c4, 14); cil(b, MM.marmore, 0.55, 0.3, s * 3.8, H - 0.3, z, 0xd8d2c4, 14, 0.42); }
+  for (const s of [-1, 1]) for (let k = 0; k < 3; k++) vitral(b, s * (W / 2 - 0.04), 3.8, -5 + k * 5, s > 0 ? -Math.PI / 2 : Math.PI / 2, 1.0, 2.6, ['#2a8a9a', '#1a5a7a', '#c8a040', '#3aa8a8', '#e8d8a0'], 'mar', 0x3a9ab0);
+  for (let i = 0; i < 9; i++) vela(B, b, -1.6 + i * 0.4, 0.8, -D / 2 + 2.9);
+  for (let i = 0; i < 10; i++) { const x = (rnd() - 0.5) * 2.6; cil(b, MAT().plain, 0.07, 0.12, x, 0.8, -D / 2 + 2.4, pick3([0xd8b048, 0x8a6a4a, 0x9ad8e8]), 8); } // oferendas
+}
+function zolkanMais(b: M4) {
+  const W = 16, D = 14, H = 7;
+  acabamento(b, W, D, H, { lambri: 0x3a2018, alt: 1.3, cornija: 0x2a1810, pilastras: 3.2 });
+  for (const s of [-1, 1]) estante(B, b, s * (W / 2 - 0.4), -4.5, s > 0 ? -Math.PI / 2 : Math.PI / 2, 2.4, 3.0);
+  for (let i = 0; i < 8; i++) teia(b, (i % 2 ? 1 : -1) * (W / 2 - 0.06), H - 0.05 - (i > 3 ? 3.2 : 0), (i < 4 ? -1 : 1) * (D / 2 - 0.06) * (i % 3 ? 1 : 0.3), (i % 2 ? -1 : 1) * Math.PI / 2 * (i % 2 ? 1 : 0), 1.0);
+  { const M = MAT(), p = peca(B, b, 0, 0, -D / 2 + 0.06, 0); p.cx(M.madeira, 1.4, 2.2, 0.08, 0, 4.6, 0, 0x3a2418); p.cx(MAT().ferro, 1.2, 2.0, 0.02, 0, 4.6, 0.05, 0x8a9aa8); for (let k = 0; k < 5; k++) p.cx(M.escuro, 0.02, 0.6 + rnd() * 0.6, 0.01, -0.4 + k * 0.2, 4.6, 0.07, 0x101010, (rnd() - 0.5) * 1.2); } // espelho rachado
+  for (let i = 0; i < 6; i++) arandela(b, (i % 2 ? 1 : -1) * (W / 2 - 0.06), 2.4, -5 + Math.floor(i / 2) * 4, (i % 2 ? -1 : 1) * Math.PI / 2, 5);
+}
+
 // ---------------- cenas ----------------
 function ancora(b: M4, G: THREE.Group) {
   const M = MAT(), W = 14, D = 10, H = 3.6, n = 'Âncora Quebrada (dentro)';
@@ -130,7 +333,6 @@ function asidon(b: M4) {
 function masmorra(b: M4) {
   const M = MAT(), W = 20, D = 16, H = 4, n = 'Masmorra de Azazel';
   sala(n, b, W, D, H, { parede: M.pedra, cp: 0x8a847a, chao: M.lajota, cc: 0x7a746a, teto: M.pedra, ct: 0x5a5650, vigas: false, janelas: 0, porta: false });
-  for (let z = -D / 2 + 1; z < D / 2; z += 2.4) box(b, M.pedra, W, 0.3, 0.35, 0, H - 0.15, z, 0x6a6660); // arcos do teto
   // corredor central com celas dos dois lados
   for (const s of [-1, 1]) {
     for (let c = 0; c < 3; c++) {
@@ -299,7 +501,8 @@ export function construirInteriores(G: THREE.Group, M: MapRuntime) {
   B = new Batch('interiores'); luzes = []; halos = []; vistas = []; pisos = []; colGeo = []; paredes = []; areas = []; anim = []; sd = 9; brasas = []; bolhas = []; poeiras = [];
   const Mt = MAT(); if (!M.lamps.includes(Mt.aceso)) M.lamps.push(Mt.aceso);
   const cenas: ((b: M4, G: THREE.Group) => void)[] = [ancora, macacoCaolho, asidon, masmorra, cavernaGelo, covil, catedral, covariel, gilukSalao, bruxa, templo, zolkan];
-  cenas.forEach((f, i) => { const [x, z] = ORIGENS[i]; f(mtx(x, Y0, z, 0), G); });
+  const extras: (((b: M4, G: THREE.Group) => void) | null)[] = [ancoraMais, macacoMais, asidonMais, masmorraMais, null, null, catedralMais, covarielMais, gilukMais, bruxaMais, temploMais, zolkanMais];
+  cenas.forEach((f, i) => { const [x, z] = ORIGENS[i], b = mtx(x, Y0, z, 0); f(b, G); extras[i]?.(b, G); });
   const g = new THREE.Group(); g.name = 'Interiores'; B.build(g); g.traverse((o: any) => { if (o.isMesh) { o.castShadow = false; o.receiveShadow = false; } }); G.add(g);
   void armario; void cristais;
   let solid: THREE.Object3D[] = [];

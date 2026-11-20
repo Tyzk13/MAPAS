@@ -1,5 +1,19 @@
 # Changelog
 
+## Sul de Arton: casas, tavernas, catedrais e interiores mais caprichados
+
+- Casas com moldura nas janelas e na porta, degrau de pedra, floreiras coloridas (Deheon, Valkaria, oeste) e
+  cumeeira escura nos telhados.
+- **Tavernas** espalhadas pelas cidades e vilas: placa pendurada com caneca, lampião na porta, bancos, barris,
+  janelas acesas e fumaça (Javali, Lanterna, Macaco Caolho e outras em cada cidade; uma estalagem em cada vila).
+- **Catedrais e templos** com contrafortes e pináculos, vitrais acesos, escadaria e símbolo na cumeeira; naves
+  laterais no Templo de Lena; **Catedral de Valkaria** com duas torres e praça com chafariz.
+- Interiores: lambri, rodapé e cornija; arandelas com velas; presuntos, linguiças, alho, ervas e panelas pendurados;
+  comida e canecas nas mesas; escudos e troféus nas paredes; teias; feixes de luz pelas janelas; vitrais coloridos
+  na Catedral de Gelo e no Templo de Korl Khodan; Asidon com bases e capitéis, arcos, escudos e estandartes.
+- **Masmorra de Azazel**: abóbada de pedra com arcos, poças, musgo, correntes com grilhões, ossadas nas celas,
+  gaiolas penduradas, mesa de tortura, grade de escoamento, velas no círculo do ritual e névoa rasteira.
+
 ## Sul de Arton: cidades com planta de verdade
 
 - Cada cidade tem ruas calçadas, muralha ou paliçada que segue o relevo (torres, **portões onde as estradas chegam**,

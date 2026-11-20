@@ -52,7 +52,7 @@ export const pick = <T,>(a: readonly T[]) => a[(rnd() * a.length) | 0];
 export const entreR = (a: number, b: number) => a + (b - a) * rnd();
 export const Pc = (x: number, y: number, z: number, ry = 0, s = 1) => peca(BC, mtx(x, y, z, ry, s), 0, 0, 0);
 export const det = (p: Peca) => peca(BD, p.m, 0, 0, 0);
-export function geo(B: Batch, mat: Mat, g: THREE.BufferGeometry, cor: number, m?: THREE.Matrix4) { if (m) g.applyMatrix4(m); if (!g.attributes.normal) g.computeVertexNormals(); boxUV(g); B.add(mat, g, cor); }
+export function geo(B: Batch, mat: Mat, g: THREE.BufferGeometry, cor: number, m?: THREE.Matrix4) { if (m) g.applyMatrix4(m); if (!g.attributes.normal) g.computeVertexNormals(); if (!(g as any).isUVd) boxUV(g); B.add(mat, g, cor); }
 export function plano(B: Batch, m: THREE.Matrix4, mat: Mat, w: number, h: number, x: number, y: number, z: number, ry: number, cor: number) { const g = new THREE.PlaneGeometry(w, h); if (ry) g.rotateY(ry); g.translate(x, y, z); geo(B, mat, g, cor, m); }
 export function cone(p: Peca, mat: Mat, r: number, h: number, x: number, y: number, z: number, cor: number, lados = 8, rot = 0, B = BC) { const g = new THREE.ConeGeometry(r, h, lados); if (rot) g.rotateY(rot); g.translate(x, y + h / 2, z); geo(B, mat, g, cor, p.m); }
 export function cupula(p: Peca, mat: Mat, r: number, x: number, y: number, z: number, cor: number, sy = 1) { const g = new THREE.SphereGeometry(r, 12, 5, 0, Math.PI * 2, 0, Math.PI / 2); g.scale(1, sy, 1); g.translate(x, y, z); geo(BC, mat, g, cor, p.m); }
@@ -222,22 +222,26 @@ export function telhado(p: Peca, mat: Mat, w: number, d: number, h: number, y: n
   const { teto, oitao } = geoTelhado(emZ ? d : w, emZ ? w : d, h, b, !!o.quatro);
   for (const g of [teto, oitao]) if (g) { if (emZ) g.rotateY(Math.PI / 2); g.translate(o.px ?? 0, y, o.pz ?? 0); }
   geo(BC, mat, teto, cor, p.m); if (oitao) geo(BC, o.parede?.[0] ?? mat, oitao, o.parede?.[1] ?? cor, p.m);
+  if (!o.quatro && mat !== MM.neve) { const L = (emZ ? d : w) + b * 2, g = new THREE.BoxGeometry(L, 0.028, 0.034); if (emZ) g.rotateY(Math.PI / 2); g.translate(o.px ?? 0, y + h + 0.008, o.pz ?? 0); geo(BD, mat, g, Math.max(0, cor - 0x282018), p.m); }
 }
 
 // ---------- casas ----------
 export type Est = 'barud' | 'lom' | 'deh' | 'valk' | 'oeste' | 'tap' | 'giluk' | 'ilha' | 'ruina' | 'barraco';
-export interface OC { and?: number; luz?: number; cumeeira?: 'x' | 'z'; loja?: number; fumo?: number; coral?: boolean; cor?: number }
-function janela(q: Peca, x: number, y: number, z: number, ry: number, acesa: boolean, persiana?: number) {
+export interface OC { and?: number; luz?: number; cumeeira?: 'x' | 'z'; loja?: number; fumo?: number; coral?: boolean; cor?: number; taverna?: boolean }
+function janela(q: Peca, x: number, y: number, z: number, ry: number, acesa: boolean, persiana?: number, moldura = 0x4a3424, flores = false) {
+  const nx = Math.sin(ry) * 0.002, nz = Math.cos(ry) * 0.002;
+  plano(BD, q.m, MM.madeira, 0.078, 0.098, x - nx, y, z - nz, ry, moldura);
   plano(BD, q.m, acesa ? MM.aceso : CM.janela, 0.06, 0.08, x, y, z, ry, 0xffffff);
+  if (flores) { const g = new THREE.BoxGeometry(0.08, 0.022, 0.025); g.rotateY(ry); g.translate(x + Math.sin(ry) * 0.012, y - 0.055, z + Math.cos(ry) * 0.012); geo(BD, MM.plain, g, 0x4a7a32, q.m); const f2 = new THREE.BoxGeometry(0.07, 0.012, 0.018); f2.rotateY(ry); f2.translate(x + Math.sin(ry) * 0.012, y - 0.038, z + Math.cos(ry) * 0.012); geo(BD, MM.plain, f2, pick([0xc83a3a, 0xe8c040, 0xd85a9a, 0xe8e0f0]), q.m); }
   if (persiana !== undefined) for (const s of [-1, 1]) { const dx = Math.cos(ry) * s * 0.05, dz = -Math.sin(ry) * s * 0.05; plano(BD, q.m, MM.plain, 0.035, 0.085, x + dx, y, z + dz, ry, persiana); }
 }
-interface OpFachada { esp?: number; y0?: number; de?: number; persiana?: number; porta?: number; saliente?: number; semPorta?: boolean }
+interface OpFachada { esp?: number; y0?: number; de?: number; persiana?: number; porta?: number; saliente?: number; semPorta?: boolean; moldura?: number; flores?: number }
 export function fachada(q: Peca, w: number, d: number, and: number, hA: number, luz: number, o: OpFachada = {}) {
   const y0 = o.y0 ?? 0, zf = d / 2 + 0.006, pw = Math.min(0.1, w * 0.24), ph = Math.min(0.18, hA * 0.62), px = (rnd() - 0.5) * Math.max(0, w - pw * 2.4);
-  if (!o.semPorta) plano(BD, q.m, MM.madeira, pw, ph, px, y0 + ph / 2 - 0.01, zf, 0, o.porta ?? 0x3a2a1e);
+  if (!o.semPorta) { plano(BD, q.m, MM.madeira, pw + 0.024, ph + 0.012, px, y0 + ph / 2 - 0.004, zf - 0.002, 0, o.moldura ?? 0x5a4a3a); plano(BD, q.m, MM.madeira, pw, ph, px, y0 + ph / 2 - 0.01, zf, 0, o.porta ?? 0x3a2a1e); q.cx(MM.pedra, pw + 0.06, 0.03, 0.06, px, y0 - 0.005, zf + 0.03, 0x8a847a); }
   for (let a = o.de ?? 0; a < and; a++) {
     const n = Math.max(1, Math.round(w / (o.esp ?? 0.24))), yj = y0 + a * hA + hA * 0.6, z = zf + (a > 0 ? o.saliente ?? 0 : 0);
-    for (let k = 0; k < n; k++) { const u = ((k + 0.5) / n - 0.5) * w; if (a === 0 && !o.semPorta && Math.abs(u - px) < pw) continue; janela(q, u, yj, z, 0, rnd() < luz, o.persiana); }
+    for (let k = 0; k < n; k++) { const u = ((k + 0.5) / n - 0.5) * w; if (a === 0 && !o.semPorta && Math.abs(u - px) < pw) continue; janela(q, u, yj, z, 0, rnd() < luz, o.persiana, o.moldura, a === 0 && rnd() < (o.flores ?? 0)); }
   }
   if (d > 0.4) for (const s of [-1, 1]) if (rnd() < 0.5) janela(q, s * (w / 2 + 0.006), y0 + hA * 0.6, (rnd() - 0.5) * d * 0.4, s * Math.PI / 2, rnd() < luz * 0.7);
 }
@@ -274,7 +278,7 @@ export function casa(x: number, z: number, ry: number, w: number, d: number, est
       const ard = rnd() < 0.22, hT = d * 0.72;
       telhado(p, ard ? MM.ardosia : MM.telha, w + e, d + e, hT, H, ard ? pick([0x4a4a56, 0x56566a]) : pick([0xa84a32, 0x9a3e2a, 0x8a4a3a, 0xb4583a]), { cumeeira: cum, parede: [MM.reboco, cor] });
       if (rnd() < 0.6) chamine(p, w, d, H, hT, cum, 0x8a6a58, fch);
-      fachada(q, w, d, and, hA, lz, { saliente: e / 2 }); break;
+      fachada(q, w, d, and, hA, lz, { saliente: e / 2, moldura: 0x3a2a1e, flores: 0.3 }); break;
     }
     case 'valk': {
       const hA = 0.36, H = hA * and, cor = o.cor ?? pick([0xe4dcee, 0xd8d0e4, 0xeee8f2, 0xd4d0dc, 0xe8e0d4, 0xdcd4c8]);
@@ -284,7 +288,7 @@ export function casa(x: number, z: number, ry: number, w: number, d: number, est
       else if (r < 0.85) telhado(p, MM.telha, w, d, d * 0.5, H, pick([0x9a5a4a, 0x8a4a3a, 0xa0604a]), { cumeeira: cum, parede: [MM.marmore, cor] });
       else { p.cx(MM.marmore, w + 0.03, 0.05, d + 0.03, 0, H + 0.02, 0, cor); cupula(p, MM.ouro, Math.min(w, d) * 0.32, 0, H + 0.04, 0, 0xe8c058); }
       if (rnd() < 0.1) { p.cil(MM.marmore, 0.1, H + 0.3, w / 2, -0.1, d / 2, cor, 8); cone(p, MM.ardosia, 0.13, 0.3, w / 2, H + 0.2, d / 2, 0x6a7898, 8); }
-      fachada(q, w, d, and, hA, lz, { esp: 0.2 }); break;
+      fachada(q, w, d, and, hA, lz, { esp: 0.2, moldura: 0xc8c0d8, flores: 0.15 }); break;
     }
     case 'oeste': {
       const hA = 0.3, H = hA * and, cor = o.cor ?? (rnd() < 0.78 ? pick([0xf4f0e6, 0xf0e8d8, 0xf8f4ec, 0xece4d4]) : pick([0xe8c890, 0xc8d4e0, 0xecc8b8, 0xe0d0a0]));
@@ -294,7 +298,7 @@ export function casa(x: number, z: number, ry: number, w: number, d: number, est
         for (const [a, b2, c2, e2] of [[w, 0.025, 0, d / 2], [w, 0.025, 0, -d / 2], [0.025, d, w / 2, 0], [0.025, d, -w / 2, 0]]) q.cx(MM.reboco, a, 0.06, b2, c2, H + 0.05, e2, cor);
         if (rnd() < 0.6) q.esf(MM.plain, 0.05, (rnd() - 0.5) * w * 0.6, H + 0.07, (rnd() - 0.5) * d * 0.6, 0x4a7a3a);
       } else telhado(p, MM.telha, w, d, d * 0.32, H, pick([0xc8683a, 0xb85a30, 0xd07848, 0xc06040]), { quatro: rnd() < 0.5, cumeeira: cum, parede: [MM.reboco, cor] });
-      fachada(q, w, d, and, hA, lz, { persiana: rnd() < 0.45 ? pick([0x3a6aa0, 0x4a8a6a, 0x2a5a8a]) : undefined }); break;
+      fachada(q, w, d, and, hA, lz, { persiana: rnd() < 0.45 ? pick([0x3a6aa0, 0x4a8a6a, 0x2a5a8a]) : undefined, moldura: 0xd8d0c0, flores: 0.3 }); break;
     }
     case 'tap': {
       const hA = 0.32, H = hA * and, tij = rnd() < 0.55, cor = o.cor ?? (tij ? pick([0xc8806a, 0xb87058, 0xd8907a]) : pick([0xe0c498, 0xd4b080, 0xe8d0a8]));
@@ -335,8 +339,28 @@ export function casa(x: number, z: number, ry: number, w: number, d: number, est
       break;
     }
   }
+  if (o.taverna) taverna(p, w, d);
   if (o.loja !== undefined) { const g = new THREE.PlaneGeometry(Math.min(0.34, w * 0.8), 0.14); g.rotateX(-1.0); g.translate(0, 0.27, d / 2 + 0.07); geo(BC, MM.tecido, g, o.loja, p.m); }
   return p;
+}
+
+// ---------- taverna: placa pendurada, lampião, bancos e barris na porta, janelas acesas ----------
+let matPlaca: THREE.MeshStandardMaterial | null = null;
+function placaTex() {
+  const c = document.createElement('canvas'); c.width = 64; c.height = 48; const g = c.getContext('2d')!;
+  g.fillStyle = '#5a3a20'; g.fillRect(0, 0, 64, 48); g.strokeStyle = '#2a1a0c'; g.lineWidth = 4; g.strokeRect(2, 2, 60, 44);
+  g.fillStyle = '#d8b048'; g.fillRect(22, 14, 18, 22); g.fillRect(40, 18, 6, 12); g.fillStyle = '#f4ead0'; g.fillRect(21, 10, 20, 6);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+export function taverna(p: Peca, w: number, d: number) {
+  const q = det(p), zf = d / 2;
+  matPlaca ||= new THREE.MeshStandardMaterial({ map: placaTex(), roughness: 0.8, side: THREE.DoubleSide });
+  q.cx(MM.madeira, 0.015, 0.015, 0.16, w * 0.32, 0.36, zf + 0.08, 0x2a1e14); q.cx(MM.madeira, 0.012, 0.06, 0.012, w * 0.32, 0.33, zf + 0.15, 0x2a1e14);
+  const g = new THREE.PlaneGeometry(0.11, 0.08); (g as any).isUVd = true; g.rotateY(Math.PI / 2); g.translate(w * 0.32, 0.27, zf + 0.15); geo(BD, matPlaca, g, 0xffffff, p.m);
+  const l = p.pos(-w * 0.32, 0.3, zf + 0.05); plano(BD, p.m, MM.aceso, 0.03, 0.04, -w * 0.32, 0.3, zf + 0.04, 0, 0xffffff); brilho(l.x, l.y, l.z, 0.45);
+  for (const s of [-1, 1]) q.cx(MM.madeira, 0.16, 0.03, 0.05, s * w * 0.2, 0.05, zf + 0.12, 0x5a4030);
+  q.cil(MM.madeira, 0.035, 0.08, w * 0.42, 0, zf + 0.1, 0x6a4a30, 8); q.cil(MM.madeira, 0.035, 0.08, w * 0.46, 0, zf + 0.18, 0x6a4a30, 8);
+  luz(l.x, l.y + 0.2, l.z + 0.2, 0xffa050, 8, 3.5); fumo(p.pos(0, 0.9, 0), 0.8);
 }
 
 // ---------- lotes: casas ao longo de uma rua, viradas para ela ----------
@@ -537,7 +561,7 @@ export function tenda(x: number, z: number, r: number, cor: number, listras?: nu
 }
 
 // ---------- prédios marcantes ----------
-export interface OpTemplo { mat?: Mat; parede: number; tetoMat?: Mat; teto: number; torre?: 'agulha' | 'cupula' | 'quadrada' | null; w?: number; d?: number; h?: number }
+export interface OpTemplo { mat?: Mat; parede: number; tetoMat?: Mat; teto: number; torre?: 'agulha' | 'cupula' | 'quadrada' | null; w?: number; d?: number; h?: number; naves?: boolean; duasTorres?: boolean }
 /** templo/igreja: nave, abside, torre na frente, rosácea acesa */
 export function templo(x: number, z: number, ry: number, s: number, o: OpTemplo) {
   const w = o.w ?? 0.9, d = o.d ?? 1.7, h = o.h ?? 0.75, mat = o.mat ?? MM.pedra, tm = o.tetoMat ?? MM.ardosia;
@@ -546,9 +570,15 @@ export function templo(x: number, z: number, ry: number, s: number, o: OpTemplo)
   telhado(p, tm, w, d, w * 0.6, h, o.teto, { cumeeira: 'z', b: 0.06, parede: [mat, o.parede] });
   const ab = new THREE.CylinderGeometry(w * 0.45, w * 0.45, h * 0.8 + 0.2, 10, 1, false, Math.PI / 2, Math.PI); ab.translate(0, (h * 0.8 - 0.2) / 2, -d / 2); geo(BC, mat, ab, o.parede, p.m);
   const abt = new THREE.ConeGeometry(w * 0.5, w * 0.35, 10, 1, false, Math.PI / 2, Math.PI); abt.translate(0, h * 0.8 + w * 0.175, -d / 2); geo(BC, tm, abt, o.teto, p.m);
-  for (const sx of [-1, 1]) for (let k = 0; k < 3; k++) { p.cx(mat, 0.08, h * 0.7, 0.1, sx * (w / 2 + 0.04), h * 0.35 - 0.1, -d / 2 + 0.3 + k * (d - 0.6) / 2, o.parede); plano(BD, q.m, CM.vitral, 0.07, 0.22, sx * (w / 2 + 0.006), h * 0.55, -d / 2 + 0.45 + k * (d - 0.6) / 2, sx * Math.PI / 2, 0xffffff); }
+  const nB = Math.max(3, Math.round(d / 0.45)), ex = o.naves ? w * 0.32 : 0;
+  if (o.naves) for (const sx of [-1, 1]) { p.cx(mat, ex, h * 0.55 + 0.2, d * 0.9, sx * (w / 2 + ex / 2), (h * 0.55 - 0.2) / 2, 0, o.parede); const g = new THREE.BoxGeometry(ex + 0.08, 0.03, d * 0.92); g.rotateZ(-sx * 0.42); g.translate(sx * (w / 2 + ex / 2), h * 0.55 + ex * 0.2, 0); geo(BC, tm, g, o.teto, p.m); for (let k = 0; k < nB; k++) plano(BD, q.m, CM.vitral, 0.06, 0.16, sx * (w / 2 + ex + 0.006), h * 0.3, -d * 0.42 + (k * d * 0.84) / (nB - 1), sx * Math.PI / 2, 0xffffff); }
+  for (const sx of [-1, 1]) for (let k = 0; k < nB; k++) { const zz = -d / 2 + 0.2 + (k * (d - 0.4)) / (nB - 1), xo = sx * (w / 2 + ex + 0.05), bh = h * (o.naves ? 0.5 : 0.75);
+    p.cx(mat, 0.1, bh, 0.1, xo, bh / 2 - 0.1, zz, o.parede); cone(p, mat, 0.06, 0.22, xo, bh - 0.1, zz, o.parede, 4, Math.PI / 4);
+    if (o.naves) { const g = new THREE.BoxGeometry(0.05, 0.05, ex + 0.12); g.rotateY(Math.PI / 2); g.rotateZ(sx * 0.6); g.translate(sx * (w / 2 + ex / 2), h * 0.72, zz); geo(BC, mat, g, o.parede, p.m); }
+    if (k < nB - 1) plano(BD, q.m, CM.vitral, 0.07, 0.24, sx * (w / 2 + 0.006), h * 0.6, zz + (d - 0.4) / (nB - 1) / 2, sx * Math.PI / 2, 0xffffff); }
   let zf = d / 2;
-  if (o.torre) {
+  if (o.duasTorres) { const tw = w * 0.42, th = h * 2.4; zf = d / 2 + tw / 2; for (const sx of [-1, 1]) { const tx = sx * (w / 2 - tw / 2 + 0.05); p.cx(mat, tw, th + 0.2, tw, tx, (th - 0.2) / 2, d / 2, o.parede); cone(p, tm, tw * 0.72, th * 0.55, tx, th, d / 2, o.teto, 8); for (let a = 0; a < 3; a++) plano(BD, q.m, CM.janela, 0.06, 0.14, tx, h * 0.6 + a * th * 0.22, zf + 0.006, 0, 0xffffff); } p.cx(mat, w * 0.3, h * 1.3, 0.1, 0, h * 0.55, d / 2 + 0.04, o.parede); }
+  else if (o.torre) {
     const tw = w * 0.48, th = h * 2.1; zf = d / 2 + tw / 2;
     p.cx(mat, tw, th + 0.2, tw, 0, (th - 0.2) / 2, d / 2, o.parede);
     if (o.torre === 'agulha') cone(p, tm, tw * 0.75, th * 0.65, 0, th, d / 2, o.teto, 4, Math.PI / 4);
@@ -558,6 +588,8 @@ export function templo(x: number, z: number, ry: number, s: number, o: OpTemplo)
   }
   const ros = new THREE.CircleGeometry(0.1, 12); ros.translate(0, h * 0.62, zf + 0.007); geo(BD, CM.vitral, ros, 0xffffff, q.m);
   plano(BD, q.m, MM.madeira, 0.14, 0.22, 0, 0.1, zf + 0.007, 0, 0x3a2414);
+  for (let k = 0; k < 3; k++) p.cx(MM.pedra, 0.5 - k * 0.08, 0.04, 0.1, 0, 0.0 - 0.02 + k * 0.035 - 0.08, zf + 0.25 - k * 0.07, 0xa8a094); // escadaria
+  p.cx(MM.pedra, 0.025, 0.16, 0.025, 0, h + w * 0.6 + 0.06, -d / 2 + 0.05, o.parede); p.cx(MM.pedra, 0.09, 0.025, 0.025, 0, h + w * 0.6 + 0.1, -d / 2 + 0.05, o.parede); // símbolo na cumeeira
   const c = p.pos(0, h * 0.6, zf + 0.1); brilho(c.x, c.y, c.z, 1.2 * s);
   return p;
 }

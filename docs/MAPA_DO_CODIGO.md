@@ -7,7 +7,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 
 | Pasta | Arquivos | Tamanho |
 |---|---|---|
-| `capturas/` | 323 | 95.0 MB |
+| `capturas/` | 370 | 100.8 MB |
 | `src/assets/` | 188 | 90.6 MB |
 | `referencias/` | 5 | 2.4 MB |
 
@@ -67,10 +67,12 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/core/walk.ts` | 229 | 12 KB |
 | `src/core/weathering.ts` | 46 | 2 KB |
 | `src/main.ts` | 529 | 34 KB |
+| `src/maps/arton/cidades-kit.ts` | 716 | 63 KB |
+| `src/maps/arton/cidades.ts` | 384 | 48 KB |
 | `src/maps/arton/dados.ts` | 103 | 18 KB |
 | `src/maps/arton/geo.ts` | 447 | 37 KB |
 | `src/maps/arton/index.ts` | 193 | 15 KB |
-| `src/maps/arton/interiores.ts` | 325 | 40 KB |
+| `src/maps/arton/interiores.ts` | 528 | 63 KB |
 | `src/maps/arton/miniaturas.ts` | 319 | 30 KB |
 | `src/maps/arton/natureza.ts` | 188 | 24 KB |
 | `src/maps/arton/simbolos.ts` | 107 | 10 KB |
@@ -275,6 +277,12 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 ### `src/main.ts`
 `cutBg` 42 · `push` 46 · `prep` 56 · `spawnPoint` 68 · `addChar` 73 · `pontoVista` 83 · `ondeEsta` 85 · `moverPara` 91 · `listaPersonagens` 96 · `bt` 104 · `revelar` 123 · `marcarQ` 127 · `escolherClima` 129 · `irParaVista` 130 · `tg` 137 · `rodarCine` 141 · `itemCine` 142 · `encherCine` 148 · `initCinemaUi` 159 · `mostrarPersonagens` 170 · `tocarCena` 174 · `gravarCenaAtual` 188 · `encherMestre` 194 · `alternarImagem` 209 · `initMestreUi` 214 · `toast` 237 · `telaLimpa` 242 · `initAtalhos` 249 · `atualizarSelo` 290 · `congelar` 298 · `escurecer` 302 · `lanterna` 303 · `marcarSom` 304 · `initImersaoUi` 305 · `initUi` 317 · `resz` 362 · `marcarE` 377 · `frame` 432 · `captureApi` 459 · `view()` 462 · `third()` 468 · `stats()` 480 · `start` 492
 
+### `src/maps/arton/cidades-kit.ts`
+`V` 15 · `Peca` 16 · `Q` 18 · `BC` 21 · `PONTES_C` 23 · `matsCidade` 28 · `piso` 29 · `vc` 30 · `iniciarKit` 45 · `pick` 51 · `entreR` 52 · `Pc` 53 · `det` 54 · `geo` 55 · `plano` 56 · `cone` 57 · `cupula` 58 · `fumo` 60 · `luz` 61 · `brilho` 62 · `Caixa` 65 · `caixa` 66 · `sobrepoe` 67 · `distSegCaixa` 75 · `clip` 78 · `pb` 80 · `ps` 81 · `comprimentos` 84 · `noPonto` 86 · `reamostra` 91 · `arco` 96 · `Cid` 99 · `livre()` 114 · `rua()` 128 · `estradasPerto()` 135 · `direcaoRua()` 142 · `addChao` 151 · `yRuaC` 152 · `corAttr` 153 · `faixa` 154 · `piso` 165 · `pontesDaRua` 185 · `construirPontes` 197 · `geoTelhado` 209 · `tri` 212 · `OpTelhado` 219 · `telhado` 220 · `Est` 229 · `OC` 230 · `janela` 231 · `fachada` 239 · `enxaimel` 249 · `chamine` 255 · `corpo` 259 · `casa` 261 · `placaTex` 349 · `taverna` 355 · `OpLote` 367 · `casasNaRua` 368 · `preencher` 384 · `Portao` 394 · `portoes` 396 · `contorno` 407 · `OpMuro` 413 · `muralha` 414 · `naPorta` 416 · `molhado` 417 · `aberto` 418 · `palicada` 473 · `torreVigia` 492 · `bandeira` 501 · `poco` 506 · `chafariz` 512 · `estatua` 518 · `barraca` 523 · `lampiao` 530 · `lampioesNaRua` 535 · `arvore` 539 · `carroca` 543 · `barris` 548 · `fogueira` 549 · `lenha` 555 · `tenda` 556 · `OpTemplo` 564 · `templo` 566 · `OpCastelo` 596 · `castelo` 598 · `salaoLongo` 619 · `armazem` 630 · `arena` 637 · `geoPas` 645 · `moinho` 647 · `navio` 654 · `barco` 662 · `cais` 664 · `guindaste` 670 · `lavoura` 673 · `cerca` 679 · `cercaRet` 686 · `pomar` 687 · `vinhedo` 691 · `terminarKit` 698
+
+### `src/maps/arton/cidades.ts`
+`muroDe` 20 · `dist` 21 · `andares` 23 · `barud` 27 · `R` 45 · `coral` 54 · `B` 70 · `estatuaValkaria` 79 · `valkaria` 92 · `P` 94 · `perto` 106 · `ajusta` 109 · `giluk` 153 · `malpetrim` 186 · `A` 188 · `R` 201 · `ocupadoPorEstrada` 222 · `minotauroEstatua` 225 · `tiberus` 232 · `A` 234 · `R` 247 · `nimbarann` 268 · `porto` 284 · `A` 286 · `campos` 310 · `vila` 321 · `aldeiaGelo` 350 · `pescadores` 359 · `TIPOS_CIDADE` 371 · `construirCidades` 372
+
 ### `src/maps/arton/dados.ts`
 `f` 6 · `FICHAS` 8
 
@@ -285,7 +293,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `P3` 24 · `vistaDe` 26 · `bbox` 30 · `ganchoCamera` 34 · `build` 39 · `escolher` 65 · `nevoa` 90 · `ajustarNomes` 158
 
 ### `src/maps/arton/interiores.ts`
-`Y0` 21 · `v3` 27 · `luz` 28 · `vista` 29 · `box` 30 · `cil` 31 · `geo` 32 · `solido` 34 · `piso` 36 · `contorno` 37 · `sala` 41 · `gruta` 54 · `tocha` 63 · `cartaz` 69 · `ancora` 76 · `macacoCaolho` 94 · `asidon` 113 · `masmorra` 130 · `cavernaGelo` 158 · `cristaisAzuis` 172 · `covil` 173 · `catedral` 191 · `covariel` 208 · `gilukSalao` 233 · `bruxa` 249 · `templo` 262 · `zolkan` 278 · `construirInteriores` 298 · `dentroDeInterior` 312 · `particulas` 314
+`Y0` 21 · `v3` 27 · `luz` 28 · `vista` 29 · `box` 30 · `cil` 31 · `geo` 32 · `solido` 34 · `piso` 36 · `contorno` 37 · `sala` 41 · `gruta` 54 · `tocha` 63 · `cartaz` 69 · `texCanvas` 77 · `matFeixe` 79 · `matTeia` 80 · `matPoca` 81 · `matMusgo` 82 · `acabamento` 85 · `arandela` 93 · `penduricalhos` 100 · `comida` 114 · `escudo` 123 · `trofeu` 131 · `teia` 135 · `feixe` 137 · `poca` 140 · `musgo` 141 · `corrente` 143 · `ossada` 149 · `gaiola` 156 · `arcoPedra` 164 · `abobada` 170 · `vitral` 175 · `nevoaChao` 181 · `ancoraMais` 188 · `macacoMais` 201 · `asidonMais` 211 · `masmorraMais` 222 · `catedralMais` 239 · `covarielMais` 251 · `gilukMais` 252 · `bruxaMais` 260 · `temploMais` 261 · `zolkanMais` 269 · `ancora` 279 · `macacoCaolho` 297 · `asidon` 316 · `masmorra` 333 · `cavernaGelo` 360 · `cristaisAzuis` 374 · `covil` 375 · `catedral` 393 · `covariel` 410 · `gilukSalao` 435 · `bruxa` 451 · `templo` 464 · `zolkan` 480 · `construirInteriores` 500 · `dentroDeInterior` 515 · `particulas` 517
 
 ### `src/maps/arton/miniaturas.ts`
 `vc` 18 · `mats` 19 · `MM` 44 · `Mini` 46 · `P` 50 · `add` 51 · `prisma` 52 · `cone` 56 · `pt` 57 · `chao` 59 · `inclinacao` 60 · `pertoDeRio` 62 · `bom` 69 · `janela` 70 · `fumo` 71 · `bandeira` 72 · `cerca` 80 · `cristais` 88 · `arvoreMorta` 92 · `catedral` 100 · `beluhga` 115 · `dragao` 129 · `osso` 140 · `geloAntigo` 147 · `cabana` 153 · `caverna` 160 · `asidon` 166 · `korl` 175 · `torreRuina` 184 · `acampamento` 189 · `batalha` 194 · `pantano` 205 · `velhaMalpetrim` 211 · `zolkan` 217 · `azazel` 227 · `centauros` 235 · `kobolds` 242 · `forteTapista` 248 · `covariel` 249 · `ancora` 256 · `eremita` 268 · `farol` 269 · `pontes` 277 · `comLote` 291 · `construirMiniaturas` 294

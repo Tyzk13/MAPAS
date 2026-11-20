@@ -479,6 +479,19 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
   tapa a cidade quando o mestre aproxima. Alfinete sem sombra (o shader da sombra não sabe do alfa).
 - Telhado de neve branco puro vira "lençol": tinta azulada, inclinação menor e cumeeira de tronco escura.
 - Custo medido (qualidade baixa, vista geral): 498 chamadas e 614 mil triângulos (antes 429 / 516 mil).
+- Detalhe barato que mais muda a leitura das casas: **moldura** atrás da janela e da porta (plano 2 mm atrás),
+  degrau, floreira e **cumeeira escura**. Taverna = placa pendurada (textura de canvas compartilhada) + lampião + bancos.
+- `geo()` do kit respeita `isUVd` (texturas de canvas precisam da UV própria; `boxUV` estragaria).
+
+### Interiores mais ricos (`interiores.ts`, extras por cena)
+- Cada cena tem um "extra" (`ancoraMais`, `masmorraMais`…) com peças de decoração reutilizáveis: `acabamento`
+  (lambri/rodapé/cornija/pilastras), `arandela`, `penduricalhos`, `comida`, `escudo`, `trofeu`, `teia` (canvas),
+  `feixe` (plano aditivo com degradê, cruzado), `vitral` (canvas), `poca`, `musgo`, `corrente`, `ossada`, `gaiola`,
+  `arcoPedra` + `abobada` (meio cilindro com as faces viradas para dentro), `nevoaChao`.
+- Abóbada precisa ficar **abaixo do teto plano** da `sala` (senão o teto a esconde). Meio cilindro em z:
+  `CylinderGeometry(r, r, D, n, 1, true, π/2, π)` + `rotateX(π/2)` e inverter a ordem dos índices.
+- Poça com envMap fica branca no swiftshader: cor quase preta, `envMapIntensity` 0,2, opacidade 0,6.
+- Feixes de luz fortes viram "sabres de luz": cor escura (≈0x384050) e largura ~0,5.
 
 ## Desempenho para o mestre (core/desempenho.ts → `economia`, nov/2026)
 
