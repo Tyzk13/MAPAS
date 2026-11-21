@@ -340,6 +340,12 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
   é um valor só, `LUAR(p)` em `barud/common.ts` (Noite 3,5), usado por Barud, Valkaria e `gente/montagem.ts`. Luz
   extra de mapa nunca acima de ~4. A chave "Luz do céu" do F9 desliga também esses luares. Testar trocando o clima
   como o botão faz (`st.pi = i` antes do `setTime(i)`), senão o `onTime` recebe o clima velho e o teste engana.
+- **Causa raiz achada (nov/2026)**: placa sem `EXT_color_buffer_half_float`/`EXT_color_buffer_float` (celulares)
+  → o composer caía para 8 bits ANTES do tone mapping → tudo acima de 1 cortado: preto no swiftshader fingindo a
+  placa, branco nos telhados no aparelho do dono. Agora `post.semMeia` desliga o pós e desenha direto com tone
+  mapping no material. Teste: `.cache/b8-teste.mjs` (esconde as extensões com `addInitScript`). E há uma vigia
+  automática (`vigiarBranco`/`conferirBranco` em `diag.ts`): num clima escuro, se a imagem sai com >10% de pixels
+  quase brancos em duas leituras, desliga reflexos do céu → luz do céu/luar → pós, guarda e avisa.
 - Testar com driver "de verdade" sem GPU: `xvfb-run` + Playwright `headless: false` +
   `--use-gl=angle --use-angle=gl --ignore-gpu-blocklist --in-process-gpu` + `LIBGL_ALWAYS_SOFTWARE=1` (sem os dois últimos o contexto WebGL falha; exemplo em `.cache/escuro-llvm.mjs`) = Mesa llvmpipe (headless cai sempre no swiftshader).
 - Noite: o HDRI `qwantani_night` vem claro quase como dia e com brilho de cidade no horizonte (≈7). Use `bg`/`env`

@@ -51,3 +51,34 @@ function abrir() {
   fechar.onclick = () => p!.remove(); p.appendChild(fechar);
   document.body.appendChild(p);
 }
+
+// ---------- vigia automática do "branco no escuro" ----------
+// O defeito só aparece em algumas placas (telhados/muralhas brancos à noite — prints do dono em Greywater e Barud) e o
+// navegador de teste não mostra. Depois de cada troca de clima/mapa, num clima escuro, a própria página lê a imagem
+// desenhada: se muitos pixels saem quase brancos em duas leituras seguidas, desliga a próxima suspeita (reflexos do
+// céu → luz do céu/luar → efeitos de imagem), guarda no navegador e confere de novo.
+const SUSPEITAS = ['env', 'ceu', 'pos'];
+let vigiarEm = 0, ruins = 0, buf: Uint8Array | null = null;
+/** Pede uma conferência daqui a `ms` (chamar ao trocar de clima ou de mapa). */
+export function vigiarBranco(ms = 3500) { vigiarEm = performance.now() + ms; ruins = 0; }
+/** Chamar logo depois de desenhar o quadro (o buffer ainda é válido). */
+export function conferirBranco(escuro: boolean, aviso: (t: string) => void) {
+  if (!vigiarEm || performance.now() < vigiarEm) return;
+  if (!escuro) { vigiarEm = 0; return; }
+  const gl = R.getContext(), w = gl.drawingBufferWidth, h = gl.drawingBufferHeight;
+  // faixa do meio da tela (sem a barra de baixo nem o topo), lida de uma vez
+  const y0 = Math.floor(h * 0.25), hh = Math.floor(h * 0.5);
+  if (!buf || buf.length !== w * hh * 4) buf = new Uint8Array(w * hh * 4);
+  try { gl.readPixels(0, y0, w, hh, gl.RGBA, gl.UNSIGNED_BYTE, buf); } catch { vigiarEm = 0; return; }
+  let n = 0, b = 0;
+  for (let i = 0; i < buf.length; i += 4 * 13) { n++; if (buf[i] > 232 && buf[i + 1] > 232 && buf[i + 2] > 232) b++; }
+  const frac = b / Math.max(1, n);
+  if (frac < 0.1) { vigiarEm = 0; ruins = 0; return; }
+  if (++ruins < 2) { vigiarEm = performance.now() + 700; return; } // relâmpago ou clarão: confere de novo
+  const prox = SUSPEITAS.find(id => salvo[id] !== false);
+  if (!prox) { vigiarEm = 0; return; }
+  salvo[prox] = false; guardar(); CHAVES.find(c => c.id === prox)!.on(false);
+  aviso('A imagem estourou em branco nesta placa de vídeo: desliguei "' + CHAVES.find(c => c.id === prox)!.n + '" (F9 para rever)');
+  vigiarBranco(1500);
+}
+(window as any).__vigia = () => ({ vigiarEm, ruins, salvo: { ...salvo } });

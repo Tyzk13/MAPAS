@@ -16,7 +16,7 @@ import { initPassagem, tickPassagem } from './core/passagem';
 import { menu, lista, fecharMenu, initMenus } from './core/menu';
 import { espelho, initEspelho, serJogadores, abrirJanelaJogadores, jogadoresLigada, dentroDeOutraPagina, tickEspelho, enviarQuadro, avisarMapa, avisarClima, avisarAparicao } from './core/espelho';
 import { aparicao } from './core/aparicao';
-import { initDiag, aplicarDiag } from './core/diag';
+import { initDiag, aplicarDiag, vigiarBranco, conferirBranco } from './core/diag';
 import { imersao, fx, tickImersao, aplicarSom, aplicarPreto, prepararLanterna, setNomeClima, setApagao, type SomModo, type Fx } from './core/imersao';
 import { mostrar, exibir, carregarImagem } from './core/mostrar';
 import { initDocs, listarPistas } from './core/docs';
@@ -417,6 +417,8 @@ mapHooks.push(() => avisarMapa()); // janela dos jogadores troca junto
 mapHooks.push(M => { som.setFontes(M.sons || []); cenaAtual = -1; });
 mapHooks.push(() => setTimeout(aplicarDiag, 300));
 timeHooks.push(() => setTimeout(aplicarDiag, 300));
+// vigia do "branco no escuro" (placas que estouram à noite): confere a imagem depois de cada troca
+if (!CFG.capture) { mapHooks.push(() => vigiarBranco(5000)); timeHooks.push(() => vigiarBranco(3500)); }
 initDiag();
 timeHooks.push(() => avisarClima());
 timeHooks.push(p => som.setClima(p.n));
@@ -461,6 +463,7 @@ function frame(ts?: number) {
   updateCull(cam);
   tickImersao(dt);
   post.render(dt);
+  conferirBranco(PRE[st.pi].bg < 0.3 || /Noite|Terror/.test(PRE[st.pi].n), t => toast(t, 6000));
   enviarQuadro();
   if (fpsEl && ++fpsN >= 30) { const n = performance.now(); fpsEl.textContent = (30000 / (n - fpsT)).toFixed(0) + ' fps · ' + R.info.render.calls + ' draws · ' + (R.info.render.triangles / 1e6).toFixed(2) + ' M tri · res ' + Math.round(desempenho.escala * 100) + '%'; fpsT = n; fpsN = 0; }
 }

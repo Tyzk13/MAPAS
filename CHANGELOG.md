@@ -5,6 +5,9 @@
 - O "luar" extra de Barud, Valkaria e Tiberus estava forte demais na Noite (7) e, em placa de vídeo de verdade,
   deixava telhados, muralhas e montanhas brancos. Agora é um valor único e mais baixo (`LUAR` em `barud/common.ts`).
 - Diagnóstico F9: "Luz do céu" desliga também o luar das cidades.
+- **Noite branca em celular/placa sem meia precisão**: o pós-processamento caía para 8 bits antes do tone mapping e
+  cortava o brilho (branco no aparelho, preto no teste). Nessas placas a cena agora é desenhada direto, com tone
+  mapping no material. E uma vigia automática desliga, um por vez, o que estourar em branco num clima escuro.
 - **TV dos jogadores**: além do canal entre janelas, a janela do mestre e a da TV que ela abre agora se falam direto
   (postMessage). Funciona onde o navegador isola as páginas (arquivo do disco no Firefox, link do claude.ai); o botão
   tenta abrir a janela também no claude.ai e avisa o caminho manual se ela não responder.

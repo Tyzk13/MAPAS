@@ -36,7 +36,7 @@ const LIMPA = /* glsl */ `void mainImage(const in vec4 c, const in vec2 uv, out 
   bvec3 ruim = equal(floatBitsToUint(c.rgb) & 0x7f800000u, uvec3(0x7f800000u));
   vec3 v = any(ruim) ? vec3(0.0) : c.rgb;
   o = vec4(clamp(v, vec3(1e-4), vec3(6e4)), c.a); }`;
-let frameN = 0, shadowEvery = 3, leve = false;
+let frameN = 0, shadowEvery = 3, leve = false, semMeia = false;
 // (a resolução adaptativa fica em core/desempenho.ts)
 
 export const post = {
@@ -85,7 +85,14 @@ export const post = {
 
     onResize((w, h) => { composer.setSize(w, h); aoPass.setSize?.(w * R.getPixelRatio(), h * R.getPixelRatio()); });
     this.setQuality(q);
+    // Sem meia precisão o composer guarda a cena em 8 bits ANTES do tone mapping: tudo acima de 1 é cortado e a
+    // imagem sai preta (swiftshader fingindo a placa) ou branca (telhados e muralhas — print do dono em Barud à
+    // noite). Nessas placas desenha direto na tela, com o tone mapping no próprio material.
+    semMeia = !half;
+    if (semMeia) this.setEnabled(false);
   },
+  /** a placa não grava em meia precisão (o pós-processamento fica desligado) */
+  get semMeia() { return semMeia; },
 
   setQuality(q: Quality) {
     this.quality = q;
@@ -121,7 +128,7 @@ export const post = {
   },
 
   /** Liga/desliga todo o pós (a exportação VTT renderiza sem pós). */
-  setEnabled(v: boolean) { enabled = v; R.toneMapping = v ? THREE.NoToneMapping : THREE.ACESFilmicToneMapping; },
+  setEnabled(v: boolean) { if (semMeia) v = false; enabled = v; R.toneMapping = v ? THREE.NoToneMapping : THREE.ACESFilmicToneMapping; },
 
   /** Quantos quadros renderizar antes de uma captura. */
   warmup() { return 3; },
