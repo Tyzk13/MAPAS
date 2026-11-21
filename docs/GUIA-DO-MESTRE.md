@@ -15,6 +15,7 @@ para hospedar e servidor, `docs/HOSPEDAGEM.md`; para Foundry/Roll20, `docs/VTT.m
 | [Sul de Arton (Tormenta 20)](https://claude.ai/artifact/Dzxp7GFmcpc2X9SXJP2VYZ) | mapa da região em relevo | todos os mapas |
 | [Valkaria (Tormenta 20)](https://claude.ai/artifact/YbkzUfCSscusfBzCY1BdN4) | Valkaria, capital do Reinado (escala de gente) | todos os mapas |
 | [Tiberus (Tormenta 20)](https://claude.ai/artifact/2gjg6BwHPHdkpzKqHoM72c) | Tiberus, capital dos minotauros (escala de gente) | todos os mapas |
+| [Floresta Sombria (Tormenta 20)](https://claude.ai/artifact/JWWs7NJ6RjQczy5DChQ9ah) | Floresta Sombria (só floresta, bem detalhada) | todos os mapas |
 
 Mapas: **Igreja** (casamento), **San Judas** (México), **Harlow** (Texas, 1987 parado no tempo), **Greywater
 Falls** (Ontário, 1975 — O Caso Ashdown, hotel de 3 andares) e **Campo** (exemplo). São privados: para outras

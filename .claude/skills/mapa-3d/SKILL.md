@@ -729,7 +729,7 @@ Meça antes de mexer: `node tools/medir.mjs --q=media` (chamadas, triângulos, e
   Sul de Arton `https://claude.ai/artifact/Dzxp7GFmcpc2X9SXJP2VYZ` (`arton.html`, `MAPA_PADRAO="arton"`; criado em 2 partes).
   Valkaria `https://claude.ai/artifact/YbkzUfCSscusfBzCY1BdN4` (`valkaria.html`, `MAPA_PADRAO="valkaria"`; criado em 2 partes, 240 + 46 arquivos).
   Tiberus `https://claude.ai/artifact/2gjg6BwHPHdkpzKqHoM72c` (`tiberus.html`, `MAPA_PADRAO="tiberus"`; 2 partes).
-  Floresta Sombria (`floresta.html`, `MAPA_PADRAO="floresta"`; link novo — ver HISTORICO).
+  Floresta Sombria `https://claude.ai/artifact/JWWs7NJ6RjQczy5DChQ9ah` (`floresta.html`, `MAPA_PADRAO="floresta"`; 2 partes, 250 + 41).
   **Limite de 512 arquivos por versão**: cada publicação deixa os arquivos velhos (hash muda); quando recusar com
   "manifest exceeds 512 entries", liste (`scope: files`) e mande `files` como objeto com `null` nos `.js` velhos
   (ex.: `igreja-*.js` e `campo-*.js` antigos) junto com os novos.

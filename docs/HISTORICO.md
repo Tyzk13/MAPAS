@@ -121,7 +121,8 @@ com salas), F (arquitetura para novos mapas + `docs/NOVO-MAPA.md`). Todas foram 
 29. "A TV para os jogadores não funciona": ligação direta (postMessage) entre a janela do mestre e a da TV além do
     BroadcastChannel; o botão também tenta abrir no claude.ai. As imagens dos protagonistas mandadas no meio de uma
     tarefa não ficaram salvas no servidor — pedir de novo numa mensagem própria.
-30. Pedido: **"um mapa só floresta bem detalhada"** → Floresta Sombria (`src/maps/floresta/`), link próprio.
+30. Pedido: **"um mapa só floresta bem detalhada"** → Floresta Sombria (`src/maps/floresta/`), link próprio:
+    https://claude.ai/artifact/JWWs7NJ6RjQczy5DChQ9ah
 
 ## Arquivo offline (como o dono joga sem internet)
 
