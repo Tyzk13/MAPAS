@@ -144,7 +144,7 @@ export async function build(M: MapRuntime) {
   // personagens das folhas do dono (npcs.ts): só aparecem perto da câmera e na mesma cena (mesa × interior)
   M.npcs = async () => npcsArton();
   // Barud e Valkaria têm mapa próprio em escala de gente (src/maps/barud, src/maps/valkaria): chegando perto aparece "Entrar em …" (core/passagem.ts)
-  { const b = lugar('barud'), v = lugar('valkaria'); M.passagens = [{ n: 'Barud', mapa: 'barud', x: b.x, z: b.z, r: 11, dist: 34, vista: 'Geral' }, { n: 'Valkaria', mapa: 'valkaria', x: v.x, z: v.z, r: 22, dist: 80, vista: 'Geral' }]; }
+  { const b = lugar('barud'), v = lugar('valkaria'), t = lugar('tiberus'); M.passagens = [{ n: 'Barud', mapa: 'barud', x: b.x, z: b.z, r: 11, dist: 34, vista: 'Geral' }, { n: 'Valkaria', mapa: 'valkaria', x: v.x, z: v.z, r: 22, dist: 80, vista: 'Geral' }, { n: 'Tiberus', mapa: 'tiberus', x: t.x, z: t.z, r: 20, dist: 70, vista: 'Geral' }]; }
   M.npcVisivel = t => { const c = cam.position, p = t.g.position, dc = c.y < -60, dt2 = p.y < -60; if (dc !== dt2) return false; return Math.hypot(c.x - p.x, c.y - p.y, c.z - p.z) < (dt2 ? 45 : 80); };
 
   // ---------- clima ----------

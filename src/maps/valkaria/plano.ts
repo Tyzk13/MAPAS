@@ -66,6 +66,8 @@ export function distSeg(x: number, z: number, ax: number, az: number, bx: number
 export class Ocupacao {
   private cx = new Map<string, Caixa[]>(); private sg = new Map<string, { ax: number; az: number; bx: number; bz: number; hw: number }[]>();
   circ: [number, number, number][] = [];
+  /** quem usa em outra cidade troca o contorno e a água (padrão: muralha redonda e rio de Valkaria) */
+  constructor(public dentro: (x: number, z: number, m: number) => boolean = (x, z, m) => dentroMuro(x, z) >= m, public agua: (x: number, z: number, m: number) => boolean = (x, z, m) => noRio(x, z, m)) {}
   private ks(x0: number, x1: number, z0: number, z1: number, f: (k: string) => void) { for (let i = Math.floor(x0 / 8); i <= Math.floor(x1 / 8); i++) for (let j = Math.floor(z0 / 8); j <= Math.floor(z1 / 8); j++) f(i + ',' + j); }
   ocupar(B: Caixa) { const r = Math.hypot(B.hw, B.hd); this.ks(B.x - r, B.x + r, B.z - r, B.z + r, k => { let L = this.cx.get(k); if (!L) this.cx.set(k, (L = [])); L.push(B); }); }
   rua(pts: V[], w: number) { const p = reamostra(pts, 3); for (let i = 1; i < p.length; i++) { const [ax, az] = p[i - 1], [bx, bz] = p[i], s = { ax, az, bx, bz, hw: w / 2 }; this.ks(Math.min(ax, bx) - w, Math.max(ax, bx) + w, Math.min(az, bz) - w, Math.max(az, bz) + w, k => { let L = this.sg.get(k); if (!L) this.sg.set(k, (L = [])); L.push(s); }); } }
@@ -74,8 +76,8 @@ export class Ocupacao {
   livre(B: Caixa, folga = 0.1, muro = 6) {
     const r = Math.hypot(B.hw, B.hd);
     for (const [cx, cz, cr] of this.circ) if (Math.hypot(cx - B.x, cz - B.z) < cr + r && distCaixa(B, cx, cz) < cr) return false;
-    for (const [u, v] of cantos(B)) { if (dentroMuro(u, v) < muro) return false; if (noRio(u, v, 3.2)) return false; }
-    if (noRio(B.x, B.z, 3.2)) return false;
+    for (const [u, v] of cantos(B)) { if (!this.dentro(u, v, muro)) return false; if (this.agua(u, v, 3.2)) return false; }
+    if (this.agua(B.x, B.z, 3.2)) return false;
     let ok = true;
     this.ks(B.x - r - 1, B.x + r + 1, B.z - r - 1, B.z + r + 1, k => {
       if (!ok) return;

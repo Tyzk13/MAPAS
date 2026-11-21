@@ -14,6 +14,7 @@ para hospedar e servidor, `docs/HOSPEDAGEM.md`; para Foundry/Roll20, `docs/VTT.m
 | [Barud (Tormenta 20)](https://claude.ai/artifact/UpjK4X8KJrYW5LefuSuPUF) | Barud, capital de Lomatubar | todos os mapas |
 | [Sul de Arton (Tormenta 20)](https://claude.ai/artifact/Dzxp7GFmcpc2X9SXJP2VYZ) | mapa da região em relevo | todos os mapas |
 | [Valkaria (Tormenta 20)](https://claude.ai/artifact/YbkzUfCSscusfBzCY1BdN4) | Valkaria, capital do Reinado (escala de gente) | todos os mapas |
+| [Tiberus (Tormenta 20)](https://claude.ai/artifact/2gjg6BwHPHdkpzKqHoM72c) | Tiberus, capital dos minotauros (escala de gente) | todos os mapas |
 
 Mapas: **Igreja** (casamento), **San Judas** (México), **Harlow** (Texas, 1987 parado no tempo), **Greywater
 Falls** (Ontário, 1975 — O Caso Ashdown, hotel de 3 andares) e **Campo** (exemplo). São privados: para outras
@@ -150,6 +151,21 @@ Malpetrim, os chefes de guerra orcs, o chefe kobold, o saqueador de Tollon, a Ve
 **Câmera e personagens**: roda = zoom para onde o mouse aponta · W A S D deslizam a mesa · Q/E giram · Z/X
 aproximam · duplo clique no chão leva a câmera até lá · com um personagem selecionado, duplo clique no chão faz
 ele andar até o ponto.
+
+### Tiberus (capital do Império de Tauron, escala de gente)
+Um castro quadrado de muralhas maciças com quatro portões (o do sul, a **Porta Triunfal**, tem dois minotauros de
+pedra), cardo e decúmano com colunatas e braseiros, ruas em grade e ínsulas de tijolo de cinco andares com lojas.
+- **Fórum**: o colosso de bronze de um minotauro de lança, a rostra dos oradores, estátuas, fontes, colunatas e o
+  **arco do triunfo**; o **Templo de Tauron** no alto de um pódio, a **Cúria** (Senado) e a **Basílica**.
+- **Arena** (anfiteatro de três andares, arquibancadas, areia com braseiros), **Termas**, **Quartéis** com campo de
+  treino, **Mercado de Escravos e Gado** (estrado do leilão, jaulas, currais), **aqueduto** chegando do norte e a
+  **necrópole** da estrada do sul (mausoléus, estelas, ciprestes, velas acesas por ninguém).
+- Por dentro: Templo · cela, Cúria · plenário, Basílica · nave, Termas · piscinas, Quartel · dormitório, Ergástulo ·
+  celas, Chifre de Bronze · salão (taverna), Casa de Varro · átrio, Forja · oficina.
+- **Fichas**: 14 lugares e 17 NPCs. O fio da campanha: o **Senador Varro** (vilão) assina as ordens que mandam o Pretor
+  de Barud "colher o coral"; Crasso tem cópias das cartas; o Legado Brutor pode virar aliado; Elian, gladiador escravo
+  vindo de Barud; Magnus, o leiloeiro (vilão); um agente do Pretor de Barud começa oculto.
+- Entra-se pelo Sul de Arton (**Entrar em Tiberus ▸**) e volta-se por **◂ Sul de Arton**.
 
 ### Valkaria (capital do Reinado, escala de gente)
 O coração da cidade, no mesmo nível de Barud: a **deusa colossal** (manto com dobras, espada nas mãos, coroa) na

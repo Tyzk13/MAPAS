@@ -1,5 +1,16 @@
 # Changelog
 
+## Tiberus em escala de gente (novo mapa) e o kit de cidades
+
+- **Tiberus**, a capital dos minotauros (`src/maps/tiberus/`): castro de 300 m com muralhas e quatro portões, cardo e
+  decúmano com colunatas, ínsulas de tijolo, fórum com o colosso de bronze, rostra, arco do triunfo, Templo de Tauron
+  no pódio, Cúria, Basílica, arena de três andares, termas, quartéis com campo de treino, mercado de escravos, aqueduto
+  com arcos e a necrópole da estrada do sul. Nove interiores, 14 lugares e 17 NPCs com fichas (o Senador Varro e as
+  ordens do coral de Barud), povo minotauro, legionários e escravos nas ruas.
+- **Kit de cidade em escala de gente** (`src/maps/gente/kit.ts` e `montagem.ts`): ruas com pontes, casas por estilo,
+  fundos de quarteirão, muralha com torres e portões, postes, árvores leves, luzes perto da câmera, fumaça, névoa,
+  fichas e NPCs — as próximas cidades (Malpetrim, Giluk…) saem dele.
+
 ## Valkaria em escala de gente (novo mapa)
 
 - **Valkaria, capital do Reinado**, no nível de Barud (`src/maps/valkaria/`): a deusa colossal na Praça do Panteão

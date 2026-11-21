@@ -500,6 +500,16 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
   `tipo` ('templo', 'quartel', 'salao') para os detalhes especiais, `matExt` para outro material de parede. A planta
   é sua (plano.ts: círculos, avenidas, rio, `Ocupacao` com caixas orientadas e ruas); as luzes usam o `LUZES`/`luz`
   de `barud/cidade.ts` (zere `LUZES.length` no build). Artes dos NPCs: `retratoArton(id)` (arton/retratos.ts).
+- **Kit de cidade em escala de gente** (`src/maps/gente/kit.ts` + `montagem.ts`, usado por Tiberus): `novaCidade(G,
+  {dentro, agua, reservados})` → `rua`/`desenharRuas` (pontes sobre água) → `casasNasRuas` + `preencher` (fundos) com
+  `Estilo` (paleta, andares, janelas, sacadas, toldos, telhado) → `muralha(pol, portoes, op)` → `postesNasRuas`,
+  `arvore`, `objetosDeRua` → `terminar`. `montar(M, {...})` faz luzes, fumaça, névoa, vistas, fichas, NPCs, povo,
+  VTT e volta. Reserve os marcos antes; a `Ocupacao` agora recebe o contorno e a água da cidade (sem isso usava o
+  círculo e o rio de Valkaria e a cidade nova ficava vazia).
+- Cidade cheia de marcos grandes (arena, fórum, templo) com margens: as ruas viram pedaços curtos e não cabem casas.
+  Aumente a cidade (Tiberus foi de 250 para 300 m) e use `preencher` com muitas tentativas e casas menores.
+- Minotauro de estátua: pernas com cascos, saiote, tronco largo em cima, ombros, focinho, chifres em arco, lança e
+  escudo, bronze metálico (`bronzeMat`); o boneco de caixas parecia brinquedo.
 - Ruas cortadas em trechos de 1,2 m: **não** use `reamostra(pts, passo)` para espaçar postes (ela só subdivide, não
   junta pontos — saiu um poste a cada 1,2 m); use `aCada(pts, passo)` (plano.ts).
 - Vistas em órbita não olham muito para cima: o `maxPolarAngle` empurra a câmera para o alto quando o alvo está bem
@@ -686,6 +696,10 @@ Meça antes de mexer: `node tools/medir.mjs --q=media` (chamadas, triângulos, e
   Barud (Tormenta 20) `https://claude.ai/artifact/UpjK4X8KJrYW5LefuSuPUF` (`barud.html`, `MAPA_PADRAO="barud"`) ·
   Sul de Arton `https://claude.ai/artifact/Dzxp7GFmcpc2X9SXJP2VYZ` (`arton.html`, `MAPA_PADRAO="arton"`; criado em 2 partes).
   Valkaria `https://claude.ai/artifact/YbkzUfCSscusfBzCY1BdN4` (`valkaria.html`, `MAPA_PADRAO="valkaria"`; criado em 2 partes, 240 + 46 arquivos).
+  Tiberus `https://claude.ai/artifact/2gjg6BwHPHdkpzKqHoM72c` (`tiberus.html`, `MAPA_PADRAO="tiberus"`; 2 partes).
+  **Limite de 512 arquivos por versão**: cada publicação deixa os arquivos velhos (hash muda); quando recusar com
+  "manifest exceeds 512 entries", liste (`scope: files`) e mande `files` como objeto com `null` nos `.js` velhos
+  (ex.: `igreja-*.js` e `campo-*.js` antigos) junto com os novos.
   O build leve passou de 255 arquivos: publique o link novo em duas partes (mesmo `file_path`); nos links que já
   existem mande só os arquivos alterados (código .js/.css e imagens novas) — texturas/modelos têm o mesmo nome. Os três têm todos os mapas (Greywater Falls
   entrou depois; para um link próprio dele, crie `canada.html` com `MAPA_PADRAO="canada"`).

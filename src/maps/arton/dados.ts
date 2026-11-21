@@ -56,7 +56,7 @@ export const FICHAS: F[] = [
   f({ id: 'velha', n: 'Velha Malpetrim', cat: 'Abandonado', tipo: 'Ruínas meio submersas', vista: 'Velha Malpetrim',
     publico: 'A cidade velha da baixada, destruída pelo tsunami: ruínas meio afundadas, cais quebrados, muros caídos, lama molhada e algas. Na maré baixa, aparecem portas e escadas que levam para baixo.',
     dono: 'O mar', funcao: 'Saqueadores e catadores.', rumores: ['O cofre do velho banco nunca foi achado.'], segredos: ['Há bolsões de ar nos porões — e algo mora neles.'] }),
-  f({ id: 'tiberus', n: 'Tiberus', cat: 'Cidade', tipo: 'Capital do Império de Tauron', vista: 'Tiberus',
+  f({ id: 'tiberus', n: 'Tiberus', cat: 'Cidade', tipo: 'Capital do Império de Tauron', vista: 'Tiberus', mapa: 'tiberus',
     publico: 'A capital dos minotauros, a noroeste, rumo a Tapista: muralhas de pedra maciças e grossas, portões monumentais, arenas e estátuas gigantes em escala de gente grande. Um ar autoritário e imponente.',
     dono: 'Império de Tauron', funcao: 'Capital imperial; de lá saem as legiões que ocupam Barud.', rumores: ['As arenas pagam em ouro quem sobreviver a três lutas.'], segredos: ['Ordens seladas vindas de Tiberus mandam o Pretor de Barud "colher o coral".'] }),
   // ---------- fortalezas, templos, tavernas, marcos ----------

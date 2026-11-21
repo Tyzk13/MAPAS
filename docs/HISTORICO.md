@@ -41,7 +41,8 @@ com salas), F (arquitetura para novos mapas + `docs/NOVO-MAPA.md`). Todas foram 
   Greywater Falls https://claude.ai/artifact/19Taut7URvhL67RnSA4MHg (criado em 18/11/2026; abre em `canada`) ·
   Barud https://claude.ai/artifact/UpjK4X8KJrYW5LefuSuPUF (Tormenta 20; abre em `barud`) ·
   Sul de Arton https://claude.ai/artifact/Dzxp7GFmcpc2X9SXJP2VYZ (Tormenta 20, mapa da região; abre em `arton`) ·
-  Valkaria https://claude.ai/artifact/YbkzUfCSscusfBzCY1BdN4 (Tormenta 20, criado em 21/11/2026; abre em `valkaria`)
+  Valkaria https://claude.ai/artifact/YbkzUfCSscusfBzCY1BdN4 (Tormenta 20, criado em 21/11/2026; abre em `valkaria`) ·
+  Tiberus https://claude.ai/artifact/2gjg6BwHPHdkpzKqHoM72c (Tormenta 20, criado em 21/11/2026; abre em `tiberus`)
 - **Imagens locais**: moradores/jogadores/criaturas de Greywater ficam em `npcs-local/` (fora do git, repositório
   público). Uma sessão sem essa pasta **não deve republicar** os links (o build perderia essas imagens); a skill
   diz como refazê-las. Os links atuais foram publicados por uma sessão que tinha as imagens.
@@ -110,6 +111,9 @@ com salas), F (arquitetura para novos mapas + `docs/NOVO-MAPA.md`). Todas foram 
 26. **Valkaria em escala de gente** (`src/maps/valkaria/`): a primeira cidade além de Barud no nível do mapa detalhado
     (deusa, palácio, catedral, academia, mercado, 9 prédios com interior, fichas, NPCs, passagem com a região).
     Próximas, na ordem que o dono pedir: Tiberus, Nova Malpetrim, Giluk, Nimbarann, Porto de Deheon.
+27. Pedido do dono: **cada cidade, masmorra e lugar importante como um mapa próprio no nível de Barud**, um por vez,
+    melhorando muito. Ordem combinada: Tiberus (feito, com o kit `src/maps/gente/`), Nova Malpetrim, Giluk, Masmorra
+    de Azazel, Nimbarann, Porto de Deheon e os outros lugares (cavernas, Catedral de Gelo, Asidon, Korl…).
 
 ## Arquivo offline (como o dono joga sem internet)
 

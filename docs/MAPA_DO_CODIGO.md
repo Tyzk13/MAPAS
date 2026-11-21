@@ -7,7 +7,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 
 | Pasta | Arquivos | Tamanho |
 |---|---|---|
-| `capturas/` | 417 | 106.5 MB |
+| `capturas/` | 435 | 108.3 MB |
 | `src/assets/` | 188 | 90.6 MB |
 | `referencias/` | 5 | 2.4 MB |
 
@@ -78,6 +78,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/maps/arton/miniaturas.ts` | 319 | 30 KB |
 | `src/maps/arton/natureza.ts` | 188 | 24 KB |
 | `src/maps/arton/npcs.ts` | 180 | 15 KB |
+| `src/maps/arton/retratos.ts` | 6 | 1 KB |
 | `src/maps/arton/simbolos.ts` | 107 | 10 KB |
 | `src/maps/arton/terreno.ts` | 356 | 31 KB |
 | `src/maps/arton/vida.ts` | 191 | 19 KB |
@@ -105,7 +106,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/maps/igreja/grounds.ts` | 369 | 30 KB |
 | `src/maps/igreja/index.ts` | 162 | 9 KB |
 | `src/maps/igreja/interior.ts` | 246 | 18 KB |
-| `src/maps/manifest.ts` | 16 | 1 KB |
+| `src/maps/manifest.ts` | 17 | 1 KB |
 | `src/maps/mexico/common.ts` | 177 | 11 KB |
 | `src/maps/mexico/index.ts` | 176 | 10 KB |
 | `src/maps/mexico/landmarks.ts` | 503 | 46 KB |
@@ -123,6 +124,12 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/maps/texas/onibus.ts` | 88 | 6 KB |
 | `src/maps/texas/pistas.ts` | 111 | 28 KB |
 | `src/maps/texas/police.ts` | 442 | 58 KB |
+| `src/maps/valkaria/cidade.ts` | 418 | 41 KB |
+| `src/maps/valkaria/dados.ts` | 166 | 22 KB |
+| `src/maps/valkaria/index.ts` | 207 | 16 KB |
+| `src/maps/valkaria/mats.ts` | 16 | 1 KB |
+| `src/maps/valkaria/plano.ts` | 105 | 8 KB |
+| `src/maps/valkaria/predios.ts` | 159 | 14 KB |
 | `src/style.css` | 307 | 25 KB |
 | `src/vite-env.d.ts` | 2 | 0 KB |
 | `tools/_grid.mjs` | 7 | 1 KB |
@@ -315,6 +322,9 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 ### `src/maps/arton/npcs.ts`
 `L` 19 · `por` 38 · `vil` 43 · `dentro` 45 · `fora` 47 · `solto` 48 · `grupo` 50 · `npcsArton` 54
 
+### `src/maps/arton/retratos.ts`
+`retratoArton` 5
+
 ### `src/maps/arton/simbolos.ts`
 `COR_PINO` 8 · `altPino` 12 · `Rota` 14 · `pxDe` 15 · `ROTAS` 24 · `dias` 29 · `placa` 31 · `desenhar` 33 · `rr` 36 · `construirSimbolos` 48 · `pinta` 51 · `reg` 70
 
@@ -449,6 +459,24 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 
 ### `src/maps/texas/police.ts`
 `wx` 14 · `mk` 18 · `age` 22 · `paperDraw` 24 · `wrap` 37 · `paper` 43 · `photo` 44 · `sigil` 64 · `pin` 70 · `cork` 71 · `marker` 72 · `COUNTY_MAP` 75 · `P2` 80 · `Police` 95 · `buildPolice` 97 · `bx` 104 · `doc` 106 · `chairs` 113 · `iw` 143 · `lo` 148 · `seg` 154 · `door` 169 · `car` 182 · `add` 184 · `win` 201 · `px` 203 · `shelf` 307 · `draw` 407
+
+### `src/maps/valkaria/cidade.ts`
+`CidadeV` 18 · `construirCidadeV` 24 · `colisor` 30 · `colCil` 31 · `plano` 32 · `sh` 33 · `resv` 34 · `cortar` 76 · `fecha` 78 · `addRua` 86 · `perto` 93 · `muroSeg` 179 · `pr` 220 · `barraca` 260 · `jardim` 272 · `estiloEm` 298 · `noPonto` 304 · `casa` 318 · `poste` 360
+
+### `src/maps/valkaria/dados.ts`
+`LOCAIS_V` 7 · `NPCS_V` 119 · `IMG_V` 162
+
+### `src/maps/valkaria/index.ts`
+`P3` 20 · `build` 22 · `escolher` 57 · `fora` 88 · `dentro` 89 · `nome` 90 · `tokId` 117 · `retrato` 118 · `P3m` 198 · `silhueta` 200
+
+### `src/maps/valkaria/mats.ts`
+`matsV` 6 · `vc` 8
+
+### `src/maps/valkaria/plano.ts`
+`V` 7 · `PI` 8 · `reseed` 12 · `rnd` 13 · `entre` 14 · `pick` 15 · `R_MURO` 18 · `PRACA_R` 19 · `ANEL1` 20 · `MURO` 22 · `dentroMuro` 24 · `AVENIDAS` 26 · `NOMES_AV` 27 · `NOMES_PORTAO` 28 · `polar` 29 · `paraCentro` 31 · `RIO` 34 · `rioX` 35 · `margem` 37 · `noRio` 38 · `Caixa` 41 · `caixa` 42 · `sobrepoe` 43 · `distCaixa` 52 · `cantos` 54 · `Rua` 56 · `reamostra` 57 · `arco` 62 · `distSeg` 63 · `Ocupacao` 66 · `livre()` 76 · `V3` 93 · `aCada` 96
+
+### `src/maps/valkaria/predios.ts`
+`em` 16 · `PREDIOS_V` 19 · `luzI` 39 · `mobiliarV` 42 · `W` 44 · `mundoV` 158
 
 ### `tools/assets-leves.mjs`
 `size` 19
