@@ -8,7 +8,7 @@ import type { MapRuntime, View } from '../../core/types';
 import { begin } from '../../core/kit';
 import { makeTerrain } from '../../core/terrain';
 import { pbr } from '../../core/pbr';
-import { instance, instanceVariants, place, type Xf } from '../../core/models';
+import { instance, instanceVariants, place, hasModel, type Xf } from '../../core/models';
 import { grassField } from '../../core/grass';
 import { cam } from '../../core/engine';
 import { Batch, MAT, mtx, por, rnd, reseed, Q } from '../barud/common';
@@ -365,7 +365,8 @@ export async function build(M: MapRuntime) {
   vai(instance('moss_01', espalha(Math.round(70 * k), 2.5, 22), G, { shadow: false, tile: 30, cullDist: 50 }));
   vai(instance('root_cluster_01', espalha(Math.round(24 * k), 2.8, 18), G, { tile: 40, cullDist: 80 }));
   vai(instance('dry_branches_medium_01', espalha(Math.round(50 * k), 2.2, 18), G, { shadow: false, tile: 30, cullDist: 60 }));
-  for (const id of ['island_tree_01_lod1', 'island_tree_02_lod1', 'island_tree_03_lod1']) vai(instance(id, espalha([8, 14, 20][nivel], 5, 16, [TRILHA, RAMAL_CAMPO, RAMAL_RUINA], 0.6).map(t => ({ ...t, s: 0.8 + rnd() * 0.4 })), G, { tile: 40, cullDist: 120, shadow: nivel > 0 }));
+  // a versão leve (build:leve) já troca o modelo pelo _lod1 e não leva os arquivos _lod1
+  for (const id0 of ['island_tree_01', 'island_tree_02', 'island_tree_03']) vai(instance(hasModel(id0 + '_lod1') ? id0 + '_lod1' : id0, espalha([8, 14, 20][nivel], 5, 16, [TRILHA, RAMAL_CAMPO, RAMAL_RUINA], 0.6).map(t => ({ ...t, s: 0.8 + rnd() * 0.4 })), G, { tile: 40, cullDist: 120, shadow: nivel > 0 }));
   vai(instance('tree_stump_01', espalha(26, 3, 26), G, { tile: 40, cullDist: 100 }));
   vai(instance('dead_tree_trunk', espalha(10, 4, 26), G, { tile: 40, cullDist: 140 }));
   vai(instanceVariants('rock_moss_set_01', espalha(Math.round(40 * k), 3, 30), G, { tile: 40, cullDist: 110 }));

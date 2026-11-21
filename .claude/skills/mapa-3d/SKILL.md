@@ -187,7 +187,8 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
   - Copa de folhosa = **cartões de folhas** (quads com textura de folhas desenhada em canvas, `alphaTest`, normais
     apontando para fora do centro do cacho): muito mais realista que icosaedros facetados, ~360 tri por árvore.
     Pinheiro: cones + franja de cartões escuros na borda de cada saia.
-  - `island_tree_0x` completo tem **30 mil tri só nas folhas**: use `_lod1`. `boulder_01` tem 28 mil (poucas cópias).
+  - `island_tree_0x` completo tem **30 mil tri só nas folhas**: use `_lod1`. Mas a versão leve (`assets-leves.mjs`) copia o `_lod1` por cima do
+    nome base e NÃO leva os `_lod1`: use `hasModel(id + '_lod1') ? id + '_lod1' : id` (o `instance` com `.catch` some calado). `boulder_01` tem 28 mil (poucas cópias).
     Meça com `.cache/peso-cena.mjs <mapa>` (soma tri × instâncias por modelo).
   - Árvores instanciadas em blocos de 55 m (30 m dava ~2700 chamadas na vista geral) e `cullDist` 420 (com 240 a
     metade longe da mata sumia na vista do alto).
