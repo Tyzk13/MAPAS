@@ -1,5 +1,11 @@
 # Changelog
 
+## Noite sem telhados brancos nas cidades
+
+- O "luar" extra de Barud, Valkaria e Tiberus estava forte demais na Noite (7) e, em placa de vídeo de verdade,
+  deixava telhados, muralhas e montanhas brancos. Agora é um valor único e mais baixo (`LUAR` em `barud/common.ts`).
+- Diagnóstico F9: "Luz do céu" desliga também o luar das cidades.
+
 ## Tiberus em escala de gente (novo mapa) e o kit de cidades
 
 - **Tiberus**, a capital dos minotauros (`src/maps/tiberus/`): castro de 300 m com muralhas e quatro portões, cardo e

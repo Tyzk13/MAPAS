@@ -146,3 +146,8 @@ export function coral(B: Batch, x: number, y: number, z: number, s = 1) {
 export const dentroRet = (x: number, z: number, r: Ret, m = 0) => x > r[0] - m && x < r[1] + m && z > r[2] - m && z < r[3] + m;
 export const cruzaRet = (a: Ret, b: Ret, m = 0) => a[0] < b[1] + m && a[1] > b[0] - m && a[2] < b[3] + m && a[3] > b[2] - m;
 export const retRua = (r: Rua): Ret => r.x0 === r.x1 ? [r.x0 - r.w / 2, r.x0 + r.w / 2, Math.min(r.z0, r.z1), Math.max(r.z0, r.z1)] : [Math.min(r.x0, r.x1), Math.max(r.x0, r.x1), r.z0 - r.w / 2, r.z0 + r.w / 2];
+
+/** "Luar": luz extra de céu das cidades em escala de gente (Barud, Valkaria, Tiberus…) nos climas escuros, para as
+ * ruas estreitas não sumirem. Já foi 6–7 na Noite e, numa placa de vídeo de verdade (com o bloom), telhados,
+ * muralhas e montanhas ficavam BRANCOS (print do dono em Barud, nov/2026); o swiftshader das capturas escondia. */
+export const LUAR = (p: { n: string; bg: number }) => (p.n === 'Noite' ? 3.5 : p.bg < 0.15 ? 1.7 : p.bg < 0.4 ? 0.8 : 0.15);

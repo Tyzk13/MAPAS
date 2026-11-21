@@ -8,7 +8,7 @@ import type { TokenDef } from '../../core/tokens';
 import { begin, mistTex } from '../../core/kit';
 import { S, cam } from '../../core/engine';
 import { fatorLuzes } from '../../core/sky';
-import { Batch, MAT, Q } from '../barud/common';
+import { Batch, MAT, Q, LUAR } from '../barud/common';
 import { LUZES } from '../barud/cidade';
 import { construirPredio, retDe, SPEC } from '../barud/edificios';
 import { PREDIOS_V, mobiliarV, mundoV } from './predios';
@@ -181,7 +181,7 @@ export async function build(M: MapRuntime) {
   // ---------- animação ----------
   const luar = new THREE.HemisphereLight(0x9aa4d8, 0x2a2430, 0); luar.userData.noExport = 1; G.add(luar);
   let fogBase = 0.008, lampsOn = true;
-  M.onTime = p => { lampsOn = p.lamps > 0; fogBase = (S.fog as THREE.FogExp2 | null)?.density ?? fogBase; luar.intensity = p.n === 'Noite' ? 6 : p.bg < 0.15 ? 2.2 : p.bg < 0.4 ? 0.9 : 0.15; escolher(); };
+  M.onTime = p => { lampsOn = p.lamps > 0; fogBase = (S.fog as THREE.FogExp2 | null)?.density ?? fogBase; luar.intensity = LUAR(p); escolher(); };
   M.tick = (dt, t) => {
     if (Math.floor(t * 3) !== ult || cam.position.distanceToSquared(posEsc) > 25) { ult = Math.floor(t * 3); posEsc.copy(cam.position); escolher(); }
     const f = fatorLuzes();

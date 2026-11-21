@@ -7,7 +7,7 @@ import { begin, mistTex, halo } from '../../core/kit';
 import { S, cam } from '../../core/engine';
 import { place } from '../../core/models';
 import { fatorLuzes } from '../../core/sky';
-import { Batch, MAT, mtx, cx, cil, rnd, pick, reseed, Q, PRACA, FORTALEZA, CORAL, PORTAO_SUL, CANAL, coral, signTexture } from './common';
+import { Batch, MAT, mtx, cx, cil, rnd, pick, reseed, Q, PRACA, FORTALEZA, CORAL, PORTAO_SUL, CANAL, coral, signTexture, LUAR } from './common';
 import { construirCidade, LUZES, luz } from './cidade';
 import { PREDIOS, construirPredio, mobiliar, construirFortaleza, retDe, mundo, SPEC } from './edificios';
 import { mesa, caixote, barril, sacos, peca } from './mobilia';
@@ -227,9 +227,10 @@ export async function build(M: MapRuntime) {
 
   // ---------- animação ----------
   // luar/luz do céu extra só em Barud: pedra escura e ruas estreitas sumiam nos climas escuros
+  // (7 na Noite deixava telhados e muralhas BRANCOS em placa de verdade com o bloom — print do dono, nov/2026)
   const luar = new THREE.HemisphereLight(0x8a9ac8, 0x2a2420, 0); luar.userData.noExport = 1; G.add(luar);
   let fogBase = 0.01, lampsOn = true;
-  M.onTime = p => { lampsOn = p.lamps > 0; fogBase = (S.fog as THREE.FogExp2 | null)?.density ?? fogBase; luar.intensity = p.n === 'Noite' ? 7 : p.bg < 0.15 ? 2.6 : p.bg < 0.4 ? 1.1 : 0.2; luar.color.setHex(p.n === 'Noite' ? 0x8a9ad8 : 0x9a9a9a); escolher(); };
+  M.onTime = p => { lampsOn = p.lamps > 0; fogBase = (S.fog as THREE.FogExp2 | null)?.density ?? fogBase; luar.intensity = LUAR(p); luar.color.setHex(p.n === 'Noite' ? 0x8a9ad8 : 0x9a9a9a); escolher(); };
   M.tick = (dt, t) => {
     if (Math.floor(t * 3) !== ult || cam.position.distanceToSquared(posEsc) > 25) { ult = Math.floor(t * 3); posEsc.copy(cam.position); escolher(); }
     const f = fatorLuzes();

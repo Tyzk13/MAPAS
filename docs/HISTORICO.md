@@ -114,6 +114,10 @@ com salas), F (arquitetura para novos mapas + `docs/NOVO-MAPA.md`). Todas foram 
 27. Pedido do dono: **cada cidade, masmorra e lugar importante como um mapa próprio no nível de Barud**, um por vez,
     melhorando muito. Ordem combinada: Tiberus (feito, com o kit `src/maps/gente/`), Nova Malpetrim, Giluk, Masmorra
     de Azazel, Nimbarann, Porto de Deheon e os outros lugares (cavernas, Catedral de Gelo, Asidon, Korl…).
+28. Relato com print: **Barud de noite com telhados e muralhas brancos**. Era o luar extra das cidades (7 na Noite);
+    agora é `LUAR(p)` em `barud/common.ts` (3,5), comum a Barud, Valkaria e Tiberus, e a chave "Luz do céu" do F9
+    também o desliga. O dono escolheu **três protagonistas** (artes dele): aguardam os arquivos para virarem os
+    jogadores 1–3 dos mapas de Tormenta 20 (só em `npcs-local/`, fora do git).
 
 ## Arquivo offline (como o dono joga sem internet)
 

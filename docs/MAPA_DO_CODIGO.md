@@ -7,7 +7,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 
 | Pasta | Arquivos | Tamanho |
 |---|---|---|
-| `capturas/` | 435 | 108.3 MB |
+| `capturas/` | 451 | 109.8 MB |
 | `src/assets/` | 188 | 90.6 MB |
 | `referencias/` | 5 | 2.4 MB |
 
@@ -83,11 +83,11 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/maps/arton/terreno.ts` | 356 | 31 KB |
 | `src/maps/arton/vida.ts` | 191 | 19 KB |
 | `src/maps/barud/cidade.ts` | 413 | 30 KB |
-| `src/maps/barud/common.ts` | 149 | 9 KB |
+| `src/maps/barud/common.ts` | 154 | 9 KB |
 | `src/maps/barud/dados.ts` | 364 | 50 KB |
 | `src/maps/barud/edificios.ts` | 419 | 37 KB |
 | `src/maps/barud/floresta.ts` | 392 | 30 KB |
-| `src/maps/barud/index.ts` | 288 | 23 KB |
+| `src/maps/barud/index.ts` | 289 | 23 KB |
 | `src/maps/barud/mobilia.ts` | 216 | 14 KB |
 | `src/maps/campo.ts` | 53 | 4 KB |
 | `src/maps/canada/casas.ts` | 217 | 27 KB |
@@ -101,6 +101,8 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/maps/canada/nature.ts` | 127 | 10 KB |
 | `src/maps/canada/npcs.ts` | 116 | 12 KB |
 | `src/maps/canada/pistas.ts` | 116 | 31 KB |
+| `src/maps/gente/kit.ts` | 274 | 25 KB |
+| `src/maps/gente/montagem.ts` | 124 | 10 KB |
 | `src/maps/igreja/building.ts` | 232 | 16 KB |
 | `src/maps/igreja/common.ts` | 105 | 7 KB |
 | `src/maps/igreja/grounds.ts` | 369 | 30 KB |
@@ -124,6 +126,10 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/maps/texas/onibus.ts` | 88 | 6 KB |
 | `src/maps/texas/pistas.ts` | 111 | 28 KB |
 | `src/maps/texas/police.ts` | 442 | 58 KB |
+| `src/maps/tiberus/cidade.ts` | 202 | 21 KB |
+| `src/maps/tiberus/dados.ts` | 108 | 17 KB |
+| `src/maps/tiberus/index.ts` | 84 | 7 KB |
+| `src/maps/tiberus/predios.ts` | 158 | 15 KB |
 | `src/maps/valkaria/cidade.ts` | 418 | 41 KB |
 | `src/maps/valkaria/dados.ts` | 166 | 22 KB |
 | `src/maps/valkaria/index.ts` | 207 | 16 KB |
@@ -338,7 +344,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `LReq` 12 · `LUZES` 13 · `luz` 14 · `Cidade` 16 · `estiloEm` 22 · `construirCidade` 29 · `colisor` 33 · `sh` 36 · `muroSeg` 89 · `ponte` 162 · `ocupado` 180 · `casa` 209 · `hh` 223 · `fzz` 253 · `barr` 288 · `poste` 318 · `livre` 337 · `carroca` 357 · `animal` 367 · `retCantos` 402 · `mergeSimples` 406
 
 ### `src/maps/barud/common.ts`
-`Q` 10 · `reseed` 18 · `rnd` 19 · `entre` 20 · `pick` 21 · `MURO_R` 24 · `MURO` 25 · `dentroMuro` 27 · `PORTAO_SUL` 38 · `PORTAO_LESTE` 39 · `CANAL` 42 · `Rua` 45 · `RUAS` 46 · `Ret` 63 · `PRACA` 64 · `FORTALEZA` 65 · `CORAL` 66 · `vc` 69 · `makeMats` 70 · `pl` 71 · `MAT` 96 · `MatKey` 97 · `por` 101 · `cx` 107 · `telhado` 112 · `cone` 129 · `cil` 132 · `coral` 136 · `dentroRet` 146 · `cruzaRet` 147 · `retRua` 148
+`Q` 10 · `reseed` 18 · `rnd` 19 · `entre` 20 · `pick` 21 · `MURO_R` 24 · `MURO` 25 · `dentroMuro` 27 · `PORTAO_SUL` 38 · `PORTAO_LESTE` 39 · `CANAL` 42 · `Rua` 45 · `RUAS` 46 · `Ret` 63 · `PRACA` 64 · `FORTALEZA` 65 · `CORAL` 66 · `vc` 69 · `makeMats` 70 · `pl` 71 · `MAT` 96 · `MatKey` 97 · `por` 101 · `cx` 107 · `telhado` 112 · `cone` 129 · `cil` 132 · `coral` 136 · `dentroRet` 146 · `cruzaRet` 147 · `retRua` 148 · `LUAR` 153
 
 ### `src/maps/barud/dados.ts`
 `LocalFicha` 6 · `NpcFicha` 16 · `LOCAIS` 24 · `NPCS` 224
@@ -350,7 +356,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `TRILHA` 18 · `FORCA` 19 · `CABANA` 20 · `CLAREIRA` 21 · `AREAS` 22 · `MARCAS` 28 · `naTrilha` 39 · `distTrilha` 41 · `distSeg` 49 · `mataMask` 54 · `vistasMata` 63 · `mortaGeo` 76 · `tubo` 81 · `pinheiroEscuro` 112 · `cranio` 137 · `Floresta` 149 · `construirFloresta` 151 · `coluna` 156 · `livre` 197 · `perto` 206 · `espalha` 235 · `vai` 249 · `placa` 286
 
 ### `src/maps/barud/index.ts`
-`retrato` 21 · `P3` 23 · `build` 25 · `barraca` 53 · `escolher` 112 · `tokId` 178 · `mundoXYZ` 248 · `silhuetaPng` 251 · `cartaz` 260 · `desenhar` 263 · `aviso` 279
+`retrato` 21 · `P3` 23 · `build` 25 · `barraca` 53 · `escolher` 112 · `tokId` 178 · `mundoXYZ` 249 · `silhuetaPng` 252 · `cartaz` 261 · `desenhar` 264 · `aviso` 280
 
 ### `src/maps/barud/mobilia.ts`
 `peca` 9 · `cx()` 13 · `cil()` 16 · `esf()` 19 · `mesa` 26 · `banco` 32 · `banqueta` 37 · `cadeira` 42 · `cama` 49 · `bau` 62 · `estante` 69 · `prateleira` 84 · `lareira` 96 · `balcao` 107 · `barril` 113 · `caixote` 120 · `sacos` 125 · `vela` 129 · `lustre` 136 · `tapecaria` 144 · `quadro` 149 · `tapete` 154 · `armario` 158 · `caldeirao` 165 · `forja` 173 · `altar` 184 · `bancoTemplo` 193 · `armadura` 199 · `cavalete` 205 · `servico` 211
@@ -390,6 +396,12 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 
 ### `src/maps/canada/pistas.ts`
 `PISTAS` 4 · `NOTAS` 60
+
+### `src/maps/gente/kit.ts`
+`Mat` 15 · `Ctx` 18 · `novaCidade` 28 · `vc` 30 · `colisor` 41 · `colCil` 42 · `chao` 44 · `forma` 49 · `pisoInvisivel` 51 · `rampa` 53 · `resv` 57 · `cortar` 61 · `fecha` 63 · `rua` 70 · `desenharRuas` 72 · `fim` 76 · `pontePadrao` 90 · `Estilo` 100 · `casa` 106 · `casasNasRuas` 141 · `noPonto` 146 · `preencher` 163 · `TipoPoste` 175 · `poste` 176 · `postesNasRuas` 183 · `arvore` 195 · `objetosDeRua` 202 · `OpMuralha` 213 · `muralha` 215 · `seg` 218 · `torre` 228 · `terminar` 263
+
+### `src/maps/gente/montagem.ts`
+`P3` 17 · `mundoP` 19 · `vistaFora` 21 · `vistaDentro` 22 · `Povo` 24 · `OpMontagem` 25 · `montar` 34 · `escolher` 40 · `tokId` 68 · `silhueta` 117
 
 ### `src/maps/igreja/building.ts`
 `Building` 11 · `buildChurch` 20 · `glassMat` 33 · `wall` 42 · `windowAt` 50
@@ -459,6 +471,18 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 
 ### `src/maps/texas/police.ts`
 `wx` 14 · `mk` 18 · `age` 22 · `paperDraw` 24 · `wrap` 37 · `paper` 43 · `photo` 44 · `sigil` 64 · `pin` 70 · `cork` 71 · `marker` 72 · `COUNTY_MAP` 75 · `P2` 80 · `Police` 95 · `buildPolice` 97 · `bx` 104 · `doc` 106 · `chairs` 113 · `iw` 143 · `lo` 148 · `seg` 154 · `door` 169 · `car` 182 · `add` 184 · `win` 201 · `px` 203 · `shelf` 307 · `draw` 407
+
+### `src/maps/tiberus/cidade.ts`
+`L` 18 · `FORUM` 20 · `ARENA` 21 · `MERCADO` 22 · `CAMPO` 23 · `construirTiberus` 25 · `pt` 102 · `escolher` 190
+
+### `src/maps/tiberus/dados.ts`
+`LOCAIS_T` 6 · `NPCS_T` 67 · `IMG_T` 104
+
+### `src/maps/tiberus/index.ts`
+`build` 16 · `R` 54
+
+### `src/maps/tiberus/predios.ts`
+`PREDIOS_T` 16 · `luzI` 32 · `braseiro` 33 · `bronzeMat` 36 · `minotauro` 38 · `add` 40 · `cilG` 41 · `mobiliarT` 68 · `W` 70
 
 ### `src/maps/valkaria/cidade.ts`
 `CidadeV` 18 · `construirCidadeV` 24 · `colisor` 30 · `colCil` 31 · `plano` 32 · `sh` 33 · `resv` 34 · `cortar` 76 · `fecha` 78 · `addRua` 86 · `perto` 93 · `muroSeg` 179 · `pr` 220 · `barraca` 260 · `jardim` 272 · `estiloEm` 298 · `noPonto` 304 · `casa` 318 · `poste` 360

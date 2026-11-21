@@ -16,7 +16,7 @@ const recompilar = () => S.traverse(o => { const m = (o as THREE.Mesh).material 
 const CHAVES: Chave[] = [
   { id: 'sombra', n: 'Sombras do sol/lua', on: v => { R.shadowMap.enabled = v; sun.castShadow = v; recompilar(); } },
   { id: 'sol', n: 'Luz do sol/lua', on: v => { sun.visible = v; } },
-  { id: 'ceu', n: 'Luz do céu (hemisfério)', on: v => { hemi.visible = v; } },
+  { id: 'ceu', n: 'Luz do céu (hemisfério e luar das cidades)', on: v => { hemi.visible = v; S.traverse(o => { if ((o as THREE.HemisphereLight).isHemisphereLight) o.visible = v; }); } },
   { id: 'env', n: 'Reflexos do céu (HDRI)', on: v => { if (!v) { if (S.environment) envGuardado = S.environment; S.environment = null; } else if (envGuardado) S.environment = envGuardado; } },
   { id: 'pontos', n: 'Luzes de postes e lâmpadas', on: v => { st.MP?.lights.forEach(e => (e.l.visible = v)); } },
   { id: 'nevoa', n: 'Névoa', on: v => { if (!v) { if (S.fog) fogGuardada = S.fog as THREE.FogExp2; S.fog = null; } else if (fogGuardada) S.fog = fogGuardada; recompilar(); } },

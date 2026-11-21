@@ -334,8 +334,14 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
   paredes e céu normais. Causa provável: a placa lê um nível pouco borrado do PMREM na luz difusa e a lua do HDRI
   (84°, ~90× o céu) estoura. Correção: o PMREM sai de uma cópia com `limitarBrilho` (cada pixel ≤ 3× a média do céu);
   o fundo visível continua o HDRI original. Se voltar, confirme com o F9 → "Reflexos do céu (HDRI)".
+- 5º relato (print do dono, Barud, Noite, vista Geral): telhados, alto das muralhas e montanhas BRANCOS, paredes
+  escuras com pontinhos brancos. Não era a passagem nem a versão leve. Causa: o "luar" (HemisphereLight extra das
+  cidades em escala de gente) estava em 7 na Noite; no llvmpipe já ficava claro demais (o swiftshader esconde). Agora
+  é um valor só, `LUAR(p)` em `barud/common.ts` (Noite 3,5), usado por Barud, Valkaria e `gente/montagem.ts`. Luz
+  extra de mapa nunca acima de ~4. A chave "Luz do céu" do F9 desliga também esses luares. Testar trocando o clima
+  como o botão faz (`st.pi = i` antes do `setTime(i)`), senão o `onTime` recebe o clima velho e o teste engana.
 - Testar com driver "de verdade" sem GPU: `xvfb-run` + Playwright `headless: false` +
-  `--use-gl=angle --use-angle=gl` + `LIBGL_ALWAYS_SOFTWARE=1` = Mesa llvmpipe (headless cai sempre no swiftshader).
+  `--use-gl=angle --use-angle=gl --ignore-gpu-blocklist --in-process-gpu` + `LIBGL_ALWAYS_SOFTWARE=1` (sem os dois últimos o contexto WebGL falha; exemplo em `.cache/escuro-llvm.mjs`) = Mesa llvmpipe (headless cai sempre no swiftshader).
 - Noite: o HDRI `qwantani_night` vem claro quase como dia e com brilho de cidade no horizonte (≈7). Use `bg`/`env`
   baixos e `skyTint` (tinge céu, reflexos e névoa juntos) — sem isso a névoa azul não bate com o céu marrom.
 - Recuperar imagens numa sessão nova (nov/2026): Greywater = `node tools/baixar-npcs.mjs https://pin.it/6FDe5jQ5t
