@@ -650,6 +650,11 @@ Meça antes de mexer: `node tools/medir.mjs --q=media` (chamadas, triângulos, e
   fov, foco e as sobreposições do cinema lidas do DOM) + mapa/clima/personagens; a dos jogadores só aplica
   (suaviza com `1-exp(-dt*18)`) e ignora o cinema da rede (já vem pela câmera). Ao abrir, ela manda `oi` e
   recebe o `estado`. Recurso novo que muda a cena → mande também pelo espelho, senão o 2º monitor não vê.
+  Segundo caminho (nov/2026, relato "a TV não funciona"): `postMessage` direto com a janela aberta pelo botão
+  (`par` = retorno do `window.open` / `window.opener`), usado enquanto o canal não entregar nada — o BroadcastChannel
+  não passa quando o navegador isola as páginas (arquivo do disco no Firefox, link dentro do claude.ai). O botão
+  agora tenta abrir a janela também dentro do claude.ai e, se ela não responder em 25 s, explica o caminho manual.
+  Teste sem o canal: `.cache/tv-teste2.mjs` (apaga `window.BroadcastChannel` nas duas janelas).
 - **Partição do navegador**: o Chrome só liga janelas (BroadcastChannel/armazenamento) sob a mesma página de
   cima. No claude.ai o mapa é um quadro dentro da página do claude.ai: funciona abrir o **mesmo link** noutra
   janela; `window.open` da URL interna cria uma janela que **não liga**. No teste, as duas janelas são

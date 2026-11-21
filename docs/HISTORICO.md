@@ -118,6 +118,9 @@ com salas), F (arquitetura para novos mapas + `docs/NOVO-MAPA.md`). Todas foram 
     agora é `LUAR(p)` em `barud/common.ts` (3,5), comum a Barud, Valkaria e Tiberus, e a chave "Luz do céu" do F9
     também o desliga. O dono escolheu **três protagonistas** (artes dele): aguardam os arquivos para virarem os
     jogadores 1–3 dos mapas de Tormenta 20 (só em `npcs-local/`, fora do git).
+29. "A TV para os jogadores não funciona": ligação direta (postMessage) entre a janela do mestre e a da TV além do
+    BroadcastChannel; o botão também tenta abrir no claude.ai. As imagens dos protagonistas mandadas no meio de uma
+    tarefa não ficaram salvas no servidor — pedir de novo numa mensagem própria.
 
 ## Arquivo offline (como o dono joga sem internet)
 

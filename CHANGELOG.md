@@ -5,6 +5,9 @@
 - O "luar" extra de Barud, Valkaria e Tiberus estava forte demais na Noite (7) e, em placa de vídeo de verdade,
   deixava telhados, muralhas e montanhas brancos. Agora é um valor único e mais baixo (`LUAR` em `barud/common.ts`).
 - Diagnóstico F9: "Luz do céu" desliga também o luar das cidades.
+- **TV dos jogadores**: além do canal entre janelas, a janela do mestre e a da TV que ela abre agora se falam direto
+  (postMessage). Funciona onde o navegador isola as páginas (arquivo do disco no Firefox, link do claude.ai); o botão
+  tenta abrir a janela também no claude.ai e avisa o caminho manual se ela não responder.
 
 ## Tiberus em escala de gente (novo mapa) e o kit de cidades
 

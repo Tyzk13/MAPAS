@@ -14,7 +14,7 @@ import { WM, setWalk, setMode, modeHooks, freeLookAt, walkStep, walkPointer, ini
 import { initOrbita, tickOrbita } from './core/orbita';
 import { initPassagem, tickPassagem } from './core/passagem';
 import { menu, lista, fecharMenu, initMenus } from './core/menu';
-import { espelho, initEspelho, serJogadores, abrirJanelaJogadores, dentroDeOutraPagina, tickEspelho, enviarQuadro, avisarMapa, avisarClima, avisarAparicao } from './core/espelho';
+import { espelho, initEspelho, serJogadores, abrirJanelaJogadores, jogadoresLigada, dentroDeOutraPagina, tickEspelho, enviarQuadro, avisarMapa, avisarClima, avisarAparicao } from './core/espelho';
 import { aparicao } from './core/aparicao';
 import { initDiag, aplicarDiag } from './core/diag';
 import { imersao, fx, tickImersao, aplicarSom, aplicarPreto, prepararLanterna, setNomeClima, setApagao, type SomModo, type Fx } from './core/imersao';
@@ -256,8 +256,12 @@ function initAtalhos() {
   $('bjog').onclick = () => {
     fecharMenu();
     if (!espelho.disponivel) { toast('Este navegador não liga janelas entre si'); return; }
-    if (abrirJanelaJogadores()) toast('Janela dos jogadores aberta: leve-a para o outro monitor e dê duplo clique', 4000);
-    else toast(dentroDeOutraPagina()
+    const manual = 'Abra este mesmo link noutra janela, leve-a ao outro monitor e nela escolha Mais → Esta janela é a tela dos jogadores';
+    if (abrirJanelaJogadores()) {
+      toast('Janela dos jogadores aberta: leve-a para o outro monitor e dê duplo clique', 4000);
+      // dentro de outra página (claude.ai) a janela pode abrir e não conseguir se ligar: então explica o caminho manual
+      setTimeout(() => { if (!jogadoresLigada()) toast('A janela dos jogadores não respondeu. ' + manual, 9000); }, 25000);
+    } else toast(dentroDeOutraPagina()
       ? 'Abra este mesmo link noutra janela, leve-a ao outro monitor e nela escolha Mais → Esta janela é a tela dos jogadores'
       : 'O navegador bloqueou a janela: abra este mesmo link noutra janela e use Mais → Esta janela é a tela dos jogadores', 8000);
   };

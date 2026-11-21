@@ -33,7 +33,15 @@ type Msg =
   | { k: 'estado'; map: string; time: number; chars: Record<string, any>; pos: Record<string, any> };
 
 const canal: BroadcastChannel | null = typeof BroadcastChannel === 'function' ? new BroadcastChannel('mapa3d:' + CFG.room) : null;
-const enviar = (m: Msg) => { try { canal?.postMessage(m); } catch { /* janela fechando */ } };
+// Segundo caminho: postMessage direto entre a janela do mestre e a dos jogadores que ela abriu (window.open/opener).
+// O BroadcastChannel não passa quando o navegador isola as páginas (arquivo aberto do disco no Firefox; link dentro
+// do claude.ai, onde a janela aberta tem outra página de cima). Enquanto o canal não entregar nada, vale o par.
+let par: Window | null = null, canalOk = false;
+try { if (window.opener && window.opener !== window) par = window.opener as Window; } catch { par = null; }
+const enviar = (m: Msg) => {
+  try { canal?.postMessage(m); } catch { /* janela fechando */ }
+  try { if (par && !par.closed) par.postMessage({ mapa3d: CFG.room, m }, '*'); } catch { /* outra janela fechou */ }
+};
 
 /** Personagens criados nesta mesa (para mandar a quem abrir a janela dos jogadores depois). */
 const criados: Record<string, any> = {};
@@ -41,7 +49,7 @@ const criados: Record<string, any> = {};
 export const espelho = {
   /** esta janela é a dos jogadores? */
   jogadores: false,
-  disponivel: !!canal,
+  disponivel: true,
   ultimo: 0,
 };
 
@@ -115,7 +123,7 @@ let pose0: { p: V3t; q: Quadro['q']; f: number; t: V3t } | null = null;
 const fwd = new THREE.Vector3();
 /** Chamado a cada quadro na janela do mestre, depois de mover a câmera. Só envia o que mudou (e 1×/s). */
 export function enviarQuadro() {
-  if (!canal || espelho.jogadores) return;
+  if ((!canal && !par) || espelho.jogadores) return;
   const agora = performance.now();
   const vivo = agora - vivoEm < 5000;
   if (vivo !== eraVivo) { eraVivo = vivo; imersao.temJogadores = vivo; aplicarPreto(); aplicarSom(); avisos.jogadores(vivo); }
@@ -159,7 +167,7 @@ export function serJogadores(v: boolean) {
   document.body.classList.toggle('nu', v || !CFG.ui);
   if (v) {
     ctl.enabled = false; st.sel = null; temQuadro = false;
-    avisos.toast(canal ? 'Tela dos jogadores · aguardando a janela do mestre… (duplo clique: tela cheia e som · H: sair)' : 'Este navegador não liga janelas entre si', 4000);
+    avisos.toast(canal || par ? 'Tela dos jogadores · aguardando a janela do mestre… (duplo clique: tela cheia e som · H: sair)' : 'Este navegador não liga janelas entre si', 4000);
     avisos.conectada = () => avisos.toast('Tela dos jogadores ligada à janela do mestre', 2000);
     enviar({ k: 'oi' });
     imersao.ehJogadores = true; aplicarSom(); aplicarPreto();
@@ -182,17 +190,19 @@ export const dentroDeOutraPagina = () => { try { return window.top !== window; }
  * então a janela tem que ser o mesmo link aberto de novo (ver o aviso no main.ts).
  */
 export function abrirJanelaJogadores() {
-  if (dentroDeOutraPagina()) return false;
   const u = new URL(location.href); u.searchParams.set('tela', 'jogadores');
   let w: Window | null = null;
   try { w = window.open(u.href, 'mapa3d-jogadores', 'popup,width=1280,height=720'); } catch { w = null; }
+  if (w) par = w;
   return !!w;
 }
+/** A janela dos jogadores respondeu nos últimos segundos? */
+export const jogadoresLigada = () => performance.now() - vivoEm < 5000;
 
 export function initEspelho(o: { loadMap: (id: string) => Promise<void>; setTime: (i: number) => void; toast: (t: string, ms?: number) => void; jogadores: (v: boolean) => void }) {
   opcoes.loadMap = o.loadMap; opcoes.setTime = o.setTime; avisos.toast = o.toast; avisos.jogadores = o.jogadores;
-  if (!canal) return;
-  canal.onmessage = e => { receber(e.data as Msg); };
+  if (canal) canal.onmessage = e => { canalOk = true; receber(e.data as Msg); };
+  addEventListener('message', e => { const d = e.data; if (!canalOk && d && d.mapa3d === CFG.room && d.m) { if (!par && e.source) par = e.source as Window; receber(d.m as Msg); } });
   imersao.aoEvento = e => enviar({ k: 'fx', e });
   mostrar.aoNova = im => { if (!espelho.jogadores) enviar({ k: 'img', im }); };
   // a janela dos jogadores avisa que está viva (a do mestre mostra o indicador e decide onde escurecer)

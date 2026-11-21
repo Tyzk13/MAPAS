@@ -28,9 +28,10 @@ monitores igual (como gerar: `docs/HISTORICO.md`).
 ### Dois monitores (recomendado)
 
 1. Monitor 1: abra o link. Esta é a **janela do mestre** (botões, câmera, personagens).
-2. Clique no botão dourado **TV dos jogadores** na barra (ou tecla **J**) — no seu site/arquivo offline ela abre
-   sozinha. No claude.ai, se não abrir: abra **o mesmo link noutra janela** e nela escolha **Mais → Esta janela é a
-   tela dos jogadores**. Leve-a ao monitor 2.
+2. Clique no botão dourado **TV dos jogadores** na barra (ou tecla **J**): ela abre sozinha (no arquivo offline e,
+   se o navegador deixar, também no claude.ai). Se o navegador bloquear a janela ou ela não se ligar (aparece um aviso
+   depois de uns segundos): abra **o mesmo link noutra janela** e nela escolha **Mais → Esta janela é a tela dos
+   jogadores**. Leve-a ao monitor 2. No arquivo baixado, dê preferência ao Chrome ou ao Edge.
 3. Dê **duplo clique** na janela dos jogadores: tela cheia e libera o som.
 4. O botão fica verde (**TV ligada**) e o dock mostra um monitor verde quando as duas estão ligadas.
 
