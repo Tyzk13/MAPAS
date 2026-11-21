@@ -153,6 +153,13 @@ Malpetrim, os chefes de guerra orcs, o chefe kobold, o saqueador de Tollon, a Ve
 aproximam · duplo clique no chão leva a câmera até lá · com um personagem selecionado, duplo clique no chão faz
 ele andar até o ponto.
 
+### Floresta Sombria (só floresta, escala de gente)
+
+Uma mata fechada de 300 m: trilha do sul ao norte, ponte sobre o riacho, Acampamento Abandonado, Árvore Oca,
+Círculo de Pedras e Santuário em Ruínas — cada um com vista e ficha (botão Locais). De noite a fogueira e as velas
+acendem, os cogumelos do círculo brilham de leve e aparecem vaga-lumes no riacho. O **Vulto** começa oculto entre
+as pedras: revele quando alguém entrar no anel de cogumelos.
+
 ### Tiberus (capital do Império de Tauron, escala de gente)
 Um castro quadrado de muralhas maciças com quatro portões (o do sul, a **Porta Triunfal**, tem dois minotauros de
 pedra), cardo e decúmano com colunatas e braseiros, ruas em grade e ínsulas de tijolo de cinco andares com lojas.

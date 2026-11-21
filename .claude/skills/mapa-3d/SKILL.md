@@ -183,6 +183,20 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
 
 ## Floresta e luzes (aprendido em `src/maps/texas/forest.ts` e `texas/index.ts`)
 
+- **Floresta Sombria** (`src/maps/floresta/`, nov/2026) — receitas que deram certo:
+  - Copa de folhosa = **cartões de folhas** (quads com textura de folhas desenhada em canvas, `alphaTest`, normais
+    apontando para fora do centro do cacho): muito mais realista que icosaedros facetados, ~360 tri por árvore.
+    Pinheiro: cones + franja de cartões escuros na borda de cada saia.
+  - `island_tree_0x` completo tem **30 mil tri só nas folhas**: use `_lod1`. `boulder_01` tem 28 mil (poucas cópias).
+    Meça com `.cache/peso-cena.mjs <mapa>` (soma tri × instâncias por modelo).
+  - Árvores instanciadas em blocos de 55 m (30 m dava ~2700 chamadas na vista geral) e `cullDist` 420 (com 240 a
+    metade longe da mata sumia na vista do alto).
+  - Relevo com ravina: o leito é a média móvel da altura ao longo do riacho, forçada a descer; a água é uma fita
+    nesse nível com ondinhas no shader (normal perturbada por senos no espaço do mundo).
+  - Pedras de pé (menires) = caixa subdividida afinando no topo, ruído e normais lisas com `marble_cliff_05`; as
+    rochas `.glb` esticadas ficaram alaranjadas e cheias de pontas.
+  - NPCs com `montar()` nascem em y = 0: em mapa com relevo, reescreva `pos.y` com a altura do chão.
+
 - `fir_tree_01` (até no LOD2) custa ~17k triângulos por cópia e quase não aparece de longe: para mata densa, use
   **pinheiro em código** (`pineGeo`: tronco + 7 saias de cone com borda irregular, cor por vértice, ~150 tri),
   instanciado em blocos de 30 m com `cullDist`. Cor verde-oliva escura e pouco saturada (HSL ~0.27/0.22/0.075).
@@ -714,6 +728,7 @@ Meça antes de mexer: `node tools/medir.mjs --q=media` (chamadas, triângulos, e
   Sul de Arton `https://claude.ai/artifact/Dzxp7GFmcpc2X9SXJP2VYZ` (`arton.html`, `MAPA_PADRAO="arton"`; criado em 2 partes).
   Valkaria `https://claude.ai/artifact/YbkzUfCSscusfBzCY1BdN4` (`valkaria.html`, `MAPA_PADRAO="valkaria"`; criado em 2 partes, 240 + 46 arquivos).
   Tiberus `https://claude.ai/artifact/2gjg6BwHPHdkpzKqHoM72c` (`tiberus.html`, `MAPA_PADRAO="tiberus"`; 2 partes).
+  Floresta Sombria (`floresta.html`, `MAPA_PADRAO="floresta"`; link novo — ver HISTORICO).
   **Limite de 512 arquivos por versão**: cada publicação deixa os arquivos velhos (hash muda); quando recusar com
   "manifest exceeds 512 entries", liste (`scope: files`) e mande `files` como objeto com `null` nos `.js` velhos
   (ex.: `igreja-*.js` e `campo-*.js` antigos) junto com os novos.

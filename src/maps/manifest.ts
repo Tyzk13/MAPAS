@@ -11,6 +11,7 @@ export const MAPS: Record<string, MapModule> = {
   barud: { id: 'barud', sis: T20, n: 'Barud (Lomatubar)', build: async M => (await import('./barud/index')).build(M) },
   valkaria: { id: 'valkaria', sis: T20, n: 'Valkaria (capital do Reinado)', build: async M => (await import('./valkaria/index')).build(M) },
   tiberus: { id: 'tiberus', sis: T20, n: 'Tiberus (Império de Tauron)', build: async M => (await import('./tiberus/index')).build(M) },
+  floresta: { id: 'floresta', sis: T20, n: 'Floresta Sombria', build: async M => (await import('./floresta/index')).build(M) },
   arton: { id: 'arton', sis: T20, n: 'Sul de Arton (mapa da região)', build: async M => (await import('./arton/index')).build(M) },
   campo: { id: 'campo', sis: OP, n: 'Campo aberto', build: async M => (await import('./campo')).build(M) },
 };

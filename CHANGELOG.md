@@ -1,5 +1,15 @@
 # Changelog
 
+## Floresta Sombria (novo mapa, só floresta)
+
+- **Floresta Sombria** (`src/maps/floresta/`): 300 m de mata em escala de gente — morros, a ravina de um riacho com
+  água que corre, trilha com ponte de tábuas e três ramais. Pinheiros com franja de agulhas, carvalhos com copa de
+  cartões de folhas (textura feita em canvas, normais da copa para fora), árvores mortas, árvores-modelo perto da
+  trilha, troncos caídos com musgo e cogumelos, samambaias, arbustos, urtigas, raízes, pedras, capim, névoa no
+  riacho, folhas caindo e vaga-lumes à noite. Lugares com ficha: Ponte do Riacho, Acampamento Abandonado (fogueira
+  com brasas), Árvore Oca (fenda com velas e fitas vermelhas), Círculo de Pedras (altar, anel de cogumelos que
+  brilha à noite) e Santuário em Ruínas; NPCs: a eremita Corvina, o caçador Breno e o Vulto (oculto).
+
 ## Noite sem telhados brancos nas cidades
 
 - O "luar" extra de Barud, Valkaria e Tiberus estava forte demais na Noite (7) e, em placa de vídeo de verdade,
