@@ -150,6 +150,11 @@ Malpetrim, os chefes de guerra orcs, o chefe kobold, o saqueador de Tollon, a Ve
 aproximam · duplo clique no chão leva a câmera até lá · com um personagem selecionado, duplo clique no chão faz
 ele andar até o ponto.
 
+**Entrar em Barud**: no Sul de Arton, chegue perto de Barud (roda do mouse, ou a vista "Barud"): aparece o botão
+**Entrar em Barud ▸** embaixo. Ele escurece a tela e abre a **Barud de verdade**, em escala de gente (ruas, prédios
+com interior, NPCs, fichas), com o mesmo clima; os personagens dos jogadores vão junto. Em Barud, o botão
+**◂ Sul de Arton** (canto de cima) volta para o mapa da região, em cima de Barud. A TV dos jogadores acompanha.
+
 **As cidades por dentro** (chegue perto com a roda do mouse: alfinetes e rotas ficam transparentes para não tapar).
 Valkaria, Tiberus, Giluk, Malpetrim, Nimbarann e o Porto cresceram (nov/2026): mais ruas, bairros e prédios com nome.
 - **Barud**: a mesma planta do mapa da cidade — Portão do Rei (sul) e Portão Leste, Via Real, Rua das Lanternas,

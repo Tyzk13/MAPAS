@@ -456,6 +456,12 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
   **redesenhe** os canvases (nomes/moldura) quando chegarem; não bloqueie o carregamento do mapa.
 
 ### Cidades do mapa regional (`cidades-kit.ts` + `cidades.ts`, nov/2026)
+- **O dono quer o nível do mapa de Barud** (escala de gente, prédios com interior, fichas) nas cidades da região, não só
+  miniaturas bonitas. Lugar com mapa próprio liga ao regional por **passagem** (`core/passagem.ts`): no mapa grande
+  `M.passagens = [{ n, mapa, x, z, r, dist, vista }]` (botão "Entrar em …" quando o alvo da câmera está a < r do lugar e
+  a câmera a < dist); no mapa de dentro `M.volta = { mapa, vista, n }` (botão "◂ n"). A troca escurece (`#fade`),
+  carrega o mapa e abre na vista. Teste: `node .cache/passagem-teste.mjs` (no dev server, importa `/src/core/state.ts`
+  para pôr a câmera na vista — o `__cap` só existe em modo captura).
 - **Pedido do dono**: "faça as cidades com o cuidado de Barud, com detalhes dentro e não só casas jogadas". Cidade boa
   = **planta** (ruas que levam a algum lugar, bairros, praças) + **prédios com nome** + casas **viradas para a rua**.
   Espalhar casas num círculo parece um punhado de dados; nunca mais faça isso.

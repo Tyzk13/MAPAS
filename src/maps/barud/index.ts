@@ -221,6 +221,7 @@ export async function build(M: MapRuntime) {
   M.exportHide = () => [C.roofs, roofs];
   M.shadowRadius = Q.luzes > 8 ? 90 : 60;
   M.walkLimit = 300; M.camMax = 300; M.fogScale = 0.5;
+  M.volta = { mapa: 'arton', vista: 'Barud', n: 'Sul de Arton' }; // botão de volta ao mapa regional (core/passagem.ts)
   M.spawn = i => ({ x: -2 + (i % 3) * 1.2, z: 86 + Math.floor(i / 3) * 1.2, y: 0.03 });
   M.walkStart = { x: 0, z: 88 };
 

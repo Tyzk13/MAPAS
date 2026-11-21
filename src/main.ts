@@ -12,6 +12,7 @@ import { DEF, makeToken, dropT, onChar, onPos, selT, sizeT, save, placeT, initTo
 import { NET, handlers, startNet } from './core/net';
 import { WM, setWalk, setMode, modeHooks, freeLookAt, walkStep, walkPointer, initWalk, placeWalkCam } from './core/walk';
 import { initOrbita, tickOrbita } from './core/orbita';
+import { initPassagem, tickPassagem } from './core/passagem';
 import { menu, lista, fecharMenu, initMenus } from './core/menu';
 import { espelho, initEspelho, serJogadores, abrirJanelaJogadores, dentroDeOutraPagina, tickEspelho, enviarQuadro, avisarMapa, avisarClima, avisarAparicao } from './core/espelho';
 import { aparicao } from './core/aparicao';
@@ -445,6 +446,7 @@ function frame(ts?: number) {
   tickTokens(WM.on && !WM.free, WM.third, WM.av, dt);
   if (M.tick) M.tick(dt, t);
   tickOrbita(dt);
+  if (!espelho.jogadores) tickPassagem();
   if (st.anim) {
     // voo da câmera com a mesma suavidade em qualquer PC (antes andava 10% por quadro: lento a 20/s, brusco a 144/s)
     const a = st.anim, kv = 1 - Math.exp(-dt * 6.3); ctl.target.lerp(a.tp, kv); cam.position.lerp(a.cp, kv);
@@ -498,6 +500,7 @@ function captureApi() {
 async function start() {
   initUi(); initWalk(); initVtt(); initImporter(); initDocs();
   initLocais(nome => { const i = st.V.findIndex(v => v.n === nome); if (i >= 0) irParaVista(i); });
+  initPassagem({ loadMap, vista: nome => { const i = st.V.findIndex(v => v.n === nome); if (i >= 0) irParaVista(i); return i >= 0; } });
   initTokenInput(() => WM.on, walkPointer);
   fit();
   post.init(CFG.quality);

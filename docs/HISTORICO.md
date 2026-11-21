@@ -104,6 +104,8 @@ com salas), F (arquitetura para novos mapas + `docs/NOVO-MAPA.md`). Todas foram 
     povo de Arton (folhas de personagens do dono recortadas em `npcs-local/arton/`, ~150 NPCs pelos lugares).
 24. **Cidades maiores** ("aumentar as cidades como em Barud"): escala por cidade em `ESCALA_CID` (geo.ts), plantas
     com mais ruas, bairros e marcos, ruas de quarteirão que param nos prédios (`ruaLivre`), cemitérios (terror sutil).
+25. **Entrar em Barud pelo Sul de Arton** (o dono queria o mapa de Barud dentro da região: "era esse nível que eu
+    queria"): passagem entre mapas no núcleo (`core/passagem.ts`). Próximo passo pedido: as outras cidades nesse nível.
 
 ## Arquivo offline (como o dono joga sem internet)
 

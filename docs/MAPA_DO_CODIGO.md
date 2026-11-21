@@ -7,7 +7,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 
 | Pasta | Arquivos | Tamanho |
 |---|---|---|
-| `capturas/` | 396 | 103.7 MB |
+| `capturas/` | 417 | 106.5 MB |
 | `src/assets/` | 188 | 90.6 MB |
 | `referencias/` | 5 | 2.4 MB |
 
@@ -21,7 +21,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 
 | Arquivo | Linhas | Tamanho |
 |---|---|---|
-| `index.html` | 157 | 15 KB |
+| `index.html` | 158 | 15 KB |
 | `legacy/igreja-3d-site.html` | 620 | 899 KB |
 | `legacy/servidor-sync.js` | 26 | 1 KB |
 | `scripts/mapa_do_codigo.py` | 78 | 5 KB |
@@ -63,16 +63,16 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/core/state.ts` | 26 | 1 KB |
 | `src/core/terrain.ts` | 99 | 5 KB |
 | `src/core/tokens.ts` | 255 | 17 KB |
-| `src/core/types.ts` | 85 | 4 KB |
+| `src/core/types.ts` | 92 | 5 KB |
 | `src/core/vtt.ts` | 105 | 7 KB |
 | `src/core/walk.ts` | 229 | 12 KB |
 | `src/core/weathering.ts` | 46 | 2 KB |
-| `src/main.ts` | 535 | 35 KB |
+| `src/main.ts` | 538 | 35 KB |
 | `src/maps/arton/cidades-kit.ts` | 734 | 64 KB |
 | `src/maps/arton/cidades.ts` | 464 | 61 KB |
 | `src/maps/arton/dados.ts` | 103 | 18 KB |
 | `src/maps/arton/geo.ts` | 452 | 38 KB |
-| `src/maps/arton/index.ts` | 198 | 16 KB |
+| `src/maps/arton/index.ts` | 200 | 16 KB |
 | `src/maps/arton/interiores.ts` | 528 | 63 KB |
 | `src/maps/arton/miniaturas.ts` | 319 | 30 KB |
 | `src/maps/arton/natureza.ts` | 188 | 24 KB |
@@ -85,7 +85,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/maps/barud/dados.ts` | 364 | 50 KB |
 | `src/maps/barud/edificios.ts` | 415 | 37 KB |
 | `src/maps/barud/floresta.ts` | 392 | 30 KB |
-| `src/maps/barud/index.ts` | 287 | 22 KB |
+| `src/maps/barud/index.ts` | 288 | 23 KB |
 | `src/maps/barud/mobilia.ts` | 216 | 14 KB |
 | `src/maps/campo.ts` | 53 | 4 KB |
 | `src/maps/canada/casas.ts` | 217 | 27 KB |
@@ -122,7 +122,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/maps/texas/onibus.ts` | 88 | 6 KB |
 | `src/maps/texas/pistas.ts` | 111 | 28 KB |
 | `src/maps/texas/police.ts` | 442 | 58 KB |
-| `src/style.css` | 298 | 24 KB |
+| `src/style.css` | 307 | 25 KB |
 | `src/vite-env.d.ts` | 2 | 0 KB |
 | `tools/_grid.mjs` | 7 | 1 KB |
 | `tools/arvores.sh` | 32 | 2 KB |
@@ -270,7 +270,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `silhueta` 12 · `jog` 19 · `TokenDef` 21 · `Token` 24 · `DEF` 35 · `pick` 42 · `tempoFichas` 45 · `vivo` 50 · `K` 69 · `sizeT` 71 · `placeT` 77 · `makeToken` 85 · `dropT` 106 · `selT` 112 · `setTarget` 117 · `focusT` 121 · `save` 127 · `onPos` 133 · `onChar` 143 · `wk` 149 · `marcarDestino` 158 · `helpers` 159 · `ultimoSelecionado` 162 · `setM` 164 · `freeSpot` 169 · `busy` 171 · `initTokenInput` 180 · `end` 205 · `andandoAgora` 226 · `tickTokens` 227 · `snapTokens` 254
 
 ### `src/core/types.ts`
-`View` 4 · `Layer` 5 · `VttData` 8 · `MapLight` 17 · `MapRuntime` 20 · `LocalInfo` 64 · `NpcInfo` 73 · `MapModule` 78
+`View` 4 · `Layer` 5 · `VttData` 8 · `MapLight` 17 · `MapRuntime` 20 · `Passagem` 68 · `LocalInfo` 71 · `NpcInfo` 80 · `MapModule` 85
 
 ### `src/core/vtt.ts`
 `fillAreas` 8 · `xcalc` 12 · `xinfo` 19 · `xrender` 21 · `clipPolyline` 50 · `push` 52 · `dd2vtt` 71 · `inb` 73 · `P` 74 · `dl` 88 · `initVtt` 94 · `opt` 98
@@ -282,7 +282,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `WeatherOpts` 5 · `weather` 7
 
 ### `src/main.ts`
-`cutBg` 43 · `push` 47 · `prep` 57 · `spawnPoint` 69 · `addChar` 74 · `pontoVista` 84 · `ondeEsta` 86 · `moverPara` 92 · `listaPersonagens` 97 · `bt` 105 · `revelar` 124 · `marcarQ` 128 · `escolherClima` 130 · `irParaVista` 131 · `tg` 138 · `rodarCine` 142 · `itemCine` 143 · `encherCine` 149 · `initCinemaUi` 160 · `mostrarPersonagens` 171 · `tocarCena` 175 · `gravarCenaAtual` 189 · `encherMestre` 195 · `alternarImagem` 210 · `initMestreUi` 215 · `toast` 238 · `telaLimpa` 243 · `initAtalhos` 250 · `atualizarSelo` 291 · `congelar` 299 · `escurecer` 303 · `lanterna` 304 · `marcarSom` 305 · `initImersaoUi` 306 · `initUi` 318 · `resz` 363 · `marcarE` 378 · `frame` 434 · `captureApi` 463 · `view()` 466 · `third()` 474 · `stats()` 486 · `start` 498
+`cutBg` 44 · `push` 48 · `prep` 58 · `spawnPoint` 70 · `addChar` 75 · `pontoVista` 85 · `ondeEsta` 87 · `moverPara` 93 · `listaPersonagens` 98 · `bt` 106 · `revelar` 125 · `marcarQ` 129 · `escolherClima` 131 · `irParaVista` 132 · `tg` 139 · `rodarCine` 143 · `itemCine` 144 · `encherCine` 150 · `initCinemaUi` 161 · `mostrarPersonagens` 172 · `tocarCena` 176 · `gravarCenaAtual` 190 · `encherMestre` 196 · `alternarImagem` 211 · `initMestreUi` 216 · `toast` 239 · `telaLimpa` 244 · `initAtalhos` 251 · `atualizarSelo` 292 · `congelar` 300 · `escurecer` 304 · `lanterna` 305 · `marcarSom` 306 · `initImersaoUi` 307 · `initUi` 319 · `resz` 364 · `marcarE` 379 · `frame` 435 · `captureApi` 465 · `view()` 468 · `third()` 476 · `stats()` 488 · `start` 500
 
 ### `src/maps/arton/cidades-kit.ts`
 `V` 15 · `Peca` 16 · `Q` 18 · `BC` 21 · `PONTES_C` 23 · `matsCidade` 28 · `piso` 29 · `vc` 30 · `iniciarKit` 45 · `pick` 51 · `entreR` 52 · `Pc` 53 · `det` 54 · `geo` 55 · `plano` 56 · `cone` 57 · `cupula` 58 · `fumo` 60 · `luz` 61 · `brilho` 62 · `Caixa` 65 · `caixa` 66 · `sobrepoe` 67 · `distSegCaixa` 75 · `clip` 78 · `pb` 80 · `ps` 81 · `comprimentos` 84 · `noPonto` 86 · `reamostra` 91 · `arco` 96 · `Cid` 99 · `livre()` 114 · `rua()` 128 · `vazio()` 135 · `ruaLivre()` 142 · `fecha` 144 · `estradasPerto()` 153 · `direcaoRua()` 160 · `addChao` 169 · `yRuaC` 170 · `corAttr` 171 · `faixa` 172 · `piso` 183 · `pontesDaRua` 203 · `construirPontes` 215 · `geoTelhado` 227 · `tri` 230 · `OpTelhado` 237 · `telhado` 238 · `Est` 247 · `OC` 248 · `janela` 249 · `fachada` 257 · `enxaimel` 267 · `chamine` 273 · `corpo` 277 · `casa` 279 · `placaTex` 367 · `taverna` 373 · `OpLote` 385 · `casasNaRua` 386 · `preencher` 402 · `Portao` 412 · `portoes` 414 · `contorno` 425 · `OpMuro` 431 · `muralha` 432 · `naPorta` 434 · `molhado` 435 · `aberto` 436 · `palicada` 491 · `torreVigia` 510 · `bandeira` 519 · `poco` 524 · `chafariz` 530 · `estatua` 536 · `barraca` 541 · `lampiao` 548 · `lampioesNaRua` 553 · `arvore` 557 · `carroca` 561 · `barris` 566 · `fogueira` 567 · `lenha` 573 · `tenda` 574 · `OpTemplo` 582 · `templo` 584 · `OpCastelo` 614 · `castelo` 616 · `salaoLongo` 637 · `armazem` 648 · `arena` 655 · `geoPas` 663 · `moinho` 665 · `navio` 672 · `barco` 680 · `cais` 682 · `guindaste` 688 · `lavoura` 691 · `cerca` 697 · `cercaRet` 704 · `pomar` 705 · `vinhedo` 709 · `terminarKit` 716
@@ -297,7 +297,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `P` 8 · `ESC` 9 · `W` 10 · `w` 11 · `LIM` 12 · `KM_POR_UNIDADE` 14 · `clamp` 17 · `smooth` 18 · `lerp` 19 · `ridged` 20 · `reseed` 26 · `rnd` 27 · `entre` 28 · `bbox` 31 · `sdPoly` 33 · `distLinha` 47 · `suaviza` 60 · `f` 67 · `UIVANTES` 78 · `ESTEPE` 79 · `TOLLON` 80 · `LOMATUBAR` 81 · `DEHEON` 82 · `BB` 83 · `costaZ` 87 · `Ilha` 94 · `ilha` 95 · `ILHAS` 96 · `ilhaD` 105 · `RIOS` 114 · `LAGO` 125 · `Reg` 128 · `Lugar` 129 · `L` 130 · `V` 131 · `LUGARES` 132 · `lugar` 167 · `Muro` 171 · `ESCALA_CID` 175 · `escalaLocal` 177 · `MUROS` 178 · `raioMuro` 189 · `dentroMuro` 191 · `cidadeEm` 196 · `pertoDeMuro` 200 · `ocupar` 203 · `ocupado` 204 · `VILAS` 205 · `pts` 208 · `PICOS` 209 · `PICO_A` 210 · `CAVERNAS` 211 · `TORRES_RUINA` 212 · `ACAMPAMENTOS` 213 · `BATALHAS` 214 · `FAROIS` 215 · `PANTANO` 216 · `BOA_SORTE` 217 · `TAIGAS` 218 · `MANADAS` 219 · `LUG` 225 · `ESTRADAS` 226 · `TRILHAS` 241 · `CLAREIRAS` 249 · `Grade` 252 · `PASSO` 253 · `terraD` 256 · `campo` 266 · `PERFIS` 323 · `G` 325 · `construirGrade` 327 · `borrar` 418 · `sombrearRelevo` 426 · `sdPolyCache` 440 · `Y` 443 · `Ysolo` 451
 
 ### `src/maps/arton/index.ts`
-`P3` 25 · `vistaDe` 27 · `bbox` 31 · `ganchoCamera` 35 · `build` 40 · `escolher` 66 · `nevoa` 91 · `ajustarNomes` 163
+`P3` 25 · `vistaDe` 27 · `bbox` 31 · `ganchoCamera` 35 · `build` 40 · `escolher` 66 · `nevoa` 91 · `ajustarNomes` 165
 
 ### `src/maps/arton/interiores.ts`
 `Y0` 21 · `ORIGENS` 22 · `v3` 27 · `luz` 28 · `vista` 29 · `box` 30 · `cil` 31 · `geo` 32 · `solido` 34 · `piso` 36 · `contorno` 37 · `sala` 41 · `gruta` 54 · `tocha` 63 · `cartaz` 69 · `texCanvas` 77 · `matFeixe` 79 · `matTeia` 80 · `matPoca` 81 · `matMusgo` 82 · `acabamento` 85 · `arandela` 93 · `penduricalhos` 100 · `comida` 114 · `escudo` 123 · `trofeu` 131 · `teia` 135 · `feixe` 137 · `poca` 140 · `musgo` 141 · `corrente` 143 · `ossada` 149 · `gaiola` 156 · `arcoPedra` 164 · `abobada` 170 · `vitral` 175 · `nevoaChao` 181 · `ancoraMais` 188 · `macacoMais` 201 · `asidonMais` 211 · `masmorraMais` 222 · `catedralMais` 239 · `covarielMais` 251 · `gilukMais` 252 · `bruxaMais` 260 · `temploMais` 261 · `zolkanMais` 269 · `ancora` 279 · `macacoCaolho` 297 · `asidon` 316 · `masmorra` 333 · `cavernaGelo` 360 · `cristaisAzuis` 374 · `covil` 375 · `catedral` 393 · `covariel` 410 · `gilukSalao` 435 · `bruxa` 451 · `templo` 464 · `zolkan` 480 · `construirInteriores` 500 · `dentroDeInterior` 515 · `particulas` 517
@@ -336,7 +336,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `TRILHA` 18 · `FORCA` 19 · `CABANA` 20 · `CLAREIRA` 21 · `AREAS` 22 · `MARCAS` 28 · `naTrilha` 39 · `distTrilha` 41 · `distSeg` 49 · `mataMask` 54 · `vistasMata` 63 · `mortaGeo` 76 · `tubo` 81 · `pinheiroEscuro` 112 · `cranio` 137 · `Floresta` 149 · `construirFloresta` 151 · `coluna` 156 · `livre` 197 · `perto` 206 · `espalha` 235 · `vai` 249 · `placa` 286
 
 ### `src/maps/barud/index.ts`
-`retrato` 21 · `P3` 23 · `build` 25 · `barraca` 53 · `escolher` 112 · `tokId` 178 · `mundoXYZ` 247 · `silhuetaPng` 250 · `cartaz` 259 · `desenhar` 262 · `aviso` 278
+`retrato` 21 · `P3` 23 · `build` 25 · `barraca` 53 · `escolher` 112 · `tokId` 178 · `mundoXYZ` 248 · `silhuetaPng` 251 · `cartaz` 260 · `desenhar` 263 · `aviso` 279
 
 ### `src/maps/barud/mobilia.ts`
 `peca` 9 · `cx()` 13 · `cil()` 16 · `esf()` 19 · `mesa` 26 · `banco` 32 · `banqueta` 37 · `cadeira` 42 · `cama` 49 · `bau` 62 · `estante` 69 · `prateleira` 84 · `lareira` 96 · `balcao` 107 · `barril` 113 · `caixote` 120 · `sacos` 125 · `vela` 129 · `lustre` 136 · `tapecaria` 144 · `quadro` 149 · `tapete` 154 · `armario` 158 · `caldeirao` 165 · `forja` 173 · `altar` 184 · `bancoTemplo` 193 · `armadura` 199 · `cavalete` 205 · `servico` 211

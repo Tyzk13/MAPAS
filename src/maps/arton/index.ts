@@ -143,6 +143,8 @@ export async function build(M: MapRuntime) {
   M.exportHide = () => [sim.nomes, sim.alfinetes, sim.rotas, fronteiras];
   // personagens das folhas do dono (npcs.ts): só aparecem perto da câmera e na mesma cena (mesa × interior)
   M.npcs = async () => npcsArton();
+  // Barud tem mapa próprio em escala de gente (src/maps/barud): chegando perto aparece "Entrar em Barud" (core/passagem.ts)
+  { const b = lugar('barud'); M.passagens = [{ n: 'Barud', mapa: 'barud', x: b.x, z: b.z, r: 11, dist: 34, vista: 'Geral' }]; }
   M.npcVisivel = t => { const c = cam.position, p = t.g.position, dc = c.y < -60, dt2 = p.y < -60; if (dc !== dt2) return false; return Math.hypot(c.x - p.x, c.y - p.y, c.z - p.z) < (dt2 ? 45 : 80); };
 
   // ---------- clima ----------

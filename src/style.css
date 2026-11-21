@@ -148,6 +148,15 @@ button.tg[aria-pressed=true]::after{background:var(--acc-bg) radial-gradient(cir
 #toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translate(-50%,-8px);z-index:12;pointer-events:none;
   background:#000c;color:#eee;font-size:13px;padding:8px 14px;border-radius:10px;border:1px solid #ffffff22;opacity:0;transition:opacity .25s,transform .25s;max-width:calc(100vw - 32px);text-align:center}
 #toast.on{opacity:1;transform:translate(-50%,0)}
+/* passagem entre mapas: "Entrar em Barud ▸" perto do lugar; "◂ Sul de Arton" no mapa de dentro (core/passagem.ts) */
+#bpass{display:none;position:fixed;left:50%;bottom:calc(66px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:11;
+  padding:9px 18px;border-radius:22px;font-size:15px;font-weight:600;letter-spacing:.02em;background:#2a1c10e6;color:#f4e2bc;border:1px solid #d8b06a88;box-shadow:0 4px 18px #0008;cursor:pointer}
+#bpass.on{display:block;animation:bpass .35s ease-out}
+#bpass.volta{left:auto;right:12px;top:calc(60px + env(safe-area-inset-top,0px));bottom:auto;transform:none;font-size:13px;padding:7px 13px;background:#1a1612d9;animation:none}
+#bpass:hover,#bpass:focus-visible{background:#4a3018f0;border-color:#f0c878}
+@keyframes bpass{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+.limpa #bpass,.jogadores #bpass,.nu #bpass,.cine #bpass{display:none!important}
+@media (max-width:760px){#bpass{bottom:calc(104px + env(safe-area-inset-bottom,0px))}}
 
 /* ---------- janela dos jogadores (segundo monitor) ---------- */
 .jogadores #c{pointer-events:none}

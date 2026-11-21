@@ -55,10 +55,17 @@ export interface MapRuntime {
   fogScale?: number;
   /** formata uma distância do mapa (em unidades) para a régua ao arrastar e o painel de locais (ex.: km e dias de viagem) */
   medida?: (d: number) => string;
+  /** lugares com mapa próprio em escala de gente: chegando perto aparece "Entrar em …" (core/passagem.ts) */
+  passagens?: Passagem[];
+  /** neste mapa de dentro, o botão "◂ n" volta para `mapa`, na vista `vista` */
+  volta?: { mapa: string; vista: string; n: string };
   /** painel de locais e fichas do mestre */
   locais?: LocalInfo[];
   fichas?: NpcInfo[];
 }
+
+/** passagem para o mapa detalhado de um lugar: alvo da câmera a menos de r de (x, z) e câmera a menos de dist */
+export interface Passagem { n: string; mapa: string; x: number; z: number; r: number; dist: number; /** vista de chegada no outro mapa */ vista?: string }
 
 /** ficha de um local (painel do mestre, core/locais.ts) */
 export interface LocalInfo {

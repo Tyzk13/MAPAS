@@ -1,5 +1,12 @@
 # Changelog
 
+## Entrar em Barud direto do Sul de Arton
+
+- Chegando perto de Barud no mapa da região aparece **Entrar em Barud ▸**: a tela escurece e abre o mapa de Barud
+  em escala de gente (mesmo clima, personagens dos jogadores junto). Em Barud, **◂ Sul de Arton** volta para a
+  região, em cima de Barud. Núcleo genérico (`core/passagem.ts`, `M.passagens` e `M.volta`): qualquer lugar que
+  ganhar mapa próprio entra do mesmo jeito.
+
 ## Cidades maiores no Sul de Arton
 
 - **Valkaria, Tiberus, Giluk, Nova Malpetrim, Nimbarann e Porto de Deheon cresceram** (1,2× a 1,7×), com a mesma
