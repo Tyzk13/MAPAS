@@ -47,7 +47,7 @@ export const FICHAS: F[] = [
   f({ id: 'nimbarann', n: 'Nimbarann', cat: 'Cidade', tipo: 'Cidade entre dois rios', vista: 'Nimbarann',
     publico: 'Uma cidade do interior entre dois rios, cercada por paliçada de madeira e torres de vigia. Casas rústicas de madeira, campos dourados em volta e um ar tenso de decadência.',
     dono: 'Burgomestre e milícia local', funcao: 'Celeiro de Lomatubar; balsa e pontes sobre os dois rios.', rumores: ['A milícia fecha os portões cedo demais.'], segredos: ['Alguém está envenenando os poços com pó de coral.'] }),
-  f({ id: 'valkaria', n: 'Valkaria', cat: 'Cidade', tipo: 'Metrópole sob a estátua da deusa', vista: 'Valkaria',
+  f({ id: 'valkaria', n: 'Valkaria', cat: 'Cidade', tipo: 'Metrópole sob a estátua da deusa', vista: 'Valkaria', mapa: 'valkaria',
     publico: 'Uma metrópole gigantesca e populosa aos pés da estátua colossal da deusa Valkaria. A arquitetura imita a estátua: mármore lilás e cinza-gelo com ondas e espirais douradas. Palácios opulentos sobem quase até os quadris da estátua; jardins suspensos ligados por viadutos; pontes largas sobre canais cheios de barcos; dezenas de estátuas menores dos deuses do Panteão. Nos bairros de fora, barracos humildes, ruas de terra estreitas e multidões.',
     dono: 'Coroa do Reinado', funcao: 'Capital de Deheon e do Reinado.', rumores: ['A estátua chora nas noites de lua cheia.'], segredos: [] }),
   f({ id: 'malpetrim', n: 'Nova Malpetrim', cat: 'Cidade', tipo: 'Porto sobre a falésia', vista: 'Nova Malpetrim', dentro: 'Estalagem do Macaco Caolho',

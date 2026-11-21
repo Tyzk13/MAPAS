@@ -54,6 +54,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/core/mostrar.ts` | 51 | 2 KB |
 | `src/core/net.ts` | 117 | 6 KB |
 | `src/core/orbita.ts` | 61 | 4 KB |
+| `src/core/passagem.ts` | 54 | 3 KB |
 | `src/core/pbr.ts` | 81 | 3 KB |
 | `src/core/post.ts` | 144 | 8 KB |
 | `src/core/probe.ts` | 53 | 2 KB |
@@ -83,7 +84,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/maps/barud/cidade.ts` | 413 | 30 KB |
 | `src/maps/barud/common.ts` | 149 | 9 KB |
 | `src/maps/barud/dados.ts` | 364 | 50 KB |
-| `src/maps/barud/edificios.ts` | 415 | 37 KB |
+| `src/maps/barud/edificios.ts` | 419 | 37 KB |
 | `src/maps/barud/floresta.ts` | 392 | 30 KB |
 | `src/maps/barud/index.ts` | 288 | 23 KB |
 | `src/maps/barud/mobilia.ts` | 216 | 14 KB |
@@ -104,7 +105,7 @@ Para ler uma função: Read com `offset` = linha e `limit` ≈ 40–80. Não lei
 | `src/maps/igreja/grounds.ts` | 369 | 30 KB |
 | `src/maps/igreja/index.ts` | 162 | 9 KB |
 | `src/maps/igreja/interior.ts` | 246 | 18 KB |
-| `src/maps/manifest.ts` | 15 | 1 KB |
+| `src/maps/manifest.ts` | 16 | 1 KB |
 | `src/maps/mexico/common.ts` | 177 | 11 KB |
 | `src/maps/mexico/index.ts` | 176 | 10 KB |
 | `src/maps/mexico/landmarks.ts` | 503 | 46 KB |
@@ -242,6 +243,9 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 ### `src/core/orbita.ts`
 `ativa` 15 · `initOrbita` 17 · `tickOrbita` 45
 
+### `src/core/passagem.ts`
+`initPassagem` 16 · `trocar` 26 · `tickPassagem` 42
+
 ### `src/core/pbr.ts`
 `fileFor` 7 · `tex` 11 · `PbrOpts` 23 · `pbr` 41 · `rep` 45
 
@@ -309,7 +313,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `hashDe` 17 · `perto` 18 · `pinta` 21 · `tollonGeo` 27 · `coniferaGeo` 35 · `folhaGeo` 43 · `cipresteGeo` 51 · `longe` 55 · `plantar` 61 · `construirNatureza` 72 · `livre` 76 · `bicho` 111 · `corpo` 113 · `perna` 114 · `cab` 115 · `chifre` 116 · `cav` 129 · `navio` 136 · `pos` 149
 
 ### `src/maps/arton/npcs.ts`
-`img` 16 · `L` 19 · `por` 38 · `vil` 43 · `dentro` 45 · `fora` 47 · `solto` 48 · `grupo` 50 · `npcsArton` 54
+`L` 19 · `por` 38 · `vil` 43 · `dentro` 45 · `fora` 47 · `solto` 48 · `grupo` 50 · `npcsArton` 54
 
 ### `src/maps/arton/simbolos.ts`
 `COR_PINO` 8 · `altPino` 12 · `Rota` 14 · `pxDe` 15 · `ROTAS` 24 · `dias` 29 · `placa` 31 · `desenhar` 33 · `rr` 36 · `construirSimbolos` 48 · `pinta` 51 · `reg` 70
@@ -330,7 +334,7 @@ Outros textos: `.claude/skills/mapa-3d/CATALOGO.md`, `.claude/skills/mapa-3d/SKI
 `LocalFicha` 6 · `NpcFicha` 16 · `LOCAIS` 24 · `NPCS` 224
 
 ### `src/maps/barud/edificios.ts`
-`Vao` 16 · `Predio` 17 · `Construido` 28 · `MATRIZ` 29 · `SPEC` 30 · `mundo` 32 · `retDe` 34 · `PREDIOS` 41 · `corDe` 65 · `parede` 67 · `seg` 70 · `construirPredio` 85 · `W` 91 · `luzI` 195 · `mobiliar` 197 · `W` 199 · `construirFortaleza` 391 · `mur` 400
+`Vao` 16 · `Predio` 17 · `Construido` 32 · `MATRIZ` 33 · `SPEC` 34 · `mundo` 36 · `retDe` 38 · `PREDIOS` 45 · `corDe` 69 · `parede` 71 · `seg` 74 · `construirPredio` 89 · `W` 95 · `luzI` 199 · `mobiliar` 201 · `W` 203 · `construirFortaleza` 395 · `mur` 404
 
 ### `src/maps/barud/floresta.ts`
 `TRILHA` 18 · `FORCA` 19 · `CABANA` 20 · `CLAREIRA` 21 · `AREAS` 22 · `MARCAS` 28 · `naTrilha` 39 · `distTrilha` 41 · `distSeg` 49 · `mataMask` 54 · `vistasMata` 63 · `mortaGeo` 76 · `tubo` 81 · `pinheiroEscuro` 112 · `cranio` 137 · `Floresta` 149 · `construirFloresta` 151 · `coluna` 156 · `livre` 197 · `perto` 206 · `espalha` 235 · `vai` 249 · `placa` 286

@@ -21,6 +21,10 @@ export interface Predio {
   /** paredes internas: [x0,z0,x1,z1, porta (distância do início) | -1, andar] */
   internas?: [number, number, number, number, number, number][];
   ruina?: boolean; corExt?: number;
+  /** como o prédio é tratado (vitrais de 'templo', seteiras de 'quartel', piso de pedra de 'salao'…); padrão = id. Outras cidades usam ids próprios */
+  tipo?: string;
+  /** material das paredes de fora (padrão: o do `ext`) — ex.: mármore em Valkaria */
+  matExt?: THREE.Material;
   /** vista interna em coordenadas locais [px,py,pz, tx,ty,tz] (padrão: canto da frente olhando o fundo) */
   vd?: [number, number, number, number, number, number];
 }
@@ -83,11 +87,11 @@ function parede(B: Batch, mat: THREE.Material, cor: number, m: THREE.Matrix4, ax
 }
 
 export function construirPredio(B: Batch, BR: Batch, G: THREE.Group, p: Predio): Construido {
-  const M = MAT(), y0 = p.base ?? 0, m = mtx(p.x, y0, p.z, p.ry); MATRIZ[p.id] = m; SPEC[p.id] = p;
+  const M = MAT(), tp = p.tipo ?? p.id, y0 = p.base ?? 0, m = mtx(p.x, y0, p.z, p.ry); MATRIZ[p.id] = m; SPEC[p.id] = p;
   const floors: THREE.Object3D[] = [], solids: THREE.Object3D[] = [], vtt: [number, number][][] = [], portals: Construido['portals'] = [];
   const t = 0.4, hw = p.w / 2, hd = p.d / 2, cor = corDe(p);
-  const matExt = p.ext === 'pedra' ? M.pedra : p.ext === 'muro' ? M.muro : p.ext === 'enxaimel' ? M.reboco : M.tabuas;
-  const dentroMat = p.ext === 'tabuas' ? { mat: M.tabuas, cor: 0x5a4636 } : { mat: M.reboco, cor: p.ext === 'pedra' && p.id !== 'templo' ? 0x8e8476 : 0xa69a86 };
+  const matExt = p.matExt ?? (p.ext === 'pedra' ? M.pedra : p.ext === 'muro' ? M.muro : p.ext === 'enxaimel' ? M.reboco : M.tabuas);
+  const dentroMat = p.ext === 'tabuas' ? { mat: M.tabuas, cor: 0x5a4636 } : { mat: M.reboco, cor: p.ext === 'pedra' && tp !== 'templo' ? 0x8e8476 : 0xa69a86 };
   const W = (x: number, z: number) => { const v = new THREE.Vector3(x, 0, z).applyMatrix4(m); return [+v.x.toFixed(2), +v.z.toFixed(2)] as [number, number]; };
   const lados: Record<Lado, [number, number, number, number]> = { f: [-hw, hd, hw, hd], t: [hw, -hd, -hw, -hd], e: [-hw, -hd, -hw, hd], d: [hw, hd, hw, -hd] };
   for (let k = 0; k < p.andares; k++) {
@@ -108,8 +112,8 @@ export function construirPredio(B: Batch, BR: Batch, G: THREE.Group, p: Predio):
       for (let i = 0; i < nj; i++) {
         const c = (L - (nj - 1) * esp) / 2 + i * esp;
         if (vaos.some(v => Math.abs(v.c - c) < v.w / 2 + 0.9)) continue;
-        if (p.id === 'templo') { vaos.push({ c, w: 1.1, y: 3.2, h: 4.6 }); continue; }
-        if (p.id === 'quartel' && l !== 'f') { vaos.push({ c, w: 0.25, y: 1.6, h: 0.9 }); continue; }   // seteiras
+        if (tp === 'templo') { vaos.push({ c, w: 1.1, y: 3.2, h: 4.6 }); continue; }
+        if (tp === 'quartel' && l !== 'f') { vaos.push({ c, w: 0.25, y: 1.6, h: 0.9 }); continue; }   // seteiras
         vaos.push({ c, w: 0.95, y: k === 0 ? 1.0 : 0.9, h: 1.2 });
       }
       parede(B, matExt, cor, m, ax, az, bx, bz, ya, p.h, t, vaos, { ...dentroMat, lado: -1 });
@@ -123,9 +127,9 @@ export function construirPredio(B: Batch, BR: Batch, G: THREE.Group, p: Predio):
       for (const v of vaos) if (v.y > 0.5 && v.w > 0.5) {
         const ux = (bx - ax) / L, uz = (bz - az) / L, a = Math.atan2(ux, uz) - Math.PI / 2, mm = m.clone().multiply(mtx(ax + ux * v.c, 0, az + uz * v.c, a));
         cx(B, M.madeira, v.w + 0.12, 0.1, 0.18, 0, ya + v.y - 0.05, t / 2, 0x2a1e16, mm);
-        if (p.id !== 'templo') { cx(B, M.madeira, 0.05, v.h, 0.05, 0, ya + v.y + v.h / 2, 0, 0x2a1e16, mm); cx(B, M.madeira, v.w, 0.05, 0.05, 0, ya + v.y + v.h / 2, 0, 0x2a1e16, mm); }
+        if (tp !== 'templo') { cx(B, M.madeira, 0.05, v.h, 0.05, 0, ya + v.y + v.h / 2, 0, 0x2a1e16, mm); cx(B, M.madeira, v.w, 0.05, 0.05, 0, ya + v.y + v.h / 2, 0, 0x2a1e16, mm); }
         else { cx(B, M.vitral, v.w - 0.05, v.h - 0.05, 0.03, 0, ya + v.y + v.h / 2, 0, 0xffffff, mm); for (let k2 = 1; k2 < 4; k2++) cx(B, M.ferro, v.w, 0.04, 0.05, 0, ya + v.y + k2 * v.h / 4, 0, 0xffffff, mm); cx(B, M.ferro, 0.04, v.h, 0.05, 0, ya + v.y + v.h / 2, 0, 0xffffff, mm); }  // vitral aceso (âmbar, por dentro de velas)
-        if (!p.ruina && rnd() < 0.6 && p.id !== 'templo') cx(B, M.tabuas, v.w / 2, v.h, 0.05, v.w * 0.75, ya + v.y + v.h / 2, t / 2 + 0.1, 0x3a2a1e, mm, 0.6);
+        if (!p.ruina && rnd() < 0.6 && tp !== 'templo') cx(B, M.tabuas, v.w / 2, v.h, 0.05, v.w * 0.75, ya + v.y + v.h / 2, t / 2 + 0.1, 0x3a2a1e, mm, 0.6);
       }
       vtt.push([W(ax, az), W(bx, bz)]);
     });
@@ -133,8 +137,8 @@ export function construirPredio(B: Batch, BR: Batch, G: THREE.Group, p: Predio):
     const yp = ya + 0.05;
     if (k === 0) {
       const g = new THREE.BoxGeometry(p.w - 0.1, 0.1, p.d - 0.1); g.translate(0, yp - 0.05 + 0.0, 0);
-      const mat = ['templo', 'salao', 'quartel', 'lazareto', 'forja'].includes(p.id) ? M.lajota : p.id === 'casebre' ? M.tabuas : M.piso;
-      por(B, mat, g, p.id === 'forja' ? 0x6a645c : 0xffffff, m);
+      const mat = ['templo', 'salao', 'quartel', 'lazareto', 'forja'].includes(tp) ? M.lajota : tp === 'casebre' ? M.tabuas : M.piso;
+      por(B, mat, g, tp === 'forja' ? 0x6a645c : 0xffffff, m);
       const f = new THREE.Mesh(new THREE.BoxGeometry(p.w - 0.2, 0.1, p.d - 0.2), new THREE.MeshBasicMaterial({ visible: false })); f.position.set(0, 0.0, 0); f.applyMatrix4(m); f.userData.ns = 1; G.add(f); floors.push(f);
       if (y0 > 0.1) { /* plataforma: o chão da fortaleza já está na altura */ }
     } else {
@@ -173,7 +177,7 @@ export function construirPredio(B: Batch, BR: Batch, G: THREE.Group, p: Predio):
   // telhado (camada) e beiral
   const topo = p.andares * p.h;
   if (p.telha) {
-    const hr = Math.min(p.w, p.d) * (p.id === 'templo' || p.id === 'salao' ? 0.42 : 0.36);
+    const hr = Math.min(p.w, p.d) * (tp === 'templo' || tp === 'salao' ? 0.42 : 0.36);
     const mt = p.telha === 'ardosia' ? M.ardosia : M.telha, ct = p.telha === 'ardosia' ? 0x56565e : 0x6a4034;
     if (p.ruina) {
       // telhado meio desabado: só uma água e caibros expostos

@@ -13,6 +13,7 @@ para hospedar e servidor, `docs/HOSPEDAGEM.md`; para Foundry/Roll20, `docs/VTT.m
 | [Greywater Falls](https://claude.ai/artifact/19Taut7URvhL67RnSA4MHg) | Greywater Falls (O Caso Ashdown) | todos os mapas |
 | [Barud (Tormenta 20)](https://claude.ai/artifact/UpjK4X8KJrYW5LefuSuPUF) | Barud, capital de Lomatubar | todos os mapas |
 | [Sul de Arton (Tormenta 20)](https://claude.ai/artifact/Dzxp7GFmcpc2X9SXJP2VYZ) | mapa da região em relevo | todos os mapas |
+| [Valkaria (Tormenta 20)](https://claude.ai/artifact/YbkzUfCSscusfBzCY1BdN4) | Valkaria, capital do Reinado (escala de gente) | todos os mapas |
 
 Mapas: **Igreja** (casamento), **San Judas** (México), **Harlow** (Texas, 1987 parado no tempo), **Greywater
 Falls** (Ontário, 1975 — O Caso Ashdown, hotel de 3 andares) e **Campo** (exemplo). São privados: para outras
@@ -149,6 +150,22 @@ Malpetrim, os chefes de guerra orcs, o chefe kobold, o saqueador de Tollon, a Ve
 **Câmera e personagens**: roda = zoom para onde o mouse aponta · W A S D deslizam a mesa · Q/E giram · Z/X
 aproximam · duplo clique no chão leva a câmera até lá · com um personagem selecionado, duplo clique no chão faz
 ele andar até o ponto.
+
+### Valkaria (capital do Reinado, escala de gente)
+O coração da cidade, no mesmo nível de Barud: a **deusa colossal** (manto com dobras, espada nas mãos, coroa) na
+**Praça do Panteão** com 20 deuses menores, chafarizes e canteiros; quatro avenidas diagonais até os portões (Coroa,
+Magos, Barcas, Peregrinos), o Anel do Panteão, o Bulevar das Torres, o Anel dos Ofícios e as travessas; o **rio** com
+cais, escadas, barcos e pontes de arco; a muralha branca com torres de telhado azul.
+- Prédios **com interior** (vistas "· salão", "· nave"…): **Sala do Trono** do Palácio Imperial, **Catedral**, **Grande
+  Biblioteca** da Academia Arcana, taverna **Grifo Dourado**, **Estalagem da Deusa Adormecida**, **Botica da Lua
+  Violeta**, **Armaria Barba-de-Ferro**, **Casa dos Heróis** (guilda dos aventureiros) e o **Quartel da Guarda**.
+- Por fora: torre da Academia (luz violeta, cristal e anel flutuando), observatório, **Grande Mercado**, torres dos
+  nobres com jardins suspensos e viadutos, jardins de jacarandás lilases, Bairro do Cais, barracos fora dos muros.
+- **Fichas** (botão Locais): 14 lugares e 19 NPCs com as artes do dono — Ulric, Lina e Zahra no Grifo, o sumo-sacerdote,
+  a Magistra Elowen, o arquivista, o conselheiro Valmont, a capitã Seraphine, a Raposa (informante)… e dois **vilões
+  ocultos**: Nyss, a espiã da elfa sombria (no quarto do meio do Grifo), e Malakar, o feiticeiro expulso (na biblioteca).
+  O povo de todas as raças anda pela praça, pelo mercado e pelo cais.
+- No Sul de Arton, chegue perto de Valkaria e use **Entrar em Valkaria ▸**; lá, **◂ Sul de Arton** volta.
 
 **Entrar em Barud**: no Sul de Arton, chegue perto de Barud (roda do mouse, ou a vista "Barud"): aparece o botão
 **Entrar em Barud ▸** embaixo. Ele escurece a tela e abre a **Barud de verdade**, em escala de gente (ruas, prédios

@@ -11,9 +11,9 @@
 import type { TokenDef } from '../../core/tokens';
 import { type P, LUGARES, TRILHAS, ACAMPAMENTOS, BATALHAS, CAVERNAS, CLAREIRAS, Ysolo, Y, lugar, escalaLocal } from './geo';
 import { ORIGENS, Y0 } from './interiores';
+import { retratoArton } from './retratos';
 
-const IMG = import.meta.glob('../../../npcs-local/arton/usar/*.webp', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
-const img = (id: string) => Object.entries(IMG).find(([k]) => k.endsWith('/' + id + '.webp'))?.[1];
+const img = retratoArton;
 let sd = 31; const rnd = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
 const pick = <T,>(a: T[]) => a[(rnd() * a.length) | 0];
 const L = (pre: string, ns: number[]) => ns.map(k => `${pre}-${String(k).padStart(2, '0')}`);

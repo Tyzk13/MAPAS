@@ -1,5 +1,17 @@
 # Changelog
 
+## Valkaria em escala de gente (novo mapa)
+
+- **Valkaria, capital do Reinado**, no nível de Barud (`src/maps/valkaria/`): a deusa colossal na Praça do Panteão
+  (20 deuses menores, chafarizes, canteiros), avenidas até quatro portões dourados, três anéis de ruas, travessas,
+  o rio com cais, escadas, barcos e pontes de arco, muralha de mármore com torres azuis, ~casas por bairro (nobres
+  de mármore, sobrados, casas simples), torres dos nobres com jardins suspensos e viadutos, jacarandás lilases.
+- Nove prédios com interior: Sala do Trono, Catedral, Grande Biblioteca, Grifo Dourado, Estalagem da Deusa
+  Adormecida, Botica da Lua Violeta, Armaria Barba-de-Ferro, Casa dos Heróis e Quartel da Guarda.
+- Fichas: 14 lugares e 19 NPCs (com as artes do dono), dois vilões ocultos; povo de todas as raças nas ruas.
+- Passagem: "Entrar em Valkaria ▸" no Sul de Arton e "◂ Sul de Arton" de volta. Link próprio publicado.
+- Custo medido (q=baixa): ~300 chamadas e ~0,5 M triângulos nas vistas de rua (contando a sombra).
+
 ## Entrar em Barud direto do Sul de Arton
 
 - Chegando perto de Barud no mapa da região aparece **Entrar em Barud ▸**: a tela escurece e abre o mapa de Barud

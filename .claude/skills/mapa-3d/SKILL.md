@@ -495,6 +495,17 @@ relâmpago), som gerado na hora, imagens para os jogadores, rede, exportação V
 - Custo medido (q=baixa, visão do mestre): 500→524 chamadas, 620k→716k triângulos com as cidades maiores — aceitável;
   se precisar cortar, comece pelo `preencher` (fundos de quarteirão).
 - Piso `CM.terra` com cor escura fica preto ao entardecer: em praça/mercado use `lajota`/`areia` e cores claras.
+- **Cidade em escala de gente reaproveitando Barud** (`src/maps/valkaria/`): `construirPredio` (casca com interior) e a
+  mobília de `barud/mobilia.ts` servem a qualquer cidade — use ids próprios (`v-…`; MATRIZ/SPEC são globais) e
+  `tipo` ('templo', 'quartel', 'salao') para os detalhes especiais, `matExt` para outro material de parede. A planta
+  é sua (plano.ts: círculos, avenidas, rio, `Ocupacao` com caixas orientadas e ruas); as luzes usam o `LUZES`/`luz`
+  de `barud/cidade.ts` (zere `LUZES.length` no build). Artes dos NPCs: `retratoArton(id)` (arton/retratos.ts).
+- Ruas cortadas em trechos de 1,2 m: **não** use `reamostra(pts, passo)` para espaçar postes (ela só subdivide, não
+  junta pontos — saiu um poste a cada 1,2 m); use `aCada(pts, passo)` (plano.ts).
+- Vistas em órbita não olham muito para cima: o `maxPolarAngle` empurra a câmera para o alto quando o alvo está bem
+  acima dela (vista "da deusa de baixo" virou vista de cima). Alvo baixo (ou câmera alta) para monumentos.
+- Árvores do catálogo em cidade: `jacaranda_tree` pesa 65k tri por cópia (12 M triângulos na cena!). Árvore de
+  cidade em código (tronco + 4 icosaedros) no lote.
 - Detalhe de história que funciona de longe: cemitério (grama escura, lápides tortas ou cairns, árvores secas,
   capela, luz fria) fora dos muros — terror sutil sem gore.
 - Custo medido (qualidade baixa, vista geral): 498 chamadas e 614 mil triângulos (antes 429 / 516 mil).
@@ -674,6 +685,7 @@ Meça antes de mexer: `node tools/medir.mjs --q=media` (chamadas, triângulos, e
   Greywater Falls `https://claude.ai/artifact/19Taut7URvhL67RnSA4MHg` (`canada.html`, `MAPA_PADRAO="canada"`) ·
   Barud (Tormenta 20) `https://claude.ai/artifact/UpjK4X8KJrYW5LefuSuPUF` (`barud.html`, `MAPA_PADRAO="barud"`) ·
   Sul de Arton `https://claude.ai/artifact/Dzxp7GFmcpc2X9SXJP2VYZ` (`arton.html`, `MAPA_PADRAO="arton"`; criado em 2 partes).
+  Valkaria `https://claude.ai/artifact/YbkzUfCSscusfBzCY1BdN4` (`valkaria.html`, `MAPA_PADRAO="valkaria"`; criado em 2 partes, 240 + 46 arquivos).
   O build leve passou de 255 arquivos: publique o link novo em duas partes (mesmo `file_path`); nos links que já
   existem mande só os arquivos alterados (código .js/.css e imagens novas) — texturas/modelos têm o mesmo nome. Os três têm todos os mapas (Greywater Falls
   entrou depois; para um link próprio dele, crie `canada.html` com `MAPA_PADRAO="canada"`).
